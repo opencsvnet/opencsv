@@ -37,7 +37,7 @@ crates/opencsv-core/ # Rust: commitments, nullifiers, consignments, verification
 crates/opencsv-pcd/  # Rust: AIR-native recursive proof engine (Plonky3-style, no zkVM)     (planned)
 crates/opencsv-cli/  # text wallet client                                                  (planned)
 crates/opencsv-signal/ # Signal transport via presage                                      (planned)
-formal/              # Lean 4 mechanization of the core predicates                        (planned)
+formal/              # Lean 4 mechanization of the core predicates
 ```
 
 ## Roadmap
@@ -47,7 +47,8 @@ formal/              # Lean 4 mechanization of the core predicates              
    AIR-native recursion over a small field (BabyBear/Goldilocks), Poseidon
    commitments/nullifiers, mint/transfer/redeem predicates.
 3. **Formal verification** — Lean 4 mechanization of the protocol logic: inflation
-   soundness, conservation, nullifier uniqueness.
+   soundness, conservation, nullifier uniqueness, receiver correctness.
+   *(done — see [`formal/`](formal/README.md); `lake build` is sorry-free)*
 4. **Signal client** — consignments delivered over Signal (presage, all-Rust) plus a
    text CLI driving the wallet.
 

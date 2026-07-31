@@ -1,0 +1,5 @@
+name = "opencsv"
+defaultTargets = ["OpenCsv"]
+
+[[lean_lib]]
+name = "OpenCsv"
