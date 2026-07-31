@@ -51,6 +51,17 @@
 //! - Root verification: [`verify_coin_proof`] (checks the bound statement
 //!   values, then natively verifies the proof).
 //!
+//! ## Stage 4: redeem and accept-driver integration (paper §4.6, §4.8)
+//!
+//! - Redeem (burn): [`prove_redeem`] / [`verify_redeem`] — one predecessor
+//!   verified in-circuit, statement binds `(mode = REDEEM, asset_id, V, nf)`.
+//! - Accept-driver integration: [`CoinProofVerifier`] implements
+//!   `opencsv-core`'s `ProofVerifier` trait with the real recursive verifier,
+//!   and [`encode_coin_proof`] serializes a [`CoinProof`] for the
+//!   consignment's opaque proof bytes. No `opencsv-core` changes were needed:
+//!   the full statement travels inside the proof bytes and the adapter checks
+//!   it against the anchor-and-openings public input.
+//!
 //! **Known limitation (inherited from upstream 0.1.0 PoC):** the standalone
 //! stage-1/2 verifier (`BatchStarkProver::verify_all_tables`) proves
 //! *satisfiability of the circuit for some public inputs* — the public input
@@ -64,6 +75,7 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
+mod accept;
 mod hash;
 mod mint;
 mod node;
@@ -84,6 +96,7 @@ use p3_field::extension::BinomialExtensionField;
 /// degrees `D ∈ {2, 4, 5}` — see `README.md`).
 pub type EF = BinomialExtensionField<BabyBear, 4>;
 
+pub use accept::{CoinProofVerifier, encode_coin_proof};
 pub use hash::{OSK_ELEMS, osk_felts};
 pub use mint::{
     MINT_OUTPUTS, MINT_PRIVATE_ELEMS, MINT_PUBLIC_ELEMS, MintError, MintProof, MintStatement,
@@ -91,7 +104,8 @@ pub use mint::{
 };
 pub use node::{
     CoinProof, NODE_INPUTS, NODE_OUTPUTS, NODE_PRIVATE_ELEMS, NodeError, NodeMode, NodeStatement,
-    STATEMENT_ELEMS, coin_fri_params, prove_genesis_mint, verify_coin_proof,
+    REDEEM_PRIVATE_ELEMS, RedeemProof, STATEMENT_ELEMS, coin_fri_params, prove_genesis_mint,
+    prove_redeem, verify_coin_proof, verify_redeem,
 };
 pub use node::prove_transfer as prove_coin_transfer;
 pub use opening::{

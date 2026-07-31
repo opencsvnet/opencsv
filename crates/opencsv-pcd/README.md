@@ -26,7 +26,7 @@ Both reuse the opening circuit's sponge pattern (now factored into
 `src/hash.rs`), and share proving plumbing (`src/prove.rs`) and the u64
 value gadget (`src/value.rs`).
 
-**Stage 3 (current): real PCD recursion** (paper §4.5 item 4). The
+**Stage 3:** real PCD recursion (paper §4.5 item 4). The
 `src/node.rs` module adds:
 
 - **Mint circuit** (genesis): the stage-2 mint predicate plus a statement
@@ -46,6 +46,44 @@ value gadget (`src/value.rs`).
   commitment `C_i` and asset. This is what chains the PCD: every transfer
   attests its inputs' full ancestry back to genesis mints, and the root
   verifier only checks the final proof.
+
+**Stage 4 (current): redeem + accept-driver integration** (paper §4.6, §4.8):
+
+- **Redeem circuit** (`src/node.rs`): burns one coin, verifying **one**
+  predecessor proof in-circuit (mint or node — the coin's ancestry) with the
+  same chaining constraints as the node circuit. It is a separate circuit,
+  not the node circuit with `N_IN = 1`: the circuit shape is fixed by the
+  number of in-circuit verifier sub-circuits, and a redeem needs exactly
+  one. The shared statement layout is reused with `mode = 2` (REDEEM):
+  `asset_id` and `V` (the coin's committed value *is* the public burn
+  amount — the value limbs go straight into the statement), `nf_1 =
+  H("null" ∥ osk ∥ C)`, and `mint_commit` / `nf_2` / both outputs zero.
+  Constraints: input commitment recomputes, ownership `owner = H(osk)`,
+  nullifier recomputes. API: `prove_redeem` / `verify_redeem`
+  (`RedeemProof = CoinProof` with `NodeMode::Redeem`).
+- **Accept-driver integration** (`src/accept.rs`): `CoinProofVerifier`
+  implements `opencsv-core`'s `ProofVerifier` trait — **no trait change and
+  no `opencsv-core` dependency cycle** (the integration lives in this
+  crate). The trait's `proof: &[u8]` blob carries a postcard envelope of
+  `(mode, full statement, batch-STARK proof)` (`encode_coin_proof`); the
+  adapter decodes it, checks the statement *projects* onto the driver's
+  reconstructed public input `x = anchor_bytes(64) ∥ openings` (anchor tag
+  ↔ mode, truncated anchor digests are 24-byte prefixes of the statement's
+  full digests, `V` matches, openings recompute to the statement's output
+  commitments), then runs `verify_coin_proof` (statement-table comparison +
+  native batch-STARK verification). The full statement must ride in the
+  proof bytes because anchors carry only truncated digests and openings do
+  not carry nullifiers — this is sound because the statement-table values
+  are transcript-bound. `vk` is ignored (fixed circuit shapes; the proof
+  self-describes its common data — same caveat as predecessor vk binding).
+- **Acceptance test** (`tests/acceptance.rs`, `#[ignore]`d): the full
+  protocol flow end-to-end — issuer keygen → mint → anchor → `accept()`
+  with the real verifier → 2-in/2-out transfer → anchor → `accept()` →
+  double-spend rejected by nullifier first-occurrence → redeem → anchor →
+  `audit::supply` = mint − redeem at every height.
+- **Benchmarks**: `tests/bench.rs` (`#[ignore]`d) measures prove/verify/
+  proof-size for mint, transfer, 2-hop transfer, redeem — see
+  `BENCHMARKS.md`.
 
 ## Stage-3 architecture notes
 
@@ -74,7 +112,9 @@ point after a few recursion depths).
 ```
 
 Mints: `mode = 1`, nullifiers zero. Transfers: `mode = 0`, `V` and
-`mint_commit` zero. The statement elements are *computed* in-circuit (hash
+`mint_commit` zero. Redeems (stage 4): `mode = 2`, `V` = burned value,
+`nf_1` the coin's nullifier, `mint_commit` / `nf_2` / outputs zero. The
+statement elements are *computed* in-circuit (hash
 outputs / selected values), so they are pinned to the witness by the
 circuit's own constraints; the statement table then binds them into the
 proof (see below).
@@ -238,7 +278,7 @@ commitments) + 2×2 (ownership) + 2×3 (nullifiers) + 2×4 (output
 commitments) = **26 rows**, plus on the order of 10³ ALU/witness rows for
 limb range checks, carries and recompose-via-ALU packing.
 
-## Deviations from the paper (stage 2)
+## Deviations from the paper
 
 - **Issuer signature stays OFF-circuit.** Paper §4.4 item 1 (Ed25519
   verification of `(asset_id, V, mint_nonce)`, `ipk` bound to `asset_id`
@@ -251,6 +291,13 @@ limb range checks, carries and recompose-via-ALU packing.
 - **Output commitments are not public inputs** (they match the paper's
   public statements `x`); they are carried in the proof structs as
   witness-derived data until recursion chains them to successor proofs.
+- **Consignment proof bytes carry the full statement** (stage 4). The
+  paper's `x` for the accept driver is reconstructed from the anchor and
+  openings, but anchors hold only 24-byte truncated digests, so
+  `CoinProofVerifier`'s envelope carries `(mode, statement, proof)` and
+  checks the statement projects onto `x` (truncation- and tag-wise) before
+  verifying. Soundness is unaffected: the statement is transcript-bound via
+  the statement table.
 
 ## u64 value gadget (`src/value.rs`)
 
@@ -307,6 +354,18 @@ pub fn prove_coin_transfer(asset_id: &AssetId,
 pub fn verify_coin_proof(expected: &NodeStatement, coin: &CoinProof)
     -> Result<(), NodeError>;
 
+// Stage 4 — redeem (burn one coin, 1 in-circuit predecessor verification;
+// RedeemProof = CoinProof with NodeMode::Redeem).
+pub fn prove_redeem(asset_id: &AssetId, input: &(Coin, OwnerSecret),
+                    predecessor: &CoinProof, selector: usize)
+    -> Result<RedeemProof, NodeError>;
+pub fn verify_redeem(expected: &NodeStatement, proof: &RedeemProof)
+    -> Result<(), NodeError>;
+
+// Stage 4 — accept-driver integration (opencsv-core's ProofVerifier seam).
+pub struct CoinProofVerifier; // impl opencsv_core::accept::ProofVerifier
+pub fn encode_coin_proof(proof: &CoinProof) -> Vec<u8>;
+
 // Low-level: explicit public data + witness (negative tests / later stages).
 pub fn prove_opening_raw(commitment: &[BabyBear; 8], witness: &CoinWitness)
     -> Result<OpeningProof, OpeningError>;
@@ -344,9 +403,12 @@ stage-1/2 standalone circuits remain carried-and-compared.
 cargo test -p opencsv-pcd -- --nocapture
 ```
 
-Default run (~2 min on a 64-core Xeon, debug profile): the twelve stage-1/2
-tests (~13 s — see below), the recursion spike (`src/spike.rs`, ~9 s), and
-the stage-3 `tests/node.rs` suite (~90 s):
+Default run (~3.5 min on a 64-core Xeon, debug profile): the twelve stage-1/2
+tests (~13 s — see below), the recursion spike (`src/spike.rs`, ~9 s), the
+statement-envelope round trip (`src/accept.rs`, ~2 s), the stage-3
+`tests/node.rs` suite (~90 s), and the stage-4 `tests/redeem.rs` suite
+(~40 s: mint→redeem round trip with wrong-`V`/tampered-statement negatives,
+plus a wrong-`osk` proving failure):
 
 - `genesis_mint_verifies` (a): prove ≈ 1.6 s, verify ≈ 57 ms, proof ≈ 46 KB.
 - `transfer_spending_mint_outputs_verifies` (b, the money test — two
@@ -359,6 +421,17 @@ the stage-3 `tests/node.rs` suite (~90 s):
 - `tampered_public_data_fails` (e): wrong expected statement, wrong asset,
   wrong mode — all rejected with `NodeError::StatementMismatch` before STARK
   verification (the statement table's bound values are compared).
+- Stage 4 (`tests/redeem.rs`): `mint_to_redeem_round_trip` (prove ≈ 35 s,
+  verify ≈ 46 ms, proof ≈ 54 KB), `wrong_osk_fails` (witness conflict at
+  proving time). `transfer_then_redeem` is `#[ignore]`d (~2 min); run it
+  with `cargo test -p opencsv-pcd --test redeem -- --ignored --nocapture`.
+- The **acceptance test** (`tests/acceptance.rs`, the project's end-to-end
+  protocol check — mint → accept → transfer → accept → double-spend
+  rejected → redeem → supply audit, all with real proofs) is `#[ignore]`d
+  (~3 min); run it with
+  `cargo test -p opencsv-pcd --test acceptance -- --ignored --nocapture`.
+- Benchmarks (`tests/bench.rs`, `#[ignore]`d; debug and release numbers):
+  see `BENCHMARKS.md`.
 - `two_hop_chain_verifies` (c) is `#[ignore]`d (~2.5 min); run it with
   `cargo test -p opencsv-pcd --test node -- --ignored --nocapture`:
   hop 1 (mint predecessors) prove ≈ 71 s / verify ≈ 45 ms / 56,041 B;
@@ -388,27 +461,21 @@ cargo run --release --example poseidon2_perm_chain -p p3-circuit-prover 3
 --field baby-bear --n 100 --num-recursive-layers 2` from the feasibility
 spike.)
 
-## What's next (stage 4)
+## What's next
 
-1. **Redeem circuit** (paper §4.6): not yet built — a coin proof variant
-   that destroys a coin and exposes `(asset_id, value, nf)` for the
-   Bitcoin-L1 withdrawal path; it slots into the same statement-table +
-   predecessor-verification architecture.
-2. **Accept-driver integration in `opencsv-core`:** replace `MockVerifier`
-   with a `ProofVerifier` backed by `verify_coin_proof` (statement-table
-   comparison + native batch-STARK verification).
-3. **Production parameters:** `CoinFriParams::testing()` is test-grade (a
+1. **Production parameters:** `CoinFriParams::testing()` is test-grade (a
    few bits of conjectured soundness); choose real FRI parameters and
    re-measure the in-circuit verifier cost. Per-circuit `ProverData` setup
    is currently rebuilt per proof — cache per (circuit-shape) vk.
-4. **vk hard-binding:** patch upstream (or wrap) to expose the predecessor's
+2. **vk hard-binding:** patch upstream (or wrap) to expose the predecessor's
    preprocessed-commitment targets so the node circuit can pin the
    predecessor vk to a constant instead of trusting the proof-carried
    `stark_common` (see "Public-input binding").
-5. **Paper gaps carried from stage 2:** issuer signature off-circuit
-   (§4.4 item 1), single-asset transfers (§4.5), benchmark-grade
-   (now test-grade) FRI parameters.
-6. **Benchmarks:** criterion benches for prove/verify per recursion depth.
+3. **Paper gaps carried from stage 2:** issuer signature off-circuit
+   (§4.4 item 1), single-asset transfers (§4.5), test-grade FRI parameters.
+4. **Shipped in stage 4:** the redeem circuit (§4.6), accept-driver
+   integration with the real recursive verifier, the end-to-end acceptance
+   test, and benchmarks (`BENCHMARKS.md`).
 
 ## What's next (superseded stage-3 plan, kept for reference)
 

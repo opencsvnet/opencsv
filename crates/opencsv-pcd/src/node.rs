@@ -38,6 +38,18 @@
 //!  out_1(8) | out_2(8)]                                        (52 elements)
 //! ```
 //!
+//! `mode` is `1` for mints, `0` for transfers, `2` for redeems (stage 4,
+//! paper §4.6). The **redeem circuit** consumes one coin and burns it: the
+//! input commitment recomputes, ownership `owner = H(osk)` holds, the
+//! nullifier `nf_1 = H("null" ∥ osk ∥ C)` is exposed, and the coin's
+//! committed value equals the public `V` (the statement's value limbs *are*
+//! the coin's witness value limbs). `mint_commit`, `nf_2` and both outputs
+//! are zero. It verifies **one** predecessor proof in-circuit (the coin's
+//! ancestry, mint or node) with the same chaining constraints as the node
+//! circuit — a separate circuit, not the node circuit with `N_IN = 1`,
+//! because the circuit shape is fixed by the number of in-circuit verifier
+//! sub-circuits, and a redeem needs exactly one.
+//!
 //! The node circuit's in-circuit verifier allocates the predecessor's
 //! statement public values as targets; the node circuit enforces, for each
 //! input `i`, that the predecessor's `asset_id` equals this node's asset and
@@ -71,6 +83,7 @@ use p3_lookup::logup::LogUpGadget;
 use p3_recursion::public_inputs::BatchStarkVerifierInputsBuilder;
 use p3_recursion::verifier::{VerificationError, verify_p3_batch_proof_circuit};
 use p3_recursion::{FriRecursionConfig, Poseidon2Config};
+use serde::{Deserialize, Serialize};
 
 use crate::hash::{coin_commitment_base, connect_digest, hash_felts_base, hash_felts_limbs};
 use crate::recursion_config::{
@@ -116,17 +129,24 @@ pub const NODE_PRIVATE_ELEMS: usize = DIGEST_ELEMS
 pub const MINT_PRIVATE_ELEMS: usize =
     2 * DIGEST_ELEMS + VALUE_LIMBS + NODE_OUTPUTS * (VALUE_LIMBS + 2 * DIGEST_ELEMS); // 57
 
+/// Private witness elements of the redeem circuit: asset_id (8) + input coin
+/// (v 3 + owner 8 + r 8 + osk 11) + predecessor output selector `k` (1).
+pub const REDEEM_PRIVATE_ELEMS: usize =
+    DIGEST_ELEMS + (VALUE_LIMBS + 2 * DIGEST_ELEMS + crate::hash::OSK_ELEMS) + 1; // 39
+
 /// The mode of a coin proof.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NodeMode {
     /// Genesis mint (no predecessors).
     Mint,
     /// Transfer spending two coins.
     Transfer,
+    /// Redeem (burn) of one coin (paper §4.6).
+    Redeem,
 }
 
 /// The public statement of a coin proof (mirrors the statement-table layout).
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NodeStatement {
     /// Asset all coins are denominated in.
     pub asset_id: AssetId,
@@ -148,6 +168,7 @@ impl NodeStatement {
         elems.push(match mode {
             NodeMode::Mint => BabyBear::ONE,
             NodeMode::Transfer => BabyBear::ZERO,
+            NodeMode::Redeem => BabyBear::new(2),
         });
         elems.extend(self.asset_id.to_elems());
         elems.extend(u64_to_felts(self.value));
@@ -513,83 +534,17 @@ fn build_node_circuit(
 
     // --- in-circuit predecessor verification + chaining.
     let lookup_gadget = LogUpGadget::new();
-    let table_provers = node_table_provers::<STATEMENT_ELEMS>();
     let mut preds: Vec<PredVerifier> = Vec::with_capacity(NODE_INPUTS);
     for (i, pred) in predecessors.iter().enumerate() {
-        let stmt_instance = pred
-            .proof
-            .non_primitives
-            .iter()
-            .position(|e| e.op_type == statement_op_type())
-            .map(|p| NUM_PRIMITIVE_TABLES + p)
-            .ok_or(NodeError::MissingStatement)?;
-
-        let (verifier_inputs, op_ids) = verify_p3_batch_proof_circuit::<
-            CoinRecursionConfig,
-            <CoinRecursionConfig as FriRecursionConfig>::Commitment,
-            <CoinRecursionConfig as FriRecursionConfig>::InputProof,
-            <CoinRecursionConfig as FriRecursionConfig>::OpeningProof,
-            _,
-            _,
-            16,
-            8,
-            4,
-        >(
+        preds.push(chain_predecessor(
             config,
             &mut builder,
-            &pred.proof,
-            config.pcs_verifier_params(),
-            &pred.proof.stark_common,
             &lookup_gadget,
-            Poseidon2Config::BABY_BEAR_D4_W16,
-            &table_provers,
-        )?;
-
-        let stmt_targets = &verifier_inputs.air_public_targets[stmt_instance];
-        assert_eq!(stmt_targets.len(), STATEMENT_PUBLIC_VALUES);
-        // Statement element `e` coefficient-0 target (all statement elements
-        // are base-embedded by construction).
-        let elem = |e: usize| stmt_targets[4 * e];
-        // Relay a public-input target through an NPO read so it can be
-        // constrained: at this pin, connecting a public input to anything
-        // double-sends it on the WitnessChecks bus (Public table sends are
-        // unconditional creators), and using one as an ALU operand trips an
-        // optimizer slot-rewrite bug when two verifier sub-circuits are
-        // present. Recomposing `[t, 0, 0, 0]` reads `t` through the
-        // (bus-safe) recompose table and yields an ordinary NPO output.
-        let relay = |builder: &mut CircuitBuilder<EF>, t: ExprId| {
-            builder.recompose_base_coeffs_to_ext::<BabyBear>(&[
-                t,
-                ExprId::ZERO,
-                ExprId::ZERO,
-                ExprId::ZERO,
-            ])
-        };
-
-        // (a) predecessor asset == this node's asset (coefficient 0 per
-        // element; remaining coefficients are zero by construction).
-        for e in 0..DIGEST_ELEMS {
-            let target = relay(&mut builder, elem(OFF_ASSET + e))?;
-            let d = builder.sub(target, witness.asset_id[e]);
-            builder.assert_zero(d);
-        }
-
-        // (b) the selected predecessor output == recomputed input commitment.
-        let k = witness.selectors[i];
-        builder.assert_bool(k);
-        for e in 0..DIGEST_ELEMS {
-            let out0 = relay(&mut builder, elem(OFF_OUTPUTS + e))?;
-            let out1 = relay(&mut builder, elem(OFF_OUTPUTS + DIGEST_ELEMS + e))?;
-            let selected = builder.select(k, out1, out0);
-            let d = builder.sub(selected, in_commitments[i][e]);
-            builder.assert_zero(d);
-        }
-
-        preds.push(PredVerifier {
-            stmt_instance,
-            verifier_inputs,
-            op_ids,
-        });
+            pred,
+            witness.asset_id,
+            witness.selectors[i],
+            &in_commitments[i],
+        )?);
     }
     let preds: [PredVerifier; 2] = match preds.try_into() {
         Ok(p) => p,
@@ -612,6 +567,162 @@ fn build_node_circuit(
     push_statement_op(&mut builder, stmt)?;
 
     Ok((builder.build()?, preds))
+}
+
+// ============================================================================
+// Shared in-circuit predecessor verification + chaining
+// ============================================================================
+
+/// Verify one predecessor coin proof in-circuit and enforce the chaining
+/// constraints (module docs): the predecessor's bound `asset_id` equals this
+/// circuit's asset, and `select(k, out_1, out_0)` equals the recomputed input
+/// commitment `commitment` (`k` a boolean witness expression).
+fn chain_predecessor(
+    config: &CoinRecursionConfig,
+    builder: &mut CircuitBuilder<EF>,
+    lookup_gadget: &LogUpGadget,
+    pred: &CoinProof,
+    asset_id: &[ExprId],
+    selector: ExprId,
+    commitment: &[ExprId; DIGEST_ELEMS],
+) -> Result<PredVerifier, NodeError> {
+    let stmt_instance = pred
+        .proof
+        .non_primitives
+        .iter()
+        .position(|e| e.op_type == statement_op_type())
+        .map(|p| NUM_PRIMITIVE_TABLES + p)
+        .ok_or(NodeError::MissingStatement)?;
+
+    let table_provers = node_table_provers::<STATEMENT_ELEMS>();
+    let (verifier_inputs, op_ids) = verify_p3_batch_proof_circuit::<
+        CoinRecursionConfig,
+        <CoinRecursionConfig as FriRecursionConfig>::Commitment,
+        <CoinRecursionConfig as FriRecursionConfig>::InputProof,
+        <CoinRecursionConfig as FriRecursionConfig>::OpeningProof,
+        _,
+        _,
+        16,
+        8,
+        4,
+    >(
+        config,
+        builder,
+        &pred.proof,
+        config.pcs_verifier_params(),
+        &pred.proof.stark_common,
+        lookup_gadget,
+        Poseidon2Config::BABY_BEAR_D4_W16,
+        &table_provers,
+    )?;
+
+    let stmt_targets = &verifier_inputs.air_public_targets[stmt_instance];
+    assert_eq!(stmt_targets.len(), STATEMENT_PUBLIC_VALUES);
+    // Statement element `e` coefficient-0 target (all statement elements
+    // are base-embedded by construction).
+    let elem = |e: usize| stmt_targets[4 * e];
+    // Relay a public-input target through an NPO read so it can be
+    // constrained: at this pin, connecting a public input to anything
+    // double-sends it on the WitnessChecks bus (Public table sends are
+    // unconditional creators), and using one as an ALU operand trips an
+    // optimizer slot-rewrite bug when two verifier sub-circuits are
+    // present. Recomposing `[t, 0, 0, 0]` reads `t` through the
+    // (bus-safe) recompose table and yields an ordinary NPO output.
+    let relay = |builder: &mut CircuitBuilder<EF>, t: ExprId| {
+        builder.recompose_base_coeffs_to_ext::<BabyBear>(&[t, ExprId::ZERO, ExprId::ZERO, ExprId::ZERO])
+    };
+
+    // (a) predecessor asset == this circuit's asset (coefficient 0 per
+    // element; remaining coefficients are zero by construction).
+    for e in 0..DIGEST_ELEMS {
+        let target = relay(builder, elem(OFF_ASSET + e))?;
+        let d = builder.sub(target, asset_id[e]);
+        builder.assert_zero(d);
+    }
+
+    // (b) the selected predecessor output == recomputed input commitment.
+    builder.assert_bool(selector);
+    for e in 0..DIGEST_ELEMS {
+        let out0 = relay(builder, elem(OFF_OUTPUTS + e))?;
+        let out1 = relay(builder, elem(OFF_OUTPUTS + DIGEST_ELEMS + e))?;
+        let selected = builder.select(selector, out1, out0);
+        let d = builder.sub(selected, commitment[e]);
+        builder.assert_zero(d);
+    }
+
+    Ok(PredVerifier {
+        stmt_instance,
+        verifier_inputs,
+        op_ids,
+    })
+}
+
+// ============================================================================
+// Redeem circuit (paper §4.6)
+// ============================================================================
+
+/// Build the redeem circuit: burn one coin, exposing `(asset_id, V, nf)` in
+/// the statement, with in-circuit verification of the single predecessor
+/// proof (mint or node — the coin's ancestry).
+fn build_redeem_circuit(
+    config: &CoinRecursionConfig,
+    predecessor: &CoinProof,
+) -> Result<(Circuit<EF>, PredVerifier), NodeError> {
+    let mut builder = CircuitBuilder::<EF>::new();
+    config.prepare_circuit_for_verification(&mut builder)?;
+    builder.register_npo(StatementCircuitPlugin::<STATEMENT_ELEMS>::new());
+
+    let private = builder.alloc_private_inputs(REDEEM_PRIVATE_ELEMS, "redeem_witness");
+    const IN_ELEMS: usize = VALUE_LIMBS + 2 * DIGEST_ELEMS + crate::hash::OSK_ELEMS; // 30
+    let asset_id = &private[0..DIGEST_ELEMS];
+    let base = DIGEST_ELEMS;
+    let v = &private[base..base + VALUE_LIMBS];
+    let owner = &private[base + VALUE_LIMBS..base + VALUE_LIMBS + DIGEST_ELEMS];
+    let r = &private[base + VALUE_LIMBS + DIGEST_ELEMS..base + VALUE_LIMBS + 2 * DIGEST_ELEMS];
+    let osk = &private[base + VALUE_LIMBS + 2 * DIGEST_ELEMS..base + IN_ELEMS];
+    let selector = private[base + IN_ELEMS];
+
+    // Value in range; the coin's committed value *is* the public burn
+    // amount `V` (the value limbs go into the statement below).
+    range_check_value(&mut builder, v.try_into().expect("v has 3 limbs"))?;
+
+    // Input commitment recomputes from the witness opening.
+    let commitment = coin_commitment_base(&mut builder, asset_id, v, owner, r)?;
+
+    // Ownership: owner = H(osk).
+    let own = hash_felts_limbs(&mut builder, "", &[osk])?;
+    connect_digest(&mut builder, own, owner)?;
+
+    // Nullifier: nf = H("null" ∥ osk ∥ C).
+    let nf = hash_felts_base(&mut builder, "null", &[osk, &commitment])?;
+
+    // --- in-circuit predecessor verification + chaining (1 predecessor).
+    let lookup_gadget = LogUpGadget::new();
+    let pred = chain_predecessor(
+        config,
+        &mut builder,
+        &lookup_gadget,
+        predecessor,
+        asset_id,
+        selector,
+        &commitment,
+    )?;
+
+    // --- statement: [mode=2 | asset | V = v | mint_commit = 0 | nf | 0 | 0 | 0].
+    let mut stmt = Vec::with_capacity(STATEMENT_ELEMS);
+    stmt.push(const_expr(&mut builder, BabyBear::new(2)));
+    stmt.extend_from_slice(asset_id);
+    stmt.extend_from_slice(v);
+    for _ in 0..DIGEST_ELEMS {
+        stmt.push(ExprId::ZERO); // mint_commit
+    }
+    stmt.extend_from_slice(&nf);
+    for _ in 0..DIGEST_ELEMS + NODE_OUTPUTS * DIGEST_ELEMS {
+        stmt.push(ExprId::ZERO); // nf_2, out_1, out_2
+    }
+    push_statement_op(&mut builder, stmt)?;
+
+    Ok((builder.build()?, pred))
 }
 
 // ============================================================================
@@ -804,4 +915,105 @@ pub fn verify_coin_proof(expected: &NodeStatement, coin: &CoinProof) -> Result<(
     let verifier = new_prover::<STATEMENT_ELEMS>(&config, coin.proof.table_packing.clone());
     verifier.verify_all_tables::<EF>(&coin.proof)?;
     Ok(())
+}
+
+/// A redeem proof (paper §4.6): a [`CoinProof`] with [`NodeMode::Redeem`].
+pub type RedeemProof = CoinProof;
+
+/// Prove a redeem: burn `input.0`, exposing `(asset_id, V = value, nf)` in
+/// the statement, verifying the coin's ancestry (`predecessor`, mint or
+/// node) in-circuit.
+///
+/// `predecessor` must be the coin proof that created `input.0` as its
+/// `selector`-th output; a mismatch fails off-circuit with
+/// [`NodeError::PredecessorOutputMismatch`], and a tampered predecessor
+/// statement fails in-circuit at witness generation ([`NodeError::Circuit`]),
+/// exactly as for [`prove_transfer`].
+pub fn prove_redeem(
+    asset_id: &AssetId,
+    input: &(Coin, OwnerSecret),
+    predecessor: &CoinProof,
+    selector: usize,
+) -> Result<RedeemProof, NodeError> {
+    let (coin, osk) = input;
+    if coin.asset_id != *asset_id {
+        return Err(NodeError::AssetMismatch);
+    }
+    if predecessor.statement.asset_id != *asset_id {
+        return Err(NodeError::PredecessorAssetMismatch);
+    }
+    if selector >= NODE_OUTPUTS
+        || predecessor.statement.output_commitments[selector] != coin.commitment()
+    {
+        return Err(NodeError::PredecessorOutputMismatch);
+    }
+    let nf = coin.nullifier(osk);
+
+    let config = CoinRecursionConfig::new(&coin_fri_params());
+    let (circuit, pred) = build_redeem_circuit(&config, predecessor)?;
+    let s = setup_circuit::<STATEMENT_ELEMS>(circuit, &coin_fri_params())?;
+
+    // Private inputs: own witness, then the predecessor verifier privates.
+    let mut private_values = Vec::new();
+    private_values.extend(asset_id.to_elems().iter().map(|&x| EF::from(x)));
+    private_values.extend(u64_to_felts(coin.value).iter().map(|&x| EF::from(x)));
+    private_values.extend(coin.owner.to_elems().iter().map(|&x| EF::from(x)));
+    private_values.extend(coin.randomness.to_elems().iter().map(|&x| EF::from(x)));
+    private_values.extend(crate::hash::osk_felts(osk).iter().map(|&x| EF::from(x)));
+    private_values.push(EF::from(BabyBear::new(selector as u32)));
+
+    // Public inputs: the predecessor verifier publics (statement instance
+    // public values + proof targets + common data).
+    let stmt_pvs = predecessor
+        .statement_public_values()
+        .ok_or(NodeError::MissingStatement)?;
+    let mut table_pvs: Vec<Vec<BabyBear>> = vec![Vec::new(); pred.stmt_instance];
+    table_pvs.push(stmt_pvs.to_vec());
+    let public_values = pred.verifier_inputs.pack_public_values(
+        &table_pvs,
+        &predecessor.proof.proof,
+        &predecessor.proof.stark_common,
+    );
+    private_values.extend(
+        pred.verifier_inputs
+            .pack_private_values(&predecessor.proof.proof),
+    );
+
+    let mut runner = s.circuit.runner();
+    runner.set_public_inputs(&public_values)?;
+    runner.set_private_inputs(&private_values)?;
+    CoinRecursionConfig::set_fri_private_data(
+        &mut runner,
+        &pred.op_ids,
+        &predecessor.proof.proof.opening_proof,
+    )
+    .map_err(NodeError::FriPrivateData)?;
+    let traces = runner.run()?;
+
+    let prover = new_prover::<STATEMENT_ELEMS>(&s.config, s.table_packing.clone());
+    let proof = prover.prove_all_tables(&traces, &s.circuit_prover_data)?;
+
+    Ok(CoinProof {
+        mode: NodeMode::Redeem,
+        statement: NodeStatement {
+            asset_id: *asset_id,
+            value: coin.value,
+            mint_commit: Digest::from_bytes([0u8; 32]),
+            nullifiers: [nf, Digest::from_bytes([0u8; 32])],
+            output_commitments: [Digest::from_bytes([0u8; 32]); NODE_OUTPUTS],
+        },
+        proof,
+    })
+}
+
+/// Verify a redeem proof: a mode-checked wrapper around
+/// [`verify_coin_proof`] (statement-table comparison, then native batch-STARK
+/// verification). The expected statement must have `value` equal to the
+/// burned amount, `nullifiers[0]` equal to the published nullifier, and zero
+/// `mint_commit` / `nullifiers[1]` / `output_commitments`.
+pub fn verify_redeem(expected: &NodeStatement, proof: &RedeemProof) -> Result<(), NodeError> {
+    if proof.mode != NodeMode::Redeem {
+        return Err(NodeError::StatementMismatch);
+    }
+    verify_coin_proof(expected, proof)
 }
