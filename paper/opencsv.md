@@ -212,7 +212,7 @@ cooperation, or any node interpreting the payloads.
 | Poseidon is collision- and preimage-resistant | commitment & nullifier integrity | counterfeiting / double-spend possible |
 | The AIR/FRI proof system is sound | no fake validity proofs | counterfeiting possible |
 | Issuer's mint key is uncompromised | supply integrity | unauthorized (but *visible*) inflation; users can exit |
-| Sender delivers the consignment | recipient learns their coin | funds are anchored but unusable by recipient (liveness, not theft — see §5.4) |
+| Sender delivers the consignment | recipient learns their coin | funds are anchored but unusable by recipient (liveness, not theft — see §5.5) |
 | Recipient stores consignments durably | later spending | loss of funds (mitigated by backups/escrow) |
 
 Notably absent: any honesty assumption about the issuer regarding the ledger, any
@@ -238,7 +238,7 @@ above and characterizes (d) as liveness failures with mitigations.
   elements or fixed-width vectors of them.
 - `H` — a Poseidon-family hash over `𝔽` (the reference implementation uses Poseidon2,
   width 16 / rate 8), used for commitments, nullifiers, and Fiat–Shamir
-  challenges. Security parameter `λ = 128` (conjectured; see §5.5).
+  challenges. Security parameter `λ = 128` (conjectured; see §5.6).
 - `Π` — an AIR-based argument with FRI as the polynomial commitment, supporting
   recursion (verification of a `Π` proof inside a `Π` AIR). We write
   `π ← Π.Prove(vk, x, w)` and `Π.Verify(vk, x, π)`, with `vk` the predicate's
@@ -265,7 +265,7 @@ asset_id := H("OpenCSV-asset" ∥ G)
 - `ipk` — issuer public key for this asset.
 - `currency_code` — e.g. USD, EUR.
 - `terms_hash` — hash of the asset's human/legal terms (redemption policy, fees,
-  freeze policy if any — see §5.7).
+  freeze policy if any — see §5.8).
 - `nonce` — domain separation across assets sharing `(ipk, currency_code)`.
 
 `G` is published on the issuer's channels and pinned into clients as a trust-on-first-use
@@ -343,15 +343,19 @@ payment, with each spender's cooperation) and creates coins `out_1 … out_n`.
 **Off-chain:** consignments carrying each output's `(v_i, owner_i, r_i)` plus the
 transaction proof are delivered to the recipients.
 
-**On-chain anchor (opaque):**
+**On-chain anchor (opaque, untagged):**
 
 ```
-XFER ∥ nf_1 ∥ … ∥ nf_m          (serialized to exactly 64 bytes)
+nf_1 ∥ … ∥ nf_m ∥ B          (serialized to exactly 64 bytes)
 ```
 
-— the nullifiers of the consumed coins. (For `m` up to the 64-byte budget this is
-direct; larger `m` uses `H(nf_1 ∥ … ∥ nf_m)` as the anchor with the full list in the
-consignment, at a small cost in the conflict-check algorithm of §4.7.)
+— the nullifiers of the consumed coins, plus a **binding value**
+`B = H("bind" ∥ nf_1 ∥ … ∥ nf_m ∥ ctx)`, where `ctx` is derived from the anchor
+transaction's input side (§4.7). The record carries no tag byte: transfer anchors
+are indistinguishable from arbitrary data-carrier traffic, and only well-formed
+records (§4.7 rule 1) mean anything to anyone. (For `m` up to the 64-byte budget
+this is direct; larger `m` uses `H(nf_1 ∥ … ∥ nf_m)` as the payload with the full
+list in the consignment, at a small cost in the conflict-check algorithm of §4.7.)
 
 **Proof:** the transfer predicate's AIR proves, with public input
 `x = (nf_1…nf_m, anchor_commit)`:
@@ -387,39 +391,69 @@ band (the redemption UX is issuer-specific).
 **On-chain anchor (public):**
 
 ```
-REDEEM ∥ asset_id ∥ V ∥ nf
+REDEEM ∥ asset_id ∥ V ∥ nf ∥ B
 ```
 
 — the consumed coin's nullifier `nf`, its `asset_id`, and its value `V` made public
-at burn time.
+at burn time, plus the context binding `B = H("bind" ∥ nf ∥ ctx)` exactly as for
+transfers (§4.7). (Mints and redeems remain *tagged*: their amounts must be
+publicly readable for the supply audit of §4.9, so camouflage does not apply to
+them — only to transfers.)
 
 **Proof:** the redeem predicate proves ownership and nullifier correctness as in a
 transfer (items 1 and 3 of §4.5 for the single input), plus that the coin's committed
 value equals the public `V`, plus PCD recursion over the coin's ancestry. The issuer
 completes off-chain settlement only after the `REDEEM` anchor is final (§4.7).
 
-### 4.7 Anchoring and double-spend resolution
+### 4.7 Anchoring, context binding, and double-spend resolution
 
 All anchors are payload in ordinary Bitcoin transactions (OP_RETURN, or a Taproot
-data-carrier; 64 bytes each). The rules that turn anchors into finality:
+data-carrier; 64 bytes each). A raw anchor record is just bytes, and bytes can be
+*copied*: without further structure, a mempool observer could front-run any anchor
+with a byte-identical one and win the first-occurrence race, freezing the victim's
+coins (a griefing attack, analyzed in §5.3). OpenCSV therefore binds every
+nullifier-bearing record to its carrying transaction:
 
-1. **First occurrence wins.** The authoritative spend of a coin is the *first*
-   appearance of its `nf` in the canonical chain order (block height, then in-block
-   position). Any later appearance of the same `nf` is invalid and ignored.
+- The sender, when constructing the anchor transaction, takes `ctx` from the
+  transaction's input side (in the reference implementation: the funding input's
+  outpoint) and computes the **binding** `B = H("bind" ∥ payload ∥ ctx)`, included
+  in the record.
+- A record is **well-formed** in a transaction `T` iff its binding recomputes:
+  `B == H("bind" ∥ payload ∥ ctx(T))`. Anyone can check this from public chain
+  data — `ctx(T)` is visible in `T`. A copied record under a different context is
+  ill-formed, and forging `B` for a chosen context is a preimage attack on `H`.
+- The one thing a copier cannot reproduce is the input side of the victim's
+  transaction: their copy must spend their own UTXOs, hence has a different `ctx`.
+  Relaying a fully-signed anchor transaction through any third party remains
+  possible; a fee-service that *funds* the anchor must pre-commit its funding
+  input to the sender off-band so the binding can be computed before proving.
+
+The rules that turn anchors into finality:
+
+1. **Well-formed first occurrence wins.** Occurrences count only if well-formed;
+   ill-formed records are ignored by every client (they are inert spam). The
+   authoritative spend of a coin is the first *well-formed* appearance of its `nf`
+   in the canonical chain order (block height, then in-block position). Any later
+   appearance of the same `nf` is invalid and ignored.
 2. **Finality depth.** A payment is accepted as final once its anchor has *k*
    confirmations (`k = 6` by default, an application parameter), making reordering
    economically prohibitive.
 3. **Recipient's check.** A recipient verifies, against their own Bitcoin view (full
    node, or compact-block-filter light client): (a) the anchor transaction exists at
-   the claimed position; (b) no *earlier* occurrence of the same `nf` exists. Check
-   (b) is a scan for a 64-byte needle; clients can maintain a local nullifier index
-   incrementally, and the index is deletable/rebuildable public data, not secret state.
+   the claimed position and is well-formed; (b) no *earlier* well-formed occurrence
+   of the same `nf` exists. Check (b) is a scan for a 64-byte needle; clients can
+   maintain a local nullifier index incrementally, and the index is
+   deletable/rebuildable public data, not secret state.
 
 Because a coin determines exactly one `nf`, an attempted double-spend cannot produce
-two *different* valid spends; it can only race two copies of the *same* `nf`, which
-rule (1) resolves deterministically. A sender who double-spends therefore succeeds in
-defrauding a recipient only if they can get a conflicting anchor confirmed first *and*
-the victim accepts before finality — the standard 0-conf hazard, removed by rule (2).
+two *different* valid spends; it can only race two well-formed occurrences of the
+*same* `nf` (each deliberately constructed by the coin's owner under its own
+context — the raw nullifier is shared, so the conflict is visible to everyone),
+which rule (1) resolves deterministically. A sender who double-spends therefore
+succeeds in defrauding a recipient only if they can get a conflicting anchor
+confirmed first *and* the victim accepts before finality — the standard 0-conf
+hazard, removed by rule (2). A *copier*, by contrast, can never produce a
+well-formed occurrence at all.
 
 ### 4.8 Consignment format and receiver verification algorithm
 
@@ -441,8 +475,10 @@ consignment := (
 2. **Proof check.** `Π.Verify(vk_tx, x, π) = 1` for the transaction type's `vk`, with
    public input `x` reconstructed from the anchor data and openings.
 3. **Anchor check.** The anchor in `anchor_ref` exists on-chain at the claimed
-   position, has ≥ *k* confirmations, and — for transfers/redemptions — the
-   nullifier(s) have no earlier occurrence.
+   position, is well-formed (its binding recomputes against the carrying
+   transaction's context, §4.7), has ≥ *k* confirmations, and — for
+   transfers/redemptions — the nullifier(s) have no earlier well-formed
+   occurrence.
 4. **Ownership check.** The recipient's own key derives `owner_i` for at least one
    output; record the coins and the consignment in local storage.
 5. **Accept.** Credit the balance. Reject (and alert) on any failure.
@@ -491,7 +527,7 @@ negligible in `λ`) and the EUF-CMA security of `Σ`.
 The issuer itself cannot inflate *covertly*: every mint must anchor its amount
 publicly (the mint predicate's public input includes `V`, and the recipient checks
 proof-public-input consistency with the anchor). An issuer operating with a
-compromised or misused key can inflate *visibly* — which the next subsection and §5.4
+compromised or misused key can inflate *visibly* — which the next subsection and §5.5
 address.
 
 ### 5.2 Double-spend resistance
@@ -512,7 +548,51 @@ Note the asymmetry with account-based shielded systems: there is no global nulli
 *set* that consensus maintains; uniqueness is enforced by clients observing a public,
 append-only log whose ordering they already trust.
 
-### 5.3 Privacy
+### 5.3 Griefing and denial of service
+
+The anchor layer is public and permissionless, which invites attacks that aim not to
+steal but to *disrupt*. We analyze the three that matter.
+
+**(a) Copy-griefing (front-running an anchor with a byte-identical copy).** A raw
+anchor record is only bytes; anyone watching the mempool can copy a record into
+their own transaction and race it to confirmation. Under a naive first-occurrence
+rule the copy could win, and the effect is worth stating precisely: it is *burn,
+not theft*. The attacker gains nothing — they hold 64 bytes, not the coin openings
+or proofs — but the victim's nullifier is consumed by a garbage anchor, so the
+legitimate consignment can never be accepted and the value freezes. The
+context-binding of §4.7 eliminates the attack class: an occurrence counts only if
+its binding `B = H("bind" ∥ payload ∥ ctx(T))` recomputes against the carrying
+transaction's input side, which is the one component a copier cannot reproduce
+(their transaction must spend their own UTXOs). Forging the binding for a chosen
+context is a preimage attack on `H`. What remains is the *race between two
+deliberate anchors* — i.e. a double-spend attempt by the coin's owner, resolved by
+first well-formed occurrence as in §5.2. Residual cost model: even before the fix,
+each grief cost the attacker a Bitcoin fee with no amplification; after the fix
+there is no grief to pay for.
+
+**(b) Censorship (miners refusing OpenCSV anchors).** If anchors are trivially
+identifiable, a miner or cartel can refuse to mine them — a system-wide liveness
+failure in which nothing is stolen and no coins are burned (un-anchored coins
+remain valid in their owners' hands) but transfers halt. Mitigations, in order of
+strength: (i) *camouflage* — transfer records carry no tag and are
+indistinguishable from arbitrary data-carrier traffic, so filtering OpenCSV means
+filtering a whole class of ordinary transactions; mints and redeems remain
+identifiable by design (their amounts must be publicly auditable), but they are
+rare, issuer-driven events, not the everyday flow; (ii) *economics* — censoring
+miners forfeit the anchor fees, so sustained censorship requires a majority
+cartel, at which point Bitcoin's own neutrality is already compromised; (iii)
+honest acknowledgment that no anchor-based scheme fully removes this assumption —
+OpenCSV shares it with every data-carrier protocol.
+
+**(c) Nuisance floods.** Fake consignments cost a recipient one proof verification
+(~4 ms measured) each — nuisance-level, comparable to message spam. Spam anchors
+bloat the nullifier index linearly, but every spam byte is paid for at fee-market
+rates and first-occurrence lookups are indexed, so the cost to victims grows only
+with the attacker's spend. Mempool spying itself leaks no amounts, assets, or
+counterparties (§5.4); what it does expose is the *anchorer's* fee-paying UTXOs —
+Bitcoin-level metadata about the sender, never about the recipient.
+
+### 5.4 Privacy
 
 **Hidden:** amounts and owners of mint outputs, transfer inputs/outputs; the
 per-transfer link between consumed nullifiers and created coins (consignments are
@@ -533,7 +613,7 @@ the hiding property of `H`-commitments with uniform `r`; unlinkability relies on
 `H`'s pseudorandomness and on recipients never reusing `r` or `owner` keys (one-shot
 addresses by default).
 
-### 5.4 Failure modes and mitigations
+### 5.5 Failure modes and mitigations
 
 - **Issuer key compromise.** An attacker (or rogue issuer) can mint visibly. Detection
   is trivial (public mint stream); response is governance-level: publish a new genesis
@@ -560,7 +640,7 @@ addresses by default).
   any counterfeit coin still needs a valid-looking anchor and consignment, keeping
   attacks attributable and the blast radius observable.
 
-### 5.5 Parameter notes
+### 5.6 Parameter notes
 
 Poseidon over BabyBear/Goldilocks at 128-bit security is the current community
 standard but has received less cryptanalytic attention than, say, SHA-256; this is
@@ -569,7 +649,7 @@ we inherit it. FRI soundness parameters (blowup factor, query count) are chosen 
 ≥ 100-bit conjectured security; exact numbers belong to the implementation
 (§7) and will be reported with benchmarks.
 
-### 5.6 Post-quantum considerations
+### 5.7 Post-quantum considerations
 
 No discrete-logarithm or pairing assumption is load-bearing anywhere in OpenCSV's
 own design, so the scheme is quantum-*resistant* by construction rather than by
@@ -603,7 +683,7 @@ cryptanalysis is an assumption like any other, and "plausibly post-quantum" is t
 honest term — no proof system or hash in this design carries a quantum security
 *proof*.
 
-### 5.7 Out of scope (this version)
+### 5.8 Out of scope (this version)
 
 Issuer-enforced freezing/clawback predicates, confidential mint amounts
 (zero-knowledge supply proofs instead of transparent mints), multi-issuer assets, and
@@ -712,7 +792,7 @@ send, receive, mint (issuer mode), redeem, balance, audit. Receiving an RWA
 payment then literally looks like receiving a message; `Accept` runs on arrival and
 the user is shown "verified" or "rejected". The Signal channel also gives sender
 authentication and forward secrecy for the consignment, covering the
-transport-privacy gap noted in §5.3.
+transport-privacy gap noted in §5.4.
 
 ---
 
