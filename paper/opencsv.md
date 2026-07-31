@@ -265,7 +265,7 @@ asset_id := H("OpenCSV-asset" ∥ G)
 - `ipk` — issuer public key for this asset.
 - `currency_code` — e.g. USD, EUR.
 - `terms_hash` — hash of the asset's human/legal terms (redemption policy, fees,
-  freeze policy if any — see §5.6).
+  freeze policy if any — see §5.7).
 - `nonce` — domain separation across assets sharing `(ipk, currency_code)`.
 
 `G` is published on the issuer's channels and pinned into clients as a trust-on-first-use
@@ -569,7 +569,41 @@ we inherit it. FRI soundness parameters (blowup factor, query count) are chosen 
 ≥ 100-bit conjectured security; exact numbers belong to the implementation
 (§7) and will be reported with benchmarks.
 
-### 5.6 Out of scope (this version)
+### 5.6 Post-quantum considerations
+
+No discrete-logarithm or pairing assumption is load-bearing anywhere in OpenCSV's
+own design, so the scheme is quantum-*resistant* by construction rather than by
+addon — with two honest caveats (parameter sizing, and the one classical component).
+
+- **Hashes (commitments, nullifiers, owner keys, asset IDs).** All are Poseidon2.
+  Security rests on preimage and collision resistance, against which the best
+  generic quantum attack is Grover search (quadratic). A conjectured 128-bit
+  classical level therefore degrades to roughly 64–85 bits against a large
+  fault-tolerant quantum adversary, depending on the exact claim (preimage vs
+  collision) and digest sizing. If post-quantum security is a hard requirement
+  rather than a hedge, digest sizes and state width should be bumped accordingly —
+  cheap to do with an AIR-native hash compared to any curve-based alternative.
+- **Proofs.** FRI's soundness relies on collision resistance and code distance, not
+  on any number-theoretic assumption, and it has a transparent (trapdoor-free)
+  setup — the same reasons STARKs are described as plausibly post-quantum [6, 7].
+- **Issuer signatures — the caveat.** The prototype's off-circuit Ed25519
+  signature is *not* post-quantum (Shor). Of the two production candidates in
+  §4.1, embedded-curve Schnorr is likewise not, while the Poseidon-native
+  hash-based signature (Winternitz/SPHINCS+ style) is both post-quantum and
+  AIR-native. Selecting the hash-based option makes the entire OpenCSV layer
+  quantum-resistant; it is the intended choice.
+- **Outside our control.** The Bitcoin anchor layer itself relies on ECDSA/Schnorr
+  signatures; a quantum break of Bitcoin would affect OpenCSV's ordering/finality
+  substrate but is a Bitcoin-level event, not something this scheme introduces or
+  can fix. The Signal transport already deploys hybrid post-quantum key agreement
+  (PQXDH), and its symmetric ratchet is hash-based.
+
+We stress what this does *not* claim: Poseidon2's resistance to quantum
+cryptanalysis is an assumption like any other, and "plausibly post-quantum" is the
+honest term — no proof system or hash in this design carries a quantum security
+*proof*.
+
+### 5.7 Out of scope (this version)
 
 Issuer-enforced freezing/clawback predicates, confidential mint amounts
 (zero-knowledge supply proofs instead of transparent mints), multi-issuer assets, and

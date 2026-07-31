@@ -126,6 +126,10 @@
       <li><b>AIR-native proofs, no zkVM.</b> Recursive proof-carrying data over
       BabyBear/Goldilocks with FRI — constant-size proofs, constant verification,
       no CPU-emulation overhead.</li>
+      <li><b>Plausibly post-quantum.</b> No discrete-log assumptions in the core:
+      hash-based commitments, nullifiers, and transparent FRI proofs. The issuer
+      signature is the one component that must be hash-based to keep it that way —
+      and that's the intended production choice.</li>
     </ul>
   </div>
 </section>
