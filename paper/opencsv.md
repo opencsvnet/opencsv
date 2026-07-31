@@ -1,4 +1,4 @@
-# OpenCSV: Client-Side Verified Stablecoins on Bitcoin
+# OpenCSV: Client-Side Verified RWAs on Bitcoin
 
 **Status:** Working draft (v0.1)
 **Date:** 2026-07-31
@@ -7,12 +7,12 @@
 
 ## Abstract
 
-Stablecoins today inherit their security model wholesale from the system that hosts
+RWAs today inherit their security model wholesale from the system that hosts
 them: a global consensus network (Ethereum, Tron, Solana) that every participant must
 trust or fully re-execute, or a federated sidechain whose validators must be trusted
 not to collude. Either way, validation is a network-wide act, and privacy is poor.
 
-We present **OpenCSV**, a scheme in which stablecoin transactions are validated *by the
+We present **OpenCSV**, a scheme in which RWA transactions are validated *by the
 parties to the payment* rather than by a consensus network. Building on the client-side
 validation (CSV) lineage — and most directly on Shielded CSV (Nick, Eagen, Linus,
 ePrint 2025/068) — OpenCSV removes transaction validity from consensus entirely. The
@@ -21,7 +21,7 @@ OpenCSV transaction anchors 64 bytes of opaque data (a *nullifier*) in an ordina
 Bitcoin transaction. Everything else — coin commitments, validity proofs, amounts —
 moves off-chain, delivered directly from sender to recipient in a *consignment*.
 
-OpenCSV extends the CSV model with the machinery a stablecoin requires:
+OpenCSV extends the CSV model with the machinery an RWA requires:
 
 1. an **issuance predicate** that permits supply growth only under a signature from an
    issuer key bound into the asset's genesis parameters;
@@ -39,9 +39,10 @@ anchor. No global state, no bridge, no fork, no new chain.
 
 ## 1. Introduction
 
-### 1.1 The stablecoin verification problem
+### 1.1 The RWA verification problem
 
-A stablecoin is an IOU: an issuer promises redemption at par, and the system must
+An RWA token is a claim on an issuer: the issuer promises redemption against the
+underlying real-world asset, and the system must
 guarantee two things that the issuer's promise alone cannot — that the *units*
 circulating are genuine (no counterfeits, no unauthorized inflation) and that each
 transfer is a transfer (no double-spends). On a smart-contract chain these guarantees
@@ -59,10 +60,10 @@ back to Peter Todd's work on single-use seals and underlies RGB. Shielded CSV
 proofs: recursive proof-carrying data collapses a coin's entire history into one
 constant-size proof, and the chain carries nothing but 64-byte nullifiers.
 
-### 1.2 Why stablecoins are not just "another asset" for CSV
+### 1.2 Why RWAs are not just "another asset" for CSV
 
 A bearer asset (like bitcoin) has no issuer and no supply predicate beyond the base
-protocol's issuance schedule. A stablecoin is different in exactly the places that
+protocol's issuance schedule. An RWA is different in exactly the places that
 matter for verification:
 
 - **Issuance is ongoing and permissioned.** Supply grows when the issuer takes in
@@ -75,7 +76,7 @@ matter for verification:
   design destroys user privacy. OpenCSV takes a deliberate middle position: *mints and
   redemptions are transparent; transfers between users are shielded.* Supply is a sum
   over public events; user graph privacy is preserved.
-- **Redemption is part of the protocol.** A stablecoin must burn cleanly back to the
+- **Redemption is part of the protocol.** A RWA must burn cleanly back to the
   issuer. Redemption is modeled as a first-class transaction type, not an afterthought.
 
 ### 1.3 Contributions
@@ -142,7 +143,7 @@ proof-carrying data:
   how many coins each transaction consumes or creates.
 
 OpenCSV adopts this skeleton wholesale and modifies the predicates — the "what counts
-as valid" — for the stablecoin setting, and makes different engineering choices for
+as valid" — for the RWA setting, and makes different engineering choices for
 the proof system (§4.1, §7).
 
 ### 2.3 Proof-carrying data and AIR-native proving
@@ -170,10 +171,11 @@ No zkVM anywhere in the stack.
 
 ### 3.1 Parties
 
-- **Issuer** — the entity backing the stablecoin. Holds an issuance keypair
+- **Issuer** — the entity backing the RWA. Holds an issuance keypair
   `(isk, ipk)` per asset. Mints against reserves, redeems burns, publishes the asset's
   genesis parameters. The issuer is trusted for *backing* (that a unit can be redeemed
-  at par) — no scheme can remove that — but is **not** trusted for correctness of the
+  against the underlying asset) — no scheme can remove that — but is **not** trusted
+  for correctness of the
   ledger: an issuer cannot inflate supply covertly, forge transfers, or spend users'
   coins, because every validity condition is checked client-side from proofs and
   public chain data.
@@ -391,7 +393,7 @@ at burn time.
 **Proof:** the redeem predicate proves ownership and nullifier correctness as in a
 transfer (items 1 and 3 of §4.5 for the single input), plus that the coin's committed
 value equals the public `V`, plus PCD recursion over the coin's ancestry. The issuer
-settles the fiat leg off-chain only after the `REDEEM` anchor is final (§4.7).
+completes off-chain settlement only after the `REDEEM` anchor is final (§4.7).
 
 ### 4.7 Anchoring and double-spend resolution
 
@@ -648,7 +650,7 @@ measured), which fits comfortably in a Signal attachment (and even in a message
 body), making a messaging transport natural: `opencsv-signal` will deliver
 consignments as end-to-end encrypted Signal messages using presage (a native Rust
 Signal client library), and `opencsv-cli` will expose the wallet as a text client —
-send, receive, mint (issuer mode), redeem, balance, audit. Receiving a stablecoin
+send, receive, mint (issuer mode), redeem, balance, audit. Receiving an RWA
 payment then literally looks like receiving a message; `Accept` runs on arrival and
 the user is shown "verified" or "rejected". The Signal channel also gives sender
 authentication and forward secrecy for the consignment, covering the

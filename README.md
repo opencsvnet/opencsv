@@ -1,12 +1,12 @@
 # OpenCSV
 
-**Client-side verified stablecoins on Bitcoin.**
+**Client-side verified RWAs on Bitcoin.**
 
-OpenCSV is a verification scheme for stablecoins in which transaction validity is
+OpenCSV is a verification scheme for RWAs in which transaction validity is
 checked by the parties to a payment — not by a global consensus network. It builds
 on the client-side validation lineage, most directly
 [Shielded CSV](https://eprint.iacr.org/2025/068) (Nick–Eagen–Linus, 2025), and adds
-what a stablecoin needs: issuer-gated issuance, publicly auditable supply, and
+what an RWA needs: issuer-gated issuance, publicly auditable supply, and
 shielded user-to-user transfers — anchored directly to Bitcoin L1 with no fork and
 a 64-byte on-chain footprint per transaction.
 
