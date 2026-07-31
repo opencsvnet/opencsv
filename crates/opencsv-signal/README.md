@@ -128,61 +128,69 @@ Everything rides inside Signal's normal sealed-sender E2E encryption;
 Signal servers see ciphertext and roughly the message size, never coin
 contents.
 
-## Demo: Note to Self, two terminals
+## Demo: two devices, one real payment
 
-Plays the full loop against your own account: mint to yourself, deliver the
-consignment over Signal Note to Self, watch the listener verify it.
-Use a release build — proving in debug is ~100× slower.
+Plays the full loop over production Signal: mint, deliver the consignment as
+an E2E-encrypted attachment, watch the listener verify it into a second
+wallet. Use a release build — proving in debug is ~100× slower.
+
+> **Live-tested note (2026-07-31):** a Signal device never receives *its own*
+> messages. Note-to-Self sent from the CLI is delivered to your *other*
+> devices (your phone shows it), but the sending CLI cannot be its own
+> recipient. The receive side of the loop therefore needs a *second* Signal
+> account (or a friend), and `--to <that-account-ACI>` — sending to yourself
+> with `--to self` only exercises the send leg.
 
 ```sh
 cargo build --release -p opencsv-cli
 OP=target/release/opencsv
 D=/tmp/opencsv-signal-demo
 CHAIN=$D/chain.log
-ME="--wallet-dir $D/me --chain $CHAIN"
+ALICE="--wallet-dir $D/alice --chain $CHAIN"   # sender / issuer
+BOB="--wallet-dir $D/bob --chain $CHAIN"       # recipient
 
-# one-time: link to your Signal account (scan the QR with your phone)
-$OP $ME signal link
+# one-time: link each wallet to ITS OWN Signal account (scan QR with phone)
+$OP $ALICE signal link
+$OP $BOB signal link        # second account / second phone
 
-# wallet + asset setup (issuer = yourself for the demo)
-$OP $ME keygen
-ASSET=$($OP $ME issuer init --currency USD | awk '{print $2}')
+$OP $ALICE keygen
+ASSET=$($OP $ALICE issuer init --currency USD | awk '{print $2}')
+BOB_OWNER=$($OP $BOB keygen | awk '{print $4}')
+BOB_ACI=<bob-account-uuid>  # printed by `signal link`, or resolve via contacts
 ```
 
-Terminal 1 — the listener (leave it running):
+Terminal 1 — bob's listener (leave it running):
 
 ```sh
-$OP $ME signal listen
+$OP $BOB signal listen
 # listening for OpenCSV consignments (Ctrl-C to stop)…
 # message queue drained; waiting for new messages…
 ```
 
-Terminal 2 — mint and send to yourself:
+Terminal 2 — alice mints to bob and sends over Signal:
 
 ```sh
-$OP $ME mint --asset $ASSET --to self --amounts 60,40 --out $D
+$OP $ALICE mint --asset $ASSET --to $BOB_OWNER --amounts 60,40 --out $D
 # anchored at height 0 position 0
 # consignment /tmp/opencsv-signal-demo/consignment-h0-p0.bin
 
-$OP $ME chain advance 6          # simulate 6 confirmations (paper §4.7 rule 2)
+$OP $ALICE chain advance 6   # simulate 6 confirmations (paper §4.7 rule 2)
 
-$OP $ME signal send --to self $D/consignment-h0-p0.bin
+$OP $ALICE signal send --to $BOB_ACI $D/consignment-h0-p0.bin
 # syncing pending Signal messages before sending…
-# sent .../consignment-h0-p0.bin (50234 bytes) to self
+# sent .../consignment-h0-p0.bin (47008 bytes) to <bob-aci>
 ```
 
-Terminal 1 receives the Note-to-Self echo and verifies:
+Terminal 1 receives and verifies (actual output from the 2026-07-31 live run):
 
 ```text
-consignment from 123e4567-e89b-12d3-a456-426614174000 (50234 bytes)
+consignment from <alice-aci> (47008 bytes)
 VERIFIED 100 <asset-hex>
 ```
 
-The phone's Note to Self chat shows the same message:
-*“OpenCSV consignment (50234 bytes)”* with a file attachment
-`opencsv-consignment.bin`.
+`$OP $BOB balance` then shows `100 <asset-hex>` as two unspent coins.
 
-Sending to another person works too: `--to <their-ACI-uuid>`, or
+Sending to a contact works the same way: `--to <their-ACI-uuid>`, or
 `--to +15551234567` if they are in your Signal contacts (phone numbers
 resolve through the contacts synced from your phone at link time). Their
 wallet runs `opencsv signal listen` on their own linked device.

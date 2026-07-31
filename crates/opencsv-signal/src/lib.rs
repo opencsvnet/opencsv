@@ -295,6 +295,37 @@ where
     Ok(())
 }
 
+/// Describe a content body variant for diagnostics, without dumping contents.
+fn body_kind(content: &Content) -> String {
+    match &content.body {
+        ContentBody::NullMessage(_) => "null message".into(),
+        ContentBody::DataMessage(_) => "data message (unhandled)".into(),
+        ContentBody::SynchronizeMessage(sync) => {
+            let field = match () {
+                _ if sync.sent.is_some() => "sent",
+                _ if sync.contacts.is_some() => "contacts",
+                _ if sync.request.is_some() => "request",
+                _ if !sync.read.is_empty() => "read",
+                _ if sync.blocked.is_some() => "blocked",
+                _ if sync.keys.is_some() => "keys",
+                _ => "other",
+            };
+            let has_dm = sync
+                .sent
+                .as_ref()
+                .is_some_and(|sent| sent.message.is_some());
+            format!("sync message ({field}, data_message={has_dm})")
+        }
+        ContentBody::CallMessage(_) => "call message".into(),
+        ContentBody::ReceiptMessage(_) => "receipt".into(),
+        ContentBody::TypingMessage(_) => "typing indicator".into(),
+        ContentBody::DecryptionErrorMessage(_) => "decryption error".into(),
+        ContentBody::StoryMessage(_) => "story message".into(),
+        ContentBody::PniSignatureMessage(_) => "pni signature message".into(),
+        ContentBody::EditMessage(_) => "edit message".into(),
+    }
+}
+
 /// Handle one decrypted incoming message.
 async fn handle_content<F>(manager: &SignalManager, content: &Content, on_consignment: &mut F)
 where
@@ -317,7 +348,7 @@ where
     };
 
     if data_messages.is_empty() {
-        println!("from {sender}: not an OpenCSV consignment (no data message)");
+        println!("from {sender}: not an OpenCSV consignment ({})", body_kind(content));
         return;
     }
 

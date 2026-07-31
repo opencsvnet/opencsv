@@ -197,6 +197,16 @@ fn default_wallet_dir() -> PathBuf {
 }
 
 fn main() -> ExitCode {
+    // Signal debugging: `RUST_LOG=debug opencsv signal …` surfaces presage /
+    // libsignal logs (e.g. the note-to-self transcript path) on stderr.
+    #[cfg(feature = "signal")]
+    {
+        use tracing_subscriber::EnvFilter;
+        let _ = tracing_subscriber::fmt()
+            .with_env_filter(EnvFilter::from_default_env())
+            .with_writer(std::io::stderr)
+            .try_init();
+    }
     let cli = Cli::parse();
     match run(cli) {
         Ok(code) => code,

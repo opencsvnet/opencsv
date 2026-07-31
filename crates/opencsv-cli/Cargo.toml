@@ -7,13 +7,14 @@ license.workspace = true
 
 [features]
 default = ["signal"]
-signal = ["dep:opencsv-signal", "dep:tokio"]
+signal = ["dep:opencsv-signal", "dep:tokio", "dep:tracing-subscriber"]
 
 [dependencies]
 opencsv-core = { path = "../opencsv-core" }
 opencsv-pcd = { path = "../opencsv-pcd" }
 opencsv-signal = { path = "../opencsv-signal", optional = true }
 tokio = { version = "1", features = ["rt"], optional = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"], optional = true }
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
 bincode = { version = "2", features = ["serde"] }
