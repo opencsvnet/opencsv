@@ -3,64 +3,54 @@
 **Client-side verified stablecoins on Bitcoin.**
 
 OpenCSV is a verification scheme for stablecoins in which transaction validity is
-checked by the parties to a payment — not by a global consensus network. It builds on
-the client-side validation (CSV) line of work, most directly
-[Shielded CSV](https://eprint.iacr.org/2025/068) (Nick–Eagen–Linus, 2025), and adds the
-machinery a stablecoin needs: issuer-gated issuance, publicly auditable supply, and
-shielded user-to-user transfers — anchored directly to Bitcoin L1 with no fork and a
-64-byte on-chain footprint per transaction.
+checked by the parties to a payment — not by a global consensus network. It builds
+on the client-side validation lineage, most directly
+[Shielded CSV](https://eprint.iacr.org/2025/068) (Nick–Eagen–Linus, 2025), and adds
+what a stablecoin needs: issuer-gated issuance, publicly auditable supply, and
+shielded user-to-user transfers — anchored directly to Bitcoin L1 with no fork and
+a 64-byte on-chain footprint per transaction.
 
-Key properties:
+- **No fork, no new chain.** Transactions publish 64-byte nullifiers inside ordinary
+  Bitcoin transactions. The base chain provides ordering and double-spend
+  resolution; it never sees amounts or logic.
+- **Client-side verification.** Recipients verify one constant-size recursive proof
+  (proof-carrying data over AIR — no zkVM) plus one Bitcoin anchor.
+- **Shielded transfers, auditable supply.** Amounts and counterparties are hidden
+  in transfers; mints and redemptions are transparent, so anyone can compute
+  outstanding supply per asset.
+- **Issuer-gated supply.** Supply grows only under the issuer key bound into the
+  asset's genesis parameters.
 
-- **No fork, no new chain.** Transactions publish 64-byte nullifiers as payload in
-  ordinary Bitcoin transactions. The base chain provides ordering and double-spend
-  resolution; it never sees amounts, balances, or contract logic.
-- **Client-side verification.** A recipient verifies a succinct proof (proof-carrying
-  data, built on AIR-native recursion — no zkVM) that the coins they receive descend
-  from a valid issuer-signed mint through conservation-respecting transfers.
-- **Shielded transfers, auditable supply.** Amounts and counterparties in user
-  transfers are hidden; mints and redemptions are transparent events, so total supply
-  per asset is publicly computable.
-- **Issuer-gated supply.** New units come into existence only under a signature from
-  the issuer key bound into the asset's genesis parameters.
+**Read the paper: [`paper/opencsv.md`](paper/opencsv.md)** — and the explainer site
+at [`web/index.html`](web/index.html).
 
 ## Status
 
-Early-stage design + reference implementation. See the roadmap below.
+Working reference implementation, live-tested end to end (2026-07-31): coins
+minted, anchored, delivered as an end-to-end-encrypted Signal attachment, and
+verified by the recipient's client with the real recursive proof engine —
+`VERIFIED 100 USD`. Double-spend attempts are rejected by the first-occurrence
+rule. Core protocol logic mechanized in Lean 4 (sorry-free).
 
-## Repository layout
+| proof | prove (release) | verify | size |
+|---|---|---|---|
+| genesis mint | 64 ms | 3.2 ms | 46,431 B |
+| transfer (2-in/2-out, 2 predecessors verified in-circuit) | 2.97 s | 3.6 ms | 56,041 B |
+| redeem | 1.47 s | 3.5 ms | 54,058 B |
 
-```
-paper/opencsv.md     # the scheme paper (markdown)
-web/index.html       # single-page explainer site (static, no build)
-crates/opencsv-core/ # Rust: commitments, nullifiers, consignments, verification driver
-crates/opencsv-pcd/  # Rust: AIR-native recursive proof engine (Plonky3 + recursion, no zkVM)
-crates/opencsv-cli/  # text wallet client
-crates/opencsv-signal/ # Signal transport via presage (linked device)
-formal/              # Lean 4 mechanization of the core predicates (sorry-free)
-```
+Constant proof size and verification time regardless of coin history — the
+defining property of proof-carrying data, confirmed by measurement
+(test-grade FRI parameters; see the paper §7 for the full table and caveats).
 
-## Roadmap
+## Repositories
 
-1. **Paper + explainer site** — scheme specification and security analysis. *(done)*
-2. **Rust core** — `opencsv-core` + `opencsv-pcd`: real proof-carrying data via
-   AIR-native recursion over BabyBear (Plonky3 0.6 + Plonky3-recursion), Poseidon2
-   commitments/nullifiers, mint/transfer/redeem predicates. *(done — recursive
-   transfer verifies 2 predecessor proofs in-circuit; constant 56 KB proofs and
-   ~3.6 ms verification regardless of history length; see
-   [`crates/opencsv-pcd/BENCHMARKS.md`](crates/opencsv-pcd/BENCHMARKS.md))*
-3. **Formal verification** — Lean 4 mechanization of the protocol logic: inflation
-   soundness, conservation, nullifier uniqueness, receiver correctness.
-   *(done — see [`formal/`](formal/README.md); `lake build` is sorry-free)*
-4. **Signal client** — consignments delivered over Signal (presage, all-Rust) plus a
-   text CLI driving the wallet. *(done — `opencsv signal link|send|listen` links the
-   CLI to your existing Signal account as a secondary device and moves consignment
-   blobs as attachments; see
-   [`crates/opencsv-signal/README.md`](crates/opencsv-signal/README.md). Note:
-   building the `signal` feature needs `protoc` and pulls in AGPL-licensed presage)*
+| repo | contents |
+|---|---|
+| **[opencsv](https://github.com/opencsv-project/opencsv)** | this repo — the paper (`paper/`) and explainer site (`web/`) |
+| **[opencsv-rs](https://github.com/opencsv-project/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, wallet CLI, Signal transport |
+| **[opencsv-formal](https://github.com/opencsv-project/opencsv-formal)** | Lean 4 mechanization: inflation soundness, conservation, nullifier uniqueness, receiver correctness |
 
-## References
+## Reference
 
-- Nick, Eagen, Linus — *Shielded CSV: Private and Efficient Client-Side Validation*,
-  [ePrint 2025/068](https://eprint.iacr.org/2025/068)
-- Full list in [`paper/opencsv.md`](paper/opencsv.md)
+Nick, Eagen, Linus — *Shielded CSV: Private and Efficient Client-Side Validation*,
+[ePrint 2025/068](https://eprint.iacr.org/2025/068). Full bibliography in the paper.
