@@ -46,9 +46,9 @@ defining property of proof-carrying data, confirmed by measurement
 
 | repo | contents |
 |---|---|
-| **[opencsv](https://github.com/opencsv-project/opencsv)** | this repo — the paper (`paper/`) and explainer site (`web/`) |
-| **[opencsv-rs](https://github.com/opencsv-project/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, wallet CLI, Signal transport |
-| **[opencsv-formal](https://github.com/opencsv-project/opencsv-formal)** | Lean 4 mechanization: inflation soundness, conservation, nullifier uniqueness, receiver correctness |
+| **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — the paper (`paper/`) and explainer site (`web/`) |
+| **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, wallet CLI, Signal transport |
+| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 mechanization: inflation soundness, conservation, nullifier uniqueness, receiver correctness |
 
 ## Reference
 
