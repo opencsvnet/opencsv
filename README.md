@@ -35,8 +35,8 @@ paper/opencsv.md     # the scheme paper (markdown)
 web/index.html       # single-page explainer site (static, no build)
 crates/opencsv-core/ # Rust: commitments, nullifiers, consignments, verification driver
 crates/opencsv-pcd/  # Rust: AIR-native recursive proof engine (Plonky3 + recursion, no zkVM)
-crates/opencsv-cli/  # text wallet client                                                  (planned)
-crates/opencsv-signal/ # Signal transport via presage                                      (planned)
+crates/opencsv-cli/  # text wallet client
+crates/opencsv-signal/ # Signal transport via presage (linked device)
 formal/              # Lean 4 mechanization of the core predicates (sorry-free)
 ```
 
@@ -53,7 +53,11 @@ formal/              # Lean 4 mechanization of the core predicates (sorry-free)
    soundness, conservation, nullifier uniqueness, receiver correctness.
    *(done — see [`formal/`](formal/README.md); `lake build` is sorry-free)*
 4. **Signal client** — consignments delivered over Signal (presage, all-Rust) plus a
-   text CLI driving the wallet. *(next)*
+   text CLI driving the wallet. *(done — `opencsv signal link|send|listen` links the
+   CLI to your existing Signal account as a secondary device and moves consignment
+   blobs as attachments; see
+   [`crates/opencsv-signal/README.md`](crates/opencsv-signal/README.md). Note:
+   building the `signal` feature needs `protoc` and pulls in AGPL-licensed presage)*
 
 ## References
 

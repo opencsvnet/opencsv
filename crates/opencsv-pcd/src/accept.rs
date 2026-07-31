@@ -68,8 +68,13 @@ pub fn encode_coin_proof(proof: &CoinProof) -> Vec<u8> {
     .expect("proof envelope serializes")
 }
 
-/// Inverse of [`encode_coin_proof`].
-fn decode_coin_proof(bytes: &[u8]) -> Option<CoinProof> {
+/// Inverse of [`encode_coin_proof`]: decode a coin proof from a
+/// consignment's opaque proof bytes.
+///
+/// Spenders need this: a transfer or redeem must present the proof that
+/// *created* each consumed coin as its in-circuit predecessor, so wallets
+/// store the received envelope and decode it at spending time.
+pub fn decode_coin_proof(bytes: &[u8]) -> Option<CoinProof> {
     let envelope: ProofEnvelope = postcard::from_bytes(bytes).ok()?;
     let proof = postcard::from_bytes(&envelope.proof).ok()?;
     Some(CoinProof {

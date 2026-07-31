@@ -1,6 +1,11 @@
 [workspace]
 resolver = "2"
-members = ["crates/opencsv-core", "crates/opencsv-pcd"]
+members = [
+    "crates/opencsv-core",
+    "crates/opencsv-pcd",
+    "crates/opencsv-cli",
+    "crates/opencsv-signal",
+]
 
 [workspace.package]
 version = "0.1.0"

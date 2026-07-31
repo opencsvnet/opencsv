@@ -96,7 +96,7 @@ use p3_field::extension::BinomialExtensionField;
 /// degrees `D ∈ {2, 4, 5}` — see `README.md`).
 pub type EF = BinomialExtensionField<BabyBear, 4>;
 
-pub use accept::{CoinProofVerifier, encode_coin_proof};
+pub use accept::{CoinProofVerifier, decode_coin_proof, encode_coin_proof};
 pub use hash::{OSK_ELEMS, osk_felts};
 pub use mint::{
     MINT_OUTPUTS, MINT_PRIVATE_ELEMS, MINT_PUBLIC_ELEMS, MintError, MintProof, MintStatement,
