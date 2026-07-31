@@ -119,7 +119,8 @@
           <tr><td><code>ownerKey_injective</code></td><td>collision resistance of <code>owner = H(osk)</code></td><td><b>T3</b></td></tr>
           <tr><td><code>sig_unforgeable</code></td><td>EUF-CMA of the issuer scheme, abstractly</td><td><b>T1</b></td></tr>
           <tr><td><code>ProofSystem.sound</code></td><td>soundness of Π, as a structure field</td><td><b>T4</b></td></tr>
-          <tr><td><code>bindHash_ctx_injective</code></td><td>collision resistance of the anchor context binding <code>H(nf, ctx)</code> in the ctx argument</td><td><b>T3</b> (anti-grief)</td></tr>
+          <tr><td><code>bindHash_injective</code></td><td>collision resistance of the anchor payload <code>H(nf, ctx)</code> in both arguments</td><td><b>T3</b> (conflict soundness)</td></tr>
+          <tr><td><code>occurrence_requires_knowledge</code></td><td>preimage resistance: a fresh well-formed entry implies knowledge of <code>nf</code></td><td><b>T3</b> (anti-grief)</td></tr>
         </tbody>
       </table>
     </div>
