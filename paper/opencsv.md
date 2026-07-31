@@ -231,7 +231,8 @@ above and characterizes (d) as liveness failures with mitigations.
 - `𝔽` — a small prime field, instantiated as BabyBear (`p = 2^31 − 2^27 + 1`) or
   Goldilocks (`p = 2^64 − 2^32 + 1`). All hash inputs and circuit values are field
   elements or fixed-width vectors of them.
-- `H` — Poseidon over `𝔽`, used for commitments, nullifiers, and Fiat–Shamir
+- `H` — a Poseidon-family hash over `𝔽` (the reference implementation uses Poseidon2,
+  width 16 / rate 8), used for commitments, nullifiers, and Fiat–Shamir
   challenges. Security parameter `λ = 128` (conjectured; see §5.5).
 - `Π` — an AIR-based argument with FRI as the polynomial commitment, supporting
   recursion (verification of a `Π` proof inside a `Π` AIR). We write
@@ -277,7 +278,8 @@ coin = (asset_id, v, owner, r)
 
 - `v` — value in the asset's base units, `0 ≤ v < 2^64` (enforced by range check in-circuit).
 - `owner` — owner's public key; in the simple case `owner = H(osk)` for owner secret `osk`.
-- `r` — hiding randomness, `r ←$ 𝔽`.
+- `r` — hiding randomness (256 bits in the reference implementation; a single
+  BabyBear element would not suffice), uniform.
 
 The coin's **commitment** and **nullifier** are
 
@@ -609,29 +611,48 @@ dedicated formalization efforts.
 
 ## 7. Implementation Roadmap
 
-**Phase 2 — Rust core.** Two crates. `opencsv-core`: Poseidon commitments and
-nullifiers over the chosen field, issuer signatures, consignment (de)serialization,
-the `Accept` driver, and a pluggable Bitcoin anchor backend (mock chain for tests;
-`bitcoind` RPC for real use). `opencsv-pcd`: the recursive engine — predicates
-(mint/transfer/redeem) written directly as AIR over BabyBear/Goldilocks on top of a
-Plonky3-style stack, with in-circuit FRI verification for the recursion step.
-Explicitly **no zkVM**: the predicates are fixed and hash-heavy, exactly the regime
-where hand-written AIR beats CPU emulation by orders of magnitude. Success metrics:
-recursive transfer proof (2-in/2-out) produced and verified on commodity hardware,
-proof size constant across history length, with honest benchmarks published back into
-this paper and the website.
+**Phase 2 — Rust core (implemented).** Two crates. `opencsv-core`: Poseidon2
+commitments and nullifiers over BabyBear, issuer signatures, consignment
+(de)serialization, the `Accept` driver, and a pluggable Bitcoin anchor backend (mock
+chain implemented; `bitcoind` RPC planned). `opencsv-pcd`: the recursive engine —
+predicates (mint/transfer/redeem) written directly as AIR over BabyBear on top of a
+Plonky3 0.6 stack, with in-circuit FRI verification (via the official
+Plonky3-recursion crates) for the recursion step. **No zkVM anywhere.**
 
-**Phase 3 — Lean 4 formalization** as specified in §6.
+Measured results (reference machine: Xeon Gold 6526Y, 64 cores; release profile;
+test-grade FRI parameters — production parameters are future work):
 
-**Phase 4 — Signal transport.** Consignments are small (a proof plus a few field
-elements; expected order 10²–10³ bytes even before optimization), which makes a
-messaging transport natural: `opencsv-signal` will deliver consignments as end-to-end
-encrypted Signal messages using presage (a native Rust Signal client library), and
-`opencsv-cli` will expose the wallet as a text client — send, receive, mint (issuer
-mode), redeem, balance, audit. Receiving a stablecoin payment then literally looks
-like receiving a message; `Accept` runs on arrival and the user is shown "verified"
-or "rejected". The Signal channel also gives sender authentication and forward
-secrecy for the consignment, covering the transport-privacy gap noted in §5.3.
+| proof | predecessors verified in-circuit | prove | verify | size |
+|---|---|---|---|---|
+| genesis mint | 0 | 64 ms | 3.2 ms | 46,431 B |
+| transfer (2-in/2-out) | 2 | 2.97 s | 3.6 ms | 56,041 B |
+| transfer, second hop | 2 | 2.96 s | 3.6 ms | 56,041 B |
+| redeem | 1 | 1.47 s | 3.5 ms | 54,058 B |
+
+Proof size and verification time are constant across history length — the defining
+property of PCD, confirmed empirically. The end-to-end acceptance test (mint →
+shielded transfer → double-spend rejected by first-occurrence → redeem → public
+supply audit) passes against the real verifier. Known gaps vs this specification:
+the issuer signature is currently verified off-circuit (an AIR-native signature is
+the production target), transfers are single-asset, and predecessor verification-key
+binding relies on call-site discipline pending upstream support. See
+`crates/opencsv-pcd/BENCHMARKS.md` and `README.md` for details.
+
+**Phase 3 — Lean 4 formalization (implemented)** as specified in §6: theorems T1–T4
+are mechanized in a dependency-free Lean 4 project (`formal/`), `sorry`-free, with
+all cryptographic hardness assumptions isolated as labeled axioms (`#print axioms`
+audit included).
+
+**Phase 4 — Signal transport.** Consignments are dominated by the proof (~46–56 KB
+measured), which fits comfortably in a Signal attachment (and even in a message
+body), making a messaging transport natural: `opencsv-signal` will deliver
+consignments as end-to-end encrypted Signal messages using presage (a native Rust
+Signal client library), and `opencsv-cli` will expose the wallet as a text client —
+send, receive, mint (issuer mode), redeem, balance, audit. Receiving a stablecoin
+payment then literally looks like receiving a message; `Accept` runs on arrival and
+the user is shown "verified" or "rejected". The Signal channel also gives sender
+authentication and forward secrecy for the consignment, covering the
+transport-privacy gap noted in §5.3.
 
 ---
 
@@ -695,5 +716,6 @@ secrecy for the consignment, covering the transport-privacy gap noted in §5.3.
 
 ---
 
-*OpenCSV is a working draft. Sections marked as roadmaps (§6, §7) describe work in
-progress; benchmark numbers will be added to §7 as the implementation lands.*
+*OpenCSV is a working draft. Phases 1–3 (paper/site, Rust core with recursive PCD,
+Lean 4 formalization) are implemented; §7 reports measured numbers. Phase 4 (Signal
+transport) is in progress.*

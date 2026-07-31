@@ -33,24 +33,27 @@ Early-stage design + reference implementation. See the roadmap below.
 ```
 paper/opencsv.md     # the scheme paper (markdown)
 web/index.html       # single-page explainer site (static, no build)
-crates/opencsv-core/ # Rust: commitments, nullifiers, consignments, verification driver   (planned)
-crates/opencsv-pcd/  # Rust: AIR-native recursive proof engine (Plonky3-style, no zkVM)     (planned)
+crates/opencsv-core/ # Rust: commitments, nullifiers, consignments, verification driver
+crates/opencsv-pcd/  # Rust: AIR-native recursive proof engine (Plonky3 + recursion, no zkVM)
 crates/opencsv-cli/  # text wallet client                                                  (planned)
 crates/opencsv-signal/ # Signal transport via presage                                      (planned)
-formal/              # Lean 4 mechanization of the core predicates
+formal/              # Lean 4 mechanization of the core predicates (sorry-free)
 ```
 
 ## Roadmap
 
-1. **Paper + explainer site** — scheme specification and security analysis. *(this phase)*
+1. **Paper + explainer site** — scheme specification and security analysis. *(done)*
 2. **Rust core** — `opencsv-core` + `opencsv-pcd`: real proof-carrying data via
-   AIR-native recursion over a small field (BabyBear/Goldilocks), Poseidon
-   commitments/nullifiers, mint/transfer/redeem predicates.
+   AIR-native recursion over BabyBear (Plonky3 0.6 + Plonky3-recursion), Poseidon2
+   commitments/nullifiers, mint/transfer/redeem predicates. *(done — recursive
+   transfer verifies 2 predecessor proofs in-circuit; constant 56 KB proofs and
+   ~3.6 ms verification regardless of history length; see
+   [`crates/opencsv-pcd/BENCHMARKS.md`](crates/opencsv-pcd/BENCHMARKS.md))*
 3. **Formal verification** — Lean 4 mechanization of the protocol logic: inflation
    soundness, conservation, nullifier uniqueness, receiver correctness.
    *(done — see [`formal/`](formal/README.md); `lake build` is sorry-free)*
 4. **Signal client** — consignments delivered over Signal (presage, all-Rust) plus a
-   text CLI driving the wallet.
+   text CLI driving the wallet. *(next)*
 
 ## References
 
