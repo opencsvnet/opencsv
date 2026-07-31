@@ -247,33 +247,46 @@ pub async fn listen<F>(manager: &mut SignalManager, mut on_consignment: F) -> Re
 where
     F: FnMut(&[u8]) -> String,
 {
-    let messages = manager
-        .receive_messages()
-        .await
-        .map_err(|e| Error::Signal(format!("could not open message stream: {e}")))?;
-    pin_mut!(messages);
     println!("listening for OpenCSV consignments (Ctrl-C to stop)…");
-    loop {
-        tokio::select! {
-            _ = tokio::signal::ctrl_c() => {
-                println!("Ctrl-C received, stopping");
-                break;
+    // `receive_messages` yields a finite stream: it ends once the backlog is
+    // drained (and whenever the websocket drops). Re-open it in a loop so the
+    // listener stays alive for new messages.
+    'outer: loop {
+        let messages = match manager.receive_messages().await {
+            Ok(messages) => messages,
+            Err(e) => {
+                println!("could not open message stream ({e}); retrying in 5s…");
+                tokio::select! {
+                    _ = tokio::signal::ctrl_c() => break 'outer,
+                    _ = tokio::time::sleep(std::time::Duration::from_secs(5)) => continue 'outer,
+                }
             }
-            item = messages.next() => {
-                let Some(item) = item else {
-                    println!("message stream ended, stopping");
-                    break;
-                };
-                match item {
-                    Received::QueueEmpty => {
-                        println!("message queue drained; waiting for new messages…");
-                    }
-                    Received::Contacts => println!("contacts synced from primary device"),
-                    Received::DecryptionError(id) => {
-                        println!("could not decrypt a message from {id:?} (a session reset may fix this)");
-                    }
-                    Received::Content(content) => {
-                        handle_content(manager, &content, &mut on_consignment).await;
+        };
+        pin_mut!(messages);
+        loop {
+            tokio::select! {
+                _ = tokio::signal::ctrl_c() => {
+                    println!("Ctrl-C received, stopping");
+                    break 'outer;
+                }
+                item = messages.next() => {
+                    let Some(item) = item else {
+                        // Stream ended (backlog drained / connection closed);
+                        // re-open to keep listening.
+                        tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+                        continue 'outer;
+                    };
+                    match item {
+                        Received::QueueEmpty => {
+                            println!("message queue drained; waiting for new messages…");
+                        }
+                        Received::Contacts => println!("contacts synced from primary device"),
+                        Received::DecryptionError(id) => {
+                            println!("could not decrypt a message from {id:?} (a session reset may fix this)");
+                        }
+                        Received::Content(content) => {
+                            handle_content(manager, &content, &mut on_consignment).await;
+                        }
                     }
                 }
             }
