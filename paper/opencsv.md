@@ -299,10 +299,14 @@ Properties:
   the committed value cannot be changed.
 - `nf` is computable only by whoever knows `osk` for the `owner` in `C` — i.e. the
   legitimate spender — and is unique per coin (`C` fixes one coin; `osk` fixes one key;
-  one `nf`). Publishing `nf` is the spend. The same coin can only ever yield the same
-  `nf`, so a double-spend attempt necessarily re-publishes an `nf` already on-chain —
-  an *observable conflict*, resolvable by first occurrence (§4.7).
-- `v` and `owner` never touch the chain. Only `nf` does.
+  one `nf`). Publishing a spend of `nf` marks the coin consumed. The same coin can
+  only ever yield the same `nf`, so a double-spend attempt necessarily produces two
+  spends of one `nf` — an *observable conflict* to anyone who knows `nf` (the owner
+  and their consignment recipients), resolvable by first occurrence (§4.7).
+- `v`, `owner`, **and `nf` itself** never touch the chain. What the chain sees is a
+  context-bound **anchor payload** `P = H("bind" ∥ nf ∥ ctx)` (§4.7): `nf` stays
+  off-chain (inside proofs and consignments), which is precisely what prevents
+  anchor copying attacks.
 
 ### 4.4 Mint
 
@@ -346,16 +350,17 @@ transaction proof are delivered to the recipients.
 **On-chain anchor (opaque, untagged):**
 
 ```
-nf_1 ∥ … ∥ nf_m ∥ B          (serialized to exactly 64 bytes)
+P_1 ∥ … ∥ P_m          (serialized to exactly 64 bytes)
 ```
 
-— the nullifiers of the consumed coins, plus a **binding value**
-`B = H("bind" ∥ nf_1 ∥ … ∥ nf_m ∥ ctx)`, where `ctx` is derived from the anchor
-transaction's input side (§4.7). The record carries no tag byte: transfer anchors
-are indistinguishable from arbitrary data-carrier traffic, and only well-formed
-records (§4.7 rule 1) mean anything to anyone. (For `m` up to the 64-byte budget
-this is direct; larger `m` uses `H(nf_1 ∥ … ∥ nf_m)` as the payload with the full
-list in the consignment, at a small cost in the conflict-check algorithm of §4.7.)
+— one **anchor payload** `P_i = H("bind" ∥ nf_i ∥ ctx)` per consumed coin, where
+`ctx` is derived from the anchor transaction's input side (§4.7). The raw
+nullifiers never appear on-chain. The record carries no tag byte: transfer anchors
+are indistinguishable from arbitrary data-carrier traffic, and mean nothing to
+anyone who does not know the corresponding `nf_i` (§4.7). (For `m` up to the
+64-byte budget this is direct; larger `m` uses `H(P_1 ∥ … ∥ P_m)` as the payload
+with the full list in the consignment, at a small cost in the conflict-check
+algorithm of §4.7.)
 
 **Proof:** the transfer predicate's AIR proves, with public input
 `x = (nf_1…nf_m, anchor_commit)`:
@@ -391,14 +396,13 @@ band (the redemption UX is issuer-specific).
 **On-chain anchor (public):**
 
 ```
-REDEEM ∥ asset_id ∥ V ∥ nf ∥ B
+REDEEM ∥ asset_id ∥ V ∥ P
 ```
 
-— the consumed coin's nullifier `nf`, its `asset_id`, and its value `V` made public
-at burn time, plus the context binding `B = H("bind" ∥ nf ∥ ctx)` exactly as for
-transfers (§4.7). (Mints and redeems remain *tagged*: their amounts must be
-publicly readable for the supply audit of §4.9, so camouflage does not apply to
-them — only to transfers.)
+— the coin's anchor payload `P = H("bind" ∥ nf ∥ ctx)` (as in transfers, §4.7), with
+its `asset_id` and value `V` made public at burn time. (Mints and redeems remain
+*tagged*: their amounts must be publicly readable for the supply audit of §4.9, so
+camouflage does not apply to them — only to transfers.)
 
 **Proof:** the redeem predicate proves ownership and nullifier correctness as in a
 transfer (items 1 and 3 of §4.5 for the single input), plus that the coin's committed
@@ -411,49 +415,63 @@ All anchors are payload in ordinary Bitcoin transactions (OP_RETURN, or a Taproo
 data-carrier; 64 bytes each). A raw anchor record is just bytes, and bytes can be
 *copied*: without further structure, a mempool observer could front-run any anchor
 with a byte-identical one and win the first-occurrence race, freezing the victim's
-coins (a griefing attack, analyzed in §5.3). OpenCSV therefore binds every
-nullifier-bearing record to its carrying transaction:
+coins (a griefing attack, analyzed in §5.3). OpenCSV therefore keeps the raw
+nullifier off-chain and publishes only a **context-bound payload**:
 
-- The sender, when constructing the anchor transaction, takes `ctx` from the
-  transaction's input side (in the reference implementation: the funding input's
-  outpoint) and computes the **binding** `B = H("bind" ∥ payload ∥ ctx)`, included
-  in the record.
-- A record is **well-formed** in a transaction `T` iff its binding recomputes:
-  `B == H("bind" ∥ payload ∥ ctx(T))`. Anyone can check this from public chain
-  data — `ctx(T)` is visible in `T`. A copied record under a different context is
-  ill-formed, and forging `B` for a chosen context is a preimage attack on `H`.
-- The one thing a copier cannot reproduce is the input side of the victim's
-  transaction: their copy must spend their own UTXOs, hence has a different `ctx`.
-  Relaying a fully-signed anchor transaction through any third party remains
-  possible; a fee-service that *funds* the anchor must pre-commit its funding
-  input to the sender off-band so the binding can be computed before proving.
+- The coin's owner computes the raw nullifier `nf` as in §4.3 and, when
+  constructing the anchor transaction, takes `ctx` from the transaction's input
+  side (in the reference implementation: the funding input's outpoint) and
+  publishes the payload `P = H("bind" ∥ nf ∥ ctx)`. The consignment carries `nf`
+  (it is part of the proof's public data, which is already off-chain).
+- A record is an **occurrence of `nf`** in a transaction `T` iff
+  `P == H("bind" ∥ nf ∥ ctx(T))`. Checking this requires knowing `nf` — so
+  occurrences of a coin are recognizable to the coin's owner and to consignment
+  recipients, and to nobody else (by design; see the scoping note below).
+- A mempool copier sees only `P`. Copying it into their own transaction fails the
+  check (`ctx` differs), and recomputing the payload for their own context
+  requires `nf` — a preimage attack on `H`. The one thing a copier cannot
+  reproduce is the input side of the victim's transaction: their copy must spend
+  their own UTXOs. Relaying a fully-signed anchor transaction through any third
+  party remains possible; a fee-service that *funds* the anchor must pre-commit
+  its funding input to the sender off-band so the payload can be computed before
+  proving.
 
 The rules that turn anchors into finality:
 
-1. **Well-formed first occurrence wins.** Occurrences count only if well-formed;
-   ill-formed records are ignored by every client (they are inert spam). The
-   authoritative spend of a coin is the first *well-formed* appearance of its `nf`
-   in the canonical chain order (block height, then in-block position). Any later
-   appearance of the same `nf` is invalid and ignored.
+1. **First occurrence wins.** The authoritative spend of a coin is the first
+   occurrence of its `nf` — i.e. the first record satisfying
+   `P == H("bind" ∥ nf ∥ ctx(T))` — in the canonical chain order (block height,
+   then in-block position). Any later occurrence of the same `nf` is invalid and
+   ignored. Records that match no `nf` the verifier knows are inert noise.
 2. **Finality depth.** A payment is accepted as final once its anchor has *k*
    confirmations (`k = 6` by default, an application parameter), making reordering
    economically prohibitive.
 3. **Recipient's check.** A recipient verifies, against their own Bitcoin view (full
    node, or compact-block-filter light client): (a) the anchor transaction exists at
-   the claimed position and is well-formed; (b) no *earlier* well-formed occurrence
-   of the same `nf` exists. Check (b) is a scan for a 64-byte needle; clients can
-   maintain a local nullifier index incrementally, and the index is
-   deletable/rebuildable public data, not secret state.
+   the claimed position and its payload recomputes from the consignment's `nf` and
+   the transaction's context; (b) no *earlier* occurrence of the same `nf` exists —
+   i.e. no earlier record `P'` with `P' == H("bind" ∥ nf ∥ ctx(T'))`. Check (b) is a
+   scan with one hash per candidate record; clients can maintain a local occurrence
+   index incrementally over their own coins, and the index is
+   deletable/rebuildable data, not secret state.
 
 Because a coin determines exactly one `nf`, an attempted double-spend cannot produce
-two *different* valid spends; it can only race two well-formed occurrences of the
-*same* `nf` (each deliberately constructed by the coin's owner under its own
-context — the raw nullifier is shared, so the conflict is visible to everyone),
-which rule (1) resolves deterministically. A sender who double-spends therefore
+two *different* valid spends; it can only race two occurrences of the *same* `nf`
+(each deliberately constructed by the coin's owner under its own context — distinct
+payloads on-chain, but recognizable as the same coin to anyone holding `nf`), which
+rule (1) resolves deterministically. A sender who double-spends therefore
 succeeds in defrauding a recipient only if they can get a conflicting anchor
 confirmed first *and* the victim accepts before finality — the standard 0-conf
-hazard, removed by rule (2). A *copier*, by contrast, can never produce a
-well-formed occurrence at all.
+hazard, removed by rule (2). A *copier*, by contrast, can produce neither a valid
+occurrence of the coin nor any record the recipient will heed.
+
+**Scoping note.** Because occurrence recognition requires `nf`, double-spend
+conflicts are visible to the coin's owner and consignment recipients — not to
+arbitrary third parties. This is a deliberate trade: it is what makes anchors
+uncopiable, it costs nothing the recipients needed (each of them can check their
+own leg), and it fits the client-side philosophy — validation happens where the
+coins are. Public auditability of supply (§4.9) is unaffected, since it depends
+only on the tagged mint/redeem stream.
 
 ### 4.8 Consignment format and receiver verification algorithm
 
@@ -475,10 +493,10 @@ consignment := (
 2. **Proof check.** `Π.Verify(vk_tx, x, π) = 1` for the transaction type's `vk`, with
    public input `x` reconstructed from the anchor data and openings.
 3. **Anchor check.** The anchor in `anchor_ref` exists on-chain at the claimed
-   position, is well-formed (its binding recomputes against the carrying
-   transaction's context, §4.7), has ≥ *k* confirmations, and — for
-   transfers/redemptions — the nullifier(s) have no earlier well-formed
-   occurrence.
+   position, its payload recomputes as `H("bind" ∥ nf ∥ ctx)` from the proof's
+   nullifier and the carrying transaction's context (§4.7), has ≥ *k*
+   confirmations, and — for transfers/redemptions — the nullifier(s) have no
+   earlier occurrence.
 4. **Ownership check.** The recipient's own key derives `owner_i` for at least one
    output; record the coins and the consignment in local storage.
 5. **Accept.** Credit the balance. Reject (and alert) on any failure.
@@ -536,9 +554,11 @@ address.
 
 **Argument.** A coin fixes one commitment `C` (binding) and one owner key; the
 nullifier `nf = H("null" ∥ osk ∥ C)` is therefore unique per coin and computable only
-by the owner. Any spend — transfer or redeem — must anchor `nf` on-chain (checked in
-`Accept` step 3). Two conflicting spends of one coin must anchor the *same* `nf`
-twice; the first-occurrence rule (§4.7) declares exactly one of them authoritative,
+by the owner. Any spend — transfer or redeem — must anchor an occurrence of `nf`
+on-chain (checked in `Accept` step 3). Two conflicting spends of one coin must both
+anchor occurrences of the *same* `nf` (distinct payloads, since their contexts
+differ — but both recognizable to anyone holding `nf`, i.e. to each victim); the
+first-occurrence rule (§4.7) declares exactly one of them authoritative,
 and both recipients cannot see their own anchor as the first occurrence at finality
 depth. A recipient who waits for *k* confirmations before accepting is protected up
 to a Bitcoin reorg deeper than *k* — the standard L1 finality assumption, identical
@@ -559,14 +579,20 @@ their own transaction and race it to confirmation. Under a naive first-occurrenc
 rule the copy could win, and the effect is worth stating precisely: it is *burn,
 not theft*. The attacker gains nothing — they hold 64 bytes, not the coin openings
 or proofs — but the victim's nullifier is consumed by a garbage anchor, so the
-legitimate consignment can never be accepted and the value freezes. The
-context-binding of §4.7 eliminates the attack class: an occurrence counts only if
-its binding `B = H("bind" ∥ payload ∥ ctx(T))` recomputes against the carrying
-transaction's input side, which is the one component a copier cannot reproduce
-(their transaction must spend their own UTXOs). Forging the binding for a chosen
-context is a preimage attack on `H`. What remains is the *race between two
+legitimate consignment can never be accepted and the value freezes.
+
+The §4.7 construction eliminates the attack class, and it is worth being precise
+about *why*, because the naive version of the fix fails: a publicly self-consistent
+binding such as `H(nf ∥ ctx)` published alongside `nf` would be **recomputable by
+the griefer** (both inputs are on-chain), leaving the attack intact. What actually
+works is keeping `nf` itself off-chain: the payload is `P = H("bind" ∥ nf ∥ ctx)`,
+so the griefer sees only `P` — copying it fails under their different `ctx`, and
+recomputing the payload for their own context requires `nf`, a preimage attack on
+`H`. Occurrence recognition is thereby restricted to parties who know `nf` (owner
+and consignment recipients), which is also what makes transfer anchors
+uncopyable *and* unlinkable by outsiders. What remains is the *race between two
 deliberate anchors* — i.e. a double-spend attempt by the coin's owner, resolved by
-first well-formed occurrence as in §5.2. Residual cost model: even before the fix,
+first occurrence as in §5.2. Residual cost model: even before the fix,
 each grief cost the attacker a Bitcoin fee with no amplification; after the fix
 there is no grief to pay for.
 
