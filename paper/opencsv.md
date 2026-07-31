@@ -677,6 +677,25 @@ the production target), transfers are single-asset, and predecessor verification
 binding relies on call-site discipline pending upstream support. See
 `crates/opencsv-pcd/BENCHMARKS.md` and `README.md` for details.
 
+**Latency and scaling profile.** The user-facing cost of a payment decomposes into
+three parts. (a) *Proving* is the sender's dominant computational cost: ~3 s per
+transfer on the 64-core reference machine, independent of how many hops the coin
+has already traveled (each proof verifies its predecessors' proofs in-circuit
+rather than replaying history, so hop 1,000 costs what hop 2 costs — the table's
+identical rows are the point). Proving is parallel; weaker hardware pays more —
+tens of seconds to minutes per transfer is the realistic estimate for a phone
+until measured. (b) *Transport* is a ~56 KB off-chain message — sub-second over a
+messaging channel. (c) *Anchoring/finality* is inherited from Bitcoin: the
+nullifier anchor is visible in the next block, and recipients finally accept after
+*k* confirmations (§4.7), exactly like an on-chain BTC payment. The recipient's
+own work is ~4 ms of verification plus a nullifier lookup against a local
+(rebuildable) index. Aggregate throughput is bounded by the 64-byte anchor: on the
+order of 100 OpenCSV transactions per second if the entire Bitcoin block space
+were available to them. Costs that *do* grow: circuit size with inputs/outputs
+per transfer (the reference circuits are fixed 2-in/2-out), the nullifier index
+linearly with total anchored bytes, and supply audits linearly with chain length
+(a public, permissionless, one-pass scan).
+
 **Phase 3 — Lean 4 formalization (implemented)** as specified in §6: theorems T1–T4
 are mechanized in a dependency-free Lean 4 project (`formal/`), `sorry`-free, with
 all cryptographic hardness assumptions isolated as labeled axioms (`#print axioms`
