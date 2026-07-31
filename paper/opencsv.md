@@ -682,9 +682,11 @@ three parts. (a) *Proving* is the sender's dominant computational cost: ~3 s per
 transfer on the 64-core reference machine, independent of how many hops the coin
 has already traveled (each proof verifies its predecessors' proofs in-circuit
 rather than replaying history, so hop 1,000 costs what hop 2 costs — the table's
-identical rows are the point). Proving is parallel; weaker hardware pays more —
-tens of seconds to minutes per transfer is the realistic estimate for a phone
-until measured. (b) *Transport* is a ~56 KB off-chain message — sub-second over a
+identical rows are the point). Proving is single-thread-bound at these circuit
+sizes (1 core ≈ 64 cores measured), so single-core speed is what matters:
+measured on-device, an iPhone 16e (A18) proves a transfer in ~550 ms and an
+iPhone 17 Pro Max (A19 Pro) in ~670 ms — 3–5× faster than the 64-core server
+reference, comfortably inside interactive-UX territory. (b) *Transport* is a ~56 KB off-chain message — sub-second over a
 messaging channel. (c) *Anchoring/finality* is inherited from Bitcoin: the
 nullifier anchor is visible in the next block, and recipients finally accept after
 *k* confirmations (§4.7), exactly like an on-chain BTC payment. The recipient's
