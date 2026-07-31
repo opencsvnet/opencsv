@@ -1,4 +1,4 @@
-# OpenCSV: Client-Side Verified RWAs on Bitcoin
+# OpenCSV: Client-Side Verified RWAs, Stables, and More on Bitcoin
 
 **Status:** Working draft (v0.1)
 **Date:** 2026-07-31
@@ -7,12 +7,13 @@
 
 ## Abstract
 
-RWAs today inherit their security model wholesale from the system that hosts
+Issuer-backed assets — RWAs, stablecoins, and more — today inherit their security
+model wholesale from the system that hosts
 them: a global consensus network (Ethereum, Tron, Solana) that every participant must
 trust or fully re-execute, or a federated sidechain whose validators must be trusted
 not to collude. Either way, validation is a network-wide act, and privacy is poor.
 
-We present **OpenCSV**, a scheme in which RWA transactions are validated *by the
+We present **OpenCSV**, a scheme in which such asset transactions are validated *by the
 parties to the payment* rather than by a consensus network. Building on the client-side
 validation (CSV) lineage — and most directly on Shielded CSV (Nick, Eagen, Linus,
 ePrint 2025/068) — OpenCSV removes transaction validity from consensus entirely. The
@@ -41,7 +42,9 @@ anchor. No global state, no bridge, no fork, no new chain.
 
 ### 1.1 The RWA verification problem
 
-An RWA token is a claim on an issuer: the issuer promises redemption against the
+An RWA token is a claim on an issuer — a stablecoin is the canonical example, but
+the same shape fits tokenized treasuries, securities, commodities, and other
+issuer-backed assets: the issuer promises redemption against the
 underlying real-world asset, and the system must
 guarantee two things that the issuer's promise alone cannot — that the *units*
 circulating are genuine (no counterfeits, no unauthorized inflation) and that each
