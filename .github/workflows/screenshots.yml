@@ -1,0 +1,64 @@
+name: demo-screenshots
+
+# Regenerates the CLI demo screenshots in web/screenshots/ from a REAL
+# regtest flow in opencsvnet/opencsv-rs (scripts/capture-demo.sh), so the
+# site's "See it working" section can never silently diverge from what the
+# code actually does. Runs weekly and on demand; commits only if changed.
+
+on:
+  schedule:
+    - cron: "23 5 * * 1" # Mondays 05:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # the site repo (this one)
+
+      - name: Check out opencsv-rs
+        uses: actions/checkout@v4
+        with:
+          repository: opencsvnet/opencsv-rs
+          path: opencsv-rs
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install bitcoind + protoc + tmux + PIL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq protobuf-compiler tmux python3-pil
+          curl -sSL https://bitcoincore.org/bin/bitcoin-core-31.1/bitcoin-31.1-x86_64-linux-gnu.tar.gz -o /tmp/btc.tar.gz
+          echo "b80d9c3e04da78fb6f0569685673418cf686fadba9042d926d13fb87ff503f9e  /tmp/btc.tar.gz" | sha256sum -c -
+          sudo tar -xzf /tmp/btc.tar.gz -C /usr/local --strip-components=1
+          bitcoind --version
+
+      - name: Build the CLI (release)
+        working-directory: opencsv-rs
+        run: cargo build --release -p opencsv-cli
+
+      - name: Run the demo capture (regtest, real anchor transactions)
+        working-directory: opencsv-rs
+        run: scripts/capture-demo.sh "$GITHUB_WORKSPACE/web/screenshots"
+
+      - name: Stamp captions with provenance
+        run: |
+          SHA=$(git -C opencsv-rs rev-parse --short HEAD)
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          sed -i "s/<!-- CAPTURE-PROVENANCE -->.*<!-- \/CAPTURE-PROVENANCE -->/<!-- CAPTURE-PROVENANCE -->captured ${DATE} · regtest · opencsv-rs@${SHA}<!-- \/CAPTURE-PROVENANCE -->/" web/index.html
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "opencsv-bot"
+          git config user.email "bot@opencsvnet.github.io"
+          git add web/screenshots web/index.html
+          if git diff --cached --quiet; then
+            echo "screenshots unchanged"
+          else
+            git commit -m "screenshots: regenerate CLI demo captures (opencsv-rs@$(git -C opencsv-rs rev-parse --short HEAD))"
+            git push
+          fi
