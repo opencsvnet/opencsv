@@ -49,6 +49,7 @@
     background: var(--card); border: 1px solid var(--border); color: var(--accent); font-family: var(--mono); font-size: 13px;
     display: flex; align-items: center; justify-content: center; }
   ol.roadmap h3 { font-size: 17px; } ol.roadmap p { color: var(--muted); font-size: 15px; }
+  ol.roadmap li.done::before { background: var(--accent); color: #111; border-color: var(--accent); }
 
   footer { padding: 40px 0 56px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
 </style>
@@ -88,11 +89,14 @@
     <div class="thm">
       <h3><span class="id">T3</span>Nullifier uniqueness &amp; first occurrence</h3>
       <p>One coin yields exactly one nullifier, so a double-spend is an
-      <em>observable</em> on-chain conflict, and the first well-formed occurrence
-      resolves it deterministically: two recipients cannot both finally accept.
-      Post-2026: occurrences carry a context binding, and a copied record under a
-      different context is provably invisible to the rule (anti-griefing).
-      Paper §5.2, §4.7.</p>
+      <em>observable</em> conflict to anyone holding <code>nf</code> (owner and
+      consignment recipients), and the first occurrence resolves it
+      deterministically: two recipients cannot both finally accept. On-chain
+      payloads are context-bound (<code>P = H(nf, ctx)</code>), and both grief
+      directions are theorems: a <em>copied</em> record under a different context
+      is provably invisible (<code>griefer_copy_invisible</code>), and an
+      adversary who doesn't know <code>nf</code> can forge no occurrence at all
+      (<code>no_occurrence_without_knowledge</code>). Paper §5.2, §4.7.</p>
     </div>
     <div class="thm">
       <h3><span class="id">T4</span>Receiver correctness</h3>
@@ -146,7 +150,13 @@
         to the Rust circuits; the correspondence is documented, not machine-checked.
         The circuits could drift from the model and nothing would catch it
         automatically — which is exactly what roadmap items 1–2 below attack.</p></li>
-      <li><b>3. The prototype's shortcuts are excluded from the model.</b>
+      <li><b>3. The chain-view assumption is explicit.</b>
+        <p>Production double-spend exclusion relies on N-of-M independent
+        indexers (paper §4.7.1): at least one honest indexer must see the true
+        history. The Lean development currently verifies the single-log
+        semantics; the N-of-M restatement is roadmap item 5. Compact-filter
+        point verification needs no such assumption.</p></li>
+      <li><b>4. The prototype's shortcuts are excluded from the model.</b>
         <p>The off-circuit Ed25519 issuer signature and test-grade FRI parameters
         are prototype deviations, documented in both repos. The formalization
         models the paper's target design, not the shortcuts.</p></li>
@@ -157,9 +167,17 @@
 <section id="roadmap">
   <div class="wrap">
     <h2>Roadmap</h2>
-    <p class="sub">Ranked by value-to-effort. Item 1 converts our scariest
-    informal argument into a theorem.</p>
+    <p class="sub">Tracked as <a href="https://github.com/opencsvnet/opencsv-formal/issues/1">opencsv-formal#1</a>.
+    One item already shipped; item 1 converts our scariest informal argument
+    into a theorem.</p>
     <ol class="roadmap">
+      <li class="done">
+        <h3>CI axiom gating — shipped</h3>
+        <p>Every headline theorem's <code>#print axioms</code> output is
+        normalized into a checked-in baseline; CI fails if any assumption set
+        changes without a human regenerating it in the same commit. The honesty
+        table on this page is an enforced invariant, not a claim.</p>
+      </li>
       <li>
         <h3>Limb-arithmetic soundness</h3>
         <p>Mechanize the u64 conservation gadget's carry argument (24/24/16-bit
@@ -173,14 +191,29 @@
         between the verified model and the implementation empirically.</p>
       </li>
       <li>
+        <h3>Lean-extracted accept logic in production</h3>
+        <p>The anchor/occurrence/accept logic is pure logic over an abstract
+        hash — extract the <em>verified</em> Lean functions to C and call them
+        from Rust. "The model is the code" for the layer that decides whether
+        money moves.</p>
+      </li>
+      <li>
+        <h3>N-of-M exclusion model</h3>
+        <p>The production chain view (paper §4.7.1) checks double-spend exclusion
+        against N independent indexers, not one log. Formalize the union-view
+        semantics with the explicit "at least one honest indexer" hypothesis and
+        restate receiver correctness under it.</p>
+      </li>
+      <li>
         <h3>PCD-tree model</h3>
         <p>Upgrade the state machine from linear traces to the tree structure of
         the real recursion, matching the paper's §5.1 induction.</p>
       </li>
       <li>
-        <h3>Circuit-level verification (research track)</h3>
-        <p>Prove the AIR constraints implement the predicates. Tooling for
-        Plonky3-style AIR is immature; tracked, not scheduled.</p>
+        <h3>Verified predicate→AIR compiler (research track)</h3>
+        <p>Rather than verifying hand-written AIR constraints after the fact:
+        define predicates in a Lean-embedded DSL, prove the translation sound
+        once, generate circuits. Every future predicate inherits the proof.</p>
       </li>
     </ol>
   </div>
