@@ -479,20 +479,31 @@ How does a wallet — especially a phone — obtain the chain data that `Accept`
 needs? The answer splits along the two checks, and the split is forced by the
 anti-grief construction itself.
 
-**Point verification (trustless via compact filters).** Checking that the
-*claimed* anchor exists — transaction present at the claimed height and position,
-record intact, `ctx` recomputed from the funding input, `k` confirmations — is a
-query about a *fixed, public* byte string (the record's script). BIP157/158
-compact block filters answer exactly such queries: the client verifies the
-header chain's proof-of-work, downloads the small per-block filters, finds the
-one block whose filter matches the payload, and fetches only that block (from
-any peer), checking everything against the headers. No server is trusted: the
-anchor cannot be faked, moved, or misdated.
+**Point verification (trustless via SPV: headers + merkle proofs).** Checking
+that the *claimed* anchor exists is easy on trust, because the consignment names
+where to look: `anchor_ref` carries the claimed height, position, and txid, and
+the record is a fixed, public byte string. The client verifies the header
+chain's proof-of-work, takes the header at the claimed height, fetches that one
+block from any peer, and checks everything against the header: the transaction's
+merkle branch recomputes to the header's merkle root, the txid matches, the
+record sits at the claimed position, `ctx` recomputes from the funding input,
+and confirmations count to the verified tip. No server is trusted: the anchor
+cannot be faked, moved, or misdated.
+
+(A note on BIP157/158 compact block filters, which this design originally
+assumed would serve this check: they do not help, for two independent reasons.
+Basic filters *exclude OP_RETURN outputs entirely* — verified against deployed
+bitcoind behavior — so an anchor record is never filter-matchable at all; and
+even for spendable outputs, filters answer membership of a *fixed* script, which
+is the query point verification does not need (the height is already known) and
+exclusion cannot use (next paragraph). The reference implementation therefore
+uses plain SPV: headers, merkle verification, block relay.)
 
 **Exclusion (not filter-solvable).** Checking that *no earlier occurrence of the
 coin's nullifier exists* would require matching occurrences of `nf` across all
 candidate blocks — but occurrence payloads are `H(nf, ctx(tx))`, deliberately
-*not* publicly derivable (§4.7). This is not an implementation gap but a
+*not* publicly derivable (§4.7), and the filter layer cannot help even in
+principle (OP_RETURN exclusion, above). This is not an implementation gap but a
 duality: **a filter-matchable occurrence key would have to be public, and a
 public occurrence key is precisely what a griefer can recompute and forge.**
 Matchability and copy-resistance exclude each other; the anti-grief design
