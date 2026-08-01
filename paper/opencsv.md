@@ -436,6 +436,27 @@ nullifier off-chain and publishes only a **context-bound payload**:
   its funding input to the sender off-band so the payload can be computed before
   proving.
 
+**The marker output.** Every anchor transaction additionally carries a small,
+protocol-constant **marker output**: dust (546 sats) to `OP_0 ∥ sha256(OP_TRUE)`
+— a P2WSH anyone-can-spend script, identical for every anchor. The marker's only
+job is *discovery*: BIP157/158 basic block filters exclude OP_RETURN outputs but
+include ordinary scriptPubKeys, so a wallet syncing compact filters can find
+anchor-bearing blocks trustlessly (§4.7.1). It carries no authority — the
+occurrence semantics above never consult it — so a griefer "copying" the marker
+into their own transactions merely volunteers their own fee money to cause a
+wallet a wasted block download. Nothing about the marker involves elliptic-curve
+cryptography (P2WSH is script-hash based), keeping the entire anchor format
+within the post-quantum envelope of §5.7.
+
+The complete anchor format (network order):
+
+```
+Input(s):   funding UTXO(s) — vin[0] is the ctx (SHA-256(txid ∥ vout_le))
+Output 0:   OP_RETURN ∥ <64-byte record>
+Output 1:   546 sats → OP_0 ∥ sha256(OP_TRUE)      (constant marker)
+Output 2..: change
+```
+
 The rules that turn anchors into finality:
 
 1. **First occurrence wins.** The authoritative spend of a coin is the first
@@ -473,59 +494,56 @@ own leg), and it fits the client-side philosophy — validation happens where th
 coins are. Public auditability of supply (§4.9) is unaffected, since it depends
 only on the tagged mint/redeem stream.
 
-### 4.7.1 Client chain views: point verification, exclusion, and the filter tension
+### 4.7.1 Client chain views: scan-first indexing
 
 How does a wallet — especially a phone — obtain the chain data that `Accept`
-needs? The answer splits along the two checks, and the split is forced by the
-anti-grief construction itself.
+needs? The design rule is that the default path requires **no trust in anyone**,
+and any service that makes it faster is optional and verifiable.
 
-**Point verification (trustless via SPV: headers + merkle proofs).** Checking
-that the *claimed* anchor exists is easy on trust, because the consignment names
-where to look: `anchor_ref` carries the claimed height, position, and txid, and
-the record is a fixed, public byte string. The client verifies the header
-chain's proof-of-work, takes the header at the claimed height, fetches that one
-block from any peer, and checks everything against the header: the transaction's
-merkle branch recomputes to the header's merkle root, the txid matches, the
-record sits at the claimed position, `ctx` recomputes from the funding input,
-and confirmations count to the verified tip. No server is trusted: the anchor
-cannot be faked, moved, or misdated.
+**Self-scan (the default, trustless).** The wallet maintains a local occurrence
+index by continuous background sync: it verifies the header chain's
+proof-of-work, downloads BIP157/158 compact filters (~kilobytes per block), and
+matches the protocol-constant marker script (§4.7). Every block whose filter
+*lacks* the marker provably contains no anchor; the handful of candidate blocks
+(on anchor days) are fetched from any peer and merkle-verified against the
+headers. Candidate records with their funding `ctx` go into the local index;
+the double-spend exclusion check — "no earlier occurrence of this coin's `nf`"
+— is then a *local* evaluation of `H("bind" ∥ nf ∥ ctx)` over the index, at
+receive time, with no network access and no third party involved. The sync
+window is bounded from below by the wallet's oldest coin birth (fixed by the
+coin's proof chain); bandwidth is filter-size-dominated, not block-dominated.
 
-(A note on BIP157/158 compact block filters, which this design originally
-assumed would serve this check: they do not help, for two independent reasons.
-Basic filters *exclude OP_RETURN outputs entirely* — verified against deployed
-bitcoind behavior — so an anchor record is never filter-matchable at all; and
-even for spendable outputs, filters answer membership of a *fixed* script, which
-is the query point verification does not need (the height is already known) and
-exclusion cannot use (next paragraph). The reference implementation therefore
-uses plain SPV: headers, merkle verification, block relay.)
+Two properties of this path deserve emphasis. First, **privacy is structural**:
+`nf` never leaves the device, so no indexer, peer, or server learns which coins
+a wallet watches (naive query protocols leak exactly this). Second, the
+**marker tension is resolved by authority separation**: an occurrence key that
+is publicly matchable would be forgeable by a griefer (the duality that ruled
+out filter-matching the payload itself), but the *marker* is publicly
+matchable precisely because it carries no authority — copying it yields the
+copier nothing.
 
-**Exclusion (not filter-solvable).** Checking that *no earlier occurrence of the
-coin's nullifier exists* would require matching occurrences of `nf` across all
-candidate blocks — but occurrence payloads are `H(nf, ctx(tx))`, deliberately
-*not* publicly derivable (§4.7), and the filter layer cannot help even in
-principle (OP_RETURN exclusion, above). This is not an implementation gap but a
-duality: **a filter-matchable occurrence key would have to be public, and a
-public occurrence key is precisely what a griefer can recompute and forge.**
-Matchability and copy-resistance exclude each other; the anti-grief design
-chooses copy-resistance, so exclusion scans need actual block data rather than
-filters. OpenCSV therefore handles exclusion in one of two ways:
+**Point verification (same machinery).** Checking that a *claimed* anchor
+exists — height, position, txid, record, `ctx`, `k` confirmations — uses the
+same headers + merkle verification, fetching the single claimed block from any
+peer. The anchor cannot be faked, moved, or misdated. (BIP158 filters are
+irrelevant to this check: the height is already known, and they exclude
+OP_RETURN outputs anyway.)
 
-1. **N-of-M independent indexers (default).** Any party can run an *indexer* — a
-   service that scans blocks and answers occurrence queries (the electrum-server
-   model familiar from light wallets). The client asks `N` independent indexers
-   and accepts only if *none* reports an earlier occurrence: hiding a
-   double-spend then requires compromising every indexer in the set, not one
-   server. Indexers are interchangeable and untrusted individually.
-2. **Self-scan (opt-in, zero trust).** The exclusion range is bounded: an
-   occurrence of a coin can only appear between its mint anchor (fixed by the
-   coin's proof chain) and the spend being checked. A client may download the
-   full blocks in that window and test every candidate record against
-   `H(nf, ctx)` locally — conclusive, trust-free, and cheap for young coins;
-   offered per-receipt for high-value payments.
+**Indexers as optional accelerators (never trust requirements).** A wallet that
+wants to skip or shortcut a sync may query an *indexer* — a service that scans
+blocks and serves per-block occurrence lists `(position, record, ctx)`. Such
+lists are deterministic from chain data, which makes them safe to consume
+without trust: the wallet cross-checks several independent indexers
+(disagreement is fraud evidence, publishable), and can spot-verify any block's
+list against its own SPV/merkle view at negligible cost. A desktop client can
+act as its owner's personal indexer over a secure channel; the owner's full
+node is one indexer among others, never a root of trust. Hiding an occurrence
+from a wallet requires defeating the wallet's own self-scan, which is always
+available — the accelerator optimizes latency, never correctness.
 
-Broadcasting anchors is orthogonal and trustless by construction: the signed
-transaction is handed to any number of nodes or public APIs for relay — the
-worst any of them can do is not relay.
+**Broadcasting anchors** is orthogonal and trustless by construction: the
+signed transaction is handed to any number of nodes or public APIs for relay —
+the worst any of them can do is not relay.
 
 ### 4.8 Consignment format and receiver verification algorithm
 
@@ -653,16 +671,18 @@ there is no grief to pay for.
 **(b) Censorship (miners refusing OpenCSV anchors).** If anchors are trivially
 identifiable, a miner or cartel can refuse to mine them — a system-wide liveness
 failure in which nothing is stolen and no coins are burned (un-anchored coins
-remain valid in their owners' hands) but transfers halt. Mitigations, in order of
-strength: (i) *camouflage* — transfer records carry no tag and are
-indistinguishable from arbitrary data-carrier traffic, so filtering OpenCSV means
-filtering a whole class of ordinary transactions; mints and redeems remain
-identifiable by design (their amounts must be publicly auditable), but they are
-rare, issuer-driven events, not the everyday flow; (ii) *economics* — censoring
-miners forfeit the anchor fees, so sustained censorship requires a majority
-cartel, at which point Bitcoin's own neutrality is already compromised; (iii)
-honest acknowledgment that no anchor-based scheme fully removes this assumption —
-OpenCSV shares it with every data-carrier protocol.
+remain valid in their owners' hands) but transfers halt. Here the marker output
+(§4.7) is a deliberate, declared trade: it makes anchors *identifiable by
+design* — to wallets, and unavoidably to censors too — in exchange for
+trustless discovery. The mitigations are therefore: (i) *dilution* — the marker
+is an unremarkable anyone-can-spend script that other protocols can share, and
+a deployment under censorship pressure may omit markers from its anchors at the
+cost of losing filter discovery (falling back to indexer-assisted or full-block
+scanning), since no occurrence semantics depend on it; (ii) *economics* —
+censoring miners forfeit the anchor fees, so sustained censorship requires a
+majority cartel, at which point Bitcoin's own neutrality is already
+compromised; (iii) honest acknowledgment that no anchor-based scheme fully
+removes this assumption — OpenCSV shares it with every data-carrier protocol.
 
 **(c) Nuisance floods.** Fake consignments cost a recipient one proof verification
 (~4 ms measured) each — nuisance-level, comparable to message spam. Spam anchors
