@@ -55,6 +55,11 @@
   ol.roadmap li.done::before { background: var(--accent); color: #111; border-color: var(--accent); }
   ol.roadmap h3 { font-size: 18px; } ol.roadmap p { color: var(--muted); font-size: 15px; }
 
+  .shot { margin-bottom: 36px; }
+  .shot img { width: 100%; border-radius: 12px; display: block; }
+  .shot figcaption { color: var(--muted); font-size: 14px; margin-top: 10px; }
+  .shot figcaption code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+
   footer { padding: 48px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
   footer ul { list-style: none; margin-top: 8px; }
   footer li { margin: 4px 0; }
@@ -104,6 +109,32 @@
         nullifier, <code>k</code> confirmations). Accept or reject — done.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>See it working</h2>
+    <p class="sub">The real CLI against a real <code>bitcoind</code> (regtest):
+    every anchor is a broadcast Bitcoin transaction carrying a 64-byte
+    <code>OP_RETURN</code> record — no demo chain, no mocks.</p>
+    <figure class="shot">
+      <img src="screenshots/mint.png" alt="Issuer initializes a USD asset and mints 100 to Bob; the anchor transaction is broadcast and confirmed on regtest">
+      <figcaption>The issuer creates a USD asset and mints 100 to Bob — the
+      anchor is a real transaction, confirmed on-chain
+      (<code>gettransaction</code> shows 6 confirmations).</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="screenshots/receive.png" alt="Bob verifies the mint consignment: VERIFIED 100, coins stored, balance 100">
+      <figcaption>Bob verifies the consignment — constant-size proof plus the
+      on-chain anchor — and his wallet credits the coins.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="screenshots/send-double-spend-audit.png" alt="Bob sends 60+40 back to the issuer (VERIFIED); a double-spend of the same coins is REJECTED by the first-occurrence rule; the supply audit reads 100 from chain data">
+      <figcaption>Bob sends 60+40 back (<code>VERIFIED</code>); re-anchoring the
+      same nullifiers loses to first occurrence (<code>REJECTED</code>); the
+      public supply audit sums mints − redeems from chain data.</figcaption>
+    </figure>
   </div>
 </section>
 
