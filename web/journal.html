@@ -191,6 +191,21 @@
     architecture got better, so the assumptions got fewer.</p>
   </div>
 
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>The marker ships; scan-only verification proven</h2>
+    <p>The marker output lands in anchor transactions
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/5564502">5564502</a>,
+    verified against real BIP158 filters), the ScanIndex engine follows
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/cd37a53">cd37a53</a>),
+    and the scan FFI completes the stack
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/5a21db1">5a21db1</a>):
+    a real mint consignment verified through the C ABI with <b>no RPC and no
+    indexer</b> — <code>VERIFIED</code> from the scan alone, double-spend rejected
+    against the same index. Bandwidth for the test window: 320 filter bytes +
+    1,140 block bytes.</p>
+  </div>
+
 </div>
 
 <footer>
