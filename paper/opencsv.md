@@ -756,13 +756,19 @@ dedicated formalization efforts.
 
 ## 7. Implementation Roadmap
 
-**Phase 2 — Rust core (implemented).** Two crates. `opencsv-core`: Poseidon2
+**Phase 2 — Rust core (implemented).** `opencsv-core`: Poseidon2
 commitments and nullifiers over BabyBear, issuer signatures, consignment
-(de)serialization, the `Accept` driver, and a pluggable Bitcoin anchor backend (mock
-chain implemented; `bitcoind` RPC planned). `opencsv-pcd`: the recursive engine —
+(de)serialization, the `Accept` driver. `opencsv-pcd`:
+the recursive engine —
 predicates (mint/transfer/redeem) written directly as AIR over BabyBear on top of a
 Plonky3 0.6 stack, with in-circuit FRI verification (via the official
 Plonky3-recursion crates) for the recursion step. **No zkVM anywhere.**
+`opencsv-bitcoin`: the real anchor backend — OP_RETURN anchor transactions with the
+funding-input binding of §4.7 (two-pass construction), block scanning with a
+rebuildable occurrence index, selectable network (signet/mainnet/regtest) with no
+fallbacks. Validated end-to-end on regtest (real anchor transactions: mint,
+transfer, double-spend rejected by first occurrence at a real block location,
+supply audited from chain data); signet read-path validated against a live node.
 
 Measured results (reference machine: Xeon Gold 6526Y, 64 cores; release profile;
 test-grade FRI parameters — production parameters are future work):
