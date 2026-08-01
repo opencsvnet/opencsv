@@ -444,7 +444,11 @@ include ordinary scriptPubKeys, so a wallet syncing compact filters can find
 anchor-bearing blocks trustlessly (§4.7.1). It carries no authority — the
 occurrence semantics above never consult it — so a griefer "copying" the marker
 into their own transactions merely volunteers their own fee money to cause a
-wallet a wasted block download. Nothing about the marker involves elliptic-curve
+wallet a wasted block download. (More precisely: fake markers let an attacker
+influence a scanning wallet's *block-download rate* — one full block per fake
+marker — bounded by their willingness to burn dust and fees; costly to sustain,
+and never correctness-affecting.) Nothing about the marker involves
+elliptic-curve
 cryptography (P2WSH is script-hash based), keeping the entire anchor format
 within the post-quantum envelope of §5.7.
 
