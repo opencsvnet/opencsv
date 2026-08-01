@@ -126,13 +126,16 @@ find anchor blocks trustlessly at ~KB/block; the OP_RETURN record stays
 ctx-bound and uncopiable; exclusion becomes a *local* check. Indexers demoted
 to optional, spot-verifiable accelerators. Paper §4.7.1 rewritten the same day.
 
-## 2026-08-01 — The scan soundness formal package (in progress)
+## 2026-08-01 — The scan soundness formal package
 
 The formal layer follows the deployment: no-false-negatives of filter
-discovery (trustless absence is *provable*, not assumed), scan-exclusion
-soundness (scan-first ≡ full-block scanning), marker zero-authority, and
-accelerator fraud-provability. The N-of-M honesty hypothesis is **eliminated
-from the roadmap** — the architecture got better, so the assumptions got fewer.
+discovery (trustless absence is *provable* — and it fell out of the
+construction in one line), scan-exclusion soundness (scan-first ≡ full-block
+scanning), marker zero-authority, and accelerator fraud-provability — 23
+theorems, no new axioms
+([00edaed](https://github.com/opencsvnet/opencsv-formal/commit/00edaed)). The
+N-of-M honesty hypothesis is **eliminated from the roadmap** — the
+architecture got better, so the assumptions got fewer.
 
 ---
 
