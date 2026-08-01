@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCSV — Journal</title>
+<meta name="description" content="The OpenCSV journal: discoveries and how the architecture evolved — griefing, filters, benchmarks, and the scan-first design.">
+<style>
+  :root {
+    --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
+    --accent2: #58a6ff; --card: #161b22; --border: #30363d; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero { padding: 72px 0 40px; text-align: center; }
+  .hero h1 { font-size: 40px; letter-spacing: -1px; }
+  .hero h1 .csv { color: var(--accent); }
+  .tagline { font-size: 18px; color: var(--muted); margin: 12px auto 16px; max-width: 620px; }
+  .back { font-size: 14px; }
+
+  .entry { padding: 32px 0 32px 28px; border-left: 2px solid var(--border); position: relative; }
+  .entry::before { content: ""; position: absolute; left: -7px; top: 42px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--card); border: 2px solid var(--accent); }
+  .entry.discovery::before { background: var(--accent); }
+  .entry.failure::before { background: #f85149; border-color: #f85149; }
+  .date { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+  .entry h2 { font-size: 22px; margin: 6px 0 10px; }
+  .entry p { color: var(--muted); font-size: 16px; max-width: 720px; }
+  .entry p + p { margin-top: 8px; }
+  .entry code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+  .entry .tag { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; color: var(--muted); margin-left: 8px; vertical-align: middle; }
+  .entry.discovery .tag { color: var(--accent); border-color: var(--accent); }
+  .entry.failure .tag { color: #f85149; border-color: #f85149; }
+  .shot { margin-top: 16px; border: 1px solid var(--border); border-radius: 10px; max-width: 100%; }
+
+  footer { padding: 40px 0 56px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>The Open<span class="csv">CSV</span> Journal</h1>
+    <p class="tagline">Discoveries and how the architecture evolved — told as it
+    happened, with the receipts linked.</p>
+    <p class="back"><a href="index.html">← home</a> · <a href="formal.html">formal verification</a> · <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">source</a></p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="entry">
+    <div class="date">2026-07-31</div>
+    <h2>Inception: client-side verified stablecoins on Bitcoin L1</h2>
+    <p>Starting point: <a href="https://eprint.iacr.org/2025/068">Shielded CSV</a>
+    (Nick–Eagen–Linus). Day-one decisions: anchor to Bitcoin L1 directly (no fork),
+    shielded amounts with public assets and issuers (auditable supply over shielded
+    transfers), and no zkVM — hand-written AIR with in-circuit recursion.
+    First artifacts: the <a href="../paper/opencsv.md">paper</a> and this site.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-07-31</div>
+    <h2>Recursive PCD works: constant proofs over arbitrary history</h2>
+    <p>The transfer circuit verifies two predecessor proofs in-circuit — mint →
+    transfer → transfer — so proof size and verify time are constant in coin
+    history. Later measured: 56,041 bytes, ~3.6 ms verify, identical at hops 1
+    and 2. See <a href="https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md">BENCHMARKS.md</a>.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-07-31</div>
+    <h2>Formal verification from the start</h2>
+    <p>Lean 4: inflation soundness, conservation, nullifier uniqueness, receiver
+    correctness — sorry-free, every assumption a labeled axiom. Later enforced by
+    CI <a href="https://github.com/opencsvnet/opencsv-formal/actions/runs/30674804692">axiom gating</a>:
+    the assumption set can't grow silently.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-07-31</div>
+    <h2>Proving is single-thread-bound</h2>
+    <p>Core-scaling: 1 core ≈ 4 = 8 = 64 cores at ~3 s per transfer. Single-core
+    speed is all that matters — which unexpectedly makes phones interesting.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>Phones beat the server 3–5×</h2>
+    <p>On-device benchmarks (<a href="https://github.com/opencsvnet/opencsv-rs/issues/1">opencsv-rs#1</a>):
+    iPhone 16e and 17 Pro Max prove a recursive transfer in ~0.55–0.96 s vs 2.97 s
+    on the 64-core Xeon. Mobile proving is viable.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>Payments over production Signal, both directions</h2>
+    <p>Physical iPhone: consignment as an E2E Signal attachment →
+    <b>+100 USD · verified</b> rendered natively; the phone proves a 2-in/2-out
+    transfer (~1 s) → CLI verifies. Audits agree on both sides.
+    (<a href="https://github.com/opencsvnet/Signal-iOS/issues/1">issue</a>,
+    <a href="https://github.com/opencsvnet/Signal-iOS/pull/2">PR #2</a>)</p>
+    <p>CLI side, regenerated weekly by CI from real regtest runs:</p>
+    <img class="shot" src="screenshots/mint.png" alt="CLI mint flow on regtest">
+    <img class="shot" src="screenshots/receive.png" alt="CLI receive VERIFIED on regtest">
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-01</div>
+    <h2>Discovery: copy-griefing <span class="tag">discovery</span></h2>
+    <p>A raw anchor record is just bytes: a mempool spy can copy it into their own
+    transaction and front-run it — the copy wins the first-occurrence race and the
+    victim's coins freeze. <b>Burn, not theft.</b> Three redesign rounds begin.</p>
+  </div>
+
+  <div class="entry failure">
+    <div class="date">2026-08-01</div>
+    <h2>Failure: the sidecar binding <span class="tag">failure</span></h2>
+    <p>First fix: publish <code>(nf, B = H(nf, ctx))</code> and check it publicly.
+    Broken on arrival — both inputs are on-chain, so the griefer recomputes B under
+    their own context. Caught by the implementing agent, not shipped. The lesson
+    that shaped everything after: <b>public matchability and copy-forgeability are
+    the same property.</b></p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>The bound-payload fix</h2>
+    <p>The payload IS the bound value: <code>P = H("bind" ∥ nf ∥ ctx)</code>, and
+    the raw nullifier never goes on-chain. Copying fails (wrong ctx); recomputing
+    needs <code>nf</code> (preimage). Later mechanized in Lean in both directions
+    (<code>griefer_copy_invisible</code>, <code>no_occurrence_without_knowledge</code>).</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>Real Bitcoin: regtest e2e and a live signet anchor</h2>
+    <p>The demo chain dies: real transactions on regtest end-to-end, then a 100-USD
+    mint confirmed on Mutinynet signet (tx
+    <a href="https://mutinynet.com/tx/3282c8abf1959f35827916ce56debc2d5ddbd52c2a8df33c53c4c724930495d1">3282c8ab…</a>,
+    height 3308725), verified by a fresh wallet from scanned blocks. Two backends
+    converge on one ctx derivation after a near dialect split.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-01</div>
+    <h2>Discovery: BIP158 filters exclude OP_RETURN <span class="tag">discovery</span></h2>
+    <p>Verified against live bitcoind: basic compact filters omit OP_RETURN outputs
+    entirely — anchor records are never filter-matchable. The compact-filter plan
+    dies on contact; SPV (headers + merkle + one block) takes the point check.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>u64 limb soundness becomes a theorem</h2>
+    <p>The conservation gadget's carry argument — the scariest informal claim in
+    the codebase — is mechanized
+    (<a href="https://github.com/opencsvnet/opencsv-formal/commit/b036cf3">b036cf3</a>).
+    Bonus honest finding: the general converse is false (a completeness limitation,
+    not a soundness hole) — documented, not lurking. The living
+    <a href="formal.html">formal page</a> now carries 17 theorems, regenerated
+    weekly from the build.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>Indexing evolves four times in a day</h2>
+    <p>Anchor-server (demoted) → full node → N-of-M cross-check → finally
+    <b>scan-first indexing</b>, which made filters useful again: anchors add a
+    constant marker output (546 sats to <code>OP_0 ∥ sha256(OP_TRUE)</code>,
+    quantum-clean). Filters include it, so phones find anchor blocks trustlessly
+    at ~KB/block while the record stays ctx-bound. Exclusion becomes a local check;
+    indexers become optional, spot-verifiable accelerators. Paper §4.7.1 rewritten
+    the same day.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>The scan soundness formal package</h2>
+    <p>The formal layer follows deployment: no-false-negatives of filter discovery
+    (trustless absence is provable), scan-exclusion soundness (scan-first ≡
+    full-block scanning), marker zero-authority, accelerator fraud-provability.
+    The N-of-M honesty hypothesis is <b>eliminated from the roadmap</b> — the
+    architecture got better, so the assumptions got fewer.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Screenshots regenerate weekly from real regtest runs
+    (<a href="https://github.com/opencsvnet/opencsv/actions/workflows/screenshots.yml">workflow</a>).
+    Benchmarks: <a href="https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md">BENCHMARKS.md</a>.
+    Journal source: <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">journal/</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
