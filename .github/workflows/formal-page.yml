@@ -1,0 +1,80 @@
+name: formal-page
+
+# Keeps web/formal.html's machine-checkable parts honest: the axiom table
+# is regenerated weekly from opencsvnet/opencsv-formal — but only AFTER
+# proving the Lean build is green (lake build + the axiom-audit gate), so
+# the site can never publish a table the code no longer satisfies.
+# Same pattern as screenshots.yml.
+
+on:
+  schedule:
+    - cron: "41 5 * * 2" # Tuesdays 05:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # the site repo (this one)
+
+      - name: Check out opencsv-formal
+        uses: actions/checkout@v4
+        with:
+          repository: opencsvnet/opencsv-formal
+          path: formal
+
+      - name: Install elan and build the Lean project (publish gate)
+        working-directory: formal
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          lake build
+          scripts/axiom-audit.sh   # gate: baseline must match the build
+
+      - name: Generate the axiom table fragment
+        working-directory: formal
+        run: python3 scripts/gen-axiom-table.py --output "$RUNNER_TEMP/axiom-table.html"
+
+      - name: Inject the fragment into web/formal.html
+        run: |
+          python3 - <<'EOF'
+          import os
+          from pathlib import Path
+
+          page = Path("web/formal.html")
+          text = page.read_text()
+          begin = "<!-- GEN-AXIOM-TABLE:BEGIN -->"
+          end = "<!-- GEN-AXIOM-TABLE:END -->"
+          if begin not in text or end not in text:
+              raise SystemExit(
+                  "error: GEN-AXIOM-TABLE markers missing from web/formal.html — "
+                  "refusing to publish (add the markers or fix the page)"
+              )
+          fragment = Path(os.environ["RUNNER_TEMP"], "axiom-table.html").read_text().strip()
+          pre, rest = text.split(begin, 1)
+          _, post = rest.split(end, 1)
+          page.write_text(pre + begin + "\n" + fragment + "\n" + end + post)
+          print("injected axiom table into web/formal.html")
+          EOF
+
+      - name: Stamp provenance
+        run: |
+          grep -q '<!-- GEN-PROVENANCE -->' web/formal.html || { echo "error: GEN-PROVENANCE marker missing from web/formal.html"; exit 1; }
+          SHA=$(git -C formal rev-parse --short HEAD)
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          sed -i "s/<!-- GEN-PROVENANCE -->.*<!-- \/GEN-PROVENANCE -->/<!-- GEN-PROVENANCE -->regenerated ${DATE} · build green · opencsv-formal@${SHA}<!-- \/GEN-PROVENANCE -->/" web/formal.html
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "opencsv-bot"
+          git config user.email "bot@opencsvnet.github.io"
+          git add web/formal.html
+          if git diff --cached --quiet; then
+            echo "formal page unchanged"
+          else
+            git commit -m "formal: regenerate axiom table (opencsv-formal@$(git -C formal rev-parse --short HEAD))"
+            git push
+          fi
