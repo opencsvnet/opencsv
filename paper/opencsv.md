@@ -473,6 +473,49 @@ own leg), and it fits the client-side philosophy — validation happens where th
 coins are. Public auditability of supply (§4.9) is unaffected, since it depends
 only on the tagged mint/redeem stream.
 
+### 4.7.1 Client chain views: point verification, exclusion, and the filter tension
+
+How does a wallet — especially a phone — obtain the chain data that `Accept`
+needs? The answer splits along the two checks, and the split is forced by the
+anti-grief construction itself.
+
+**Point verification (trustless via compact filters).** Checking that the
+*claimed* anchor exists — transaction present at the claimed height and position,
+record intact, `ctx` recomputed from the funding input, `k` confirmations — is a
+query about a *fixed, public* byte string (the record's script). BIP157/158
+compact block filters answer exactly such queries: the client verifies the
+header chain's proof-of-work, downloads the small per-block filters, finds the
+one block whose filter matches the payload, and fetches only that block (from
+any peer), checking everything against the headers. No server is trusted: the
+anchor cannot be faked, moved, or misdated.
+
+**Exclusion (not filter-solvable).** Checking that *no earlier occurrence of the
+coin's nullifier exists* would require matching occurrences of `nf` across all
+candidate blocks — but occurrence payloads are `H(nf, ctx(tx))`, deliberately
+*not* publicly derivable (§4.7). This is not an implementation gap but a
+duality: **a filter-matchable occurrence key would have to be public, and a
+public occurrence key is precisely what a griefer can recompute and forge.**
+Matchability and copy-resistance exclude each other; the anti-grief design
+chooses copy-resistance, so exclusion scans need actual block data rather than
+filters. OpenCSV therefore handles exclusion in one of two ways:
+
+1. **N-of-M independent indexers (default).** Any party can run an *indexer* — a
+   service that scans blocks and answers occurrence queries (the electrum-server
+   model familiar from light wallets). The client asks `N` independent indexers
+   and accepts only if *none* reports an earlier occurrence: hiding a
+   double-spend then requires compromising every indexer in the set, not one
+   server. Indexers are interchangeable and untrusted individually.
+2. **Self-scan (opt-in, zero trust).** The exclusion range is bounded: an
+   occurrence of a coin can only appear between its mint anchor (fixed by the
+   coin's proof chain) and the spend being checked. A client may download the
+   full blocks in that window and test every candidate record against
+   `H(nf, ctx)` locally — conclusive, trust-free, and cheap for young coins;
+   offered per-receipt for high-value payments.
+
+Broadcasting anchors is orthogonal and trustless by construction: the signed
+transaction is handed to any number of nodes or public APIs for relay — the
+worst any of them can do is not relay.
+
 ### 4.8 Consignment format and receiver verification algorithm
 
 The **consignment** is the off-chain message from sender to recipient:
