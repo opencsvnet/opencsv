@@ -59,6 +59,7 @@
   .shot img { width: 100%; border-radius: 12px; display: block; }
   .shot figcaption { color: var(--muted); font-size: 14px; margin-top: 10px; }
   .shot figcaption code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+  .provenance { color: var(--muted); font-family: var(--mono); font-size: 12px; margin: -24px 0 32px; }
 
   footer { padding: 48px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
   footer ul { list-style: none; margin-top: 8px; }
@@ -118,6 +119,7 @@
     <p class="sub">The real CLI against a real <code>bitcoind</code> (regtest):
     every anchor is a broadcast Bitcoin transaction carrying a 64-byte
     <code>OP_RETURN</code> record — no demo chain, no mocks.</p>
+    <p class="provenance"><!-- CAPTURE-PROVENANCE -->captured manually · regtest · opencsv-rs@local<!-- /CAPTURE-PROVENANCE --></p>
     <figure class="shot">
       <img src="screenshots/mint.png" alt="Issuer initializes a USD asset and mints 100 to Bob; the anchor transaction is broadcast and confirmed on regtest">
       <figcaption>The issuer creates a USD asset and mints 100 to Bob — the
