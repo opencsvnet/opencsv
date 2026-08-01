@@ -178,9 +178,26 @@
     <p class="sub">Regenerated weekly by CI from <code>axiom-audit.txt</code> in
     opencsv-formal — this block can never drift from the actual proofs.</p>
     <!-- GEN-AXIOM-TABLE:BEGIN -->
-    <p class="sub">(generated axiom table — first CI run pending)</p>
-    <!-- GEN-AXIOM-TABLE:END -->
-    <p class="sub"><!-- GEN-PROVENANCE -->not yet generated<!-- /GEN-PROVENANCE --></p>
+<table>
+  <thead><tr><th>Theorem</th><th>Axiom dependencies</th></tr></thead>
+  <tbody>
+    <tr><td><code>OpenCsv.accepted_trace_supply</code></td><td><code>propext</code>, <code>OpenCsv.Sig</code>, <code>OpenCsv.SigVerify</code>, <code>OpenCsv.assetId</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.commitHash</code>, <code>OpenCsv.nullHash</code>, <code>OpenCsv.ownerKey</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.copied_record_not_wellformed</code></td><td><code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code></td></tr>
+    <tr><td><code>OpenCsv.double_spend_conflict</code></td><td><code>OpenCsv.bindHash</code>, <code>OpenCsv.commitHash</code>, <code>OpenCsv.nullHash</code>, <code>OpenCsv.ownerKey</code>, <code>OpenCsv.ownerKey_injective</code></td></tr>
+    <tr><td><code>OpenCsv.griefer_copy_invisible</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code></td></tr>
+    <tr><td><code>OpenCsv.inflation_soundness</code></td><td><code>propext</code>, <code>OpenCsv.Sig</code>, <code>OpenCsv.SigVerify</code>, <code>OpenCsv.assetId</code>, <code>OpenCsv.commitHash</code>, <code>OpenCsv.nullHash</code>, <code>OpenCsv.ownerKey</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.later_occurrence_rejected</code></td><td><code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.mints_authorized</code></td><td><code>propext</code>, <code>OpenCsv.Sig</code>, <code>OpenCsv.SigVerify</code>, <code>OpenCsv.SignedByIssuer</code>, <code>OpenCsv.assetId</code>, <code>OpenCsv.commitHash</code>, <code>OpenCsv.nullHash</code>, <code>OpenCsv.ownerKey</code>, <code>OpenCsv.sig_unforgeable</code></td></tr>
+    <tr><td><code>OpenCsv.no_occurrence_without_knowledge</code></td><td><code>OpenCsv.KnowsRawNf</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.occurrence_requires_knowledge</code></td></tr>
+    <tr><td><code>OpenCsv.payload_binds_one_nullifier</code></td><td><code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code></td></tr>
+    <tr><td><code>OpenCsv.receiver_correctness</code></td><td><code>propext</code>, <code>OpenCsv.Sig</code>, <code>OpenCsv.SigVerify</code>, <code>OpenCsv.assetId</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.commitHash</code>, <code>OpenCsv.nullHash</code>, <code>OpenCsv.ownerKey</code></td></tr>
+    <tr><td><code>OpenCsv.transfer_conservation</code></td><td><code>propext</code>, <code>OpenCsv.Sig</code>, <code>OpenCsv.SigVerify</code>, <code>OpenCsv.assetId</code>, <code>OpenCsv.commitHash</code>, <code>OpenCsv.nullHash</code>, <code>OpenCsv.ownerKey</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.unknowing_adversary_entry_invisible</code></td><td><code>propext</code>, <code>OpenCsv.KnowsRawNf</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.occurrence_requires_knowledge</code></td></tr>
+  </tbody>
+</table>
+<p class="gen-summary">12 theorems, audited 2026-08-01 from <code>axiom-audit.txt</code> @ 1dfedd7</p>
+<!-- GEN-AXIOM-TABLE:END -->
+    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-01 15:14 UTC · build green · opencsv-formal@1dfedd7<!-- /GEN-PROVENANCE --></p>
   </div>
 </section>
 
