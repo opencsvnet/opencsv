@@ -66,6 +66,49 @@
   </div>
 </header>
 
+<section id="plain">
+  <div class="wrap">
+    <h2>In plain language</h2>
+    <p class="sub">The full tables are below. This is the three-sentence version.</p>
+    <ul class="layers">
+      <li><b>Proven: no inflation without the issuer's key.</b>
+        <p>If someone shows you coins, the math — not a server, not trust — proves
+        every unit traces back to a mint the issuer actually signed. If that's
+        ever wrong, the world has a counterfeiting machine, and the mints stream
+        would show it.</p></li>
+      <li><b>Proven: a double-spend can't quietly succeed.</b>
+        <p>Spending the same coin twice produces a visible conflict that resolves
+        deterministically — the first properly anchored spend wins, and a
+        recipient who waits for confirmations can't be fooled into taking the
+        loser. Copying someone's anchor to grief them provably does nothing.</p></li>
+      <li><b>Proven: the checklist protects the receiver.</b>
+        <p>A wallet that follows the verification checklist accepts only coins
+        with a genuine, unbroken history. The checklist is short enough to be
+        verified itself — that's what the theorems below are.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section id="assumptions-plain">
+  <div class="wrap">
+    <h2>What you still trust, and what breaks if it's wrong</h2>
+    <p class="sub">Every proof rests on assumptions. We don't hide them — each is
+    named, and each failure mode is visible rather than silent.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>You trust that…</th><th>If it breaks…</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>Poseidon2 hashes are collision-resistant</td><td>counterfeiting becomes possible</td><td>conservative parameters; swap hash without protocol change</td></tr>
+          <tr><td>The FRI proof system is sound</td><td>fake validity proofs could pass</td><td>transparent setup; audits re-check proofs publicly</td></tr>
+          <tr><td>The issuer keeps its mint key safe</td><td>inflation — but <em>visible</em>, never hidden</td><td>public mint stream; key rotation cuts off rogue mints</td></tr>
+          <tr><td>At least one of N indexers is honest</td><td>a double-spend could be hidden from you</td><td>cross-check independent indexers; zero-trust self-scan per receipt</td></tr>
+          <tr><td>Bitcoin isn't reorged past k confirmations</td><td>accepted payments can be undone</td><td>same assumption as any Bitcoin payment</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <section id="theorems">
   <div class="wrap">
     <h2>What the theorems say</h2>
@@ -131,6 +174,13 @@
     <p class="sub" style="margin-top:16px">Notable by absence: the first-occurrence
     lemmas are pure list reasoning and depend on <em>no</em> cryptographic axioms
     at all.</p>
+    <h3 style="margin-top:28px">Live from the build</h3>
+    <p class="sub">Regenerated weekly by CI from <code>axiom-audit.txt</code> in
+    opencsv-formal — this block can never drift from the actual proofs.</p>
+    <!-- GEN-AXIOM-TABLE:BEGIN -->
+    <p class="sub">(generated axiom table — first CI run pending)</p>
+    <!-- GEN-AXIOM-TABLE:END -->
+    <p class="sub"><!-- GEN-PROVENANCE -->not yet generated<!-- /GEN-PROVENANCE --></p>
   </div>
 </section>
 
