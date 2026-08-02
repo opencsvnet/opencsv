@@ -222,7 +222,21 @@
 
   <div class="entry">
     <div class="date">2026-08-02</div>
-    <h2>Field season: the retarget wall falls, batches go live</h2>
+    <h2>The Aeneas verdict: full-crate dies, kernel-extraction lives</h2>
+    <p>The feasibility spike for verifying the Rust implementation directly
+    returned a clean split. Dead: full-crate Aeneas — a charon bug on std
+    iterator impls our hashing pulls in, dyn-trait and GAT rejection, and an
+    outright aeneas crash. Alive and <em>proven</em>: a kernel-shaped subset
+    (loops, no serde/dyn/RNG, opaque hash boundary) translates in 0.9 s, builds,
+    and proves — <code>binding_eq_spec</code> and <code>well_formed_spec</code>
+    showed translated Rust equivalent to the Lean model, with only core axioms
+    plus the opaque hash constant. The path forward (Track A of
+    <a href="https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md">ROADMAP.md</a>):
+    carve <code>opencsv-kernel</code> from opencsv-core and verify it against
+    the spec in a dedicated Lean 4.31 + mathlib project. The roadmap noted the
+    honest fork too: Aeneas pins its own Lean toolchain, so the main
+    dependency-free repo stays untouched.</p>
+  </div>
     <p>The first field-found consensus bug: signet header sync died at height 2016
     — the client assumed signet allowed min-difficulty blocks, but real signet is
     mainnet-style; block 2019 demanded a true target. Fixed
