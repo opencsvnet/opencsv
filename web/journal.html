@@ -206,6 +206,20 @@
     1,140 block bytes.</p>
   </div>
 
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>Scan-first runs in the app — proven by a stranger's anchor</h2>
+    <p>The iOS provider swap lands on <code>opencsv-wallet</code>
+    (<a href="https://github.com/opencsvnet/Signal-iOS/commit/1fa76d6944">1fa76d6944</a>):
+    decision ladder (self-scan → cross-check → demo, throwing rather than
+    falling back on an unsynced index), scheduled background sync, the
+    "fully verified by this phone" badge. The interop proof: an anchor
+    <b>hand-crafted with raw bitcoin-cli from the spec</b> — 64-byte OP_RETURN at
+    vout 0, 546 sats to <code>OP_0 ∥ sha256(OP_TRUE)</code> at vout 1 — was
+    discovered by the scan engine purely via the filter walk, under 5 KB across
+    a 113-block chain. Two implementations, one protocol, zero coordination.</p>
+  </div>
+
 </div>
 
 <footer>
