@@ -27,11 +27,17 @@ at [`web/index.html`](web/index.html).
 
 ## Status
 
-Working reference implementation, live-tested end to end (2026-07-31): coins
-minted, anchored, delivered as an end-to-end-encrypted Signal attachment, and
-verified by the recipient's client with the real recursive proof engine —
-`VERIFIED 100 USD`. Double-spend attempts are rejected by the first-occurrence
-rule. Core protocol logic mechanized in Lean 4 (sorry-free).
+Working system, live-tested end to end (2026-08-01): coins minted, anchored on
+real Bitcoin (regtest + signet), delivered as end-to-end-encrypted Signal
+attachments, and verified by recipients with the real recursive proof engine —
+`VERIFIED 100 USD` — natively inside Signal-iOS in one direction and by the CLI
+in the other. Double-spends are rejected by first occurrence. **Scan-first
+indexing**: a protocol-constant marker output lets wallets find anchor blocks
+via compact filters and check double-spends *locally* — a consignment was
+verified with no RPC and no indexer, and an anchor hand-built with `bitcoin-cli`
+from the spec was discovered purely by the filter walk. Core protocol logic and
+the scan model are mechanized in Lean 4 (23 theorems, sorry-free, CI-enforced
+axiom audit). See the [journal](journal/README.md) for the full evolution.
 
 | proof | prove (release) | verify | size |
 |---|---|---|---|
@@ -42,14 +48,15 @@ rule. Core protocol logic mechanized in Lean 4 (sorry-free).
 Constant proof size and verification time regardless of coin history — the
 defining property of proof-carrying data, confirmed by measurement
 (test-grade FRI parameters; see the paper §7 for the full table and caveats).
+On-device (iPhone 16e / A18): transfer proving ~550 ms.
 
 ## Repositories
 
 | repo | contents |
 |---|---|
-| **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — the paper (`paper/`) and explainer site (`web/`) |
-| **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, wallet CLI, Signal transport |
-| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 mechanization: inflation soundness, conservation, nullifier uniqueness, receiver correctness |
+| **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — the paper (`paper/`), explainer site (`web/`), journal (`journal/`) |
+| **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, SPV light client + scan engine, bitcoind backend, wallet CLI, Signal transport |
+| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 mechanization (23 theorems): inflation soundness, conservation, nullifier uniqueness, receiver correctness, limb soundness, scan exclusion soundness |
 
 ## Reference
 

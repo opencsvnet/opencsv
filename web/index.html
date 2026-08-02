@@ -163,6 +163,11 @@
       hash-based commitments, nullifiers, and transparent FRI proofs. The issuer
       signature is the one component that must be hash-based to keep it that way —
       and that's the intended production choice.</li>
+      <li><b>Trustless mobile verification.</b> A protocol-constant marker output
+      makes anchor blocks discoverable via compact block filters — a phone syncs
+      kilobytes per block, fetches only anchor blocks, and checks double-spends
+      <em>locally</em>. No trusted server, ever; indexers are optional,
+      spot-verifiable accelerators.</li>
     </ul>
   </div>
 </section>
@@ -213,11 +218,26 @@
         conservation, nullifier uniqueness, receiver correctness. Sorry-free; all
         cryptographic hardness isolated in labeled axioms.</p>
       </li>
+      <li class="done">
+        <h3>Signal client — working, live-tested</h3>
+        <p>Consignments delivered as E2E-encrypted Signal messages; a payment
+        arrived on a physical iPhone and rendered <b>+100 USD · verified</b>;
+        the phone proved a transfer on-device (~1 s) and the CLI verified it.
+        Both directions over production Signal, audits agreeing.</p>
+      </li>
+      <li class="done">
+        <h3>Scan-first indexing — working</h3>
+        <p>A protocol-constant marker output makes anchor blocks discoverable
+        via compact filters. A real consignment was verified with <b>no RPC and
+        no indexer</b> — 320 filter bytes + 1,140 block bytes for the window —
+        and an anchor hand-crafted with raw <code>bitcoin-cli</code> from the
+        spec was discovered by the scan engine purely via the filter walk.
+        Two implementations, one protocol, zero coordination.</p>
+      </li>
       <li>
-        <h3>Signal client — next</h3>
-        <p>Consignments delivered as end-to-end-encrypted Signal messages (presage,
-        all-Rust) with a text wallet CLI. Receiving a payment looks like receiving a
-        message: verified or rejected.</p>
+        <h3>Field validation — next</h3>
+        <p>On-device sync bandwidth, battery, and receive latency on real
+        phones on signet; mainnet beta after that.</p>
       </li>
     </ol>
   </div>

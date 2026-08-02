@@ -228,12 +228,14 @@
         to the Rust circuits; the correspondence is documented, not machine-checked.
         The circuits could drift from the model and nothing would catch it
         automatically — which is exactly what roadmap items 1–2 below attack.</p></li>
-      <li><b>3. The chain-view assumption is explicit.</b>
-        <p>Production double-spend exclusion relies on N-of-M independent
-        indexers (paper §4.7.1): at least one honest indexer must see the true
-        history. The Lean development currently verifies the single-log
-        semantics; the N-of-M restatement is roadmap item 5. Compact-filter
-        point verification needs no such assumption.</p></li>
+      <li><b>3. The chain-view assumption is explicit — and shrinking.</b>
+        <p>The deployment moved to scan-first indexing (paper §4.7.1): exclusion
+        is a <em>local</em> check over a filter-discovered candidate set, verified
+        against proof-of-work. The formal model now matches the deployment
+        (<code>OpenCsv.Scan</code>): scan-first exclusion is proven as sound as
+        full-block scanning, so the old "at least one honest indexer" hypothesis
+        is <em>eliminated</em> from the default path — indexers are optional,
+        spot-verifiable accelerators whose fraud is provably publishable.</p></li>
       <li><b>4. The prototype's shortcuts are excluded from the model.</b>
         <p>The off-circuit Ed25519 issuer signature and test-grade FRI parameters
         are prototype deviations, documented in both repos. The formalization
@@ -256,11 +258,22 @@
         changes without a human regenerating it in the same commit. The honesty
         table on this page is an enforced invariant, not a claim.</p>
       </li>
-      <li>
-        <h3>Limb-arithmetic soundness</h3>
-        <p>Mechanize the u64 conservation gadget's carry argument (24/24/16-bit
-        limbs, field equality ⟺ integer equality) — the place a wrap-around bug
-        would mint money, today only a rustdoc comment.</p>
+      <li class="done">
+        <h3>Limb-arithmetic soundness — shipped</h3>
+        <p>The u64 conservation gadget's carry argument (24/24/16-bit limbs,
+        field equality ⟺ integer equality) is mechanized
+        (<a href="https://github.com/opencsvnet/opencsv-formal/commit/b036cf3">b036cf3</a>)
+        — wrap-around cannot fake balance. Honest bonus: the general converse
+        is false (completeness, not soundness) — documented.</p>
+      </li>
+      <li class="done">
+        <h3>Scan soundness — shipped, roadmap item eliminated</h3>
+        <p><code>OpenCsv.Scan</code>
+        (<a href="https://github.com/opencsvnet/opencsv-formal/commit/00edaed">00edaed</a>):
+        no-false-negatives of filter discovery, scan-exclusion soundness
+        (scan-first ≡ full-block scanning), marker zero-authority, accelerator
+        fraud-provability. The N-of-M honesty hypothesis is eliminated — the
+        architecture got better, so the assumptions got fewer.</p>
       </li>
       <li>
         <h3>Differential testing, model ↔ code</h3>
@@ -274,13 +287,6 @@
         hash — extract the <em>verified</em> Lean functions to C and call them
         from Rust. "The model is the code" for the layer that decides whether
         money moves.</p>
-      </li>
-      <li>
-        <h3>N-of-M exclusion model</h3>
-        <p>The production chain view (paper §4.7.1) checks double-spend exclusion
-        against N independent indexers, not one log. Formalize the union-view
-        semantics with the explicit "at least one honest indexer" hypothesis and
-        restate receiver correctness under it.</p>
       </li>
       <li>
         <h3>PCD-tree model</h3>

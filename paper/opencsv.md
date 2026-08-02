@@ -891,18 +891,34 @@ linearly with total anchored bytes, and supply audits linearly with chain length
 **Phase 3 — Lean 4 formalization (implemented)** as specified in §6: theorems T1–T4
 are mechanized in a dependency-free Lean 4 project (`formal/`), `sorry`-free, with
 all cryptographic hardness assumptions isolated as labeled axioms (`#print axioms`
-audit included).
+audit enforced in CI). Since the first pass, two additions landed with the
+deployment's evolution: the u64 limb-conservation soundness (the circuit's
+range-check argument of §4.5 item 2, mechanized) and `OpenCsv.Scan` — the
+scan-first indexing model of §4.7.1, with the exclusion-soundness theorem
+(scan-first ≡ full-block scanning) and accelerator fraud-provability.
 
-**Phase 4 — Signal transport.** Consignments are dominated by the proof (~46–56 KB
-measured), which fits comfortably in a Signal attachment (and even in a message
-body), making a messaging transport natural: `opencsv-signal` will deliver
-consignments as end-to-end encrypted Signal messages using presage (a native Rust
-Signal client library), and `opencsv-cli` will expose the wallet as a text client —
-send, receive, mint (issuer mode), redeem, balance, audit. Receiving an RWA
+**Phase 4 — Signal transport (implemented, live-tested).** Consignments are
+dominated by the proof (~46–56 KB measured), which fits comfortably in a Signal
+attachment. `opencsv-signal` delivers consignments as end-to-end encrypted Signal
+messages (presage), and `opencsv-cli` exposes the wallet as a text client — send,
+receive, mint (issuer mode), redeem, balance, audit. A Signal-iOS integration
+renders verified payments natively as chat bubbles. Receiving an RWA
 payment then literally looks like receiving a message; `Accept` runs on arrival and
-the user is shown "verified" or "rejected". The Signal channel also gives sender
+the user is shown "verified" or "rejected". Validated on production Signal in
+both directions: a mint verified natively in-app on a physical iPhone, and a
+phone-proved 2-in/2-out transfer (~1 s on-device) verified by the CLI, with
+supply audits agreeing on both sides. The Signal channel also gives sender
 authentication and forward secrecy for the consignment, covering the
 transport-privacy gap noted in §5.4.
+
+**Phase 5 — Scan-first indexing (implemented).** The anchor marker of §4.7 and
+the §4.7.1 scan engine: wallets find anchor blocks via compact filters,
+merkle-verify candidate blocks, and evaluate exclusion locally — validated
+end-to-end with a consignment verified using no RPC and no indexer (320 filter
+bytes + 1,140 block bytes for the test window), and by a cross-implementation
+interop test in which an anchor hand-crafted with `bitcoin-cli` from this
+specification was discovered by the scan engine purely via the filter walk.
+Indexers remain available as optional accelerators (§4.7.1).
 
 ---
 
