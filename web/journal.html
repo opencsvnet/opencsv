@@ -221,8 +221,21 @@
   </div>
 
   <div class="entry">
-    <div class="date">2026-08-01</div>
-    <h2>Batching: from ~100 anchors/s to thousands, with an untrusted batcher</h2>
+    <div class="date">2026-08-02</div>
+    <h2>Field season: the retarget wall falls, batches go live</h2>
+    <p>The first field-found consensus bug: signet header sync died at height 2016
+    — the client assumed signet allowed min-difficulty blocks, but real signet is
+    mainnet-style; block 2019 demanded a true target. Fixed
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/e137096">e137096</a>)
+    with a regression that syncs all 315,800 signet headers through 156 retargets
+    in 193 s. Same batch: <b>batching v1 lands</b>
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/3d4da5f">3d4da5f</a>) —
+    witness-envelope batches verified via scan with no RPC and no indexer, after a
+    real standardness lesson (bare <code>OP_TRUE</code> fails CLEANSTACK with junk
+    items; the witness script is <code>OP_DROP×(n+1) OP_TRUE</code>, still
+    quantum-clean). Plus a persistent CBF client killing the per-foreground
+    handshake cost the iPhone measured.</p>
+  </div>
     <p>The per-transaction ceiling broke. Paper §4.7.2 adds optional batching:
     a coordinator pre-commits a funding outpoint; each sender computes their
     payload <em>locally</em> (<code>P_i = H("bind" ∥ nf_i ∥ X)</code>) and hands
