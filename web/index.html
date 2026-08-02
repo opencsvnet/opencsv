@@ -179,18 +179,29 @@
     <div class="tablewrap">
       <table>
         <thead>
-          <tr><th></th><th>Client-side validation</th><th>Shielded transfers</th><th>Auditable supply</th><th>Issuer-gated issuance</th><th>Fork-free on Bitcoin</th></tr>
+          <tr><th></th><th>Client-side validation</th><th>Shielded transfers</th><th>Auditable supply</th><th>Issuer-gated issuance</th><th>Trustless light verification</th><th>Fork-free on Bitcoin</th></tr>
         </thead>
         <tbody>
-          <tr><td>ERC-20 (Ethereum)</td><td class="no">no</td><td class="no">no</td><td class="yes">yes</td><td class="yes">yes</td><td class="no">n/a</td></tr>
-          <tr><td>RGB</td><td class="yes">yes</td><td class="part">partial</td><td class="part">per-contract</td><td class="yes">yes</td><td class="yes">yes</td></tr>
-          <tr><td>Taproot Assets</td><td class="yes">yes</td><td class="part">partial</td><td class="part">issuer proofs</td><td class="yes">yes</td><td class="yes">yes</td></tr>
-          <tr><td>Zcash</td><td class="no">no (own chain)</td><td class="yes">yes</td><td class="no">no</td><td class="no">no</td><td class="no">no</td></tr>
-          <tr><td>Shielded CSV</td><td class="yes">yes</td><td class="yes">yes</td><td class="no">no</td><td class="no">no</td><td class="yes">yes</td></tr>
-          <tr class="me"><td>OpenCSV</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td></tr>
+          <tr><td>ERC-20 (Ethereum)</td><td class="no">no</td><td class="no">no</td><td class="yes">yes</td><td class="yes">yes</td><td class="part">trusted RPC</td><td class="no">n/a</td></tr>
+          <tr><td>RGB</td><td class="yes">yes</td><td class="part">partial</td><td class="part">per-contract</td><td class="yes">yes</td><td class="no">full history rescan</td><td class="yes">yes</td></tr>
+          <tr><td>Taproot Assets</td><td class="yes">yes</td><td class="part">partial</td><td class="part">issuer proofs</td><td class="yes">yes</td><td class="no">issuer proofs</td><td class="yes">yes</td></tr>
+          <tr><td>Zcash</td><td class="no">no (own chain)</td><td class="yes">yes</td><td class="no">no</td><td class="no">no</td><td class="part">lightwalletd (trusted)</td><td class="no">no</td></tr>
+          <tr><td>Shielded CSV</td><td class="yes">yes</td><td class="yes">yes</td><td class="no">no</td><td class="no">no</td><td class="no">full scan or trusted indexer</td><td class="yes">yes</td></tr>
+          <tr class="me"><td>OpenCSV</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">compact filters + PoW, on-device</td><td class="yes">yes</td></tr>
         </tbody>
       </table>
     </div>
+    <p class="sub" style="margin-top:20px">The last two columns are where OpenCSV
+    earns its keep. Issuer-gated issuance and auditable supply make it an RWA
+    scheme rather than a bearer asset. The deeper one is light verification: in
+    plain Shielded CSV, checking a double-spend means scanning every nullifier
+    the chain has ever carried (or trusting someone who did) — fine on a desktop,
+    impossible on a phone. OpenCSV's marker output makes anchor blocks
+    discoverable through the same compact block filters light wallets already
+    sync, so a phone proves "this coin was never spent before" with proof-of-work
+    and a few kilobytes per block — no trusted server, no full scan. That's the
+    difference between client-side validation as a theory and client-side
+    validation that runs in your pocket.</p>
   </div>
 </section>
 

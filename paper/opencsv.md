@@ -924,14 +924,14 @@ Indexers remain available as optional accelerators (§4.7.1).
 
 ## 8. Related Work
 
-| | global consensus validation | shielded transfers | auditable supply | issuer-gated issuance | on-chain footprint / tx | fork-free on Bitcoin |
-|---|---|---|---|---|---|---|
-| ERC-20 on Ethereum | yes | no | yes | yes (contract logic) | full calldata | n/a |
-| RGB | no (CSV) | partial (history visible to recipients) | per-contract, not public | yes | 1 commitment (seal) | yes |
-| Taproot Assets | no (CSV) | partial | per-asset proofs | yes | 1 commitment | yes |
-| Zcash (Sapling/Orchard) | yes (own chain) | yes | no (turnstile audits only) | n/a (no issuer assets) | full shielded tx | no |
-| Shielded CSV | no (CSV) | yes | no | no | 64 B nullifier | yes |
-| **OpenCSV** | no (CSV) | yes | **yes (transparent mint/redeem stream)** | **yes (in-circuit issuer predicate)** | 64 B nullifier | yes |
+| | global consensus validation | shielded transfers | auditable supply | issuer-gated issuance | trustless light verification | on-chain footprint / tx | fork-free on Bitcoin |
+|---|---|---|---|---|---|---|---|
+| ERC-20 on Ethereum | yes | no | yes | yes (contract logic) | no (trusted RPC) | full calldata | n/a |
+| RGB | no (CSV) | partial (history visible to recipients) | per-contract, not public | yes | no (full history rescan) | 1 commitment (seal) | yes |
+| Taproot Assets | no (CSV) | partial | per-asset proofs | yes | no (issuer proofs) | 1 commitment | yes |
+| Zcash (Sapling/Orchard) | yes (own chain) | yes | no (turnstile audits only) | n/a (no issuer assets) | partial (lightwalletd, trusted) | full shielded tx | no |
+| Shielded CSV | no (CSV) | yes | no | no | no (full scan or trusted indexer) | 64 B nullifier | yes |
+| **OpenCSV** | no (CSV) | yes | **yes (transparent mint/redeem stream)** | **yes (in-circuit issuer predicate)** | **yes (marker + compact filters + PoW)** | 64 B nullifier + dust marker | yes |
 
 - **Client-side validation lineage.** Todd's client-side validation and single-use
   seals; RGB maximizes this philosophy with Bitcoin-UTXO-bound seals and full
@@ -948,8 +948,13 @@ Indexers remain available as optional accelerators (§4.7.1).
   commitment/nullifier skeleton and relocates validation to the client.
 - **Shielded CSV** is the direct parent. OpenCSV differs by: issuer-bound issuance
   predicate with on-chain-transparent mint amounts; a redemption predicate closing
-  the loop to the issuer; a public supply-audit function; and a concrete choice of
-  AIR-native recursion (Plonky3-style, no zkVM) as the PCD engine.
+  the loop to the issuer; a public supply-audit function; a concrete choice of
+  AIR-native recursion (Plonky3-style, no zkVM) as the PCD engine; and — the
+  systems-level difference — a solution to light verification: Shielded CSV
+  recipients must scan all anchored nullifiers (or trust an indexer) to check
+  double-spends, while OpenCSV's marker output (§4.7) makes anchor blocks
+  discoverable via compact block filters, so exclusion is checkable on-device
+  against proof-of-work alone (§4.7.1).
 - **Proof systems.** PCD (Chiesa–Tromer); STARKs and FRI (Ben-Sasson et al.); Plonky2's
   in-circuit FRI recursion and Plonky3's AIR framework; Poseidon (Grassi et al.);
   BabyBear/Goldilocks fields as deployed in modern high-throughput provers.
