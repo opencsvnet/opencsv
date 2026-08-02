@@ -168,6 +168,11 @@
       kilobytes per block, fetches only anchor blocks, and checks double-spends
       <em>locally</em>. No trusted server, ever; indexers are optional,
       spot-verifiable accelerators.</li>
+      <li><b>Optional batching.</b> Senders can combine many anchors into one
+      transaction: each computes their own payload against a pre-committed
+      outpoint, so an untrusted batcher packs thousands of payments per envelope
+      and learns nothing. Solo anchors stay the default; batching is for
+      throughput and fee sharing.</li>
     </ul>
   </div>
 </section>
@@ -259,7 +264,7 @@
     <p><b>OpenCSV</b> — working draft, v0.1.</p>
     <ul>
       <li><a href="../paper/opencsv.md">Paper (markdown)</a></li>
-      <li><a href="journal.html">Journal</a> · <a href="formal.html">Formal verification</a> · <a href="https://github.com/opencsvnet">github.com/opencsvnet</a></li>
+      <li><a href="story.html">A payment, end to end</a> · <a href="journal.html">Journal</a> · <a href="formal.html">Formal verification</a> · <a href="https://github.com/opencsvnet">github.com/opencsvnet</a></li>
       <li><a href="https://eprint.iacr.org/2025/068">Shielded CSV — Nick, Eagen, Linus (ePrint 2025/068)</a></li>
       <li><a href="https://docs.rgb.info/">RGB</a> · <a href="https://github.com/lightninglabs/taproot-assets">Taproot Assets</a> · <a href="https://github.com/Plonky3/Plonky3">Plonky3</a> · <a href="https://github.com/whisperfish/presage">presage</a></li>
     </ul>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCSV — A payment, end to end</title>
+<meta name="description" content="Watch a real OpenCSV payment: minted on signet, sent over Signal, verified on a phone with no trusted server, double-spend rejected, supply audited.">
+<style>
+  :root {
+    --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
+    --accent2: #58a6ff; --card: #161b22; --border: #30363d; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero { padding: 72px 0 32px; text-align: center; }
+  .hero h1 { font-size: 38px; letter-spacing: -1px; }
+  .tagline { font-size: 18px; color: var(--muted); margin: 12px auto 12px; max-width: 640px; }
+  .back { font-size: 14px; }
+
+  .panel { display: grid; grid-template-columns: 56px 1fr; gap: 20px; padding: 36px 0; border-top: 1px solid var(--border); }
+  .panel .n { font-family: var(--mono); color: var(--accent); font-size: 26px; padding-top: 2px; }
+  .panel h2 { font-size: 22px; margin-bottom: 6px; }
+  .panel p { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 14px; }
+  .panel code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+  .shot { border: 1px solid var(--border); border-radius: 10px; max-width: 100%; }
+  .placeholder { border: 1px dashed var(--border); border-radius: 10px; background: var(--card);
+    color: var(--muted); font-family: var(--mono); font-size: 13px; padding: 48px 24px; text-align: center; }
+  .placeholder b { color: var(--accent2); }
+  .cap { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  footer { padding: 40px 0 56px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>A payment, end to end</h1>
+    <p class="tagline">Minted on signet. Sent over Signal. Verified on a phone
+    with no trusted server. Every frame below is real — CLI captures regenerate
+    weekly from live runs; phone captures are taken on-device.</p>
+    <p class="back"><a href="index.html">← home</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="panel">
+    <div class="n">1</div>
+    <div>
+      <h2>The issuer mints 100 USD</h2>
+      <p>An issuer key — bound into the asset's genesis — signs a mint. The mint
+      is <em>public</em>: asset and amount go into the anchor, so anyone can audit
+      supply later. The anchor is a real Bitcoin transaction with the constant
+      marker output (<code>OP_0 ∥ sha256(OP_TRUE)</code>) that makes it
+      discoverable by compact block filters.</p>
+      <img class="shot" src="screenshots/mint.png" alt="CLI: issuer init and mint with real anchor transaction">
+      <div class="cap">regtest · auto-regenerated weekly from a live run</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="n">2</div>
+    <div>
+      <h2>The payment arrives as a Signal message</h2>
+      <p>The consignment — coin openings plus a constant-size recursive proof of
+      the coin's entire history — travels off-chain, end-to-end encrypted, as an
+      ordinary Signal attachment. Signal sees ciphertext, never coins.</p>
+      <div class="placeholder">S1 — on-device capture pending<br><b>chat view with the consignment message</b><br>(iPhone 16e, signet)</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="n">3</div>
+    <div>
+      <h2>The phone verifies — alone</h2>
+      <p>Recipient's phone verifies the recursive proof in milliseconds, syncs
+      compact block filters (kilobytes), finds the anchor block via the marker,
+      and checks locally that the coin was never spent before. No RPC, no
+      indexer, no trusted server — the bubble says <b>+100 USD · verified</b>.</p>
+      <div class="placeholder">S2 — on-device capture pending<br><b>the verified payment bubble</b><br>(iPhone 16e, signet)</div>
+      <div class="placeholder" style="margin-top:12px">⌚ centerpiece video slot — receive → verify → bubble-flip in one take (20–30 s)</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="n">4</div>
+    <div>
+      <h2>Bob pays 40 back</h2>
+      <p>The recipient key prefills from the chat (no typing, no address books).
+      The phone builds the 2-in/2-out transfer and proves it in about a second —
+      on an iPhone 16e, recursive proving is faster than on a 64-core server.</p>
+      <div class="placeholder">S3 — on-device capture pending<br><b>send sheet, prefilled recipient + balance</b><br>(iPhone 16e, signet)</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="n">5</div>
+    <div>
+      <h2>The CLI verifies Bob's transfer</h2>
+      <p>On the other side, the text wallet runs the same verification: proof,
+      anchor position, local exclusion check. <code>VERIFIED</code> — the two
+      clients agree because the protocol is the proof, not the server.</p>
+      <img class="shot" src="screenshots/receive.png" alt="CLI: receive VERIFIED">
+      <div class="cap">regtest · auto-regenerated weekly from a live run</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="n">6</div>
+    <div>
+      <h2>A double-spend dies; the supply audits clean</h2>
+      <p>Re-spending the same coin produces a conflicting anchor — the
+      first-occurrence rule rejects it at a real block location
+      (<code>NullifierConflict</code>). Meanwhile the public mint/redeem stream
+      sums the supply: anyone can check it, no permission needed.</p>
+      <img class="shot" src="screenshots/send-double-spend-audit.png" alt="CLI: send, double-spend rejected, supply audit">
+      <div class="cap">regtest · auto-regenerated weekly from a live run</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Every artifact is real: CLI panels regenerate weekly by CI from live
+    regtest runs; phone panels are captured on-device (signet) with provenance
+    noted. The conceptual version of this flow is the
+    <a href="index.html#watch">end-to-end animation</a>. Specification:
+    <a href="../paper/opencsv.md">the paper</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

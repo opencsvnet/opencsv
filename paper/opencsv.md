@@ -498,6 +498,50 @@ own leg), and it fits the client-side philosophy — validation happens where th
 coins are. Public auditability of supply (§4.9) is unaffected, since it depends
 only on the tagged mint/redeem stream.
 
+### 4.7.2 Batching: combining many anchors into one transaction
+
+The format above costs one Bitcoin transaction per anchor, capping aggregate
+throughput at the per-transaction level (on the order of 100 anchors per second
+even with the entire block space). **Batching** lifts the cap to the
+per-*envelope* level by carrying many transfers' payloads in one transaction —
+and it is safe against an untrusted coordinator because of the same binding
+discipline as §4.7:
+
+1. A coordinator (any client, or a dedicated but *untrusted* batching service)
+   announces a batch with a pre-committed funding outpoint `X` and a cutoff.
+2. Each sender computes their payload **locally**, `P_i = H("bind" ∥ nf_i ∥ X)`,
+   and sends only `P_i` to the coordinator — 24 bytes that go on-chain anyway.
+   The coordinator learns nothing: `nf_i` is a preimage away, so a batcher can
+   combine but never forge. This is the same pre-commit handshake as the
+   fee-service case of §4.7.
+3. The batch transaction carries, in a witness envelope (magic tag plus the
+   payloads as stack items), the full payload list; output 0 holds a batch
+   header `OP_RETURN ∥ [count ∥ H("batch" ∥ P_1 ∥ … ∥ P_n ∥ ctx)]`; output 1
+   is the constant marker (one marker per batch, so filter discovery works
+   unchanged). `ctx` is the funding outpoint `X`, shared by every payload in
+   the batch. Witness carriage is used because OP_RETURN standardness caps
+   payloads at ~80 bytes (~3 records), while the witness discount makes
+   payloads four times cheaper and allows thousands per envelope.
+4. If the coordinator drops a payload or double-spends `X`, nothing binding is
+   published: the affected senders simply re-bind to another context and anchor
+   elsewhere. The coordinator's trust scope is *liveness only*.
+
+Occurrence semantics are unchanged: an occurrence of `nf` is a payload `P` in a
+batch envelope with `P == H("bind" ∥ nf ∥ ctx)` and the batch commitment
+recomputing over the envelope's payloads; recipients' consignments name
+`(txid, envelope_index)` instead of a solo anchor position, and exclusion scans
+read envelope payloads from fetched blocks exactly as solo records. A batch is,
+to the verification model, just a busier anchor.
+
+Batching is **optional**: interactive solo anchors remain the default for
+latency-sensitive sends, with batching for throughput-tolerant sends and fee
+sharing. Two privacy notes: batch members are co-timed (an observer learns that
+these payments happened together — not amounts, assets, or owners), and
+senders should treat batch composition like coinjoin participation. The
+cross-user coordination ("gossip") layer is transport-agnostic by design — any
+messaging channel can carry the two-round handshake; the protocol requires
+nothing of it beyond delivering 24-byte payloads.
+
 ### 4.7.1 Client chain views: scan-first indexing
 
 How does a wallet — especially a phone — obtain the chain data that `Accept`

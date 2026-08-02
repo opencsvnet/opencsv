@@ -220,6 +220,22 @@
     a 113-block chain. Two implementations, one protocol, zero coordination.</p>
   </div>
 
+  <div class="entry">
+    <div class="date">2026-08-01</div>
+    <h2>Batching: from ~100 anchors/s to thousands, with an untrusted batcher</h2>
+    <p>The per-transaction ceiling broke. Paper §4.7.2 adds optional batching:
+    a coordinator pre-commits a funding outpoint; each sender computes their
+    payload <em>locally</em> (<code>P_i = H("bind" ∥ nf_i ∥ X)</code>) and hands
+    over only 24 bytes — so the batcher combines but can never forge (preimage).
+    Payloads ride a witness envelope (4× cheaper than OP_RETURN, thousands per
+    envelope), one constant marker per batch keeps filter discovery unchanged,
+    and occurrence semantics are untouched: a batch is just a busier anchor.
+    Silent payments was considered for coordination and <b>rejected</b>: ECDH
+    breaks the quantum-clean anchor layer, and per-output EC scanning is
+    strictly costlier than GCS filter matching on mobile. The v2 shape is
+    coinjoin-style co-funded batches — each sender signs their own input.</p>
+  </div>
+
 </div>
 
 <footer>
