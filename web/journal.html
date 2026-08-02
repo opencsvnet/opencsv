@@ -222,7 +222,21 @@
 
   <div class="entry">
     <div class="date">2026-08-02</div>
-    <h2>The mempool sentinel: five takes, one root cause</h2>
+    <h2>Verify-then-adopt becomes real: the kernel is carved and proved</h2>
+    <p>The Track-A thesis landed end to end. <code>opencsv-kernel</code>
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/b64bdf4">b64bdf4</a>)
+    carves the pure decision logic out of core in Aeneas shape — 8/8
+    equivalence tests against the original code. And the new
+    <a href="https://github.com/opencsvnet/formal-aeneas">formal-aeneas</a>
+    repo (<code>21364ac</code>) holds four sorry-free refinement theorems:
+    the translated Rust binding, occurrence test, first-occurrence, and supply
+    equation are each proved equal to the Lean specification. The supply-loop
+    proof took a real fight (maxRecDepth explosions until the recursive-theorem
+    style was abandoned for the library's loop induction principle). The
+    distinction that matters: this is no longer "a model that corresponds to
+    the code" — it's the code, proved. Adoption (shipping the verified kernel
+    in core and the FFI) is the next decision.</p>
+  </div>
     <p>The iOS host's forensic hunt (five takes, three logging builds) isolated
     why every fresh mint verified everywhere <em>except</em> the phone's
     crediting path: consignments written while the anchor is still in the
