@@ -222,7 +222,17 @@
 
   <div class="entry">
     <div class="date">2026-08-02</div>
-    <h2>The Aeneas verdict: full-crate dies, kernel-extraction lives</h2>
+    <h2>Serverless crediting: the last server leaves the frame</h2>
+    <p>One small function closed the last trust gap in the receive path:
+    <code>opencsv_scan_export_snapshot</code>
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/290c8e0">290c8e0</a>)
+    projects the phone's own filter-scanned index into the snapshot format the
+    crediting verifier already consumes. The headline test is the property the
+    whole project aims at: a real consignment, verified and credited, with
+    <b>no RPC, no indexer, no anchor server — zero servers anywhere in
+    frame</b>. Bonus find: a latent ~1% tag-collision flake in fixed-seed test
+    anchors, hunted down and fixed with a retry harness across the suites.</p>
+  </div>
     <p>The feasibility spike for verifying the Rust implementation directly
     returned a clean split. Dead: full-crate Aeneas — a charon bug on std
     iterator impls our hashing pulls in, dyn-trait and GAT rejection, and an
