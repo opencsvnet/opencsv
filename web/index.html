@@ -61,6 +61,10 @@
   .shot figcaption code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
   .provenance { color: var(--muted); font-family: var(--mono); font-size: 12px; margin: -24px 0 32px; }
 
+  .watch { text-align: center; }
+  .watch video { width: 100%; max-width: 880px; border-radius: 12px; border: 1px solid var(--border); display: block; margin: 0 auto; }
+  .watch .note { color: var(--muted); font-size: 14px; margin-top: 12px; }
+
   footer { padding: 48px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
   footer ul { list-style: none; margin-top: 8px; }
   footer li { margin: 4px 0; }
@@ -80,6 +84,22 @@
     </div>
   </div>
 </header>
+
+<section id="watch">
+  <div class="wrap watch">
+    <h2>Watch it end to end</h2>
+    <p class="sub" style="margin-left:auto;margin-right:auto">Eighty seconds:
+    mint, anchor, off-chain transport, scan-first verification, batching —
+    and what you trust.</p>
+    <video controls preload="metadata" poster="animation/out/poster.png">
+      <source src="animation/out/opencsv-e2e.mp4" type="video/mp4">
+      Your browser does not support the video tag; download
+      <a href="animation/out/opencsv-e2e.mp4">opencsv-e2e.mp4</a> instead.
+    </video>
+    <p class="note">Rendered with Remotion from
+    <a href="https://github.com/opencsvnet/opencsv/tree/main/web/animation"><code>web/animation</code></a>.</p>
+  </div>
+</section>
 
 <section id="how">
   <div class="wrap">

@@ -12,7 +12,7 @@ export const Anchor = () => {
   const x1 = interpolate(split, [0, 1], [430, 330]);
   const x2 = interpolate(split, [0, 1], [430, 540]);
   const chipX = interpolate(fly, [0, 1], [330, 700]);
-  const chipY = interpolate(fly, [0, 1], [300, 520]);
+  const chipY = interpolate(fly, [0, 1], [300, 462]);
 
   return (
     <Scene
@@ -57,10 +57,10 @@ export const Anchor = () => {
       ) : null}
 
       {/* chain: OP_RETURN + marker */}
-      <ChainStrip y={600} blocks={7} delay={40} highlight={4} />
+      <ChainStrip y={540} blocks={7} delay={40} highlight={4} />
       <ChainBox
         x={700}
-        y={520}
+        y={460}
         w={330}
         h={56}
         color={C.blue}
@@ -71,12 +71,12 @@ export const Anchor = () => {
       />
       <ChainBox
         x={1060}
-        y={520}
-        w={150}
+        y={460}
+        w={170}
         h={56}
         color={C.blue}
         title="marker"
-        sub="546 sats · constant"
+        sub="546 sats · dust"
         delay={196}
         glow
       />
@@ -84,7 +84,7 @@ export const Anchor = () => {
       {dust > 0 ? (
         <Coin
           x={1135}
-          y={interpolate(dust, [0, 1], [420, 494])}
+          y={interpolate(dust, [0, 1], [380, 436])}
           r={13}
           delay={0}
           label=""

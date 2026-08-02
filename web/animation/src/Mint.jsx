@@ -56,14 +56,14 @@ export const Mint = () => {
 
       {/* coins */}
       <Coin x={620} y={250} r={44} delay={50} label="100" />
-      <Coin x={760} y={220} r={30} delay={64} label="₿" dim={false} />
-      <Coin x={860} y={280} r={24} delay={78} label="·" />
+      <Coin x={760} y={220} r={30} delay={64} label="" dim={false} />
+      <Coin x={860} y={280} r={24} delay={78} label="" />
 
       {/* chain + MINT anchor drop */}
       <ChainStrip y={560} blocks={6} delay={90} highlight={5} />
       <ChainBox
-        x={830}
-        y={interpolate(drop, [0, 1], [420, 516])}
+        x={470}
+        y={interpolate(drop, [0, 1], [420, 496])}
         w={330}
         h={58}
         color={C.orange}
