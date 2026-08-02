@@ -191,7 +191,7 @@
     <p class="sub" style="margin-top:16px">Notable by absence: the first-occurrence
     lemmas are pure list reasoning and depend on <em>no</em> cryptographic axioms
     at all.</p>
-    <h3 style="margin-top:28px">Live from the build</h3>
+    <h3 style="margin-top:28px">Specification audit — live from the build</h3>
     <p class="sub">Regenerated weekly by CI from <code>axiom-audit.txt</code> in
     opencsv-formal — this block can never drift from the actual proofs.</p>
     <!-- GEN-AXIOM-TABLE:BEGIN -->
@@ -231,7 +231,34 @@
 </table>
 <p class="gen-summary">29 theorems, audited 2026-08-02 from <code>axiom-audit.txt</code> @ 2b42286</p>
 <!-- GEN-AXIOM-TABLE:END -->
-    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-02 01:34 UTC · build green · opencsv-formal@2b42286<!-- /GEN-PROVENANCE --></p>
+    <h3 style="margin-top:28px">Translated Rust audit — live from the build</h3>
+    <p class="sub">This is a separate audit of the Aeneas-translated
+    <code>opencsv-kernel</code> refinements. Its 15 declarations do not inflate
+    the 29 specification-theorem count above.</p>
+    <!-- GEN-AENEAS-AXIOM-TABLE:BEGIN -->
+<table>
+  <thead><tr><th>Rust refinement declaration</th><th>Axiom dependencies</th></tr></thead>
+  <tbody>
+    <tr><td><code>opencsv_kernel.array_eq_decide_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.audit_equation</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.binding_eq_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+    <tr><td><code>opencsv_kernel.first_occurrence_iff_isFirstOccurrence</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+    <tr><td><code>opencsv_kernel.first_occurrence_none_no_occurrence</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+    <tr><td><code>opencsv_kernel.first_occurrence_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+    <tr><td><code>opencsv_kernel.specFirstOccList_bridge</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.specFirstOccList_none</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.supply_fold_split</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.supply_loop_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>I128.Insts.CoreConvertFromU64.from</code></td></tr>
+    <tr><td><code>opencsv_kernel.supply_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>I128.Insts.CoreConvertFromU64.from</code></td></tr>
+    <tr><td><code>opencsv_kernel.truncate24_loop_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.truncate24_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>opencsv_kernel.well_formed_pure_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+    <tr><td><code>opencsv_kernel.well_formed_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+  </tbody>
+</table>
+<p class="gen-summary">15 audited declarations, audited 2026-08-02 from <code>axiom-audit.txt</code> @ 3bcafed</p>
+<!-- GEN-AENEAS-AXIOM-TABLE:END -->
+    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-02 20:18 UTC · both builds green · opencsv-formal@2b42286 · formal-aeneas@3bcafed<!-- /GEN-PROVENANCE --></p>
   </div>
 </section>
 
@@ -282,10 +309,11 @@
     <ol class="roadmap">
       <li class="done">
         <h3>CI axiom gating — shipped</h3>
-        <p>Every headline theorem's <code>#print axioms</code> output is
-        normalized into a checked-in baseline; CI fails if any assumption set
-        changes without a human regenerating it in the same commit. The honesty
-        table on this page is an enforced invariant, not a claim.</p>
+        <p>Every headline specification theorem and translated-Rust refinement
+        declaration has its <code>#print axioms</code> output normalized into a
+        checked-in baseline. CI builds both Lean projects and refuses to publish
+        if either assumption set drifts. The two honesty tables on this page are
+        enforced invariants, not claims.</p>
       </li>
       <li class="done">
         <h3>Limb-arithmetic soundness — shipped</h3>
