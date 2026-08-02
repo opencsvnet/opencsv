@@ -222,7 +222,21 @@
 
   <div class="entry">
     <div class="date">2026-08-02</div>
-    <h2>Serverless crediting: the last server leaves the frame</h2>
+    <h2>The mempool sentinel: five takes, one root cause</h2>
+    <p>The iOS host's forensic hunt (five takes, three logging builds) isolated
+    why every fresh mint verified everywhere <em>except</em> the phone's
+    crediting path: consignments written while the anchor is still in the
+    mempool carry a sentinel location, and only the snapshot verify did a
+    location-strict lookup. The fix
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/1616397">1616397</a>)
+    had its own twist: patching <code>locate()</code> alone wouldn't have
+    worked — the accept driver consults <code>anchor_at</code> and
+    <code>ctx_at</code> first, so the sentinel resolution now lives in a shared
+    <code>find()</code> across all three lookups. Their side-effects were just
+    as valuable: chain-lag rejections reclassified from final to
+    withheld-retryable (a race mainnet would have made constant), and Signal's
+    attachment dedup-by-content recorded as a protocol note.</p>
+  </div>
     <p>One small function closed the last trust gap in the receive path:
     <code>opencsv_scan_export_snapshot</code>
     (<a href="https://github.com/opencsvnet/opencsv-rs/commit/290c8e0">290c8e0</a>)
