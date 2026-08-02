@@ -26,11 +26,16 @@
   h2 { font-size: 26px; margin-bottom: 10px; }
   .sub { color: var(--muted); max-width: 760px; margin-bottom: 28px; }
 
-  .thm { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; }
+  .thm { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px;
+         display: flex; gap: 24px; align-items: flex-start; }
+  .thm .thm-text { flex: 1; }
   .thm h3 { font-size: 18px; margin-bottom: 6px; }
   .thm h3 .id { font-family: var(--mono); color: var(--accent); font-size: 14px; margin-right: 8px; }
   .thm p { color: var(--muted); font-size: 15px; }
   .thm code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+  .thm video, .rmv { width: 400px; max-width: 100%; border-radius: 10px; border: 1px solid var(--border); flex-shrink: 0; display: block; }
+  .rmv { margin-top: 14px; }
+  @media (max-width: 860px) { .thm { flex-direction: column; } .thm video { width: 100%; } }
 
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
@@ -117,19 +122,26 @@
     live, independent of any cryptography.</p>
 
     <div class="thm">
+      <div class="thm-text">
       <h3><span class="id">T1</span>Inflation soundness</h3>
       <p>Along any valid trace, per asset: net value in circulation equals
       <code>Σ mints − Σ redeems</code>, and every mint carries a valid issuer
       signature. Nobody prints money — not the users, not a forger, and not the
       issuer beyond its own signed, publicly anchored mints. Paper §5.1.</p>
+      </div>
+      <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T1-inflation.mp4"></video>
     </div>
     <div class="thm">
+      <div class="thm-text">
       <h3><span class="id">T2</span>Conservation</h3>
       <p>Every transfer step preserves per-asset totals: outputs sum to inputs,
       so shielded transfers can neither create nor destroy value — which is what
       makes the public mint/redeem stream an exact audit of supply. Paper §4.5.</p>
+      </div>
+      <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T2-conservation.mp4"></video>
     </div>
     <div class="thm">
+      <div class="thm-text">
       <h3><span class="id">T3</span>Nullifier uniqueness &amp; first occurrence</h3>
       <p>One coin yields exactly one nullifier, so a double-spend is an
       <em>observable</em> conflict to anyone holding <code>nf</code> (owner and
@@ -140,13 +152,18 @@
       is provably invisible (<code>griefer_copy_invisible</code>), and an
       adversary who doesn't know <code>nf</code> can forge no occurrence at all
       (<code>no_occurrence_without_knowledge</code>). Paper §5.2, §4.7.</p>
+      </div>
+      <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T3-nullifiers.mp4"></video>
     </div>
     <div class="thm">
+      <div class="thm-text">
       <h3><span class="id">T4</span>Receiver correctness</h3>
       <p>The receiver's <code>Accept</code> checklist (verify proof, check anchor,
       check no earlier occurrence, check ownership) succeeds only on transactions
       that extend a valid trace — recipients can't be fooled into accepting
       counterfeit coins, modulo proof-system soundness. Paper §4.8, §5.1.</p>
+      </div>
+      <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T4-receiver.mp4"></video>
     </div>
   </div>
 </section>
@@ -280,6 +297,7 @@
         (scan-first ≡ full-block scanning), marker zero-authority, accelerator
         fraud-provability. The N-of-M honesty hypothesis is eliminated — the
         architecture got better, so the assumptions got fewer.</p>
+        <video class="rmv" muted loop playsinline controls preload="metadata" src="animation/out/formals/Scan-soundness.mp4"></video>
       </li>
       <li>
         <h3>Differential testing, model ↔ code</h3>

@@ -6,6 +6,7 @@
   "scripts": {
     "render": "remotion render OpenCSV-E2E out/opencsv-e2e.mp4 --codec=h264 --crf=23",
     "still": "remotion still OpenCSV-E2E out/poster.png",
+    "formals": "for id in T1-inflation T2-conservation T3-nullifiers T4-receiver Scan-soundness; do remotion render $id out/formals/$id.mp4 --codec=h264 --crf=24; done",
     "studio": "remotion studio"
   },
   "dependencies": {
