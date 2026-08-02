@@ -246,11 +246,17 @@
         and FRI's soundness enter as axioms. Mechanizing them is research-grade
         work (and, for FRI, an active area elsewhere), not something this project
         claims.</p></li>
-      <li><b>2. The model is not the code.</b>
-        <p>The Lean development verifies a state machine that <em>corresponds</em>
-        to the Rust circuits; the correspondence is documented, not machine-checked.
-        The circuits could drift from the model and nothing would catch it
-        automatically — which is exactly what roadmap items 1–2 below attack.</p></li>
+      <li><b>2. The model is not the code — partially closed.</b>
+        <p>As of 2026-08-02 the correspondence is <em>machine-checked for the
+        kernel</em>: <a href="https://github.com/opencsvnet/formal-aeneas">formal-aeneas</a>
+        translates <code>opencsv-kernel</code> (binding, occurrence test,
+        first-occurrence, supply audit) from Rust into Lean 4 and proves it
+        equal to this specification — sorry-free, audited. Two honest
+        remainders: (a) <em>coverage</em> — the trait-heavy accept() driver,
+        scan engine, and chain backends are not yet translated, and (b)
+        <em>adoption</em> — production still runs the original core code
+        (equivalence-tested against the kernel), until Track A4 swaps the
+        verified kernel in as the shipped implementation.</p></li>
       <li><b>3. The chain-view assumption is explicit — and shrinking.</b>
         <p>The deployment moved to scan-first indexing (paper §4.7.1): exclusion
         is a <em>local</em> check over a filter-discovered candidate set, verified
@@ -306,11 +312,13 @@
         between the verified model and the implementation empirically.</p>
       </li>
       <li>
-        <h3>Lean-extracted accept logic in production</h3>
-        <p>The anchor/occurrence/accept logic is pure logic over an abstract
-        hash — extract the <em>verified</em> Lean functions to C and call them
-        from Rust. "The model is the code" for the layer that decides whether
-        money moves.</p>
+        <h3>Verify-then-adopt: the kernel becomes the shipped code</h3>
+        <p>The kernel (<code>opencsv-kernel</code>) is already proved equal to
+        this specification in formal-aeneas. The remaining step is adoption:
+        opencsv-core and the FFI call the verified kernel as the production
+        implementation, and the accept() decision driver gets its own pure
+        kernel (the big design item, A5). "The model is the code" by
+        verification-and-adoption, not by extraction.</p>
       </li>
       <li>
         <h3>PCD-tree model</h3>
