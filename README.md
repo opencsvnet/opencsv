@@ -23,7 +23,7 @@ a 64-byte on-chain footprint per transaction.
   asset's genesis parameters.
 
 **Read the paper: [`paper/opencsv.md`](paper/opencsv.md)** — and the explainer site
-at [`web/index.html`](web/index.html).
+at [`index.html`](index.html).
 
 ## Status
 

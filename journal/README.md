@@ -137,6 +137,16 @@ theorems, no new axioms
 N-of-M honesty hypothesis is **eliminated from the roadmap** — the
 architecture got better, so the assumptions got fewer.
 
+## 2026-08-02 — The project domain gets a real front door
+
+The GitHub Pages project site originally kept its homepage under `web/` and
+used a root meta-refresh. The `opencsv.net` cutover makes the repository root
+the canonical homepage instead: assets remain grouped under `web/`, while the
+old `web/index.html` becomes a compatibility redirect. The ordering is part of
+the design, not deployment trivia: verify domain ownership and DNS before
+changing the Pages custom domain, so the working `github.io` site never
+redirects into an unresolved hostname.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

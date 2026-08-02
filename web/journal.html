@@ -48,7 +48,7 @@
     <h1>The Open<span class="csv">CSV</span> Journal</h1>
     <p class="tagline">Discoveries and how the architecture evolved — told as it
     happened, with the receipts linked.</p>
-    <p class="back"><a href="index.html">← home</a> · <a href="formal.html">formal verification</a> · <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">source</a></p>
+    <p class="back"><a href="../">← home</a> · <a href="formal.html">formal verification</a> · <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">source</a></p>
   </div>
 </header>
 
@@ -299,6 +299,19 @@
     breaks the quantum-clean anchor layer, and per-output EC scanning is
     strictly costlier than GCS filter matching on mobile. The v2 shape is
     coinjoin-style co-funded batches — each sender signs their own input.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-02</div>
+    <h2>The project domain gets a real front door</h2>
+    <p>The GitHub Pages project site originally kept its homepage under
+    <code>web/</code> and used a root meta-refresh. The
+    <code>opencsv.net</code> cutover makes the repository root canonical:
+    assets stay grouped under <code>web/</code>, while the old
+    <code>web/index.html</code> becomes a compatibility redirect. Ordering is
+    part of the design: domain ownership and DNS must verify before the Pages
+    custom-domain flip, so the working <code>github.io</code> site never
+    redirects into an unresolved hostname.</p>
   </div>
 
 </div>
