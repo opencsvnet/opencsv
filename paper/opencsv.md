@@ -929,7 +929,7 @@ uniqueness. These are *protocol logic* — independent of the SNARK — and are 
 to mechanized proof.
 
 **Specification ledger (implemented):** a dependency-free Lean 4 development
-with 29 sorry-free, CI-audited theorems covering:
+with 54 sorry-free, CI-audited theorems covering:
 
 1. **Abstract interfaces** — commitment scheme, signature scheme, PRF, each with its
    security property stated as an explicit hypothesis (binding, EUF-CMA,
@@ -954,8 +954,8 @@ The separate `formal-aeneas` project translates the pure Rust kernel and proves
 15 audited declarations/refinements for binding, occurrence, first-occurrence,
 and supply. The reproducible dependency/audit commit has a green hosted receipt
 and was fast-forwarded to `formal-aeneas/main` without rewriting history. A4/A5
-implement verify-then-adopt and a pure receiver-decision boundary on a
-merge-gated Rust descendant.
+implement verify-then-adopt and a pure receiver-decision boundary on
+`opencsv-rs/main`.
 
 Deliberately not mechanized: AIR/FRI soundness, Poseidon security, Bitcoin
 consensus/backends, networking, storage, and the root-circuit allowlist. These
@@ -997,7 +997,7 @@ Current explicit proof gaps are single-asset transfers and distribution of an
 allowlist for accepted self-described root-circuit commitments.
 
 **Formal verification (specification and Rust adoption merged).** The
-dependency-free Lean project has 29 sorry-free audited specification theorems,
+dependency-free Lean project has 54 sorry-free audited specification theorems,
 including limb arithmetic, batching, and scan-exclusion soundness. The separate
 Aeneas project has 15 audited declarations on its default branch connecting
 translated `opencsv-kernel` Rust to binding, occurrence, first-occurrence, and
@@ -1019,6 +1019,10 @@ real multi-party regtest transaction, unanimous replacement, BIP158 discovery,
 authenticated peer gossip, durable reservations, and exact-manifest recovery
 are implemented. The newest adversarial fixes—historical-v2 live rejection and
 one absolute frame deadline—are on `opencsv-rs/main`.
+The C3 Lean model is also on `opencsv-formal/main`: exact participant/output
+alignment, allocation and conservation, duplicate-field and reusable-output
+guards, sign-time freshness, fail-closed versioning, and conforming replacement
+are covered by the 54-declaration checked audit.
 
 **Signal transport (prototype live-tested; final product last).** Production
 Signal carried consignments in both directions on a physical iPhone and rendered

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — Formal Verification</title>
-<meta name="description" content="OpenCSV formal verification: 29 audited protocol theorems, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
+<meta name="description" content="OpenCSV formal verification: 54 audited protocol theorems, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -199,12 +199,37 @@
 <table>
   <thead><tr><th>Theorem</th><th>Axiom dependencies</th></tr></thead>
   <tbody>
+    <tr><td><code>OpenCsv.Batch.allocated_charge_base</code></td><td><code>propext</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.allocated_charge_high</code></td><td><code>propext</code></td></tr>
     <tr><td><code>OpenCsv.Batch.batch_commit_unique</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Batch.batch_exclusion_sound</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Batch.batch_occurrence_iff</code></td><td><code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.batch_v2_exclusion_sound</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.batch_v2_occurrence_iff</code></td><td><code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.c1_two_party_initial_valid</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.c1_two_party_replacement_conforms</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.c1_two_party_replacement_valid</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.canonical_adjacent_swap_rejected</code></td><td><code>propext</code></td></tr>
     <tr><td><code>OpenCsv.Batch.chainOccurrence_expandWindow</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.chainOccurrence_expandWindow_v2</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Batch.coordinator_cannot_forge</code></td><td><code>OpenCsv.KnowsRawNf</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.occurrence_requires_knowledge</code></td></tr>
     <tr><td><code>OpenCsv.Batch.coordinator_envelope_no_occurrence</code></td><td><code>OpenCsv.KnowsRawNf</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.occurrence_requires_knowledge</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.manifest_c1_guards</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.manifest_fixed_positions</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.manifest_participant_alignment</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.manifest_value_conservation</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.manifest_vector_lengths</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.max_signed_weight_at_cap</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.participant_funding_conservation</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.proposal_id_unique</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.replacement_monotone</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.replacement_preserves_header</code></td><td><code>OpenCsv.bindHash</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.replacement_preserves_marker</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.replacement_preserves_stock</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.replacement_requires_unanimity</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.signer_receipt_fresh</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Batch.versioned_commit_no_fallback</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code></td></tr>
+    <tr><td><code>OpenCsv.Batch.versioned_commit_unique</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Scan.anchor_bearing_is_candidate</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Scan.filter_absence_trustless</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Scan.filter_no_false_negatives</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
@@ -230,12 +255,12 @@
     <tr><td><code>OpenCsv.unknowing_adversary_entry_invisible</code></td><td><code>propext</code>, <code>OpenCsv.KnowsRawNf</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.occurrence_requires_knowledge</code></td></tr>
   </tbody>
 </table>
-<p class="gen-summary">29 theorems, audited 2026-08-02 from <code>axiom-audit.txt</code> @ 2b42286</p>
+<p class="gen-summary">54 theorems, audited 2026-08-03 from <code>axiom-audit.txt</code> @ c4f970d</p>
 <!-- GEN-AXIOM-TABLE:END -->
-    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-02 01:34 UTC · build green · opencsv-formal@2b42286<!-- /GEN-PROVENANCE --></p>
+    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-03 17:29 UTC · build green · opencsv-formal@c4f970d<!-- /GEN-PROVENANCE --></p>
     <h3 style="margin-top:28px">Translated Rust audit — merged reproducibility receipt</h3>
     <p class="sub">A separate audit of the Aeneas-translated
-    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 29
+    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 54
     specification-theorem count above. The exact green commit was
     fast-forwarded without rewriting history and is now the default
     <code>formal-aeneas</code> branch.</p>
@@ -341,18 +366,26 @@
         <video class="rmv" muted loop playsinline controls preload="metadata" src="animation/out/formals/Scan-soundness.mp4"></video>
       </li>
       <li class="done">
-        <h3>Differential testing, model ↔ code — review branch</h3>
+        <h3>Differential testing, model ↔ code — shipped</h3>
         <p>Generated valid and mutated traces dual-run legacy decisions and the
-        adopted kernel. The receipt is complete on the A4 branch; merge remains
-        independently gated.</p>
+        adopted kernel. The exact receipt and generated mutation corpus are on
+        <code>opencsv-rs/main</code>.</p>
       </li>
       <li class="done">
-        <h3>Verify-then-adopt — implemented, merge-gated</h3>
+        <h3>Verify-then-adopt — shipped</h3>
         <p>Core/FFI binding, occurrence, first-occurrence, and supply use the
         verified kernel, and receiver decisions pass through a pure A5 boundary
-        with stable rejection reasons. The code exists on the reviewed
-        integration lineage; this page does not call it merged before its exact
-        CI/re-review gate closes.</p>
+        with stable rejection reasons on <code>opencsv-rs/main</code>. The
+        independent adversarial review was deferred by the owner, not recorded
+        as completed; later findings are fix-forward work.</p>
+      </li>
+      <li class="done">
+        <h3>Co-funded batching v2 model — shipped</h3>
+        <p><code>opencsv-formal/main@c4f970d</code> fixes transaction positions,
+        fee allocation and conservation, fail-closed domains, replacement,
+        duplicate-field and reusable-output guards, and sign-time readiness.
+        Exact hosted CI passed and the checked specification audit now covers
+        54 declarations.</p>
       </li>
       <li>
         <h3>PCD-tree model</h3>

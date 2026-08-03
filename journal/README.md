@@ -272,9 +272,14 @@ a universal protocol constant, and proof-bearing signer readiness separates
 verified public inputs from each signer's private reservation. Corrective
 commit
 [`a831b13`](https://github.com/opencsvnet/opencsv-formal/commit/a831b13bd80384cd14fc0aeaf38c126707a7c5d4)
-has a green hosted check on
-[PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2) and remains
-review-gated.
+closed that gap. Final comparison against frozen C1 then found missing
+duplicate operation/payload/change-script rejection, reusable stock/change
+floors, and nonzero proposal guards. Those are now explicit in the
+assumption-free `manifest_c1_guards` receipt. Corrective
+[`c4f970d`](https://github.com/opencsvnet/opencsv-formal/commit/c4f970da787b0d1a8a3057982c202f68f8dc6834)
+passed exact hosted CI, expanded the checked audit to 54 declarations, and was
+fast-forwarded to `opencsv-formal/main` through
+[PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2).
 
 ## 2026-08-03 — Signal owns the fee wallet; Bitcoin is gas only
 

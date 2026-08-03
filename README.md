@@ -60,7 +60,7 @@ asset wallet and a BIP84 Bitcoin **fee** wallet; there is no anchor server and
 no arbitrary-Bitcoin-send API. The hardened Rust account-wallet foundation is
 on `opencsv-rs/main`; Signal-iOS integration remains the final codebase.
 
-Formal evidence is kept in two ledgers rather than one inflated count: 29
+Formal evidence is kept in two ledgers rather than one inflated count: 54
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations
 covering the Aeneas-translated Rust kernel refinements, now on
 `formal-aeneas/main` at `3bcafed`. See the
@@ -72,7 +72,7 @@ covering the Aeneas-translated Rust kernel refinements, now on
 |---|---|
 | **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — canonical homepage (`index.html`), site assets/pages (`web/`), paper (`paper/`), and journal (`journal/`) |
 | **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, SPV light client + scan engine, bitcoind backend, wallet CLI, Signal transport |
-| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (29 audited theorems): inflation, conservation, nullifier/occurrence, receiver correctness, limb soundness, batching, scan exclusion |
+| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (54 audited theorems): inflation, conservation, nullifier/occurrence, receiver correctness, limb soundness, batching v2, scan exclusion |
 | **[formal-aeneas](https://github.com/opencsvnet/formal-aeneas)** | Separate Lean 4.31 + mathlib project connecting the Aeneas-translated pure Rust kernel to the specification (15 audited declarations on the green reproducibility receipt) |
 
 ## Reference

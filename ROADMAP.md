@@ -17,7 +17,7 @@ iPhone transfer proving); real Bitcoin anchoring (regtest e2e and live signet
 receipts); scan-first indexing (no-RPC/no-indexer verification and
 cross-implementation anchor discovery); co-funded batching v2 with real
 three-peer gossip→broadcast→replacement evidence; retarget-correct signet
-header sync; and 29 CI-gated Lean specification theorems. The separate Aeneas
+header sync; and 54 CI-gated Lean specification theorems. The separate Aeneas
 project has 15 audited translated-Rust declarations on its default branch.
 
 The August 1 Signal-iOS prototype remains valid evidence for encrypted
@@ -78,14 +78,14 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   durable reservations and exact-manifest recovery. The TCP/CLI relay key is a
   transport profile, not a Signal protocol requirement. Historical v2 is
   read-only; new sessions use the safe-marker v3 profile.
-- **C3. Lean extension** [CORRECTED, GREEN REVIEW PR]: co-funded batch model
+- **C3. Lean extension** [DONE ON MAIN, `c4f970d`]: co-funded batch model
   reusing `OpenCsv.Batch`. Review found that the first replacement relation
-  did not require valid endpoint manifests; commit `a831b13` closes that gap,
-  separates the 64-participant reference policy from protocol validity, and
-  adds proof-bearing signer freshness/readiness. Default `opencsv-formal`
-  still carries the earlier batch-envelope model until
-  [PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2) is reviewed and
-  merged.
+  did not require valid endpoint manifests; `a831b13` closed that gap. Final
+  C1 reconciliation then added duplicate-field rejection, reusable
+  stock/change floors, nonzero proposal guards, and corrected the
+  64-participant label to reference policy. The checked audit now covers 54
+  declarations; [PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2)
+  records the exact fast-forward.
 - Recorded rejection: silent payments for coordination (quantum break; EC-scan
   costlier than GCS filters on mobile).
 
@@ -135,7 +135,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
    on exact green candidate CI. The owner deferred the outstanding independent
    adversarial re-review; it is not represented as completed, and later findings
    must be fixed forward.
-2. Review and merge the corrected C3 formal model.
+2. The corrected C3 formal model is merged on exact green CI at `c4f970d`.
 3. Finish reference signet acceptance, security review, and reproducible
    packaging. No release or mainnet broadcast is implied.
 4. Last: fresh Signal-iOS checkout, in-place migration, both build flags,

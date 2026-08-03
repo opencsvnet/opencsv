@@ -347,11 +347,13 @@
     <code>ConformingReplacement</code> did not require either endpoint manifest
     to be valid. It therefore admitted marker and conservation mutations. The
     corrective <a href="https://github.com/opencsvnet/opencsv-formal/commit/a831b13bd80384cd14fc0aeaf38c126707a7c5d4"><code>a831b13</code></a>
-    requires valid endpoints, proves marker preservation, separates the
-    64-participant reference policy from protocol validity, and adds
-    proof-bearing signer freshness/readiness. Its hosted check is green on
-    <a href="https://github.com/opencsvnet/opencsv-formal/pull/2">PR #2</a>;
-    review and merge remain pending.</p>
+    requires valid endpoints and proves marker preservation. Final C1
+    reconciliation then added duplicate operation/payload/change-script
+    rejection, reusable stock/change floors, and nonzero proposal guards in
+    <a href="https://github.com/opencsvnet/opencsv-formal/commit/c4f970da787b0d1a8a3057982c202f68f8dc6834"><code>c4f970d</code></a>.
+    Exact hosted CI passed, the checked audit expanded to 54 declarations, and
+    <a href="https://github.com/opencsvnet/opencsv-formal/pull/2">PR #2</a>
+    records the fast-forward to <code>opencsv-formal/main</code>.</p>
   </div>
 
   <div class="entry">
