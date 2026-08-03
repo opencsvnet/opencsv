@@ -284,12 +284,11 @@
         translates <code>opencsv-kernel</code> (binding, occurrence test,
         first-occurrence, supply audit) from Rust into Lean 4 and proves it
         equal to this specification — sorry-free, audited. Two honest
-        remainders: (a) <em>coverage</em> — proof, scan, storage, and chain I/O
-        are not translated, and (b) <em>merge state</em> — A4 adopts binding,
-        occurrence, first-occurrence, and supply through the verified kernel,
-        while A5 projects receiver decisions through a pure accept boundary,
-        but that descendant is still behind hosted-CI and independent-review
-        gates.</p></li>
+        remainder: <em>coverage</em> — proof, scan, storage, and chain I/O are
+        not translated. A4 now adopts binding, occurrence, first-occurrence,
+        and supply through the verified kernel on <code>opencsv-rs/main</code>;
+        A5 projects receiver decisions through a pure accept boundary on that
+        same line.</p></li>
       <li><b>3. The chain-view assumption is explicit — and shrinking.</b>
         <p>The deployment moved to scan-first indexing (paper §4.7.1): exclusion
         is a <em>local</em> check over a filter-discovered candidate set, verified

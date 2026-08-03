@@ -996,17 +996,16 @@ profiles are recorded in
 Current explicit proof gaps are single-asset transfers and distribution of an
 allowlist for accepted self-described root-circuit commitments.
 
-**Formal verification (specification merged; Rust adoption review-gated).** The
+**Formal verification (specification and Rust adoption merged).** The
 dependency-free Lean project has 29 sorry-free audited specification theorems,
 including limb arithmetic, batching, and scan-exclusion soundness. The separate
 Aeneas project has 15 audited declarations on its default branch connecting
 translated `opencsv-kernel` Rust to binding, occurrence, first-occurrence, and
-supply specifications. A4/A5 adopt that kernel and a pure
-receiver-decision boundary on a descendant branch; exact hosted CI and
-independent review remain merge gates. Proof-system soundness, Poseidon2
+supply specifications. A4/A5 adopt that kernel and a pure receiver-decision
+boundary on `opencsv-rs/main`. Proof-system soundness, Poseidon2
 cryptanalysis, chain backends, storage, and networking are not mechanized.
 
-**Scan-first indexing and readiness (implemented; latest receipts review-gated).**
+**Scan-first indexing and readiness (implemented on main; release still gated).**
 Wallets find marker-bearing blocks via compact filters, merkle-verify candidates,
 and evaluate exclusion locally. A real consignment verified with no RPC/indexer
 (320 filter bytes + 1,140 block bytes for the test window), and a hand-built
@@ -1019,7 +1018,7 @@ receipts do not authorize release or mainnet.
 real multi-party regtest transaction, unanimous replacement, BIP158 discovery,
 authenticated peer gossip, durable reservations, and exact-manifest recovery
 are implemented. The newest adversarial fixes—historical-v2 live rejection and
-one absolute frame deadline—are published on a merge-gated descendant.
+one absolute frame deadline—are on `opencsv-rs/main`.
 
 **Signal transport (prototype live-tested; final product last).** Production
 Signal carried consignments in both directions on a physical iPhone and rendered
@@ -1028,7 +1027,7 @@ as transport/UI evidence. The final product uses the §4.10 Rust account wallet:
 Bitcoin as protocol fee reserve only, no anchor server, direct P2P relay,
 authoritative outpoint revalidation, durable crash recovery, non-migratable
 device binding, and canonical-consignment verdict identity. The hardened Rust
-wallet is a review branch; Signal-iOS migration, in-place backup/database work,
+wallet foundation is on `opencsv-rs/main`; Signal-iOS migration, in-place backup/database work,
 both build flags, and physical v3 crash/recovery/fee-bump acceptance remain the
 final codebase and are not claimed complete.
 

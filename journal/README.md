@@ -240,7 +240,7 @@ but cannot enter a new replacement epoch; new creation uses version 3. A
 generic Bitcoin Core fee bump later removed protocol change, providing the
 negative receipt for a pure replacement validator that permits only
 context/layout-preserving change reduction. See the dated
-[`SIGNET_READINESS.md`](https://github.com/opencsvnet/opencsv-rs/blob/codex/a4-a5-readiness-integration/SIGNET_READINESS.md).
+[`SIGNET_READINESS.md`](https://github.com/opencsvnet/opencsv-rs/blob/main/SIGNET_READINESS.md).
 
 ## 2026-08-03 — Adversarial review attacks the batching fix itself
 
@@ -312,13 +312,16 @@ Swift must key verdict and rendered-cell storage on that value. The physical
 acceptance test still owes the proof: crash/resume into two attachment attempts,
 exactly one verified payment bubble.
 
-## 2026-08-03 — Honest stop line: Rust review branches are not an iOS wallet
+## 2026-08-03 — A merged Rust foundation is still not an iOS wallet
 
-The current integration tip `e4265b9` and wallet tip `4dc05cf` are published
-review artifacts. Their exact hosted CI runs and independent review are still
-gates; neither is described here as merged. Signal-iOS source, the linked
-iPhone, releases, and mainnet were intentionally untouched. The next public
-claim changes only after those receipts change.
+After exact hosted candidate CI succeeded, the owner deferred the outstanding
+independent adversarial re-review and authorized strict fast-forwards:
+integration `e4265b9`, then wallet `4dc05cf`, are now on `opencsv-rs/main`.
+That review is deferred, not represented as completed; later findings must be
+fixed forward. This merge changes the Rust foundation, not the product claim:
+Signal-iOS source, the linked iPhone, releases, and mainnet remain untouched.
+Swift still owes in-place migration, `ThisDeviceOnly` recovery, canonical
+verdict/render storage, both build flags, and physical crash/retry/RBF evidence.
 
 ---
 

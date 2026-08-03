@@ -53,12 +53,12 @@ rows, failed memory profiles, and the security accounting live in the
 [benchmark receipt](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
 
 The reference stack also includes co-funded batching v2 and its two-round peer
-gossip, a verified pure Rust kernel and pure accept-decision boundary on a
-review branch, and dated signet/readiness receipts. The final Signal product
+gossip, a verified pure Rust kernel and pure accept-decision boundary on
+`opencsv-rs/main`, and dated signet/readiness receipts. The final Signal product
 architecture is intentionally not presented as shipped: Rust owns an OpenCSV
 asset wallet and a BIP84 Bitcoin **fee** wallet; there is no anchor server and
-no arbitrary-Bitcoin-send API. The hardened Rust account-wallet branch is under
-hosted-CI/review gates, and Signal-iOS integration remains the final codebase.
+no arbitrary-Bitcoin-send API. The hardened Rust account-wallet foundation is
+on `opencsv-rs/main`; Signal-iOS integration remains the final codebase.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 29
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations

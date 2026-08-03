@@ -18,9 +18,7 @@ receipts); scan-first indexing (no-RPC/no-indexer verification and
 cross-implementation anchor discovery); co-funded batching v2 with real
 three-peer gossip→broadcast→replacement evidence; retarget-correct signet
 header sync; and 29 CI-gated Lean specification theorems. The separate Aeneas
-project has a green reproducibility run and 15 audited translated-Rust
-declarations, but its main-branch adoption/publication remains reviewable state,
-not a merged claim.
+project has 15 audited translated-Rust declarations on its default branch.
 
 The August 1 Signal-iOS prototype remains valid evidence for encrypted
 transport, native rendering, self-scanning receive, and on-device feasibility;
@@ -28,8 +26,9 @@ its ~0.55–0.96 s numbers are explicitly the historical test profile. The final
 architecture is different: Rust owns the asset wallet, BIP84 fee wallet,
 operation journal, signing, transaction layout, and relay; Bitcoin is spendable
 only by OpenCSV mint/transfer/fee-bump operations; no OpenCSV anchor server or
-general BTC send path exists. That Rust wallet is under review/hosted-CI gates.
-Signal-iOS has not been migrated and remains deliberately last.
+general BTC send path exists. The Rust wallet foundation is now on
+`opencsv-rs/main`; Signal-iOS has not been
+migrated and remains deliberately last.
 
 ## Track A — Executable formal verification (REVISED per spike verdict)
 The spike (REPORT in formal-formal issue #1): **full-crate Aeneas is dead**
@@ -52,12 +51,12 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   exact green commit was reviewed and fast-forwarded to the default branch;
   [PR #1](https://github.com/opencsvnet/formal-aeneas/pull/1) records the
   no-rewrite merge and its audit artifact.
-- **A4. Production adoption (the sharpened endgame)** [IMPLEMENTED; MERGE-GATED]: once A3 is reproducible,
+- **A4. Production adoption (the sharpened endgame)** [DONE ON MAIN, `e4265b9`]: once A3 is reproducible,
   dual-run kernel and legacy decisions in tests, then have opencsv-core/FFI
   **adopt the verified kernel as the shipped implementation**. No
   language crossing — the verified Rust kernel IS the code. "The model is the
   code" achieved via verify-then-adopt, not extraction.
-- **A5. accept() decision logic** [IMPLEMENTED; MERGE-GATED]: a verifiable pure
+- **A5. accept() decision logic** [DONE ON MAIN, `e4265b9`]: a verifiable pure
   decision boundary with explicit input state and stable rejection reasons;
   the trait-heavy driver retains proof, chain, storage, and transport I/O.
 - **A6. Differential testing** (bridge, standing): executable Lean model vs
@@ -74,8 +73,8 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   input fixes the shared context; each sender contributes one separate fee
   input, payload, and change output; no coordinator funds participant fees. Issue
   opencsv-rs#4.
-- **C2. Authenticated gossip handshake** [CLI DONE; ADVERSARIAL FOLLOW-UP
-  MERGE-GATED]: two rounds, canonical bodies, stock/fee-key authorization,
+- **C2. Authenticated gossip handshake** [DONE ON MAIN, `e4265b9`]: two rounds,
+  canonical bodies, stock/fee-key authorization,
   durable reservations and exact-manifest recovery. The TCP/CLI relay key is a
   transport profile, not a Signal protocol requirement. Historical v2 is
   read-only; new sessions use the safe-marker v3 profile.
@@ -105,7 +104,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   benchmarks. Failed high-memory phone profiles are recorded, not hidden.
 
 ## Track E — Mainnet path
-- **E1. Signet field validation** [RECEIPTS ON MERGE-GATED BRANCH] through the CLI/reference stack: cold/hot
+- **E1. Signet field validation** [RECEIPTS ON MAIN; FINAL ACCEPTANCE OPEN] through the CLI/reference stack: cold/hot
   sync, bandwidth, latency, recovery, and reliability. iOS is not a gate.
 - **E2. Mainnet beta economics** [MODEL RECORDED; RELEASE GATE OPEN]: anchor fees, marker cost, batch amortization,
   fee-wallet UX.
@@ -118,7 +117,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
 - **B0. Prototype evidence** [DONE on feature branch]: PR blockers and S-items,
   explorer UI, persistent client, regtest/hardware receive measurements, and
   story captures. Revalidate; do not redo.
-- **B1. Signal-native wallet architecture** [RUST REVIEW BRANCH; SWIFT NOT
+- **B1. Signal-native wallet architecture** [RUST ON MAIN, `4dc05cf`; SWIFT NOT
   STARTED]: Rust-owned account root, non-migratable device binding, BIP84 fee
   wallet, owner/issuer derivation, durable operations, authoritative outpoint
   revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
@@ -132,11 +131,12 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   (owner approval — runner token).
 
 ## Sequencing & gates
-1. Current merge gate: exact hosted CI plus independent adversarial review for
-   the A4/A5/readiness/C2-audit integration tip.
-2. Current wallet gate: hosted CI and review of the Rust-only account-wallet
-   descendant; do not confuse a green branch with Signal integration.
-3. Then finish reference signet acceptance, security review, and reproducible
+1. A4/A5/readiness/C2-audit and the Rust account-wallet descendant are merged
+   on exact green candidate CI. The owner deferred the outstanding independent
+   adversarial re-review; it is not represented as completed, and later findings
+   must be fixed forward.
+2. Review and merge the corrected C3 formal model.
+3. Finish reference signet acceptance, security review, and reproducible
    packaging. No release or mainnet broadcast is implied.
 4. Last: fresh Signal-iOS checkout, in-place migration, both build flags,
    physical-device crash/recovery/confirmation/fee-bump acceptance, and PR
