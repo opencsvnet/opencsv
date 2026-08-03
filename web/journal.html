@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — Journal</title>
-<meta name="description" content="The OpenCSV journal: discoveries and how the architecture evolved — griefing, filters, benchmarks, and the scan-first design.">
+<meta name="description" content="The OpenCSV journal: receipt-linked discoveries, failed approaches, proof parameters, batching hardening, and the serverless Signal wallet architecture.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -222,83 +222,71 @@
 
   <div class="entry">
     <div class="date">2026-08-02</div>
-    <h2>Verify-then-adopt becomes real: the kernel is carved and proved</h2>
-    <p>The Track-A thesis landed end to end. <code>opencsv-kernel</code>
-    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/b64bdf4">b64bdf4</a>)
-    carves the pure decision logic out of core in Aeneas shape — 8/8
-    equivalence tests against the original code. And the new
+    <h2>Verify-then-adopt becomes real</h2>
+    <p>The pure <code>opencsv-kernel</code>
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/b64bdf49caa3a46a10084e20fc36560bb2b8def3">b64bdf4</a>)
+    carves binding, occurrence, first-occurrence, and supply logic into an
+    Aeneas-compatible Rust surface. The separate
     <a href="https://github.com/opencsvnet/formal-aeneas">formal-aeneas</a>
-    repo (<code>21364ac</code>) holds four sorry-free refinement theorems:
-    the translated Rust binding, occurrence test, first-occurrence, and supply
-    equation are each proved equal to the Lean specification. The supply-loop
-    proof took a real fight (maxRecDepth explosions until the recursive-theorem
-    style was abandoned for the library's loop induction principle). The
-    distinction that matters: this is no longer "a model that corresponds to
-    the code" — it's the code, proved. Adoption (shipping the verified kernel
-    in core and the FFI) is the next decision.</p>
+    project proves translated Rust equal to the Lean specification. The public
+    record now keeps 29 specification theorems and 15 translated-Rust audit
+    declarations as separate ledgers, not one inflated count.</p>
   </div>
-    <p>The iOS host's forensic hunt (five takes, three logging builds) isolated
-    why every fresh mint verified everywhere <em>except</em> the phone's
-    crediting path: consignments written while the anchor is still in the
-    mempool carry a sentinel location, and only the snapshot verify did a
-    location-strict lookup. The fix
+
+  <div class="entry discovery">
+    <div class="date">2026-08-02</div>
+    <h2>The mempool sentinel: one symptom, three lookups <span class="tag">discovery</span></h2>
+    <p>Fresh mints verified everywhere except the phone's credit path. The fix
     (<a href="https://github.com/opencsvnet/opencsv-rs/commit/1616397">1616397</a>)
-    had its own twist: patching <code>locate()</code> alone wouldn't have
-    worked — the accept driver consults <code>anchor_at</code> and
-    <code>ctx_at</code> first, so the sentinel resolution now lives in a shared
-    <code>find()</code> across all three lookups. Their side-effects were just
-    as valuable: chain-lag rejections reclassified from final to
-    withheld-retryable (a race mainnet would have made constant), and Signal's
-    attachment dedup-by-content recorded as a protocol note.</p>
+    could not live only in <code>locate()</code>: the accept driver asks
+    <code>anchor_at</code> and <code>ctx_at</code> first. One shared lookup now
+    resolves mempool sentinels and treats chain lag as retryable, not final.</p>
   </div>
-    <p>One small function closed the last trust gap in the receive path:
-    <code>opencsv_scan_export_snapshot</code>
+
+  <div class="entry">
+    <div class="date">2026-08-02</div>
+    <h2>Serverless crediting closes the receive loop</h2>
+    <p><code>opencsv_scan_export_snapshot</code>
     (<a href="https://github.com/opencsvnet/opencsv-rs/commit/290c8e0">290c8e0</a>)
-    projects the phone's own filter-scanned index into the snapshot format the
-    crediting verifier already consumes. The headline test is the property the
-    whole project aims at: a real consignment, verified and credited, with
-    <b>no RPC, no indexer, no anchor server — zero servers anywhere in
-    frame</b>. Bonus find: a latent ~1% tag-collision flake in fixed-seed test
-    anchors, hunted down and fixed with a retry harness across the suites.</p>
+    projects the phone's compact-filter scan into the snapshot consumed by the
+    crediting verifier. A real consignment was verified and credited with
+    <b>no RPC, no indexer, and no anchor server</b>. Public explorers become
+    hints; they do not decide acceptance.</p>
   </div>
-    <p>The feasibility spike for verifying the Rust implementation directly
-    returned a clean split. Dead: full-crate Aeneas — a charon bug on std
-    iterator impls our hashing pulls in, dyn-trait and GAT rejection, and an
-    outright aeneas crash. Alive and <em>proven</em>: a kernel-shaped subset
-    (loops, no serde/dyn/RNG, opaque hash boundary) translates in 0.9 s, builds,
-    and proves — <code>binding_eq_spec</code> and <code>well_formed_spec</code>
-    showed translated Rust equivalent to the Lean model, with only core axioms
-    plus the opaque hash constant. The path forward (Track A of
-    <a href="https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md">ROADMAP.md</a>):
-    carve <code>opencsv-kernel</code> from opencsv-core and verify it against
-    the spec in a dedicated Lean 4.31 + mathlib project. The roadmap noted the
-    honest fork too: Aeneas pins its own Lean toolchain, so the main
-    dependency-free repo stays untouched.</p>
+
+  <div class="entry failure">
+    <div class="date">2026-08-02</div>
+    <h2>A proof that only builds on one laptop is not a receipt <span class="tag">failure</span></h2>
+    <p>The first Aeneas project used an absolute local dependency path and
+    audited only part of its surface. The reproducibility branch pins the Lean
+    dependency by exact Git revision, removes a duplicate theorem, expands the
+    audit to 15 translated-Rust declarations, and passes hosted CI
+    (<a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746">run 30765043746</a>).
+    Default-branch adoption remains a merge decision.</p>
   </div>
-    <p>The first field-found consensus bug: signet header sync died at height 2016
-    — the client assumed signet allowed min-difficulty blocks, but real signet is
-    mainnet-style; block 2019 demanded a true target. Fixed
-    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/e137096">e137096</a>)
-    with a regression that syncs all 315,800 signet headers through 156 retargets
-    in 193 s. Same batch: <b>batching v1 lands</b>
-    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/3d4da5f">3d4da5f</a>) —
-    witness-envelope batches verified via scan with no RPC and no indexer, after a
-    real standardness lesson (bare <code>OP_TRUE</code> fails CLEANSTACK with junk
-    items; the witness script is <code>OP_DROP×(n+1) OP_TRUE</code>, still
-    quantum-clean). Plus a persistent CBF client killing the per-foreground
-    handshake cost the iPhone measured.</p>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-02</div>
+    <h2>Field sync and batching v1 each find a real bug <span class="tag">discovery</span></h2>
+    <p>Signet sync failed at height 2016 because the client applied the wrong
+    difficulty rule; <a href="https://github.com/opencsvnet/opencsv-rs/commit/e137096">e137096</a>
+    syncs 315,800 headers through 156 retargets. Batching v1 then proved that
+    bare <code>OP_TRUE</code> fails CLEANSTACK when envelope items remain;
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/3d4da5f">3d4da5f</a>
+    fixed the script. V1 remains prototype evidence, not the new-write format.</p>
   </div>
-    <p>The per-transaction ceiling broke. Paper §4.7.2 adds optional batching:
-    a coordinator pre-commits a funding outpoint; each sender computes their
-    payload <em>locally</em> (<code>P_i = H("bind" ∥ nf_i ∥ X)</code>) and hands
-    over only 24 bytes — so the batcher combines but can never forge (preimage).
-    Payloads ride a witness envelope (4× cheaper than OP_RETURN, thousands per
-    envelope), one constant marker per batch keeps filter discovery unchanged,
-    and occurrence semantics are untouched: a batch is just a busier anchor.
-    Silent payments was considered for coordination and <b>rejected</b>: ECDH
-    breaks the quantum-clean anchor layer, and per-output EC scanning is
-    strictly costlier than GCS filter matching on mobile. The v2 shape is
-    coinjoin-style co-funded batches — each sender signs their own input.</p>
+
+  <div class="entry">
+    <div class="date">2026-08-02</div>
+    <h2>Batching becomes co-funded and signer-verifiable</h2>
+    <p>A signed stock input fixes the shared context. Each participant contributes
+    one payload, one fee input, and one change output; every signer reconstructs
+    the canonical transaction and releases only <code>SIGHASH_ALL</code>. C0/C1/C2
+    land as <a href="https://github.com/opencsvnet/opencsv-rs/commit/d51d139">d51d139</a>,
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/0af0258">0af0258</a>,
+    and <a href="https://github.com/opencsvnet/opencsv-rs/commit/54c0833">54c0833</a>.
+    The 64-participant reference cap is a script-safety profile, not a universal
+    relay quota.</p>
   </div>
 
   <div class="entry">
@@ -312,6 +300,84 @@
     part of the design: domain ownership and DNS must verify before the Pages
     custom-domain flip, so the working <code>github.io</code> site never
     redirects into an unresolved hostname.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-03</div>
+    <h2>Production proofs replace the beautiful prototype numbers <span class="tag">discovery</span></h2>
+    <p>The ~56 KB / ~3.6 ms / ~0.55 s-phone profile proved recursive PCD and
+    mobile feasibility, but used two FRI queries and no grinding. D1 → D4 → D3
+    → D2 lands setup caching, hard-bound predecessor keys, in-circuit issuer
+    authorization, and the frozen v3 boundary. The honest production receipt:
+    a 94-bit enforced floor, ~0.54–0.85 MB proofs, 15–22 ms desktop verification,
+    and 11.25–14.47 s transfer proving on the iPhone 16e. Two higher-memory
+    profiles died under the iOS process limit before the final packing fit.</p>
+  </div>
+
+  <div class="entry failure">
+    <div class="date">2026-08-03</div>
+    <h2>A live child spends the marker and changes the protocol <span class="tag">failure</span></h2>
+    <p>The original <code>P2WSH(sha256(OP_TRUE))</code> marker was filter-visible
+    and anyone-can-spend. On signet, a third party immediately spent its 546
+    sats and pinned the parent against ordinary RBF. New anchors use unspendable
+    <code>P2WSH(sha256(OP_RETURN))</code>; historical v2 remains readable but
+    cannot enter a new replacement epoch. A generic Core fee bump then removed
+    protocol change, justifying a pure change-only replacement validator.
+    <a href="https://github.com/opencsvnet/opencsv-rs/blob/codex/a4-a5-readiness-integration/SIGNET_READINESS.md">Full receipt</a>.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-03</div>
+    <h2>Adversarial review attacks the batching fix itself <span class="tag">discovery</span></h2>
+    <p>Typed verified-input capabilities, stock/fee-key body authorization,
+    semantic quotas, durable signature release, and exact-manifest recovery
+    replace Boolean assertions and newest-epoch-only state
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/8d047f6">8d047f6</a>).
+    A second attack pass found historical-v2 live admission and a slow-drip
+    timeout. Tip <a href="https://github.com/opencsvnet/opencsv-rs/commit/e4265b9">e4265b9</a>
+    closes both. Hosted CI and independent re-review remain merge gates.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-03</div>
+    <h2>Signal owns the fee wallet; Bitcoin is gas only</h2>
+    <p>The anchor-server architecture is superseded. Rust owns the OpenCSV
+    wallet, BIP84 fee wallet, UTXO reservation, change, context, signing,
+    operation journal, safe RBF, and direct relay. Esplora accelerates reads;
+    headers, BIP158, merkle proofs, and full blocks decide spend state. The FFI
+    exposes no WIF, caller-selected input/change, arbitrary BTC recipient,
+    general raw broadcast, or bespoke OpenCSV server.</p>
+  </div>
+
+  <div class="entry failure">
+    <div class="date">2026-08-03</div>
+    <h2>The phone restore that cloned a primary <span class="tag">failure</span></h2>
+    <p>iOS restored Keychain state onto the developer iPhone 16e, proving an
+    account root could silently arm two primaries. Rust now binds the database
+    and backup checkpoint to a separate non-migratable <code>ThisDeviceOnly</code>
+    value. Missing/mismatched restores are read/export-only, and missing state
+    is sticky: a later replacement cannot re-arm the wallet
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/fb4a26a">fb4a26a</a>).</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-03</div>
+    <h2>One consignment, one verdict, one bubble <span class="tag">discovery</span></h2>
+    <p>Delivery attempts are not payment identities. The Rust receive boundary
+    decodes, canonically re-encodes, verifies/stores canonical bytes, and returns
+    one SHA-256 identity for accepted and rejected verdicts
+    (<a href="https://github.com/opencsvnet/opencsv-rs/commit/4dc05cf">4dc05cf</a>).
+    Swift still owes the physical crash/resume receipt: two attachment attempts,
+    exactly one rendered payment.</p>
+  </div>
+
+  <div class="entry">
+    <div class="date">2026-08-03</div>
+    <h2>Honest stop line: Rust review branches are not an iOS wallet</h2>
+    <p>Integration <code>e4265b9</code> and wallet <code>4dc05cf</code> are
+    published review artifacts. Their exact hosted CI and independent review
+    remain gates; neither is called merged here. Signal-iOS, the linked iPhone,
+    releases, and mainnet were intentionally untouched.</p>
   </div>
 
 </div>

@@ -1,7 +1,7 @@
 # OpenCSV: Client-Side Verified RWAs, Stables, and More on Bitcoin
 
-**Status:** Working draft (v0.1)
-**Date:** 2026-07-31
+**Status:** Working draft (v0.2)
+**Date:** 2026-08-03
 
 ---
 
@@ -18,9 +18,10 @@ parties to the payment* rather than by a consensus network. Building on the clie
 validation (CSV) lineage — and most directly on Shielded CSV (Nick, Eagen, Linus,
 ePrint 2025/068) — OpenCSV removes transaction validity from consensus entirely. The
 Bitcoin blockchain is used only as an ordering and data-availability layer: each
-OpenCSV transaction anchors 64 bytes of opaque data (a *nullifier*) in an ordinary
-Bitcoin transaction. Everything else — coin commitments, validity proofs, amounts —
-moves off-chain, delivered directly from sender to recipient in a *consignment*.
+solo OpenCSV transaction anchors a 64-byte context-bound record plus a
+compact-filter-visible marker output in an ordinary Bitcoin transaction. Raw
+nullifiers remain off-chain. Everything else — coin commitments, validity proofs,
+amounts — is delivered directly from sender to recipient in a *consignment*.
 
 OpenCSV extends the CSV model with the machinery an RWA requires:
 
@@ -86,8 +87,8 @@ matter for verification:
 
 - A concrete scheme, **OpenCSV**, specifying asset genesis, coin commitments,
   nullifiers, and three transaction types (mint, transfer, redeem) as client-side
-  validated predicates, anchored to Bitcoin L1 with a 64-byte on-chain footprint and
-  no consensus changes.
+  validated predicates, anchored to Bitcoin L1 with a fixed 64-byte record plus
+  marker output and no consensus changes.
 - A privacy/auditability split — shielded transfers over transparent issuance — that
   keeps total supply publicly computable while hiding amounts and the transaction
   graph between users.
@@ -211,9 +212,10 @@ cooperation, or any node interpreting the payloads.
 | Bitcoin's ordering is not reorged past *k* conf | finality of spends | payments can be undone, as with on-chain BTC |
 | Poseidon is collision- and preimage-resistant | commitment & nullifier integrity | counterfeiting / double-spend possible |
 | The AIR/FRI proof system is sound | no fake validity proofs | counterfeiting possible |
-| Issuer's mint key is uncompromised | supply integrity | unauthorized (but *visible*) inflation; users can exit |
+| Issuer's mint seed is uncompromised | supply integrity | unauthorized (but *visible*) inflation; users can exit |
 | Sender delivers the consignment | recipient learns their coin | funds are anchored but unusable by recipient (liveness, not theft — see §5.5) |
 | Recipient stores consignments durably | later spending | loss of funds (mitigated by backups/escrow) |
+| Client's verified header/filter/block view is current | first occurrence and confirmation state | a spend or reorg can be missed; explorers do not repair this |
 
 Notably absent: any honesty assumption about the issuer regarding the ledger, any
 network of validators, any bridge committee, any token-specific consensus.
@@ -243,12 +245,16 @@ above and characterizes (d) as liveness failures with mitigations.
   recursion (verification of a `Π` proof inside a `Π` AIR). We write
   `π ← Π.Prove(vk, x, w)` and `Π.Verify(vk, x, π)`, with `vk` the predicate's
   verification key, `x` public input, `w` witness.
-- `Σ` — an issuer signature scheme that is *AIR-friendly*: verification expressed
+- `Σ` — an abstract issuer authorization scheme that is *AIR-friendly*: verification expressed
   natively over `𝔽` without non-native field arithmetic. Two candidate
   instantiations: Schnorr over an elliptic curve whose base field is `𝔽`, or a
   Poseidon-based hash signature for mint authorization (signatures appear only in
   mints, so even a comparatively heavy scheme is acceptable). The interface is
-  `Σ.Verify(ipk, m, σ) ∈ {0,1}`; the concrete choice is fixed at implementation time.
+  `Σ.Verify(ipk, m, σ) ∈ {0,1}`. The v3 reference implementation instantiates
+  this abstract predicate as a PCD signature of knowledge: the mint circuit
+  proves knowledge of an issuer seed committed by genesis and transcript-binds
+  the exact mint statement. It is not a separately verifiable conventional
+  signature. Legacy Ed25519 records remain inspection-only.
 
 Field-element quantities such as `asset_id`, `C`, `nf` below are single `𝔽`-elements
 (or small fixed vectors); the on-chain anchor serializes to exactly 64 bytes.
@@ -431,14 +437,14 @@ nullifier off-chain and publishes only a **context-bound payload**:
   check (`ctx` differs), and recomputing the payload for their own context
   requires `nf` — a preimage attack on `H`. The one thing a copier cannot
   reproduce is the input side of the victim's transaction: their copy must spend
-  their own UTXOs. Relaying a fully-signed anchor transaction through any third
-  party remains possible; a fee-service that *funds* the anchor must pre-commit
-  its funding input to the sender off-band so the payload can be computed before
-  proving.
+  their own UTXOs. The reference wallet therefore reserves and fixes funding
+  input zero before proof generation, signs locally, persists the signed bytes,
+  and can relay that complete transaction through any generic peer.
 
-**The marker output.** Every anchor transaction additionally carries a small,
-protocol-constant **marker output**: dust (546 sats) to `OP_0 ∥ sha256(OP_TRUE)`
-— a P2WSH anyone-can-spend script, identical for every anchor. The marker's only
+**The marker output.** Every newly created anchor transaction additionally carries
+a small, protocol-constant **marker output**: dust (546 sats) to
+`OP_0 ∥ sha256(OP_RETURN)` — a P2WSH unspendable script, identical for every
+anchor. The marker's only
 job is *discovery*: BIP157/158 basic block filters exclude OP_RETURN outputs but
 include ordinary scriptPubKeys, so a wallet syncing compact filters can find
 anchor-bearing blocks trustlessly (§4.7.1). It carries no authority — the
@@ -457,9 +463,17 @@ The complete anchor format (network order):
 ```
 Input(s):   funding UTXO(s) — vin[0] is the ctx (SHA-256(txid ∥ vout_le))
 Output 0:   OP_RETURN ∥ <64-byte record>
-Output 1:   546 sats → OP_0 ∥ sha256(OP_TRUE)      (constant marker)
+Output 1:   546 sats → OP_0 ∥ sha256(OP_RETURN)    (constant marker)
 Output 2..: change
 ```
+
+The historical marker `OP_0 ∥ sha256(OP_TRUE)` was filter-visible but
+anyone-can-spend. A live signet observer spent it and pinned its parent against
+ordinary BIP125 replacement. Readers retain exact version-2 compatibility, but
+new constructors emit only version 3 with the unspendable marker; historical
+manifests cannot begin a new replacement epoch. Marker authority remains zero
+in either version—the migration closes a fee-bump/liveness flaw, not an
+OpenCSV-validity flaw.
 
 The rules that turn anchors into finality:
 
@@ -503,44 +517,55 @@ only on the tagged mint/redeem stream.
 The format above costs one Bitcoin transaction per anchor, capping aggregate
 throughput at the per-transaction level (on the order of 100 anchors per second
 even with the entire block space). **Batching** lifts the cap to the
-per-*envelope* level by carrying many transfers' payloads in one transaction —
-and it is safe against an untrusted coordinator because of the same binding
-discipline as §4.7:
+per-*envelope* level by carrying many transfers' payloads in one transaction.
+The frozen C1 protocol is co-funded and fail-closed:
 
-1. A coordinator (any client, or a dedicated but *untrusted* batching service)
-   announces a batch with a pre-committed funding outpoint `X` and a cutoff.
-2. Each sender computes their payload **locally**, `P_i = H("bind" ∥ nf_i ∥ X)`,
-   and sends only `P_i` to the coordinator — 24 bytes that go on-chain anyway.
-   The coordinator learns nothing: `nf_i` is a preimage away, so a batcher can
-   combine but never forge. This is the same pre-commit handshake as the
-   fee-service case of §4.7.
-3. The batch transaction carries, in a witness envelope (magic tag plus the
-   payloads as stack items), the full payload list; output 0 holds a batch
-   header `OP_RETURN ∥ [count ∥ H("batch" ∥ P_1 ∥ … ∥ P_n ∥ ctx)]`; output 1
-   is the constant marker (one marker per batch, so filter discovery works
-   unchanged). `ctx` is the funding outpoint `X`, shared by every payload in
-   the batch. Witness carriage is used because OP_RETURN standardness caps
-   payloads at ~80 bytes (~3 records), while the witness discount makes
-   payloads four times cheaper and allows thousands per envelope.
-4. If the coordinator drops a payload or double-spends `X`, nothing binding is
-   published: the affected senders simply re-bind to another context and anchor
-   elsewhere. The coordinator's trust scope is *liveness only*.
+1. A stock owner pre-creates a count-specific signed P2WSH stock outpoint.
+   Spending it as input 0 fixes the one shared context `ctx` for the batch;
+   output 2 returns its value and exact script unchanged.
+2. Each of `N` participants contributes exactly one already-bound 24-byte
+   payload, one confirmed native-segwit fee input, one fresh change script, and
+   a maximum charge. Their wallet selects and durably reserves the fee outpoint;
+   neither Swift nor a coordinator supplies coin selection or change.
+3. Commitments are sorted canonically by fee outpoint. The exact transaction is
+   fixed before signatures: input 0 is stock, inputs 1…N participant fees;
+   output 0 is the 64-byte header, output 1 the unspendable marker, output 2 the
+   unchanged stock, and outputs 3…N+2 participant change in the same order.
+4. Every participant independently verifies the proposal, all public prevouts,
+   payload/header/envelope equality, fee split, expiry, ordering, standardness,
+   and their own durable reservation. Only then may it release `SIGHASH_ALL`.
+   The typed verification receipt is bound to the exact batch, manifest, chain
+   tip, and maximum age; a caller-supplied Boolean “verified” flag is not an API.
+5. Replacement is unanimous. It preserves stock/context, membership, inputs,
+   payload order, protocol outputs, and change scripts; only participant charges
+   increase within each signed maximum. Recovery tracks every exact manifest,
+   including earlier epochs whose signatures may still exist.
 
-Occurrence semantics are unchanged: an occurrence of `nf` is a payload `P` in a
-batch envelope with `P == H("bind" ∥ nf ∥ ctx)` and the batch commitment
-recomputing over the envelope's payloads; recipients' consignments name
-`(txid, envelope_index)` instead of a solo anchor position, and exclusion scans
-read envelope payloads from fetched blocks exactly as solo records. A batch is,
-to the verification model, just a busier anchor.
+The coordinator is an ephemeral assembler with liveness power only. Any
+participant can coordinate; any peer holding the complete transcript can
+combine signatures and broadcast; nobody receives another participant's keys.
+The current reference profile caps one batch at 64 participants because of
+Bitcoin script/witness limits. That is not a universal transport quota; relay
+quotas are local policy keyed to authorized relay, fee-key, outpoint,
+operation, and payload identities.
 
-Batching is **optional**: interactive solo anchors remain the default for
-latency-sensitive sends, with batching for throughput-tolerant sends and fee
-sharing. Two privacy notes: batch members are co-timed (an observer learns that
-these payments happened together — not amounts, assets, or owners), and
-senders should treat batch composition like coinjoin participation. The
-cross-user coordination ("gossip") layer is transport-agnostic by design — any
-messaging channel can carry the two-round handshake; the protocol requires
-nothing of it beyond delivering 24-byte payloads.
+C2 transports the two rounds over authenticated peer frames. Stock-key
+authorization binds proposal bodies; fee-key authorization binds participant
+commitment bodies. The TCP/CLI profile additionally binds a relay identity;
+Signal binds the same authorized body to its authenticated sender and operation
+context instead. An exact proposal reannouncement is idempotent; a different
+body in the same session is rejected. Remote parse/authentication failures are
+contained, storage/listener failures are fatal, and prefix/body reads share one
+absolute deadline. No OpenCSV-specific coordination server is required.
+
+Occurrence semantics remain unchanged: an occurrence of `nf` is a payload `P`
+in a batch envelope with `P == H("bind" ∥ nf ∥ ctx)` and a header commitment
+that recomputes over the ordered envelope. Recipients name
+`(txid, envelope_index)` instead of a solo anchor position. Batch members are
+co-timed, so composition should be treated like coinjoin participation.
+The normative transcript, threat model, golden vectors, fee formula, and abort
+rules live in
+[`BATCHING_V2.md`](https://github.com/opencsvnet/opencsv-rs/blob/main/BATCHING_V2.md).
 
 ### 4.7.1 Client chain views: scan-first indexing
 
@@ -640,6 +665,54 @@ transfers neither create nor destroy value, so the transparent mint/redeem strea
 fully determines supply. This gives the attestation workflow issuers already perform
 ("reserves ≥ outstanding supply") a trustless right-hand side.
 
+### 4.10 Client wallet, custody, and recovery boundary
+
+The reference product architecture keeps custody and Bitcoin policy in Rust,
+not in the messaging UI and not in an OpenCSV server. One random 32-byte
+OpenCSV account root derives domain-separated owner, issuer, and BIP84 fee-wallet
+branches. The Bitcoin branch is a **protocol fee reserve**: callers may inspect
+its address, balance, UTXOs, confirmations, fees, and explorer evidence, but no
+API can send arbitrary BTC. Bitcoin can be spent only while constructing an
+OpenCSV mint, transfer, or invariant-preserving fee replacement.
+
+The host submits actions—asset, recipient, amount, and fee policy—not WIF keys,
+fee outpoints, coin selection, change addresses, or raw transactions. The Rust
+wallet durably reserves both asset coins and fee UTXOs, fixes input 0 before
+proof generation, derives change, validates the exact input/output layout,
+persists signed bytes before relay, and journals the operation through:
+
+```
+planned → fee_reserved → proof_ready → signed_persisted → broadcast
+        → mempool → confirmed → consignment_delivered
+```
+
+Cancellation is allowed only before broadcast. A replacement may reduce the
+original change but must preserve funding input zero, context, record, marker,
+output positions, and change destination. Generic Bitcoin wallet fee-bump
+behavior is not assumed protocol-safe.
+
+Public Esplora data may accelerate address history, UTXO discovery, fee hints,
+and explorer links. Before proof/signing, spend-critical state is independently
+revalidated through proof-of-work headers, BIP158 filters, merkle-checked full
+blocks, and multiple peers on public networks. Signed transactions are relayed
+directly to multiple Bitcoin peers; a generic relay may be fallback transport,
+but there is no bespoke anchor server.
+
+Recovery uses a versioned checkpoint plus the account root in Signal Secure
+Backups; the BDK chain database is rebuildable cache. Only the primary device
+receives signing material. Linked devices receive watch descriptors and public
+identities. Because iOS can restore Keychain state onto another phone, the
+account root alone cannot establish primary authority: Rust also binds the
+database/checkpoint to a separate 32-byte value stored in a non-migratable
+`ThisDeviceOnly` item. Missing or mismatched binding opens read/export-only,
+the missing state is sticky, and authority moves only through an explicit
+recovery/rekey procedure.
+
+Transport retries are likewise not payment identities. Receive first decodes
+and canonically re-encodes the consignment, then hashes the canonical bytes for
+one verdict/render key shared by accepted and rejected outcomes. Attachment IDs
+and delivery-attempt nonces never create a second credit or payment bubble.
+
 ---
 
 ## 5. Security Analysis
@@ -647,20 +720,23 @@ fully determines supply. This gives the attestation workflow issuers already per
 ### 5.1 Inflation soundness
 
 **Claim.** Except with negligible probability, any coin accepted by `Accept` traces to
-a mint carrying a valid signature of the asset's issuer key, and total created value
+a mint carrying valid authorization from the asset issuer, and total created value
 per asset equals the sum of publicly anchored mints minus public redemptions.
 
 **Argument.** Induction over the PCD tree. Base case: a mint proof verifies only if
-the mint predicate held — including issuer-signature validity (§4.4 item 1) and
+the mint predicate held — including issuer-authorization validity (§4.4 item 1) and
 `Σ v_i = V` (item 3) — by soundness of `Π` and unforgeability of `Σ`. Inductive step:
 a transfer proof verifies only if each input's predecessor proof verifies (recursion
 condition) *and* per-asset input/output sums match with range-checked values
 (§4.5 items 2, 4), so the total per-asset value across the cut of the tree is
 preserved. Redeem is analogous, moving value from shielded form into a public
 negative term. Hence the only sources of per-asset value in any accepted coin's
-ancestry are signed mints, and the public stream bounds total supply exactly
+ancestry are issuer-authorized mints, and the public stream bounds total supply exactly
 (§4.9). The quantitative bound reduces to the soundness error of `Π` (FRI-based,
-negligible in `λ`) and the EUF-CMA security of `Σ`.
+negligible in `λ`) and the unforgeability property of `Σ`. In the v3 reference
+instantiation, that latter boundary reduces to proof soundness and the secrecy/
+preimage resistance of the genesis-bound issuer seed rather than EUF-CMA of a
+standalone signature.
 
 The issuer itself cannot inflate *covertly*: every mint must anchor its amount
 publicly (the mint predicate's public input includes `V`, and the recipient checks
@@ -723,17 +799,17 @@ remain valid in their owners' hands) but transfers halt. Here the marker output
 (§4.7) is a deliberate, declared trade: it makes anchors *identifiable by
 design* — to wallets, and unavoidably to censors too — in exchange for
 trustless discovery. The mitigations are therefore: (i) *dilution* — the marker
-is an unremarkable anyone-can-spend script that other protocols can share, and
-a deployment under censorship pressure may omit markers from its anchors at the
-cost of losing filter discovery (falling back to indexer-assisted or full-block
-scanning), since no occurrence semantics depend on it; (ii) *economics* —
+is an unremarkable unspendable P2WSH script that other protocols can share. A
+non-conforming deployment could omit it only by also giving up the standard
+scan-first discovery profile and falling back to full-block discovery; no
+occurrence semantics grant the marker authority. (ii) *economics* —
 censoring miners forfeit the anchor fees, so sustained censorship requires a
 majority cartel, at which point Bitcoin's own neutrality is already
 compromised; (iii) honest acknowledgment that no anchor-based scheme fully
 removes this assumption — OpenCSV shares it with every data-carrier protocol.
 
-**(c) Nuisance floods.** Fake consignments cost a recipient one proof verification
-(~4 ms measured) each — nuisance-level, comparable to message spam. Spam anchors
+**(c) Nuisance floods.** Fake consignments can cost a recipient one proof verification
+(15–22 ms measured for current v3 shapes) each — nuisance-level, comparable to message spam. Spam anchors
 bloat the nullifier index linearly, but every spam byte is paid for at fee-market
 rates and first-occurrence lookups are indexed, so the cost to victims grows only
 with the attacker's spend. Mempool spying itself leaks no amounts, assets, or
@@ -746,8 +822,8 @@ Bitcoin-level metadata about the sender, never about the recipient.
 per-transfer link between consumed nullifiers and created coins (consignments are
 off-chain and confidential); asset IDs inside transfers.
 
-**Public:** the raw nullifier stream (pseudorandom, unlinkable to coins without the
-opening), mint and redemption events with `(asset_id, V)`, timing of anchors, and —
+**Public:** context-bound payload records (pseudorandom, unlinkable to coins without
+the raw nullifier), mint and redemption events with `(asset_id, V)`, timing of anchors, and —
 unavoidably — whatever the off-chain transport leaks (§7 discusses using Signal so
 that transport metadata is minimized and end-to-end encrypted).
 
@@ -770,11 +846,12 @@ addresses by default).
   is strictly better than opaque-ledger inflation, which may never be detected.
 - **Consignment non-delivery / data loss.** If the sender anchors a spend but the
   recipient never receives the consignment, the anchored coins exist but are
-  unusable. The sender can always re-send (they hold the data); the protocol should
-  also support an "abort" — the sender re-spends the outputs back to themselves
-  before the recipient accepts, at the cost of another anchor. Recipients must back
-  up consignments (they are small); watchtower-style escrow of encrypted consignments
-  is compatible with the design.
+  unusable by that recipient until delivery. The sender can re-send the same
+  canonically identified consignment; delivery-attempt IDs do not create a second
+  payment. A prepared operation may be cancelled only before broadcast. After
+  broadcast, recovery resumes the durable journal and delivery rather than silently
+  constructing a conflicting "abort." Recipients back up coin state and compact
+  checkpoints through the account recovery mechanism.
 - **Nullifier spam.** Anchoring costs Bitcoin fees; an attacker can only pollute the
   nullifier space economically at fee-market prices, and spam nullifiers conflict
   with nothing (they correspond to no valid coin). The recipient's scan cost grows
@@ -782,7 +859,8 @@ addresses by default).
 - **L1 reorgs.** Treated as in any anchored system: wait for *k* confirmations; on a
   deep reorg, re-evaluate first occurrences.
 - **Proof-system or hash break.** Catastrophic (counterfeiting). Mitigation is
-  conservative parameterization (128-bit conjectured security, ample FRI queries) and
+  conservative parameterization (including the runtime-enforced 94-bit proven FRI
+  floor and a separate 128-bit hash target) and
   the fact that supply inflation remains *detectable in principle* via audits that
   re-check proofs — the transparent mint stream bounds the *legitimate* supply, and
   any counterfeit coin still needs a valid-looking anchor and consignment, keeping
@@ -790,18 +868,21 @@ addresses by default).
 
 ### 5.6 Parameter notes
 
-Poseidon over BabyBear/Goldilocks at 128-bit security is the current community
-standard but has received less cryptanalytic attention than, say, SHA-256; this is
-the same trade-off every modern STARK-based system makes for in-field efficiency, and
-we inherit it. FRI soundness parameters (blowup factor, query count) are chosen for
-≥ 100-bit conjectured security; exact numbers belong to the implementation
-(§7) and will be reported with benchmarks.
+Poseidon2 over BabyBear has received less cryptanalytic attention than SHA-256;
+this is the same trade-off modern STARK systems make for in-field efficiency.
+Proof lineage v3 uses quartic BabyBear challenges, 8× LDE, maximum folding arity
+4, 64 FRI queries, 16-bit grinding per commit round, and 16-bit query grinding.
+The executable Plonky3 proven-security calculator is evaluated on each proof's
+actual trace degrees with a union margin; verification fails below a published
+**94-bit adjusted floor**. The separate Poseidon2 collision target is 128 bits.
+These are concrete accounting inputs, not an independent cryptographic audit.
 
 ### 5.7 Post-quantum considerations
 
-No discrete-logarithm or pairing assumption is load-bearing anywhere in OpenCSV's
-own design, so the scheme is quantum-*resistant* by construction rather than by
-addon — with two honest caveats (parameter sizing, and the one classical component).
+No discrete-logarithm or pairing assumption is load-bearing in OpenCSV's own
+v3 asset-validity layer. The honest term remains *plausibly post-quantum*:
+parameter sizing and underlying hash/proof assumptions still matter, and Bitcoin
+itself uses classical signatures.
 
 - **Hashes (commitments, nullifiers, owner keys, asset IDs).** All are Poseidon2.
   Security rests on preimage and collision resistance, against which the best
@@ -814,12 +895,10 @@ addon — with two honest caveats (parameter sizing, and the one classical compo
 - **Proofs.** FRI's soundness relies on collision resistance and code distance, not
   on any number-theoretic assumption, and it has a transparent (trapdoor-free)
   setup — the same reasons STARKs are described as plausibly post-quantum [6, 7].
-- **Issuer signatures — the caveat.** The prototype's off-circuit Ed25519
-  signature is *not* post-quantum (Shor). Of the two production candidates in
-  §4.1, embedded-curve Schnorr is likewise not, while the Poseidon-native
-  hash-based signature (Winternitz/SPHINCS+ style) is both post-quantum and
-  AIR-native. Selecting the hash-based option makes the entire OpenCSV layer
-  quantum-resistant; it is the intended choice.
+- **Issuer authorization.** Legacy off-circuit Ed25519 records are classical and
+  cannot create v3 mints. V3 instead proves knowledge of the Poseidon2-derived
+  issuer seed inside the mint PCD circuit and binds the exact statement. This is
+  a hash-native authorization artifact, not a standalone conventional signature.
 - **Outside our control.** The Bitcoin anchor layer itself relies on ECDSA/Schnorr
   signatures; a quantum break of Bitcoin would affect OpenCSV's ordering/finality
   substrate but is a Bitcoin-level event, not something this scheme introduces or
@@ -842,14 +921,15 @@ anchoring or recursion layer.
 
 ---
 
-## 6. Formal Verification Roadmap
+## 6. Formal Verification Status and Roadmap
 
 The security argument of §5 has three load-bearing parts: the state machine (genesis →
 mint → transfer* → redeem), the value-conservation invariant, and nullifier
 uniqueness. These are *protocol logic* — independent of the SNARK — and are amenable
 to mechanized proof.
 
-**Target:** a Lean 4 development (`formal/`) with:
+**Specification ledger (implemented):** a dependency-free Lean 4 development
+with 29 sorry-free, CI-audited theorems covering:
 
 1. **Abstract interfaces** — commitment scheme, signature scheme, PRF, each with its
    security property stated as an explicit hypothesis (binding, EUF-CMA,
@@ -858,8 +938,8 @@ to mechanized proof.
 2. **Coin state machine** — inductive definition of valid coin traces mirroring §4.4–4.6.
 3. **Theorems:**
    - **(T1) Inflation soundness** — every valid trace's per-asset net supply equals
-     Σ mints − Σ redeems along the trace, and every mint node carries a valid issuer
-     signature.
+     Σ mints − Σ redeems along the trace, and every mint node carries valid issuer
+     authorization.
    - **(T2) Conservation** — transfer steps preserve per-asset totals.
    - **(T3) Nullifier uniqueness** — distinct spends of one coin emit identical
      nullifiers; hence any accepted double-spend yields an observable on-chain
@@ -870,99 +950,87 @@ to mechanized proof.
    section and (b) the Rust predicate/circuit it abstracts, so the formal artifact
    stays honest about the gap between verified logic and unverified cryptography.
 
-Deliberately *not* mechanized (initially): the AIR/FRI soundness proof itself, and the
-Poseidon security analysis — both are proof-system-level results better left to
-dedicated formalization efforts.
+The separate `formal-aeneas` project translates the pure Rust kernel and proves
+15 audited declarations/refinements for binding, occurrence, first-occurrence,
+and supply. The reproducible dependency/audit commit has a green hosted receipt;
+the public site labels that review state separately from default-branch adoption.
+A4/A5 implement verify-then-adopt and a pure receiver-decision boundary on a
+merge-gated Rust descendant.
+
+Deliberately not mechanized: AIR/FRI soundness, Poseidon security, Bitcoin
+consensus/backends, networking, storage, and the root-circuit allowlist. These
+are distinct trust/review surfaces, not theorems implied by the model.
 
 ---
 
-## 7. Implementation Roadmap
+## 7. Implementation Status and Roadmap
 
-**Phase 2 — Rust core (implemented).** `opencsv-core`: Poseidon2
-commitments and nullifiers over BabyBear, issuer signatures, consignment
-(de)serialization, the `Accept` driver. `opencsv-pcd`:
-the recursive engine —
-predicates (mint/transfer/redeem) written directly as AIR over BabyBear on top of a
-Plonky3 0.6 stack, with in-circuit FRI verification (via the official
-Plonky3-recursion crates) for the recursion step. **No zkVM anywhere.**
-`opencsv-bitcoin`: the real anchor backend — OP_RETURN anchor transactions with the
-funding-input binding of §4.7 (two-pass construction), block scanning with a
-rebuildable occurrence index, selectable network (signet/mainnet/regtest) with no
-fallbacks. Validated end-to-end on regtest (real anchor transactions: mint,
-transfer, double-spend rejected by first occurrence at a real block location,
-supply audited from chain data); signet read-path validated against a live node.
+**Rust core and proof system (implemented on the reference main line).**
+`opencsv-core` defines commitments, anchors, consignments, and the accept driver;
+`opencsv-pcd` implements mint/transfer/redeem directly as AIR over BabyBear with
+in-circuit FRI recursion; `opencsv-bitcoin` and `opencsv-cbf` implement real
+Bitcoin transactions, proof-of-work headers, BIP158, merkle-checked blocks, and
+rebuildable occurrence indexes. **No zkVM is used.** The end-to-end regtest
+acceptance flow mints, transfers, rejects a double-spend, redeems, and audits
+supply against real Bitcoin transactions.
 
-Measured results (reference machine: Xeon Gold 6526Y, 64 cores; release profile;
-test-grade FRI parameters — production parameters are future work):
+Proof lineage v3 caches setup by complete circuit/setup/vk identity, binds the
+issuer seed and exact mint statement in-circuit, hard-binds recursive predecessor
+keys, rejects legacy proof/profile tags, and enforces the §5.6 floor. Release
+measurements:
 
-| proof | predecessors verified in-circuit | prove | verify | size |
-|---|---|---|---|---|
-| genesis mint | 0 | 64 ms | 3.2 ms | 46,431 B |
-| transfer (2-in/2-out) | 2 | 2.97 s | 3.6 ms | 56,041 B |
-| transfer, second hop | 2 | 2.96 s | 3.6 ms | 56,041 B |
-| redeem | 1 | 1.47 s | 3.5 ms | 54,058 B |
+| proof | Apple M4 prove (warm) | verify | size | iPhone 16e prove (cold) |
+|---|---:|---:|---:|---:|
+| genesis mint | 102.35 ms | 14.80 ms | 535,705 B | 180.8 ms |
+| transfer / mint predecessors | 7.77 s | 22.20 ms | 854,105 B | 11.253 s |
+| transfer / node predecessors | 9.76 s | 21.38 ms | 841,464 B | 14.469 s |
+| redeem | 4.71 s | 19.94 ms | 778,466 B | 7.283 s |
 
-Proof size and verification time are constant across history length — the defining
-property of PCD, confirmed empirically. The end-to-end acceptance test (mint →
-shielded transfer → double-spend rejected by first-occurrence → redeem → public
-supply audit) passes against the real verifier. Known gaps vs this specification:
-the issuer signature is currently verified off-circuit (an AIR-native signature is
-the production target), transfers are single-asset, and predecessor verification-key
-binding relies on call-site discipline pending upstream support. See
-`crates/opencsv-pcd/BENCHMARKS.md` and `README.md` for details.
+The older 46–56 KB, ~3.5 ms verification, and ~0.55–0.96 s phone rows used
+two FRI queries and no grinding. They are retained as historical feasibility
+evidence, not projections for v3. Proof size and native verification remain
+history-independent; predecessor circuit shape changes the fixed cost. The
+complete cold/warm table, security calculator inputs, and two iOS memory-killed
+profiles are recorded in
+[`BENCHMARKS.md`](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
+Current explicit proof gaps are single-asset transfers and distribution of an
+allowlist for accepted self-described root-circuit commitments.
 
-**Latency and scaling profile.** The user-facing cost of a payment decomposes into
-three parts. (a) *Proving* is the sender's dominant computational cost: ~3 s per
-transfer on the 64-core reference machine, independent of how many hops the coin
-has already traveled (each proof verifies its predecessors' proofs in-circuit
-rather than replaying history, so hop 1,000 costs what hop 2 costs — the table's
-identical rows are the point). Proving is single-thread-bound at these circuit
-sizes (1 core ≈ 64 cores measured), so single-core speed is what matters:
-measured on-device, an iPhone 16e (A18) proves a transfer in ~550 ms and an
-iPhone 17 Pro Max (A19 Pro) in ~670 ms — 3–5× faster than the 64-core server
-reference, comfortably inside interactive-UX territory. (b) *Transport* is a ~56 KB off-chain message — sub-second over a
-messaging channel. (c) *Anchoring/finality* is inherited from Bitcoin: the
-nullifier anchor is visible in the next block, and recipients finally accept after
-*k* confirmations (§4.7), exactly like an on-chain BTC payment. The recipient's
-own work is ~4 ms of verification plus a nullifier lookup against a local
-(rebuildable) index. Aggregate throughput is bounded by the 64-byte anchor: on the
-order of 100 OpenCSV transactions per second if the entire Bitcoin block space
-were available to them. Costs that *do* grow: circuit size with inputs/outputs
-per transfer (the reference circuits are fixed 2-in/2-out), the nullifier index
-linearly with total anchored bytes, and supply audits linearly with chain length
-(a public, permissionless, one-pass scan).
+**Formal verification (specification merged; Rust adoption review-gated).** The
+dependency-free Lean project has 29 sorry-free audited specification theorems,
+including limb arithmetic, batching, and scan-exclusion soundness. The separate
+Aeneas project has a green reproducibility receipt and 15 audited declarations
+connecting translated `opencsv-kernel` Rust to binding, occurrence,
+first-occurrence, and supply specifications. A4/A5 adopt that kernel and a pure
+receiver-decision boundary on a descendant branch; exact hosted CI and
+independent review remain merge gates. Proof-system soundness, Poseidon2
+cryptanalysis, chain backends, storage, and networking are not mechanized.
 
-**Phase 3 — Lean 4 formalization (implemented)** as specified in §6: theorems T1–T4
-are mechanized in a dependency-free Lean 4 project (`formal/`), `sorry`-free, with
-all cryptographic hardness assumptions isolated as labeled axioms (`#print axioms`
-audit enforced in CI). Since the first pass, two additions landed with the
-deployment's evolution: the u64 limb-conservation soundness (the circuit's
-range-check argument of §4.5 item 2, mechanized) and `OpenCsv.Scan` — the
-scan-first indexing model of §4.7.1, with the exclusion-soundness theorem
-(scan-first ≡ full-block scanning) and accelerator fraud-provability.
+**Scan-first indexing and readiness (implemented; latest receipts review-gated).**
+Wallets find marker-bearing blocks via compact filters, merkle-verify candidates,
+and evaluate exclusion locally. A real consignment verified with no RPC/indexer
+(320 filter bytes + 1,140 block bytes for the test window), and a hand-built
+`bitcoin-cli` anchor was discovered by filter walk. Dated signet receipts cover
+multi-peer cold/restart/same-session sync, fee modeling, the spendable-marker
+failure, safe-marker migration, and the negative generic-fee-bump result. Those
+receipts do not authorize release or mainnet.
 
-**Phase 4 — Signal transport (implemented, live-tested).** Consignments are
-dominated by the proof (~46–56 KB measured), which fits comfortably in a Signal
-attachment. `opencsv-signal` delivers consignments as end-to-end encrypted Signal
-messages (presage), and `opencsv-cli` exposes the wallet as a text client — send,
-receive, mint (issuer mode), redeem, balance, audit. A Signal-iOS integration
-renders verified payments natively as chat bubbles. Receiving an RWA
-payment then literally looks like receiving a message; `Accept` runs on arrival and
-the user is shown "verified" or "rejected". Validated on production Signal in
-both directions: a mint verified natively in-app on a physical iPhone, and a
-phone-proved 2-in/2-out transfer (~1 s on-device) verified by the CLI, with
-supply audits agreeing on both sides. The Signal channel also gives sender
-authentication and forward secrecy for the consignment, covering the
-transport-privacy gap noted in §5.4.
+**Co-funded batching (C0/C1/C2 implemented).** The normative v2/v3 transcript,
+real multi-party regtest transaction, unanimous replacement, BIP158 discovery,
+authenticated peer gossip, durable reservations, and exact-manifest recovery
+are implemented. The newest adversarial fixes—historical-v2 live rejection and
+one absolute frame deadline—are published on a merge-gated descendant.
 
-**Phase 5 — Scan-first indexing (implemented).** The anchor marker of §4.7 and
-the §4.7.1 scan engine: wallets find anchor blocks via compact filters,
-merkle-verify candidate blocks, and evaluate exclusion locally — validated
-end-to-end with a consignment verified using no RPC and no indexer (320 filter
-bytes + 1,140 block bytes for the test window), and by a cross-implementation
-interop test in which an anchor hand-crafted with `bitcoin-cli` from this
-specification was discovered by the scan engine purely via the filter walk.
-Indexers remain available as optional accelerators (§4.7.1).
+**Signal transport (prototype live-tested; final product last).** Production
+Signal carried consignments in both directions on a physical iPhone and rendered
+a native verified bubble under the historical proof profile. That is preserved
+as transport/UI evidence. The final product uses the §4.10 Rust account wallet:
+Bitcoin as protocol fee reserve only, no anchor server, direct P2P relay,
+authoritative outpoint revalidation, durable crash recovery, non-migratable
+device binding, and canonical-consignment verdict identity. The hardened Rust
+wallet is a review branch; Signal-iOS migration, in-place backup/database work,
+both build flags, and physical v3 crash/recovery/fee-bump acceptance remain the
+final codebase and are not claimed complete.
 
 ---
 
@@ -975,7 +1043,7 @@ Indexers remain available as optional accelerators (§4.7.1).
 | Taproot Assets | no (CSV) | partial | per-asset proofs | yes | no (issuer proofs) | 1 commitment | yes |
 | Zcash (Sapling/Orchard) | yes (own chain) | yes | no (turnstile audits only) | n/a (no issuer assets) | partial (lightwalletd, trusted) | full shielded tx | no |
 | Shielded CSV | no (CSV) | yes | no | no | no (full scan or trusted indexer) | 64 B nullifier | yes |
-| **OpenCSV** | no (CSV) | yes | **yes (transparent mint/redeem stream)** | **yes (in-circuit issuer predicate)** | **yes (marker + compact filters + PoW)** | 64 B nullifier + dust marker | yes |
+| **OpenCSV** | no (CSV) | yes | **yes (transparent mint/redeem stream)** | **yes (in-circuit issuer predicate)** | **yes (marker + compact filters + PoW)** | 64 B bound record + marker | yes |
 
 - **Client-side validation lineage.** Todd's client-side validation and single-use
   seals; RGB maximizes this philosophy with Bitcoin-UTXO-bound seals and full

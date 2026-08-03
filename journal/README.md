@@ -137,6 +137,68 @@ theorems, no new axioms
 N-of-M honesty hypothesis is **eliminated from the roadmap** — the
 architecture got better, so the assumptions got fewer.
 
+## 2026-08-02 — Verify-then-adopt becomes real
+
+The pure [`opencsv-kernel`](https://github.com/opencsvnet/opencsv-rs/commit/b64bdf49caa3a46a10084e20fc36560bb2b8def3)
+carves binding, occurrence, first-occurrence, and supply logic into an
+Aeneas-compatible Rust surface and dual-runs it against the legacy core.
+The separate `formal-aeneas` project proves translated Rust equal to the Lean
+specification. The important distinction is now enforceable: 29 specification
+theorems and 15 translated-Rust audit declarations are separate honesty
+ledgers, not one inflated theorem count.
+
+## 2026-08-02 — The mempool sentinel: one symptom, three lookups
+
+Fresh mints verified everywhere except the phone's credit path. Consignments
+created before confirmation carried a mempool sentinel, while one snapshot
+path demanded a confirmed location. Fixing only `locate()` would still fail:
+the accept driver asks `anchor_at` and `ctx_at` first. Commit
+[`1616397`](https://github.com/opencsvnet/opencsv-rs/commit/1616397)
+resolves the sentinel through one shared lookup and makes chain lag a retryable
+condition rather than a final rejection.
+
+## 2026-08-02 — Serverless crediting closes the receive loop
+
+[`opencsv_scan_export_snapshot`](https://github.com/opencsvnet/opencsv-rs/commit/290c8e0)
+projects the phone's own compact-filter scan into the snapshot consumed by the
+crediting verifier. A real consignment was verified and credited with **no RPC,
+no indexer, and no anchor server**. This demoted public explorers to optional
+hints and made the architectural rule explicit: an OpenCSV-specific server is
+not part of acceptance.
+
+## 2026-08-02 — A proof that only builds on one laptop is not a receipt
+
+The first Aeneas project depended on an absolute local path and audited only a
+subset of its declarations. The reproducibility branch pins the Aeneas Lean
+library by exact Git revision, removes the duplicate binding theorem, expands
+the translated-Rust audit to 15 declarations, and passes hosted Lean CI
+([run 30765043746](https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746)).
+The public formal page labels the 29 specification theorems and 15 refinement
+declarations separately. Default-branch adoption remains a merge decision.
+
+## 2026-08-02 — Field sync finds a consensus bug; batching v1 finds a script bug
+
+The first signet sync failed at height 2016 because the client treated signet
+like a min-difficulty test chain. Commit
+[`e137096`](https://github.com/opencsvnet/opencsv-rs/commit/e137096)
+syncs 315,800 headers through 156 retargets. Batching v1 then exposed a
+standardness mistake: a bare `OP_TRUE` witness script fails CLEANSTACK when
+envelope items remain. The corrected `OP_DROP×(n+1) OP_TRUE` construction
+shipped as [`3d4da5f`](https://github.com/opencsvnet/opencsv-rs/commit/3d4da5f),
+useful prototype evidence that was later superseded for new batch creation.
+
+## 2026-08-02 — Batching becomes co-funded and signer-verifiable
+
+The frozen v2 design removes coordinator-funded Bitcoin. A signed stock input
+fixes the shared OpenCSV context; each participant contributes one payload,
+one fee input, and one change output; every participant reconstructs the full
+canonical transaction and releases only `SIGHASH_ALL`. C0/C1/C2 land as
+[`d51d139`](https://github.com/opencsvnet/opencsv-rs/commit/d51d139),
+[`0af0258`](https://github.com/opencsvnet/opencsv-rs/commit/0af0258), and
+[`54c0833`](https://github.com/opencsvnet/opencsv-rs/commit/54c0833).
+The current reference profile caps one batch at 64 participants for script
+safety; that number is not a universal relay quota.
+
 ## 2026-08-02 — The project domain gets a real front door
 
 The GitHub Pages project site originally kept its homepage under `web/` and
@@ -146,6 +208,98 @@ old `web/index.html` becomes a compatibility redirect. The ordering is part of
 the design, not deployment trivia: verify domain ownership and DNS before
 changing the Pages custom domain, so the working `github.io` site never
 redirects into an unresolved hostname.
+
+## 2026-08-03 — Production proofs replace the beautiful prototype numbers
+
+The ~56 KB / ~3.6 ms / ~0.55 s-phone profile did its job: it proved recursive
+PCD and mobile feasibility. It used two FRI queries and no grinding, so it is
+now labeled historical. D1 → D4 → D3 → D2 lands setup caching, in-circuit
+predecessor-key binding, in-circuit issuer-seed authorization, and the frozen
+v3 proof/profile boundary
+([`ca8ad37`](https://github.com/opencsvnet/opencsv-rs/commit/ca8ad37),
+[`97187e6`](https://github.com/opencsvnet/opencsv-rs/commit/97187e6),
+[`8ee7a81`](https://github.com/opencsvnet/opencsv-rs/commit/8ee7a81),
+[`d18c235`](https://github.com/opencsvnet/opencsv-rs/commit/d18c235)).
+
+The new receipt is less cinematic and more useful: a 94-bit conservative
+union-adjusted enforced floor, ~0.54–0.85 MB proofs, 15–22 ms desktop
+verification, and 11.25–14.47 s transfer proving on the iPhone 16e. Two
+higher-memory profiles were killed by iOS before the four-step Horner packing
+made the deepest shape fit. Failed profiles belong in the receipt too.
+
+## 2026-08-03 — A live child spends the marker and changes the protocol
+
+The original marker was `P2WSH(sha256(OP_TRUE))`: filter-visible, but also
+anyone-can-spend. On signet, a third party immediately spent its 546 sats and
+pinned the parent against ordinary RBF. New anchors now use the unspendable
+`P2WSH(sha256(OP_RETURN))` marker. Historical version-2 records remain readable
+but cannot enter a new replacement epoch; new creation uses version 3. A
+generic Bitcoin Core fee bump later removed protocol change, providing the
+negative receipt for a pure replacement validator that permits only
+context/layout-preserving change reduction. See the dated
+[`SIGNET_READINESS.md`](https://github.com/opencsvnet/opencsv-rs/blob/codex/a4-a5-readiness-integration/SIGNET_READINESS.md).
+
+## 2026-08-03 — Adversarial review attacks the batching fix itself
+
+The first C1/C2 review found that Boolean “verified” flags, unauthenticated
+relay bodies, and newest-epoch-only recovery were not security boundaries.
+The remediation uses typed capabilities from authoritative chain verification,
+stock/fee-key authorization over exact canonical bodies, semantic quotas,
+durable `signature_released` state, and exact-manifest recovery across epochs
+([`8d047f6`](https://github.com/opencsvnet/opencsv-rs/commit/8d047f6)).
+
+The follow-up attack pass then found two more edges: historical v2 could still
+enter a live C2 session, and a peer could slow-drip a frame by resetting socket
+timeouts. The current review tip rejects v2 at every live/reopen boundary and
+shares one absolute prefix+body deadline
+([`e4265b9`](https://github.com/opencsvnet/opencsv-rs/commit/e4265b9)).
+Two test-only corrections were added because the first receipt described cases
+more precisely than its tests exercised. Receipt prose is a release invariant,
+not decoration. Hosted CI and an independent re-review remain merge gates.
+
+## 2026-08-03 — Signal owns the fee wallet; Bitcoin is gas only
+
+The anchor-server architecture is superseded. Signal's target account owns a
+Rust-managed OpenCSV wallet and a BIP84 Bitcoin fee wallet. Rust selects and
+reserves fee UTXOs, derives change, fixes input zero before proof generation,
+persists signed bytes before relay, and allows RBF only when the OpenCSV
+context, record, marker, positions, and change destination remain intact.
+Public Esplora data is an accelerator; confirmed spend state is rechecked
+through headers, BIP158, merkle proofs, and full blocks. There is no WIF,
+caller-selected UTXO/change, general BTC recipient, raw-transaction broadcast,
+or bespoke OpenCSV server at the FFI boundary.
+
+## 2026-08-03 — The phone restore that cloned a primary
+
+iOS restored Keychain state onto the developer iPhone 16e. That meant an
+account root alone could silently arm two primary devices against the same
+coins and fee UTXOs. The Rust open boundary now requires a distinct 32-byte
+binding from a non-migratable `ThisDeviceOnly` item, stores its root-bound
+commitment in SQLite and the backup checkpoint, and opens missing/mismatched
+restores read/export-only. Missing-binding state is sticky: supplying a newly
+generated binding later still cannot re-arm the database
+([`fb4a26a`](https://github.com/opencsvnet/opencsv-rs/commit/fb4a26a)).
+Authority moves only through a future explicit recovery/rekey flow.
+
+## 2026-08-03 — One consignment, one verdict, one bubble
+
+Signal delivery attempts are not payment identities. Bincode accepts distinct
+wire encodings of the same semantic consignment, so hashing attachment bytes
+could duplicate a verdict even before retry nonces. The Rust receive boundary
+now decodes, canonically re-encodes, verifies/stores the canonical bytes, and
+returns one SHA-256 identity for both accepted and rejected verdicts
+([`4dc05cf`](https://github.com/opencsvnet/opencsv-rs/commit/4dc05cf)).
+Swift must key verdict and rendered-cell storage on that value. The physical
+acceptance test still owes the proof: crash/resume into two attachment attempts,
+exactly one verified payment bubble.
+
+## 2026-08-03 — Honest stop line: Rust review branches are not an iOS wallet
+
+The current integration tip `e4265b9` and wallet tip `4dc05cf` are published
+review artifacts. Their exact hosted CI runs and independent review are still
+gates; neither is described here as merged. Signal-iOS source, the linked
+iPhone, releases, and mainnet were intentionally untouched. The next public
+claim changes only after those receipts change.
 
 ---
 

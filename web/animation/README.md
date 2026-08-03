@@ -5,8 +5,14 @@ animation in the site's visual language (dark `#0d1117`, orange `#f7931a`,
 blue `#58a6ff`, monospace accents). Six scenes: mint → anchor → off-chain
 transport → scan-first verification → batching → trust summary.
 
-The rendered video is embedded in `web/index.html` ("Watch it end to end")
+The rendered video is embedded in the root `index.html` ("Watch the prototype
+lineage end to end")
 and committed at `out/opencsv-e2e.mp4` (h264) with `out/poster.png`.
+
+This render is a historical architecture receipt. It predates the unspendable
+`sha256(OP_RETURN)` marker, frozen production proof profile, co-funded batching
+v2, and Rust-owned Signal account wallet. Re-render only after those current
+semantics are represented; until then the homepage labels the deltas explicitly.
 
 A second series — one short composition per formal-verification theorem
 family — lives under `src/formals/` and renders to `out/formals/`

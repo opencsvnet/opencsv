@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — Formal Verification</title>
-<meta name="description" content="What OpenCSV's Lean 4 formalization proves: inflation soundness, conservation, nullifier uniqueness, receiver correctness — sorry-free, with every cryptographic assumption labeled.">
+<meta name="description" content="OpenCSV formal verification: 29 audited protocol theorems, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -65,8 +65,9 @@
   <div class="wrap">
     <h1>Formal verification of Open<span class="csv">CSV</span></h1>
     <p class="tagline">What is proven, what is assumed, and exactly where the gap
-    between the two lives. Mechanized in Lean 4 — sorry-free, no mathlib, every
-    cryptographic assumption labeled.</p>
+    between the two lives. The dependency-free protocol model and the separate
+    Aeneas-translated Rust refinements are sorry-free, with every cryptographic
+    assumption labeled.</p>
     <p class="back"><a href="../">← back to OpenCSV</a> · <a href="https://github.com/opencsvnet/opencsv-formal">opencsvnet/opencsv-formal</a></p>
   </div>
 </header>
@@ -76,9 +77,9 @@
     <h2>In plain language</h2>
     <p class="sub">The full tables are below. This is the three-sentence version.</p>
     <ul class="layers">
-      <li><b>Proven: no inflation without the issuer's key.</b>
+      <li><b>Proven: no inflation without issuer authorization.</b>
         <p>If someone shows you coins, the math — not a server, not trust — proves
-        every unit traces back to a mint the issuer actually signed. If that's
+        every unit traces back to a mint the issuer actually authorized. If that's
         ever wrong, the world has a counterfeiting machine, and the mints stream
         would show it.</p></li>
       <li><b>Proven: a double-spend can't quietly succeed.</b>
@@ -105,8 +106,8 @@
         <tbody>
           <tr><td>Poseidon2 hashes are collision-resistant</td><td>counterfeiting becomes possible</td><td>conservative parameters; swap hash without protocol change</td></tr>
           <tr><td>The FRI proof system is sound</td><td>fake validity proofs could pass</td><td>transparent setup; audits re-check proofs publicly</td></tr>
-          <tr><td>The issuer keeps its mint key safe</td><td>inflation — but <em>visible</em>, never hidden</td><td>public mint stream; key rotation cuts off rogue mints</td></tr>
-          <tr><td>At least one of N indexers is honest</td><td>a double-spend could be hidden from you</td><td>cross-check independent indexers; zero-trust self-scan per receipt</td></tr>
+          <tr><td>The issuer keeps its mint seed safe</td><td>inflation — but <em>visible</em>, never hidden</td><td>public mint stream; explicit asset migration/rotation</td></tr>
+          <tr><td>Your verified Bitcoin header/filter/block view is current</td><td>a spend or reorg could be missed</td><td>multi-peer proof-of-work validation; explorers are hints only</td></tr>
           <tr><td>Bitcoin isn't reorged past k confirmations</td><td>accepted payments can be undone</td><td>same assumption as any Bitcoin payment</td></tr>
         </tbody>
       </table>
@@ -125,8 +126,8 @@
       <div class="thm-text">
       <h3><span class="id">T1</span>Inflation soundness</h3>
       <p>Along any valid trace, per asset: net value in circulation equals
-      <code>Σ mints − Σ redeems</code>, and every mint carries a valid issuer
-      signature. Nobody prints money — not the users, not a forger, and not the
+      <code>Σ mints − Σ redeems</code>, and every mint carries valid issuer
+      authorization. Nobody prints money — not the users, not a forger, and not the
       issuer beyond its own signed, publicly anchored mints. Paper §5.1.</p>
       </div>
       <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T1-inflation.mp4"></video>
@@ -181,7 +182,7 @@
           <tr><td><code>assetId_injective</code></td><td>collision resistance of the genesis hash</td><td>asset binding</td></tr>
           <tr><td><code>commitHash_injective</code></td><td>binding of coin commitments</td><td>coin identity</td></tr>
           <tr><td><code>ownerKey_injective</code></td><td>collision resistance of <code>owner = H(osk)</code></td><td><b>T3</b></td></tr>
-          <tr><td><code>sig_unforgeable</code></td><td>EUF-CMA of the issuer scheme, abstractly</td><td><b>T1</b></td></tr>
+          <tr><td><code>sig_unforgeable</code></td><td>unforgeability of the abstract issuer authorization; v3 refines this with in-circuit seed knowledge</td><td><b>T1</b></td></tr>
           <tr><td><code>ProofSystem.sound</code></td><td>soundness of Π, as a structure field</td><td><b>T4</b></td></tr>
           <tr><td><code>bindHash_injective</code></td><td>collision resistance of the anchor payload <code>H(nf, ctx)</code> in both arguments</td><td><b>T3</b> (conflict soundness)</td></tr>
           <tr><td><code>occurrence_requires_knowledge</code></td><td>preimage resistance: a fresh well-formed entry implies knowledge of <code>nf</code></td><td><b>T3</b> (anti-grief)</td></tr>
@@ -191,7 +192,7 @@
     <p class="sub" style="margin-top:16px">Notable by absence: the first-occurrence
     lemmas are pure list reasoning and depend on <em>no</em> cryptographic axioms
     at all.</p>
-    <h3 style="margin-top:28px">Live from the build</h3>
+    <h3 style="margin-top:28px">Specification audit — live from the build</h3>
     <p class="sub">Regenerated weekly by CI from <code>axiom-audit.txt</code> in
     opencsv-formal — this block can never drift from the actual proofs.</p>
     <!-- GEN-AXIOM-TABLE:BEGIN -->
@@ -232,6 +233,37 @@
 <p class="gen-summary">29 theorems, audited 2026-08-02 from <code>axiom-audit.txt</code> @ 2b42286</p>
 <!-- GEN-AXIOM-TABLE:END -->
     <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-02 01:34 UTC · build green · opencsv-formal@2b42286<!-- /GEN-PROVENANCE --></p>
+    <h3 style="margin-top:28px">Translated Rust audit — green review receipt</h3>
+    <p class="sub">A separate audit of the Aeneas-translated
+    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 29
+    specification-theorem count above. The reproducible commit is green but is
+    still a review artifact rather than the default <code>formal-aeneas</code>
+    branch.</p>
+    <!-- GEN-AENEAS-AXIOM-TABLE:BEGIN -->
+    <table>
+      <thead><tr><th>Rust refinement declaration</th><th>Axiom dependencies</th></tr></thead>
+      <tbody>
+        <tr><td><code>opencsv_kernel.array_eq_decide_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.audit_equation</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.binding_eq_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+        <tr><td><code>opencsv_kernel.first_occurrence_iff_isFirstOccurrence</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+        <tr><td><code>opencsv_kernel.first_occurrence_none_no_occurrence</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+        <tr><td><code>opencsv_kernel.first_occurrence_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+        <tr><td><code>opencsv_kernel.specFirstOccList_bridge</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.specFirstOccList_none</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.supply_fold_split</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.supply_loop_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>I128.Insts.CoreConvertFromU64.from</code></td></tr>
+        <tr><td><code>opencsv_kernel.supply_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>I128.Insts.CoreConvertFromU64.from</code></td></tr>
+        <tr><td><code>opencsv_kernel.truncate24_loop_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.truncate24_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+        <tr><td><code>opencsv_kernel.well_formed_pure_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+        <tr><td><code>opencsv_kernel.well_formed_spec</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>, <code>hash.hash_bind</code></td></tr>
+      </tbody>
+    </table>
+    <p class="gen-summary">15 audited declarations · green hosted run
+    <a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746">30765043746</a>
+    · <code>formal-aeneas@3bcafed</code></p>
+    <!-- GEN-AENEAS-AXIOM-TABLE:END -->
   </div>
 </section>
 
@@ -246,17 +278,18 @@
         and FRI's soundness enter as axioms. Mechanizing them is research-grade
         work (and, for FRI, an active area elsewhere), not something this project
         claims.</p></li>
-      <li><b>2. The model is not the code — partially closed.</b>
+      <li><b>2. The model/code gap is closed only for the pure kernel.</b>
         <p>As of 2026-08-02 the correspondence is <em>machine-checked for the
         kernel</em>: <a href="https://github.com/opencsvnet/formal-aeneas">formal-aeneas</a>
         translates <code>opencsv-kernel</code> (binding, occurrence test,
         first-occurrence, supply audit) from Rust into Lean 4 and proves it
         equal to this specification — sorry-free, audited. Two honest
-        remainders: (a) <em>coverage</em> — the trait-heavy accept() driver,
-        scan engine, and chain backends are not yet translated, and (b)
-        <em>adoption</em> — production still runs the original core code
-        (equivalence-tested against the kernel), until Track A4 swaps the
-        verified kernel in as the shipped implementation.</p></li>
+        remainders: (a) <em>coverage</em> — proof, scan, storage, and chain I/O
+        are not translated, and (b) <em>merge state</em> — A4 adopts binding,
+        occurrence, first-occurrence, and supply through the verified kernel,
+        while A5 projects receiver decisions through a pure accept boundary,
+        but that descendant is still behind hosted-CI and independent-review
+        gates.</p></li>
       <li><b>3. The chain-view assumption is explicit — and shrinking.</b>
         <p>The deployment moved to scan-first indexing (paper §4.7.1): exclusion
         is a <em>local</em> check over a filter-discovered candidate set, verified
@@ -265,10 +298,12 @@
         full-block scanning, so the old "at least one honest indexer" hypothesis
         is <em>eliminated</em> from the default path — indexers are optional,
         spot-verifiable accelerators whose fraud is provably publishable.</p></li>
-      <li><b>4. The prototype's shortcuts are excluded from the model.</b>
-        <p>The off-circuit Ed25519 issuer signature and test-grade FRI parameters
-        are prototype deviations, documented in both repos. The formalization
-        models the paper's target design, not the shortcuts.</p></li>
+      <li><b>4. The old proof shortcuts are historical, and one trust boundary remains.</b>
+        <p>Legacy off-circuit Ed25519 records and the two-query/no-grinding FRI
+        profile are inspectable but cannot create or verify v3 proofs. V3 binds
+        issuer-seed knowledge and predecessor keys in-circuit and enforces its
+        94-bit floor. Deployments still need an explicit allowlist/distribution
+        boundary for accepted self-described root-circuit commitments.</p></li>
     </ul>
   </div>
 </section>
@@ -282,10 +317,11 @@
     <ol class="roadmap">
       <li class="done">
         <h3>CI axiom gating — shipped</h3>
-        <p>Every headline theorem's <code>#print axioms</code> output is
-        normalized into a checked-in baseline; CI fails if any assumption set
-        changes without a human regenerating it in the same commit. The honesty
-        table on this page is an enforced invariant, not a claim.</p>
+        <p>Every headline specification theorem and translated-Rust refinement
+        declaration has normalized <code>#print axioms</code> output. The model
+        table is regenerated from its default branch; the translated-Rust table
+        is pinned to its last green reproducibility receipt until that branch is
+        adopted.</p>
       </li>
       <li class="done">
         <h3>Limb-arithmetic soundness — shipped</h3>
@@ -305,20 +341,19 @@
         architecture got better, so the assumptions got fewer.</p>
         <video class="rmv" muted loop playsinline controls preload="metadata" src="animation/out/formals/Scan-soundness.mp4"></video>
       </li>
-      <li>
-        <h3>Differential testing, model ↔ code</h3>
-        <p>Make the Lean model executable, generate random valid/invalid traces,
-        and run them against the Rust <code>accept()</code> driver — catches drift
-        between the verified model and the implementation empirically.</p>
+      <li class="done">
+        <h3>Differential testing, model ↔ code — review branch</h3>
+        <p>Generated valid and mutated traces dual-run legacy decisions and the
+        adopted kernel. The receipt is complete on the A4 branch; merge remains
+        independently gated.</p>
       </li>
-      <li>
-        <h3>Verify-then-adopt: the kernel becomes the shipped code</h3>
-        <p>The kernel (<code>opencsv-kernel</code>) is already proved equal to
-        this specification in formal-aeneas. The remaining step is adoption:
-        opencsv-core and the FFI call the verified kernel as the production
-        implementation, and the accept() decision driver gets its own pure
-        kernel (the big design item, A5). "The model is the code" by
-        verification-and-adoption, not by extraction.</p>
+      <li class="done">
+        <h3>Verify-then-adopt — implemented, merge-gated</h3>
+        <p>Core/FFI binding, occurrence, first-occurrence, and supply use the
+        verified kernel, and receiver decisions pass through a pure A5 boundary
+        with stable rejection reasons. The code exists on the reviewed
+        integration lineage; this page does not call it merged before its exact
+        CI/re-review gate closes.</p>
       </li>
       <li>
         <h3>PCD-tree model</h3>

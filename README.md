@@ -8,12 +8,14 @@ checked by the parties to a payment — not by a global consensus network. It bu
 on the client-side validation lineage, most directly
 [Shielded CSV](https://eprint.iacr.org/2025/068) (Nick–Eagen–Linus, 2025), and adds
 what such assets need: issuer-gated issuance, publicly auditable supply, and
-shielded user-to-user transfers — anchored directly to Bitcoin L1 with no fork and
-a 64-byte on-chain footprint per transaction.
+shielded user-to-user transfers — anchored directly to Bitcoin L1 with no fork.
+Each solo anchor carries a fixed 64-byte record plus one BIP158-visible marker
+output; co-funded batches amortize the marker and miner fee.
 
-- **No fork, no new chain.** Transactions publish 64-byte nullifiers inside ordinary
-  Bitcoin transactions. The base chain provides ordering and double-spend
-  resolution; it never sees amounts or logic.
+- **No fork, no new chain.** Transactions publish 64-byte context-bound records
+  inside ordinary Bitcoin transactions. Raw nullifiers stay in consignments.
+  The base chain provides ordering and double-spend resolution; it never
+  evaluates OpenCSV logic.
 - **Client-side verification.** Recipients verify one constant-size recursive proof
   (proof-carrying data over AIR — no zkVM) plus one Bitcoin anchor.
 - **Shielded transfers, auditable supply.** Amounts and counterparties are hidden
@@ -27,36 +29,50 @@ at [`index.html`](index.html).
 
 ## Status
 
-Working system, live-tested end to end (2026-08-01): coins minted, anchored on
-real Bitcoin (regtest + signet), delivered as end-to-end-encrypted Signal
-attachments, and verified by recipients with the real recursive proof engine —
-`VERIFIED 100 USD` — natively inside Signal-iOS in one direction and by the CLI
-in the other. Double-spends are rejected by first occurrence. **Scan-first
-indexing**: a protocol-constant marker output lets wallets find anchor blocks
-via compact filters and check double-spends *locally* — a consignment was
-verified with no RPC and no indexer, and an anchor hand-built with `bitcoin-cli`
-from the spec was discovered purely by the filter walk. Core protocol logic and
-the scan model are mechanized in Lean 4 (23 theorems, sorry-free, CI-enforced
-axiom audit). See the [journal](journal/README.md) for the full evolution.
+The protocol has real end-to-end evidence: mint, transfer, rejection of a
+double-spend, redemption, and supply audit on regtest; a confirmed signet
+anchor; scan-only verification with no RPC/indexer; and two-way transport over
+production Signal on a physical iPhone. That August 1 phone demo used the
+historical feasibility profile. It proved the interaction model, not production
+parameters.
 
-| proof | prove (release) | verify | size |
-|---|---|---|---|
-| genesis mint | 64 ms | 3.2 ms | 46,431 B |
-| transfer (2-in/2-out, 2 predecessors verified in-circuit) | 2.97 s | 3.6 ms | 56,041 B |
-| redeem | 1.47 s | 3.5 ms | 54,058 B |
+The frozen proof-lineage-v3 profile now binds issuer authorization and recursive
+predecessor keys in-circuit, rejects legacy proof/profile tags, and enforces a
+94-bit conservative union-adjusted security floor. Current release measurements:
 
-Constant proof size and verification time regardless of coin history — the
-defining property of proof-carrying data, confirmed by measurement
-(test-grade FRI parameters; see the paper §7 for the full table and caveats).
-On-device (iPhone 16e / A18): transfer proving ~550 ms.
+| proof | Apple M4 prove (warm) | verify | size | iPhone 16e prove (cold) |
+|---|---:|---:|---:|---:|
+| genesis mint | 102 ms | 14.8 ms | 535,705 B | 181 ms |
+| transfer / mint predecessors | 7.77 s | 22.2 ms | 854,105 B | 11.25 s |
+| transfer / node predecessors | 9.76 s | 21.4 ms | 841,464 B | 14.47 s |
+| redeem | 4.71 s | 19.9 ms | 778,466 B | 7.28 s |
+
+Proof size and verification remain independent of coin-history length; cost
+depends on the fixed predecessor circuit shape. Full parameters, cold/warm
+rows, failed memory profiles, and the security accounting live in the
+[benchmark receipt](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
+
+The reference stack also includes co-funded batching v2 and its two-round peer
+gossip, a verified pure Rust kernel and pure accept-decision boundary on a
+review branch, and dated signet/readiness receipts. The final Signal product
+architecture is intentionally not presented as shipped: Rust owns an OpenCSV
+asset wallet and a BIP84 Bitcoin **fee** wallet; there is no anchor server and
+no arbitrary-Bitcoin-send API. The hardened Rust account-wallet branch is under
+hosted-CI/review gates, and Signal-iOS integration remains the final codebase.
+
+Formal evidence is kept in two ledgers rather than one inflated count: 29
+sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations
+covering the Aeneas-translated Rust kernel refinements. See the
+[journal](journal/README.md) for the discoveries, failures, and exact receipts.
 
 ## Repositories
 
 | repo | contents |
 |---|---|
-| **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — the paper (`paper/`), explainer site (`web/`), journal (`journal/`) |
+| **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — canonical homepage (`index.html`), site assets/pages (`web/`), paper (`paper/`), and journal (`journal/`) |
 | **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, SPV light client + scan engine, bitcoind backend, wallet CLI, Signal transport |
-| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 mechanization (23 theorems): inflation soundness, conservation, nullifier uniqueness, receiver correctness, limb soundness, scan exclusion soundness |
+| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (29 audited theorems): inflation, conservation, nullifier/occurrence, receiver correctness, limb soundness, batching, scan exclusion |
+| **[formal-aeneas](https://github.com/opencsvnet/formal-aeneas)** | Separate Lean 4.31 + mathlib project connecting the Aeneas-translated pure Rust kernel to the specification (15 audited declarations on the green reproducibility receipt) |
 
 ## Reference
 

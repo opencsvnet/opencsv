@@ -4,7 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — Client-Side Verified RWAs, Stables &amp; More on Bitcoin</title>
-<meta name="description" content="OpenCSV: RWAs, stablecoins, and other issuer-backed assets validated by the parties to a payment, not a consensus network. Shielded transfers, auditable supply, 64-byte footprint on Bitcoin L1, no fork.">
+<meta name="description" content="OpenCSV: issuer-backed assets verified by the parties to a payment, not a consensus network. Shielded transfers, auditable supply, client-side proofs, and Bitcoin ordering — no fork or anchor server.">
+<link rel="canonical" href="https://opencsv.net/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OpenCSV — Proofs travel. Bitcoin orders.">
+<meta property="og:description" content="Client-side verified issuer assets with shielded transfers, auditable supply, and Bitcoin ordering — no fork or anchor server.">
+<meta property="og:url" content="https://opencsv.net/">
+<meta property="og:image" content="https://opencsv.net/web/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="OpenCSV: Proofs travel. Bitcoin orders.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OpenCSV — Proofs travel. Bitcoin orders.">
+<meta name="twitter:description" content="Client-side verified issuer assets with shielded transfers, auditable supply, and Bitcoin ordering.">
+<meta name="twitter:image" content="https://opencsv.net/web/og.png">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -24,6 +37,20 @@
   .cta .primary { background: var(--accent); color: #111; }
   .cta .secondary { border: 1px solid var(--border); color: var(--fg); }
   .cta .primary:hover, .cta .secondary:hover { text-decoration: none; filter: brightness(1.1); }
+
+  .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .status-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .status-card .eyebrow { font: 12px var(--mono); letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); }
+  .status-card h3 { font-size: 19px; margin: 8px 0; }
+  .status-card p { color: var(--muted); font-size: 15px; }
+  .status-card.ready { border-color: rgba(63,185,80,.55); }
+  .status-card.review { border-color: rgba(247,147,26,.7); }
+  .status-card.last { border-color: rgba(88,166,255,.55); }
+  .receipt { margin-top: 20px; padding: 16px 18px; border-left: 3px solid var(--accent); background: rgba(247,147,26,.06); color: var(--muted); font-size: 15px; }
+  .receipt strong { color: var(--fg); }
+
+  .metrics { margin-top: 24px; }
+  .metrics caption { text-align: left; color: var(--muted); margin-bottom: 10px; }
 
   section { padding: 56px 0; border-top: 1px solid var(--border); }
   h2 { font-size: 30px; margin-bottom: 12px; }
@@ -75,22 +102,23 @@
 <header class="hero">
   <div class="wrap">
     <h1>Open<span class="csv">CSV</span></h1>
-    <p class="tagline">RWAs, stables, and more — verified by the parties to a
+    <p class="tagline">Issuer-backed assets verified by the parties to a
     payment, not by a consensus network. Shielded transfers, auditable supply,
-    anchored to Bitcoin with a 64-byte footprint. No fork.</p>
+    and Bitcoin ordering — no fork, new chain, or anchor server.</p>
     <div class="cta">
       <a class="primary" href="paper/opencsv.md">Read the paper</a>
-      <a class="secondary" href="#how">How it works</a>
+      <a class="secondary" href="#status">Current status</a>
     </div>
   </div>
 </header>
 
 <section id="watch">
   <div class="wrap watch">
-    <h2>Watch it end to end</h2>
+    <h2>Watch the prototype lineage end to end</h2>
     <p class="sub" style="margin-left:auto;margin-right:auto">Eighty seconds:
     mint, anchor, off-chain transport, scan-first verification, batching —
-    and what you trust.</p>
+    and what you trust. The animation predates the safe-marker, co-funded-v2,
+    production-proof, and Rust account-wallet changes documented below.</p>
     <video controls preload="metadata" poster="web/animation/out/poster.png">
       <source src="web/animation/out/opencsv-e2e.mp4" type="video/mp4">
       Your browser does not support the video tag; download
@@ -98,6 +126,47 @@
     </video>
     <p class="note">Rendered with Remotion from
     <a href="https://github.com/opencsvnet/opencsv/tree/main/web/animation"><code>web/animation</code></a>.</p>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <h2>What is real, what is under review, what comes last</h2>
+    <p class="sub">OpenCSV publishes receipts at the boundary between those
+    three states. A prototype result is evidence, not a production claim; a
+    green local branch is not a merge.</p>
+    <div class="status-grid">
+      <article class="status-card ready">
+        <div class="eyebrow">On the reference main line</div>
+        <h3>Proof lineage v3 + co-funded batching</h3>
+        <p>Issuer authorization and predecessor keys are bound in-circuit.
+        The 94-bit-floor proof profile, C1 co-funded transactions, and C2
+        two-round peer gossip have reproducible Rust receipts.</p>
+      </article>
+      <article class="status-card review">
+        <div class="eyebrow">Review-gated descendants</div>
+        <h3>Verified kernel, accept boundary, readiness, wallet</h3>
+        <p>A4/A5 adoption, dated signet/readiness evidence, C2 adversarial
+        fixes, and the Rust-owned Signal account wallet remain behind exact
+        hosted-CI and independent-review gates.</p>
+      </article>
+      <article class="status-card last">
+        <div class="eyebrow">Final codebase</div>
+        <h3>Signal-iOS migration</h3>
+        <p>The physical-phone prototype proved encrypted delivery, native
+        rendering, and local scanning. The final Rust custody, backup,
+        device-binding, and crash-safe send design is not yet integrated into
+        Signal-iOS.</p>
+      </article>
+    </div>
+    <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
+    product.</strong> The target Signal wallet exposes fee reserve, UTXOs,
+    confirmations, and evidence, but Bitcoin can be spent only by an OpenCSV
+    mint, transfer, or protocol-safe fee bump. There is no general BTC send or
+    bespoke OpenCSV anchor server. Follow the exact gates in
+    <a href="https://github.com/opencsvnet/opencsv/issues/1">issue #1</a> and
+    the Signal architecture in
+    <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">issue #3</a>.</p>
   </div>
 </section>
 
@@ -111,23 +180,23 @@
       <div class="step">
         <div class="n">01 — Mint</div>
         <h3>Issuer creates supply</h3>
-        <p>The issuer signs a mint and anchors it on Bitcoin: <code>MINT ∥ asset_id ∥ V</code>
-        — amount and asset public, so anyone can audit supply. New coins go out as
-        hiding commitments; owners stay private.</p>
+        <p>A v3 mint proves knowledge of the issuer seed committed by genesis
+        and binds the exact statement in-circuit. <code>MINT ∥ asset_id ∥ V</code>
+        remains public for supply audit; new coin openings remain private.</p>
       </div>
       <div class="step">
         <div class="n">02 — Send</div>
         <h3>Pay like sending a message</h3>
-        <p>A transfer anchors only the spent coins' <code>nullifiers</code> (64 opaque
-        bytes). The coins themselves — plus a recursive proof of their entire ancestry —
-        travel off-chain to the recipient, e.g. over Signal.</p>
+        <p>The Rust wallet reserves Bitcoin fees, fixes input zero, and anchors
+        a 64-byte context-bound record. Raw nullifiers, coin openings, and the
+        recursive proof travel only in the consignment, e.g. over Signal.</p>
       </div>
       <div class="step">
         <div class="n">03 — Verify</div>
         <h3>Recipient checks, chain sleeps</h3>
-        <p>The recipient verifies one constant-size proof (valid issuance →
-        conservation-respecting history) and one Bitcoin anchor (first occurrence of the
-        nullifier, <code>k</code> confirmations). Accept or reject — done.</p>
+        <p>The recipient verifies one history-independent proof and one Bitcoin
+        anchor, then evaluates first occurrence from its own header/filter/block
+        view. Explorer data may accelerate discovery; it cannot decide acceptance.</p>
       </div>
     </div>
   </div>
@@ -138,7 +207,9 @@
     <h2>See it working</h2>
     <p class="sub">The real CLI against a real <code>bitcoind</code> (regtest):
     every anchor is a broadcast Bitcoin transaction carrying a 64-byte
-    <code>OP_RETURN</code> record — no demo chain, no mocks.</p>
+    <code>OP_RETURN</code> record and a compact-filter marker — no demo chain,
+    no mocked chain. These captures show the historical feasibility profile;
+    current production-profile measurements are below.</p>
     <p class="provenance"><!-- CAPTURE-PROVENANCE -->captured 2026-08-03 08:53 UTC · regtest · opencsv-rs@b64bdf4<!-- /CAPTURE-PROVENANCE --></p>
     <figure class="shot">
       <img src="web/screenshots/mint.png" alt="Issuer initializes a USD asset and mints 100 to Bob; the anchor transaction is broadcast and confirmed on regtest">
@@ -168,10 +239,11 @@
     <ul class="props">
       <li><b>No fork, no new chain.</b> Anchors ride inside ordinary Bitcoin
       transactions. Miners and nodes never know OpenCSV exists.</li>
-      <li><b>64-byte footprint.</b> One nullifier record per transaction — on the order
-      of 100 tx/s fits in Bitcoin block space.</li>
+      <li><b>Fixed anchor record.</b> A solo anchor carries one 64-byte
+      context-bound record plus a constant unspendable marker output. Raw
+      nullifiers never appear on-chain.</li>
       <li><b>Shielded transfers.</b> Amounts, counterparties, and asset IDs in
-      user-to-user payments are hidden behind Poseidon commitments.</li>
+      user-to-user payments are hidden inside coin commitments and proofs.</li>
       <li><b>Auditable supply.</b> Mints and redemptions are transparent events;
       outstanding supply per asset is a public sum anyone can compute.</li>
       <li><b>Issuer-gated issuance.</b> Supply grows only under the issuer key bound
@@ -179,21 +251,33 @@
       <li><b>AIR-native proofs, no zkVM.</b> Recursive proof-carrying data over
       BabyBear/Goldilocks with FRI — constant-size proofs, constant verification,
       no CPU-emulation overhead.</li>
-      <li><b>Plausibly post-quantum.</b> No discrete-log assumptions in the core:
-      hash-based commitments, nullifiers, and transparent FRI proofs. The issuer
-      signature is the one component that must be hash-based to keep it that way —
-      and that's the intended production choice.</li>
+      <li><b>Hash-native OpenCSV authorization.</b> V3 issuer authorization is a
+      proof of knowledge of the genesis-bound issuer seed inside the PCD
+      circuit, not an off-circuit curve signature. Bitcoin's own signature
+      security remains outside OpenCSV's control.</li>
       <li><b>Trustless mobile verification.</b> A protocol-constant marker output
       makes anchor blocks discoverable via compact block filters — a phone syncs
       kilobytes per block, fetches only anchor blocks, and checks double-spends
       <em>locally</em>. No trusted server, ever; indexers are optional,
       spot-verifiable accelerators.</li>
-      <li><b>Optional batching.</b> Senders can combine many anchors into one
-      transaction: each computes their own payload against a pre-committed
-      outpoint, so an untrusted batcher packs thousands of payments per envelope
-      and learns nothing. Solo anchors stay the default; batching is for
-      throughput and fee sharing.</li>
+      <li><b>Optional co-funded batching.</b> Each participant contributes one
+      fee input, payload, and change output; every signer reconstructs the exact
+      transaction before releasing <code>SIGHASH_ALL</code>. The current
+      reference profile supports up to 64 participants and unanimous safe RBF.</li>
     </ul>
+    <div class="tablewrap metrics">
+      <table>
+        <caption>Frozen proof-lineage-v3 release measurements. The August 1
+        ~0.55 s phone result used the retired test profile.</caption>
+        <thead><tr><th>Proof</th><th>M4 prove (warm)</th><th>Verify</th><th>Size</th><th>iPhone 16e prove (cold)</th></tr></thead>
+        <tbody>
+          <tr><td>Genesis mint</td><td>102 ms</td><td>14.8 ms</td><td>535,705 B</td><td>181 ms</td></tr>
+          <tr><td>Transfer / mint predecessors</td><td>7.77 s</td><td>22.2 ms</td><td>854,105 B</td><td>11.25 s</td></tr>
+          <tr><td>Transfer / node predecessors</td><td>9.76 s</td><td>21.4 ms</td><td>841,464 B</td><td>14.47 s</td></tr>
+          <tr><td>Redeem</td><td>4.71 s</td><td>19.9 ms</td><td>778,466 B</td><td>7.28 s</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
@@ -243,23 +327,24 @@
         <h3>Rust core — real PCD, working</h3>
         <p><code>opencsv-core</code> + <code>opencsv-pcd</code>: Poseidon2 commitments and
         nullifiers over BabyBear, mint/transfer/redeem predicates as hand-written AIR,
-        in-circuit FRI recursion. Transfers verify two predecessor proofs in-circuit:
-        <b>56 KB proofs, 3.6 ms verification, constant in history length</b>
-        (~3 s proving, release, 64-core Xeon). The full flow — mint → shielded transfer →
+        in-circuit FRI recursion. V3 transfers verify two predecessor proofs
+        in-circuit: <b>0.84–0.85 MB proofs, ~21–22 ms verification, and
+        history-independent size/work</b> (7.77–9.76 s warm proving on M4).
+        The full flow — mint → shielded transfer →
         double-spend rejected → redeem → public supply audit — passes end to end.</p>
       </li>
       <li class="done">
-        <h3>Formal verification — done</h3>
-        <p>Lean 4 mechanization of the protocol logic: inflation soundness,
-        conservation, nullifier uniqueness, receiver correctness. Sorry-free; all
-        cryptographic hardness isolated in labeled axioms.</p>
+        <h3>Formal ledgers — machine checked</h3>
+        <p>Twenty-nine Lean specification theorems are sorry-free and
+        CI-audited. A separate 15-declaration Aeneas audit connects the pure
+        Rust kernel to the model without pretending the two counts are one.</p>
       </li>
       <li class="done">
-        <h3>Signal client — working, live-tested</h3>
-        <p>Consignments delivered as E2E-encrypted Signal messages; a payment
-        arrived on a physical iPhone and rendered <b>+100 USD · verified</b>;
-        the phone proved a transfer on-device (~1 s) and the CLI verified it.
-        Both directions over production Signal, audits agreeing.</p>
+        <h3>Signal prototype — live-tested</h3>
+        <p>Both directions worked over production Signal on a physical iPhone
+        using the feasibility proof profile. This is preserved as prototype
+        evidence; the final serverless Rust account wallet and v3 proof profile
+        have not yet been integrated into Signal-iOS.</p>
       </li>
       <li class="done">
         <h3>Scan-first indexing — working</h3>
@@ -270,10 +355,18 @@
         spec was discovered by the scan engine purely via the filter walk.
         Two implementations, one protocol, zero coordination.</p>
       </li>
+      <li class="done">
+        <h3>Production prover &amp; batching v2 — reference stack</h3>
+        <p>Frozen proof parameters, in-circuit issuer authorization and
+        predecessor keys, co-funded batches, authenticated gossip, durable
+        reservations, and real multi-party regtest receipts.</p>
+      </li>
       <li>
-        <h3>Field validation — next</h3>
-        <p>On-device sync bandwidth, battery, and receive latency on real
-        phones on signet; mainnet beta after that.</p>
+        <h3>Review gates, then iOS last</h3>
+        <p>Merge the independently reviewed kernel/readiness/wallet descendants,
+        finish reference signet acceptance and release evidence, then migrate
+        Signal-iOS in place and run physical crash/recovery acceptance. No
+        mainnet or release action is implied.</p>
       </li>
     </ol>
   </div>
@@ -281,7 +374,8 @@
 
 <footer>
   <div class="wrap">
-    <p><b>OpenCSV</b> — working draft, v0.1.</p>
+    <p><b>OpenCSV</b> — working draft, v0.2. Claims are receipt-backed and
+    merge state is stated explicitly.</p>
     <ul>
       <li><a href="paper/opencsv.md">Paper (markdown)</a></li>
       <li><a href="web/story.html">A payment, end to end</a> · <a href="web/journal.html">Journal</a> · <a href="web/formal.html">Formal verification</a> · <a href="https://github.com/opencsvnet">github.com/opencsvnet</a></li>

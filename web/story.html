@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — A payment, end to end</title>
-<meta name="description" content="Watch a real OpenCSV payment: minted on signet, sent over Signal, verified on a phone with no trusted server, double-spend rejected, supply audited.">
+<meta name="description" content="The OpenCSV prototype payment receipt: real Bitcoin anchoring, encrypted Signal transport, local phone verification, double-spend rejection, and the production architecture learned from it.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -40,9 +40,9 @@
 <header class="hero">
   <div class="wrap">
     <h1>A payment, end to end</h1>
-    <p class="tagline">Minted on signet. Sent over Signal. Verified on a phone
-    with no trusted server. Every frame below is real — CLI captures regenerate
-    weekly from live runs; phone captures are taken on-device.</p>
+    <p class="tagline">Real Bitcoin anchors. Encrypted Signal transport. Local
+    verification on a physical phone. This is the prototype receipt; notes call
+    out where the frozen v3 proof, marker, and wallet architecture now differ.</p>
     <p class="back"><a href="../">← home</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
   </div>
 </header>
@@ -53,11 +53,11 @@
     <div class="n">1</div>
     <div>
       <h2>The issuer mints 100 USD</h2>
-      <p>An issuer key — bound into the asset's genesis — signs a mint. The mint
-      is <em>public</em>: asset and amount go into the anchor, so anyone can audit
-      supply later. The anchor is a real Bitcoin transaction with the constant
-      marker output (<code>OP_0 ∥ sha256(OP_TRUE)</code>) that makes it
-      discoverable by compact block filters.</p>
+      <p>A mint is <em>public</em>: asset and amount go into the anchor, so anyone
+      can audit supply. In proof lineage v3, the coin proof itself proves
+      knowledge of the issuer seed bound by genesis. New anchors use the
+      unspendable marker <code>OP_0 ∥ sha256(OP_RETURN)</code>; the historical
+      capture below predates that live-found migration.</p>
       <img class="shot" src="screenshots/mint.png" alt="CLI: issuer init and mint with real anchor transaction">
       <div class="cap">regtest · auto-regenerated weekly from a live run</div>
     </div>
@@ -67,7 +67,7 @@
     <div class="n">2</div>
     <div>
       <h2>The payment arrives as a Signal message</h2>
-      <p>The consignment — coin openings plus a constant-size recursive proof of
+      <p>The consignment — coin openings plus a history-independent recursive proof of
       the coin's entire history — travels off-chain, end-to-end encrypted, as an
       ordinary Signal attachment. Signal sees ciphertext, never coins.</p>
       <div class="placeholder">S1 — on-device capture pending<br><b>chat view with the consignment message</b><br>(iPhone 16e, signet)</div>
@@ -78,7 +78,8 @@
     <div class="n">3</div>
     <div>
       <h2>The phone verifies — alone</h2>
-      <p>Recipient's phone verifies the recursive proof in milliseconds, syncs
+      <p>The recipient's phone verifies the v3 recursive proof in tens of
+      milliseconds, syncs
       compact block filters (kilobytes), finds the anchor block via the marker,
       and checks locally that the coin was never spent before. No RPC, no
       indexer, no trusted server — the bubble says <b>+100 USD · verified</b>.</p>
@@ -91,9 +92,11 @@
     <div class="n">4</div>
     <div>
       <h2>Bob pays 40 back</h2>
-      <p>The recipient key prefills from the chat (no typing, no address books).
-      The phone builds the 2-in/2-out transfer and proves it in about a second —
-      on an iPhone 16e, recursive proving is faster than on a 64-core server.</p>
+      <p>The recipient key prefills from the chat. The prototype proved a
+      2-in/2-out transfer in about a second under the retired feasibility
+      profile. The measured v3 phone cost is 11.25–14.47 seconds. In the final
+      design, Rust—not Swift or an anchor server—also reserves Bitcoin fees,
+      derives change, fixes the context, persists signed bytes, and relays.</p>
       <div class="placeholder">S3 — on-device capture pending<br><b>send sheet, prefilled recipient + balance</b><br>(iPhone 16e, signet)</div>
     </div>
   </div>
@@ -127,9 +130,12 @@
 
 <footer>
   <div class="wrap">
-    <p>Every artifact is real: CLI panels regenerate weekly by CI from live
-    regtest runs; phone panels are captured on-device (signet) with provenance
-    noted. The conceptual version of this flow is the
+    <p>Every displayed artifact is real, but the panels combine regtest CLI
+    receipts with historical physical-phone prototype evidence; they are not a
+    claim that the final v3 Signal wallet is shipped. Current gates live in the
+    <a href="https://github.com/opencsvnet/opencsv/issues/1">work board</a> and
+    <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">Signal architecture issue</a>.
+    The conceptual version of this flow is the
     <a href="index.html#watch">end-to-end animation</a>. Specification:
     <a href="../paper/opencsv.md">the paper</a>.</p>
   </div>
