@@ -174,7 +174,10 @@ library by exact Git revision, removes the duplicate binding theorem, expands
 the translated-Rust audit to 15 declarations, and passes hosted Lean CI
 ([run 30765043746](https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746)).
 The public formal page labels the 29 specification theorems and 15 refinement
-declarations separately. Default-branch adoption remains a merge decision.
+declarations separately. The exact green commit was later fast-forwarded to
+`formal-aeneas/main` as
+[`3bcafed`](https://github.com/opencsvnet/formal-aeneas/commit/3bcafedf754dc473e648fcb6565f5ad9b80af963)
+without a merge commit or history rewrite.
 
 ## 2026-08-02 — Field sync finds a consensus bug; batching v1 finds a script bug
 
@@ -256,6 +259,22 @@ shares one absolute prefix+body deadline
 Two test-only corrections were added because the first receipt described cases
 more precisely than its tests exercised. Receipt prose is a release invariant,
 not decoration. Hosted CI and an independent re-review remain merge gates.
+
+## 2026-08-03 — A Lean build can be green while the modeled rule is wrong
+
+The first C3 batching-v2 model built and matched its axiom baseline, but review
+found that `ConformingReplacement` never required either endpoint manifest to
+be well formed. A formally “conforming” pair could therefore change the marker
+or violate exact fee allocation and conservation. The model, not the receipt,
+was repaired: both endpoints must now be valid, marker preservation is proved,
+the 64-participant limit is explicitly a Rust/CLI reference policy rather than
+a universal protocol constant, and proof-bearing signer readiness separates
+verified public inputs from each signer's private reservation. Corrective
+commit
+[`a831b13`](https://github.com/opencsvnet/opencsv-formal/commit/a831b13bd80384cd14fc0aeaf38c126707a7c5d4)
+has a green hosted check on
+[PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2) and remains
+review-gated.
 
 ## 2026-08-03 — Signal owns the fee wallet; Bitcoin is gas only
 

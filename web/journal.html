@@ -262,7 +262,9 @@
     dependency by exact Git revision, removes a duplicate theorem, expands the
     audit to 15 translated-Rust declarations, and passes hosted CI
     (<a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746">run 30765043746</a>).
-    Default-branch adoption remains a merge decision.</p>
+    The exact green commit was later fast-forwarded to
+    <a href="https://github.com/opencsvnet/formal-aeneas/commit/3bcafedf754dc473e648fcb6565f5ad9b80af963"><code>formal-aeneas/main@3bcafed</code></a>
+    without a merge commit or history rewrite.</p>
   </div>
 
   <div class="entry discovery">
@@ -336,6 +338,20 @@
     A second attack pass found historical-v2 live admission and a slow-drip
     timeout. Tip <a href="https://github.com/opencsvnet/opencsv-rs/commit/e4265b9">e4265b9</a>
     closes both. Hosted CI and independent re-review remain merge gates.</p>
+  </div>
+
+  <div class="entry failure">
+    <div class="date">2026-08-03</div>
+    <h2>A Lean build can be green while the modeled rule is wrong <span class="tag">failure</span></h2>
+    <p>The first C3 batching-v2 model built and matched its axiom baseline, but
+    <code>ConformingReplacement</code> did not require either endpoint manifest
+    to be valid. It therefore admitted marker and conservation mutations. The
+    corrective <a href="https://github.com/opencsvnet/opencsv-formal/commit/a831b13bd80384cd14fc0aeaf38c126707a7c5d4"><code>a831b13</code></a>
+    requires valid endpoints, proves marker preservation, separates the
+    64-participant reference policy from protocol validity, and adds
+    proof-bearing signer freshness/readiness. Its hosted check is green on
+    <a href="https://github.com/opencsvnet/opencsv-formal/pull/2">PR #2</a>;
+    review and merge remain pending.</p>
   </div>
 
   <div class="entry">

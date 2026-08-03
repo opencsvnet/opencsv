@@ -952,9 +952,9 @@ with 29 sorry-free, CI-audited theorems covering:
 
 The separate `formal-aeneas` project translates the pure Rust kernel and proves
 15 audited declarations/refinements for binding, occurrence, first-occurrence,
-and supply. The reproducible dependency/audit commit has a green hosted receipt;
-the public site labels that review state separately from default-branch adoption.
-A4/A5 implement verify-then-adopt and a pure receiver-decision boundary on a
+and supply. The reproducible dependency/audit commit has a green hosted receipt
+and was fast-forwarded to `formal-aeneas/main` without rewriting history. A4/A5
+implement verify-then-adopt and a pure receiver-decision boundary on a
 merge-gated Rust descendant.
 
 Deliberately not mechanized: AIR/FRI soundness, Poseidon security, Bitcoin
@@ -999,9 +999,9 @@ allowlist for accepted self-described root-circuit commitments.
 **Formal verification (specification merged; Rust adoption review-gated).** The
 dependency-free Lean project has 29 sorry-free audited specification theorems,
 including limb arithmetic, batching, and scan-exclusion soundness. The separate
-Aeneas project has a green reproducibility receipt and 15 audited declarations
-connecting translated `opencsv-kernel` Rust to binding, occurrence,
-first-occurrence, and supply specifications. A4/A5 adopt that kernel and a pure
+Aeneas project has 15 audited declarations on its default branch connecting
+translated `opencsv-kernel` Rust to binding, occurrence, first-occurrence, and
+supply specifications. A4/A5 adopt that kernel and a pure
 receiver-decision boundary on a descendant branch; exact hosted CI and
 independent review remain merge gates. Proof-system soundness, Poseidon2
 cryptanalysis, chain backends, storage, and networking are not mechanized.

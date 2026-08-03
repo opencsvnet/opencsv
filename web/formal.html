@@ -233,12 +233,12 @@
 <p class="gen-summary">29 theorems, audited 2026-08-02 from <code>axiom-audit.txt</code> @ 2b42286</p>
 <!-- GEN-AXIOM-TABLE:END -->
     <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-02 01:34 UTC · build green · opencsv-formal@2b42286<!-- /GEN-PROVENANCE --></p>
-    <h3 style="margin-top:28px">Translated Rust audit — green review receipt</h3>
+    <h3 style="margin-top:28px">Translated Rust audit — merged reproducibility receipt</h3>
     <p class="sub">A separate audit of the Aeneas-translated
     <code>opencsv-kernel</code>. These 15 declarations do not inflate the 29
-    specification-theorem count above. The reproducible commit is green but is
-    still a review artifact rather than the default <code>formal-aeneas</code>
-    branch.</p>
+    specification-theorem count above. The exact green commit was
+    fast-forwarded without rewriting history and is now the default
+    <code>formal-aeneas</code> branch.</p>
     <!-- GEN-AENEAS-AXIOM-TABLE:BEGIN -->
     <table>
       <thead><tr><th>Rust refinement declaration</th><th>Axiom dependencies</th></tr></thead>
@@ -262,7 +262,7 @@
     </table>
     <p class="gen-summary">15 audited declarations · green hosted run
     <a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746">30765043746</a>
-    · <code>formal-aeneas@3bcafed</code></p>
+    · <a href="https://github.com/opencsvnet/formal-aeneas/pull/1"><code>formal-aeneas@3bcafed</code></a></p>
     <!-- GEN-AENEAS-AXIOM-TABLE:END -->
   </div>
 </section>
@@ -279,7 +279,7 @@
         work (and, for FRI, an active area elsewhere), not something this project
         claims.</p></li>
       <li><b>2. The model/code gap is closed only for the pure kernel.</b>
-        <p>As of 2026-08-02 the correspondence is <em>machine-checked for the
+        <p>As of 2026-08-03 the correspondence is <em>machine-checked for the
         kernel</em>: <a href="https://github.com/opencsvnet/formal-aeneas">formal-aeneas</a>
         translates <code>opencsv-kernel</code> (binding, occurrence test,
         first-occurrence, supply audit) from Rust into Lean 4 and proves it
@@ -320,8 +320,8 @@
         <p>Every headline specification theorem and translated-Rust refinement
         declaration has normalized <code>#print axioms</code> output. The model
         table is regenerated from its default branch; the translated-Rust table
-        is pinned to its last green reproducibility receipt until that branch is
-        adopted.</p>
+        is pinned to the exact green reproducibility receipt now adopted by
+        <code>formal-aeneas/main</code>.</p>
       </li>
       <li class="done">
         <h3>Limb-arithmetic soundness — shipped</h3>

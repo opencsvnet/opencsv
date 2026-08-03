@@ -42,14 +42,16 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   in the Aeneas-compatible shape (loops only, no iterator adapters, no
   serde/dyn/RNG/generics, opaque hash boundary). Byte-identical semantics;
   kernel≡core tests as the immediate bridge.
-- **A3. `formal-aeneas` project** [GREEN REVIEW BRANCH; MAIN ADOPTION PENDING]: a **separate** Lean 4.31.0 +
+- **A3. `formal-aeneas` project** [DONE, `3bcafed`]: a **separate** Lean 4.31.0 +
   mathlib project (Aeneas pins its toolchain — the main repo stays v4.15
   dependency-free; this fork is deliberate and recorded). Refinement theorems:
   translated kernel ≡ Lean spec (occurrence, first-occurrence, §4.9 supply
   equation). Sorry-free, with the `#print axioms` audit ported from
   `axiom-audit.sh`. Adoption is gated on a pinned Git dependency, green CI,
   duplicate-theorem removal, and an expanded 15-declaration audit surface. The
-  green run is a receipt; it does not silently advance the default branch.
+  exact green commit was reviewed and fast-forwarded to the default branch;
+  [PR #1](https://github.com/opencsvnet/formal-aeneas/pull/1) records the
+  no-rewrite merge and its audit artifact.
 - **A4. Production adoption (the sharpened endgame)** [IMPLEMENTED; MERGE-GATED]: once A3 is reproducible,
   dual-run kernel and legacy decisions in tests, then have opencsv-core/FFI
   **adopt the verified kernel as the shipped implementation**. No
@@ -77,9 +79,14 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   durable reservations and exact-manifest recovery. The TCP/CLI relay key is a
   transport profile, not a Signal protocol requirement. Historical v2 is
   read-only; new sessions use the safe-marker v3 profile.
-- **C3. Lean extension** [IMPLEMENTED ON REVIEW BRANCH]: co-funded batch model
-  reusing `OpenCsv.Batch`; default `opencsv-formal` still carries the earlier
-  batch-envelope model until the C3 receipt is reviewed and merged.
+- **C3. Lean extension** [CORRECTED, GREEN REVIEW PR]: co-funded batch model
+  reusing `OpenCsv.Batch`. Review found that the first replacement relation
+  did not require valid endpoint manifests; commit `a831b13` closes that gap,
+  separates the 64-participant reference policy from protocol validity, and
+  adds proof-bearing signer freshness/readiness. Default `opencsv-formal`
+  still carries the earlier batch-envelope model until
+  [PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2) is reviewed and
+  merged.
 - Recorded rejection: silent payments for coordination (quantum break; EC-scan
   costlier than GCS filters on mobile).
 

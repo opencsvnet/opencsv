@@ -62,7 +62,8 @@ hosted-CI/review gates, and Signal-iOS integration remains the final codebase.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 29
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations
-covering the Aeneas-translated Rust kernel refinements. See the
+covering the Aeneas-translated Rust kernel refinements, now on
+`formal-aeneas/main` at `3bcafed`. See the
 [journal](journal/README.md) for the discoveries, failures, and exact receipts.
 
 ## Repositories
