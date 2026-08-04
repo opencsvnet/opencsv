@@ -328,6 +328,42 @@ Signal-iOS source, the linked iPhone, releases, and mainnet remain untouched.
 Swift still owes in-place migration, `ThisDeviceOnly` recovery, canonical
 verdict/render storage, both build flags, and physical crash/retry/RBF evidence.
 
+## 2026-08-04 — “USD” is a label, not a product definition
+
+The first Signal mint UI asked for a ticker and amount. Entering `USD` could
+therefore create an unrelated issuer asset without a named issuer, fixed
+precision, backing statement, redemption terms, or recognizable identity.
+Repeated attempts left several USD-looking assets and forced the sender to
+choose among identifiers the product had never explained. The proof could be
+valid while the wallet claim was meaningless.
+
+The replacement preview supports one product: **OpenCSV USD Preview**, with
+fixed Rust-owned terms, six decimals, and one exact `asset_id`. The production
+FFI accepts no arbitrary definition; `opencsv_preview_usd_ensure(handle)` is
+idempotent, signet/regtest-only, and freezes writes until the new checkpoint is
+secured by Signal Backup. Signal accepts a human decimal amount and selects no
+ticker, issuer, Bitcoin input, or asset identity. Old ticker-only and custom
+assets remain readable prototypes but are excluded from issuance and send.
+
+This is explicitly not Tether or USDT. A future Tether instrument must cross a
+new authenticated issuer/terms/asset-version boundary; preview balances cannot
+be silently renamed or converted.
+
+The implementation is published as draft
+[opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
+`3bfaa1876507a086feda15ba147f85d0ca3c4f4d` and draft
+[Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at
+`aa9fc33178`. The exact receipt is 4 core instrument tests, 26 Rust
+account-wallet tests, an iOS 15 device/universal-simulator XCFramework build,
+CocoaPods fetching and rebuilding that framework from the pushed Rust SHA, a
+complete unsigned Signal simulator build with the app targets'
+`-warnings-as-errors`, and the focused exact USD decimal parser/formatter test.
+These are published-branch local integration receipts, not hosted CI approval,
+a merge, release, mainnet activation, or physical-phone acceptance result. The
+linked iPhone was deliberately untouched because its installed profiles require
+an Apple Development certificate/private key that is not currently present in
+the keychain.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

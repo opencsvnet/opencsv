@@ -26,9 +26,13 @@ its ~0.55–0.96 s numbers are explicitly the historical test profile. The final
 architecture is different: Rust owns the asset wallet, BIP84 fee wallet,
 operation journal, signing, transaction layout, and relay; Bitcoin is spendable
 only by OpenCSV mint/transfer/fee-bump operations; no OpenCSV anchor server or
-general BTC send path exists. The Rust wallet foundation is now on
-`opencsv-rs/main`; Signal-iOS has not been
-migrated and remains deliberately last.
+general BTC send path exists. The Rust wallet base is on `opencsv-rs/main` at
+`4dc05cf`; recovery/relay hardening plus the fixed instrument boundary are in
+draft [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
+`3bfaa187`. Signal-iOS migration is published but unmerged in draft
+[PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at `aa9fc331` and
+remains deliberately last. Its product surface is narrowed to one fixed
+signet/regtest USD Preview; custom instrument creation is not a v1 goal.
 
 ## Track A — Executable formal verification (REVISED per spike verdict)
 The spike (REPORT in formal-formal issue #1): **full-crate Aeneas is dead**
@@ -117,12 +121,19 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
 - **B0. Prototype evidence** [DONE on feature branch]: PR blockers and S-items,
   explorer UI, persistent client, regtest/hardware receive measurements, and
   story captures. Revalidate; do not redo.
-- **B1. Signal-native wallet architecture** [RUST ON MAIN, `4dc05cf`; SWIFT NOT
-  STARTED]: Rust-owned account root, non-migratable device binding, BIP84 fee
+- **B1. Signal-native wallet architecture** [RUST BASE ON MAIN, `4dc05cf`;
+  HARDENING/INSTRUMENT DRAFT `3bfaa187`; SWIFT DRAFT `aa9fc331`]: Rust-owned
+  account root, non-migratable device binding, BIP84 fee
   wallet, owner/issuer derivation, durable operations, authoritative outpoint
   revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
   canonical consignment identity, and action-only FFI. No anchor server,
   caller-selected inputs/change, arbitrary BTC send, or raw broadcast.
+- **B1a. USD Preview product boundary** [DRAFT PRS + LOCAL TEST RECEIPTS]: one fixed
+  signet/regtest instrument, six-decimal exact amounts, no ticker-defined
+  creation or multi-asset picker, legacy prototypes read-only, and an explicit
+  authenticated version boundary before any future Tether instrument. Receipt:
+  4 core instrument tests, 26 account-wallet tests, source-built CocoaPods pin,
+  full unsigned Signal simulator build, and the focused exact-amount test.
 - **B2. Final validation**: rebase, full suites, both flag configurations under
   `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
   mempool-to-confirmed transitions.

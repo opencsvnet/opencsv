@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCSV USD Preview — Terms v1</title>
+<meta name="description" content="Canonical test-only terms for OpenCSV USD Preview on Bitcoin signet and regtest.">
+<link rel="canonical" href="https://opencsv.net/usd-preview/terms-v1">
+<style>
+  :root { color-scheme: dark; --bg:#0d1117; --fg:#e6edf3; --muted:#9da7b3; --card:#161b22; --border:#30363d; --accent:#f7931a; --link:#58a6ff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; }
+  h1 { margin: 0 0 8px; font-size: clamp(34px, 7vw, 52px); line-height: 1.1; }
+  h2 { margin-top: 42px; font-size: 24px; }
+  p, li { color: var(--muted); }
+  strong, code { color: var(--fg); }
+  a { color: var(--link); }
+  .warning { margin: 30px 0; padding: 20px; border: 1px solid var(--accent); border-radius: 12px; background: var(--card); }
+  .warning p { margin: 0; color: var(--fg); }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+  dt { color: var(--muted); }
+  dd { margin: 0; overflow-wrap: anywhere; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+</style>
+</head>
+<body>
+<main>
+  <p><a href="../../">← OpenCSV</a></p>
+  <h1>OpenCSV USD Preview</h1>
+  <p>Canonical instrument terms · version 1</p>
+
+  <div class="warning">
+    <p><strong>Test only.</strong> USD Preview has no monetary value, is not a
+    dollar, is not USDT, is not redeemable for dollars or USDT, and is not
+    issued or endorsed by Tether.</p>
+  </div>
+
+  <dl>
+    <dt>Networks</dt><dd>Bitcoin signet and regtest only</dd>
+    <dt>Display name</dt><dd>OpenCSV USD Preview</dd>
+    <dt>Unit code</dt><dd><code>USD</code> (display metadata, not identity)</dd>
+    <dt>Decimals</dt><dd>6</dd>
+    <dt>Issuer label</dt><dd>OpenCSV Preview Issuer</dd>
+    <dt>Backing</dt><dd>None</dd>
+    <dt>Redemption</dt><dd>None</dd>
+  </dl>
+
+  <h2>Identity and issuance</h2>
+  <p>The exact instrument is identified by its OpenCSV <code>asset_id</code>,
+  not by the letters “USD.” Its genesis commits these terms and the issuer
+  public key. Issuance requires a proof of control of that genesis-bound
+  issuer key and a Bitcoin-ordered OpenCSV anchor.</p>
+
+  <h2>Wallet policy</h2>
+  <ul>
+    <li>The preview Signal wallet exposes no arbitrary instrument creator.</li>
+    <li>Its first “Issue test USD” action creates this fixed definition,
+    secures the updated checkpoint in Signal Backup, and only then prepares
+    issuance.</li>
+    <li>Legacy ticker-only or custom prototype assets remain recoverable and
+    readable but cannot be issued or sent by the USD Preview product flow.</li>
+    <li>Bitcoin in Signal is restricted to OpenCSV protocol fees; it is not a
+    general-purpose BTC send wallet.</li>
+  </ul>
+
+  <h2>Future production issuer</h2>
+  <p>A future Tether-issued OpenCSV instrument would be a separately
+  authenticated issuer, terms document, asset identity, and protocol version.
+  Preview balances will never be silently relabeled or converted. Any future
+  migration or redemption must be explicit, issuer-authorized, and auditable.</p>
+
+  <h2>No production claim</h2>
+  <p>This page documents developer test behavior. It is not an offer, payment
+  promise, custodial account, representation of reserves, or guarantee of
+  availability. Mainnet creation and broadcast remain disabled pending
+  separate issuer authorization, security review, and owner approval.</p>
+</main>
+</body>
+</html>

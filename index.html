@@ -134,7 +134,7 @@
     <h2>What is real, what is under review, what comes last</h2>
     <p class="sub">OpenCSV publishes receipts at the boundary between those
     three states. A prototype result is evidence, not a production claim; a
-    green local branch is not a merge.</p>
+    green draft branch is not a merge.</p>
     <div class="status-grid">
       <article class="status-card ready">
         <div class="eyebrow">On the reference main line</div>
@@ -154,12 +154,18 @@
         represented as completed.</p>
       </article>
       <article class="status-card last">
-        <div class="eyebrow">Final codebase</div>
-        <h3>Signal-iOS migration</h3>
+        <div class="eyebrow">Published drafts · not merged</div>
+        <h3>Signal-iOS + one fixed USD Preview</h3>
         <p>The physical-phone prototype proved encrypted delivery, native
-        rendering, and local scanning. The final Rust custody, backup,
-        device-binding, and crash-safe send design is not yet integrated into
-        Signal-iOS.</p>
+        rendering, and local scanning. The isolated final integration now
+        compiles the Rust custody, backup, device-binding, and crash-safe send
+        design and removes custom ticker minting. Rust
+        <a href="https://github.com/opencsvnet/opencsv-rs/pull/5">PR #5</a>
+        and Signal
+        <a href="https://github.com/opencsvnet/Signal-iOS/pull/4">PR #4</a>
+        have local Rust, source-built CocoaPods, full simulator-build, and
+        exact-amount test receipts. Physical crash/retry/RBF acceptance,
+        hosted review gates, and merge remain outstanding.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
@@ -169,7 +175,9 @@
     bespoke OpenCSV anchor server. Follow the exact gates in
     <a href="https://github.com/opencsvnet/opencsv/issues/1">issue #1</a> and
     the Signal architecture in
-    <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">issue #3</a>.</p>
+    <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">issue #3</a>.
+    The built-in test instrument's canonical disclosure is in the
+    <a href="usd-preview/terms-v1/">USD Preview terms</a>.</p>
   </div>
 </section>
 
@@ -346,8 +354,9 @@
         <h3>Signal prototype — live-tested</h3>
         <p>Both directions worked over production Signal on a physical iPhone
         using the feasibility proof profile. This is preserved as prototype
-        evidence; the final serverless Rust account wallet and v3 proof profile
-        have not yet been integrated into Signal-iOS.</p>
+        evidence. The final serverless account wallet and v3 profile now build
+        in a published draft Signal integration with one fixed USD Preview
+        product; that branch is not merged or physically accepted.</p>
       </li>
       <li class="done">
         <h3>Scan-first indexing — working</h3>
@@ -366,11 +375,12 @@
       </li>
       <li>
         <h3>Finish readiness, then iOS last</h3>
-        <p>The kernel/readiness/wallet descendants are on the reference main
-        line. The corrected C3 model is now on the formal main line; finish
-        signet acceptance and release evidence, then migrate
-        Signal-iOS in place and run physical crash/recovery acceptance. No
-        mainnet or release action is implied.</p>
+        <p>The kernel/readiness work and base wallet are on the reference main
+        line. Wallet recovery/instrument hardening and Signal integration are
+        published draft descendants. The corrected C3 model is on the formal
+        main line; finish signet and hosted review gates, then run physical
+        Signal crash/recovery acceptance. No mainnet or release action is
+        implied.</p>
       </li>
     </ol>
   </div>
