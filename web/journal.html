@@ -466,6 +466,43 @@
     mainnet were untouched.</p>
   </div>
 
+  <div class="entry failure">
+    <div class="date">2026-08-04</div>
+    <h2>Unsigned was not an in-place Signal upgrade <span class="tag">failure</span></h2>
+    <p>A simulator build made with <code>CODE_SIGNING_ALLOWED=NO</code> lacked
+    Signal's effective application-group entitlement. Launch failed closed,
+    and CoreSimulator replaced the simulator-only app/group containers. The
+    provisional registration and wallet could not be recovered. Source, the
+    physical iPhone, issuer checkpoint, and mainnet state were untouched.</p>
+    <p>The accepted procedure now requires Xcode's default local ad-hoc
+    signature, inspection of app-group and keychain entitlements, and container
+    identity receipts before and after install. The signed build passed; a fresh
+    registration was completed without another reinstall. The exact runbook is
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/ab0b20f"><code>ab0b20f</code></a>.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>First exact reviewed issuer enabled on signet <span class="tag">live test</span></h2>
+    <p>Signal commit
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/4fec89e902"><code>4fec89e902</code></a>
+    pins one test-only <b>OpenCSV USD Preview</b> manifest on signet. Mainnet
+    and regtest registries remain empty. Its asset id is
+    <code>1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507</code>;
+    the <a href="../usd-preview/terms-v1/">public terms</a> record six decimals,
+    the exact issuer key and terms hash, no backing, no redemption, no monetary
+    value, and no Tether claim.</p>
+    <p>A live registered simulator recognizes the one-USD policy at zero balance
+    and has 20,000 confirmed signet sats restricted to protocol fees. Its public
+    owner is
+    <code>ff17c90b2e7c511f8d64734e07833502d6a82308d0c5ba0ca862f61ebd48c124</code>.
+    The headless issuer's first preparation rejected safely before proving: its
+    1,000-sat confirmed UTXO was below the 2,500-sat policy floor. A 10,000-sat
+    faucet output is observed but unconfirmed. No USD operation exists yet;
+    confirmation, checkpoint acknowledgement, broadcast, Signal delivery,
+    credit, crash-resume, and safe RBF remain open.</p>
+  </div>
+
 </div>
 
 <footer>

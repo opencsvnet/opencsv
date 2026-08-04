@@ -154,7 +154,7 @@
         represented as completed.</p>
       </article>
       <article class="status-card last">
-        <div class="eyebrow">Published drafts · not merged</div>
+        <div class="eyebrow">Published drafts · live signet acceptance</div>
         <h3>Signal-iOS + one USD wallet</h3>
         <p>The physical-phone prototype proved encrypted delivery, native
         rendering, and local scanning. The isolated final integration now
@@ -166,10 +166,12 @@
         also provides issuance outside Signal through an opt-in, JSON-speaking
         headless operator that requires the exact issuer authority and asset id.
         Signal <a href="https://github.com/opencsvnet/Signal-iOS/pull/4">PR #4</a>
-        retains only owner behavior. The drafts have local Rust, source-built
-        CocoaPods, full simulator-build, and exact-amount receipts. Physical
-        crash/retry/RBF acceptance, hosted review gates, and merge remain
-        outstanding.</p>
+        retains only owner behavior. Its signet build now pins one exact,
+        test-only OpenCSV USD Preview manifest while production registries stay
+        empty. A registered simulator shows the intended zero-USD wallet with
+        20,000 confirmed fee sats; the first headless-issued consignment is
+        waiting on an issuer faucet confirmation. Physical crash/retry/RBF
+        acceptance, hosted review gates, and merge remain outstanding.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment

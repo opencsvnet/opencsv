@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV Test USD Issuer — Terms v1</title>
-<meta name="description" content="Canonical test-only issuer terms for OpenCSV USD on Bitcoin signet and regtest.">
+<meta name="description" content="Canonical test-only issuer terms and public identity for OpenCSV USD Preview on Bitcoin signet.">
 <link rel="canonical" href="https://opencsv.net/usd-preview/terms-v1">
 <style>
   :root { color-scheme: dark; --bg:#0d1117; --fg:#e6edf3; --muted:#9da7b3; --card:#161b22; --border:#30363d; --accent:#f7931a; --link:#58a6ff; }
@@ -27,7 +27,7 @@
 <body>
 <main>
   <p><a href="../../">← OpenCSV</a></p>
-  <h1>OpenCSV Test USD</h1>
+  <h1>OpenCSV USD Preview</h1>
   <p>OpenCSV test issuer terms · version 1</p>
 
   <div class="warning">
@@ -37,13 +37,16 @@
   </div>
 
   <dl>
-    <dt>Networks</dt><dd>Bitcoin signet and regtest only</dd>
-    <dt>Display name</dt><dd>OpenCSV Test USD</dd>
+    <dt>Network</dt><dd>Bitcoin signet only</dd>
+    <dt>Display name</dt><dd>OpenCSV USD Preview</dd>
     <dt>Unit code</dt><dd><code>USD</code> (display metadata, not identity)</dd>
     <dt>Decimals</dt><dd>6</dd>
-    <dt>Issuer label</dt><dd>OpenCSV Test Issuer</dd>
+    <dt>Issuer label</dt><dd>OpenCSV Preview Issuer</dd>
     <dt>Backing</dt><dd>None</dd>
     <dt>Redemption</dt><dd>None</dd>
+    <dt>Asset ID</dt><dd><code>1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507</code></dd>
+    <dt>Issuer public key</dt><dd><code>e269d625776ada22fa38720d11ae3373fe19fd16f98e4b095f042d103b58c517</code></dd>
+    <dt>Terms hash</dt><dd><code>5e55e542dc34380d3530c9533d28655a43317d7323d48c5ad0a14a6f801e4764</code></dd>
   </dl>
 
   <h2>Identity and issuance</h2>
@@ -81,9 +84,10 @@
   <h2>No production claim</h2>
   <p>This page documents developer test behavior. It is not an offer, payment
   promise, custodial account, representation of reserves, or guarantee of
-  availability. No OpenCSV test-issuer manifest is currently enabled in the
-  Signal draft. Mainnet issuance and broadcast remain disabled pending separate
-  issuer authorization, security review, and owner approval.</p>
+  availability. This exact test-only manifest is enabled only in the signet
+  Signal draft. Mainnet and regtest registries remain empty; mainnet issuance
+  and broadcast remain disabled pending separate issuer authorization, security
+  review, and owner approval.</p>
 </main>
 </body>
 </html>

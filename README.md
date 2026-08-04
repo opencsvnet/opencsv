@@ -61,13 +61,15 @@ no arbitrary-Bitcoin-send API. The base account-wallet foundation is on
 `opencsv-rs/main` at `4dc05cf`; its recovery/relay descendant and the
 owner-only USD boundary are under review in
 [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`7882e185` (owner-only boundary `11ba73ca`).
+`ab0b20f` (headless operator `7882e185`; owner-only boundary `11ba73ca`).
 [Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4)
-at `645f12574d` presents one USD wallet product backed by separately identified,
+with the reviewed-issuer integration at `4fec89e902` presents one USD wallet
+product backed by separately identified,
 reviewed issuer instruments. Signal holds owner keys only: it has no issuer
-secret, mint action, arbitrary asset creator, or mint FFI. The current registry
-is deliberately empty until exact issuer manifests are approved; a ticker is
-never enough. The OpenCSV test issuer's disclosure lives in the
+secret, mint action, arbitrary asset creator, or mint FFI. The signet draft now
+pins one exact test-only OpenCSV manifest; mainnet and regtest remain empty, and
+a ticker is never enough. The OpenCSV test issuer's disclosure and exact public
+identity live in the
 [test USD terms](usd-preview/terms-v1/). Both PRs are drafts; physical-phone
 acceptance and the merge decision remain outstanding.
 

@@ -440,6 +440,46 @@ regression, focused warnings-denied default/issuer builds, and focused issuer
 Clippy pass locally. Hosted CI for `7882e185` is pending. No Signal source,
 iPhone state, issuer activation, release, merge, or mainnet action changed.
 
+## 2026-08-04 — An unsigned Signal simulator build is not an in-place upgrade
+
+The first reviewed-issuer simulator install was compiled with
+`CODE_SIGNING_ALLOWED=NO`. It produced an app, but not one with Signal's
+effective application-group entitlement. Launch failed closed; CoreSimulator
+then replaced the simulator-only app/group containers, so the provisional test
+registration and wallet could not be recovered. No source, physical iPhone,
+issuer checkpoint, or mainnet state changed.
+
+The accepted procedure is now explicit: use Xcode's default local ad-hoc
+signature, inspect the generated app-group and keychain entitlements, record
+the logical containers before and after install, and treat any container change
+as a failed in-place upgrade. A rebuilt signed app passed, and a fresh simulator
+registration was completed without another reinstall. The exact incident and
+runbook are published at `opencsv-rs@ab0b20f`.
+
+## 2026-08-04 — The first reviewed issuer is exact, public, and signet-only
+
+The registry-empty safety posture ended only for one test instrument. Signal
+commit `4fec89e902` pins the exact **OpenCSV USD Preview** manifest on signet;
+mainnet and regtest registries remain empty. The public identity is asset id
+`1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507`,
+six decimals, issuer public key
+`e269d625776ada22fa38720d11ae3373fe19fd16f98e4b095f042d103b58c517`,
+and terms hash
+`5e55e542dc34380d3530c9533d28655a43317d7323d48c5ad0a14a6f801e4764`.
+The terms say the units are test-only, valueless, not redeemable for dollars or
+USDT, and not a Tether claim.
+
+A live registered simulator recognizes the policy as one USD product at zero
+balance and retains 20,000 confirmed signet sats restricted to protocol fees.
+Its public owner is
+`ff17c90b2e7c511f8d64734e07833502d6a82308d0c5ba0ca862f61ebd48c124`.
+The headless issuer's first mint preparation failed safely before proof
+generation because its only confirmed UTXO was 1,000 sats and the wallet
+requires at least 2,500. A 10,000-sat faucet request was accepted and observed
+unconfirmed. No USD operation was created; confirmation, exact-checkpoint
+acknowledgement, broadcast, Signal delivery, credit, and crash/RBF acceptance
+remain open.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

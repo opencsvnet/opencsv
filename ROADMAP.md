@@ -31,9 +31,10 @@ only by OpenCSV transfer/fee-bump operations; no OpenCSV anchor server or
 general BTC send path exists. The Rust wallet base is on `opencsv-rs/main` at
 `4dc05cf`; recovery/relay hardening plus the owner-only issuer registry are in
 draft [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`7882e185` (owner-only boundary `11ba73ca`; headless issuer operator
+`ab0b20f` (owner-only boundary `11ba73ca`; headless issuer operator
 `7882e185`). Signal-iOS migration is published but unmerged in draft
-[PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at `645f12574d` and
+[PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4), with the reviewed
+signet-issuer integration at `4fec89e902`, and
 remains deliberately last. Signal is an owner wallet, never an issuer console:
 it shows one USD product over reviewed issuer-specific identities and exposes
 no minting or custom instrument creation.
@@ -126,7 +127,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   explorer UI, persistent client, regtest/hardware receive measurements, and
   story captures. Revalidate; do not redo.
 - **B1. Signal-native wallet architecture** [RUST BASE ON MAIN, `4dc05cf`;
-  OWNER-ONLY DRAFT `e505b181`; SWIFT DRAFT `645f12574d`]: Rust-owned
+  OWNER-ONLY DRAFT `ab0b20f`; SWIFT DRAFT `4fec89e902`]: Rust-owned
   account root, non-migratable device binding, BIP84 fee
   wallet, owner derivation, durable operations, authoritative outpoint
   revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
@@ -140,19 +141,22 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   priority-ordered issuer that covers the whole send, names it at review, and
   records its exact identity in the receipt. It rejects rather than silently
   mixing issuer tranches. Ticker lookalikes and legacy per-wallet preview assets
-  remain read-only. The registry is empty until real manifests are approved;
-  Tether is neither implied nor fabricated. Receipt: 28 Rust account-wallet
-  tests, source-built CocoaPods pin, focused selection/amount tests, and a full
-  unsigned Signal simulator build under target warnings-as-errors.
-- **B1b. Headless issuer operator** [DRAFT `7882e185`]: issuance remains
+  remain read-only. Signet now pins one exact, test-only OpenCSV USD Preview
+  manifest (`1d58a814…b507`); mainnet/regtest remain empty and Tether is neither
+  implied nor fabricated. Receipt: 28 Rust account-wallet tests, source-built
+  CocoaPods pin, focused selection/amount tests, a full signed Signal simulator
+  build, and a live registered simulator showing 0 USD with 20,000 confirmed
+  signet fee sats.
+- **B1b. Headless issuer operator** [DRAFT `ab0b20f`; OPERATOR `7882e185`]: issuance remains
   available outside Signal through the non-default `opencsv-issuer` binary.
   It reads distinct issuer root/device-binding secrets from owner-only files,
   creates exact public manifests, mints only by exact asset id, requires exact
   checkpoint acknowledgements, and exposes JSON status, broadcast, resume,
   cancel, and protocol-safe fee-bump operations. Signal's default/CocoaPods
   graph and C ABI remain owner-only. Four CLI tests plus the exact-checkpoint
-  regression and warnings-denied focused builds pass; hosted CI for this tip is
-  pending.
+  regression and warnings-denied focused builds pass. The exact signet preview
+  manifest and issuer checkpoint exist outside Signal; the first funded mint is
+  waiting on one faucet-output confirmation.
 - **B2. Final validation**: rebase, full suites, both flag configurations under
   `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
   mempool-to-confirmed transitions.
