@@ -424,14 +424,22 @@
     would need to mix issuers. OpenCSV and any future Tether instrument remain
     separate claims; no Tether identity is invented and the registry remains
     empty until a real manifest is approved.</p>
-    <p>Draft receipts: Rust
-    <a href="https://github.com/opencsvnet/opencsv-rs/commit/11ba73ca92de6eed93805d378d9bf2d9d9adb69d"><code>11ba73ca</code></a>
+    <p>Draft receipts: Rust owner-only boundary
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/11ba73ca92de6eed93805d378d9bf2d9d9adb69d"><code>11ba73ca</code></a>,
+    issuer-tool CI gate
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/e505b18190632618735e9a8932f206a4011c21b9"><code>e505b181</code></a>,
     and Signal
     <a href="https://github.com/opencsvnet/Signal-iOS/commit/645f12574dfa2a6c259f67243a837cacc5df42db"><code>645f12574d</code></a>;
-    26 Rust account-wallet tests, focused issuer-selection/amount tests, and the
+    27 Rust account-wallet tests, focused issuer-selection/amount tests, and the
     complete unsigned Signal simulator build pass locally. Hosted approval,
     issuer activation, physical-device acceptance, merge, and mainnet remain
     open.</p>
+    <p>The first hosted run caught the privileged signet issuer example being
+    compiled against the correctly owner-only default library. The correction
+    makes issuer state and methods an explicit <code>issuer-tools</code> feature,
+    requires it for that example, and gives the harness its own CI compile
+    check. Default/CocoaPods builds remain owner-only. Exact local warning-denied
+    workspace and feature checks pass; hosted CI is pending.</p>
   </div>
 
 </div>

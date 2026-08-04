@@ -31,7 +31,7 @@ only by OpenCSV transfer/fee-bump operations; no OpenCSV anchor server or
 general BTC send path exists. The Rust wallet base is on `opencsv-rs/main` at
 `4dc05cf`; recovery/relay hardening plus the owner-only issuer registry are in
 draft [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`11ba73ca`. Signal-iOS migration is published but unmerged in draft
+`e505b181` (owner-only boundary `11ba73ca`). Signal-iOS migration is published but unmerged in draft
 [PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at `645f12574d` and
 remains deliberately last. Signal is an owner wallet, never an issuer console:
 it shows one USD product over reviewed issuer-specific identities and exposes
@@ -125,7 +125,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   explorer UI, persistent client, regtest/hardware receive measurements, and
   story captures. Revalidate; do not redo.
 - **B1. Signal-native wallet architecture** [RUST BASE ON MAIN, `4dc05cf`;
-  OWNER-ONLY DRAFT `11ba73ca`; SWIFT DRAFT `645f12574d`]: Rust-owned
+  OWNER-ONLY DRAFT `e505b181`; SWIFT DRAFT `645f12574d`]: Rust-owned
   account root, non-migratable device binding, BIP84 fee
   wallet, owner derivation, durable operations, authoritative outpoint
   revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
@@ -140,7 +140,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   records its exact identity in the receipt. It rejects rather than silently
   mixing issuer tranches. Ticker lookalikes and legacy per-wallet preview assets
   remain read-only. The registry is empty until real manifests are approved;
-  Tether is neither implied nor fabricated. Receipt: 26 Rust account-wallet
+  Tether is neither implied nor fabricated. Receipt: 27 Rust account-wallet
   tests, source-built CocoaPods pin, focused selection/amount tests, and a full
   unsigned Signal simulator build under target warnings-as-errors.
 - **B2. Final validation**: rebase, full suites, both flag configurations under

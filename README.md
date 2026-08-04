@@ -61,7 +61,8 @@ no arbitrary-Bitcoin-send API. The base account-wallet foundation is on
 `opencsv-rs/main` at `4dc05cf`; its recovery/relay descendant and the
 owner-only USD boundary are under review in
 [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`11ba73ca`. [Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4)
+`e505b181` (owner-only boundary `11ba73ca`).
+[Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4)
 at `645f12574d` presents one USD wallet product backed by separately identified,
 reviewed issuer instruments. Signal holds owner keys only: it has no issuer
 secret, mint action, arbitrary asset creator, or mint FFI. The current registry

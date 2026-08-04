@@ -392,9 +392,10 @@ assets are retained as untrusted/read-only history.
 
 The correction is published on draft
 [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`11ba73ca92de6eed93805d378d9bf2d9d9adb69d` and draft
+`e505b18190632618735e9a8932f206a4011c21b9` (owner-only boundary
+`11ba73ca92de6eed93805d378d9bf2d9d9adb69d`) and draft
 [Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at
-`645f12574dfa2a6c259f67243a837cacc5df42db`. Rust's 26 account-wallet tests pass,
+`645f12574dfa2a6c259f67243a837cacc5df42db`. Rust's 27 account-wallet tests pass,
 including multi-issuer classification and ticker-substitution rejection. The
 source-pinned CocoaPods framework was rebuilt; focused Signal tests cover
 priority selection, exact issuer selection, split rejection, untrusted
@@ -402,6 +403,14 @@ lookalikes, and exact six-decimal amounts; the complete unsigned simulator build
 passes under the app targets' warnings-as-errors. These are local draft-branch
 receipts, not hosted approval, a merge, physical-device acceptance, a real
 issuer activation, or a mainnet claim.
+
+The first hosted run exposed one honest integration failure: Cargo's
+`--all-targets` compiled the signet issuer example after the default library had
+correctly hidden `mint_prepare`. Commit `e505b181` gates that example and all
+issuer state behind an explicit `issuer-tools` feature, adds a dedicated CI
+compile check for the privileged harness, and leaves the default/CocoaPods build
+owner-only. The exact warning-denied workspace test and the feature-specific
+example check pass locally; hosted CI for that corrective tip is pending.
 
 ---
 
