@@ -169,9 +169,13 @@
         retains only owner behavior. Its signet build now pins one exact,
         test-only OpenCSV USD Preview manifest while production registries stay
         empty. A registered simulator shows the intended zero-USD wallet with
-        20,000 confirmed fee sats; the first headless-issued consignment is
-        waiting on an issuer faucet confirmation. Physical crash/retry/RBF
-        acceptance, hosted review gates, and merge remain outstanding.</p>
+        20,000 confirmed fee sats. The first headless-issued consignment was
+        signed only after exact checkpoint acknowledgement, broadcast as
+        signet transaction <code>eb5571a6…1c22c</code>, and delivered as a
+        normal Signal attachment. Its anchor remains unconfirmed, so the
+        simulator correctly withholds the 100 USD credit. Physical
+        crash/retry/RBF acceptance, hosted review gates, and merge remain
+        outstanding.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment

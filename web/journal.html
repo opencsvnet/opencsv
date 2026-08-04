@@ -503,6 +503,45 @@
     credit, crash-resume, and safe RBF remain open.</p>
   </div>
 
+  <div class="entry failure">
+    <div class="date">2026-08-04</div>
+    <h2>Live issuance found a checkpoint self-reference before signing <span class="tag">failure</span></h2>
+    <p>The first funded preparation used the debug prover and took about 13
+    minutes. Its proof was valid, but persisting the checkpoint hash inside the
+    operation and receipt changed the checkpoint that had just been hashed.
+    The operation was cancelled before signing or broadcast, its fee outpoint
+    was released, and the mismatching export was retained only as private
+    forensic evidence.</p>
+    <p>Commit
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/1ef29d2"><code>1ef29d2</code></a>
+    excludes acknowledgement metadata and the receipt's derived hash from the
+    canonical checkpoint, stores the final receipt before hashing, and
+    independently recomputes current state at acknowledgement. The exact export
+    now remains stable across acknowledgement, while a later state change makes
+    that old hash fail. Twenty-nine warnings-denied account-wallet tests and
+    four issuer-CLI tests pass.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>First headless USD consignment crossed live Signal <span class="tag">live test</span></h2>
+    <p>The corrected release preparation minted 100 test-only preview USD to
+    simulator owner <code>ff17c90…8c124</code> under exact checkpoint
+    <code>77f94dc96d1610da4c7775a86fbbcb576ff0b72edadcf9346a04e75c06f524ef</code>.
+    Rust persisted the signed transaction before submitting it to both
+    configured signet peers. Transaction
+    <a href="https://mempool.space/signet/tx/eb5571a6c2b5e916546dc5a099ef0047e47b8a03d1554c25845142491421c22c"><code>eb5571a6…1c22c</code></a>
+    uses 455 sats at 2 sat/vB, with record, marker, and change at vouts 0, 1,
+    and 2. The canonical 536,508-byte consignment id is
+    <code>16d16cde8b9fda972bf5b56abda706399907d4259987251a1d1ddd09f36fdd68</code>.</p>
+    <p>Signal delivered and the freshly registered simulator downloaded that
+    one 537 KB attachment. Its anchor is still in the signet mempool, so the
+    wallet correctly remains at 0 USD. This is a transport and
+    pre-confirmation fail-closed receipt, not a completed payment acceptance
+    claim. Confirmation-depth credit, crash/resume, RBF, and physical-iPhone
+    acceptance remain open.</p>
+  </div>
+
 </div>
 
 <footer>

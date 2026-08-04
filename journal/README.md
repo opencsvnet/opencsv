@@ -480,6 +480,38 @@ unconfirmed. No USD operation was created; confirmation, exact-checkpoint
 acknowledgement, broadcast, Signal delivery, credit, and crash/RBF acceptance
 remain open.
 
+## 2026-08-04 — Live issuance found a checkpoint self-reference before signing
+
+The first funded preparation used the debug prover and took about 13 minutes.
+Its proof was valid, but the reported checkpoint was not stable: persisting the
+checkpoint hash inside the operation and receipt changed the checkpoint that
+had just been hashed. The operation was cancelled before signing or broadcast,
+its fee outpoint was released, and the mismatching export was retained only as
+private forensic evidence.
+
+Commit `1ef29d2` canonicalizes backup checkpoints by excluding acknowledgement
+metadata and the receipt's derived hash, stores the final receipt before
+hashing, and independently recomputes current state at acknowledgement. The
+prepared/exported hash now stays identical across acknowledgement, while any
+later wallet-state change rejects the stale hash. The focused receipt is 29
+warnings-denied account-wallet tests and four issuer-CLI tests, all passing.
+
+The corrected release preparation minted 100 test-only preview USD to simulator
+owner `ff17c90…8c124` under exact checkpoint
+`77f94dc96d1610da4c7775a86fbbcb576ff0b72edadcf9346a04e75c06f524ef`.
+Rust persisted the signed transaction before submitting it to both configured
+signet peers. Transaction
+`eb5571a6c2b5e916546dc5a099ef0047e47b8a03d1554c25845142491421c22c`
+uses 455 sats at 2 sat/vB; record, marker, and change remain at vouts 0, 1,
+and 2. The canonical 536,508-byte consignment id is
+`16d16cde8b9fda972bf5b56abda706399907d4259987251a1d1ddd09f36fdd68`.
+
+Signal delivered and the freshly registered simulator downloaded that one
+537 KB attachment. The anchor is still in the signet mempool, so the wallet
+correctly remains at 0 USD. This proves transport and pre-confirmation
+fail-closed behavior; confirmation-depth credit, crash/resume, RBF, and the
+physical iPhone acceptance receipt remain open.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

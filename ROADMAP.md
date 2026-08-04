@@ -127,7 +127,7 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   explorer UI, persistent client, regtest/hardware receive measurements, and
   story captures. Revalidate; do not redo.
 - **B1. Signal-native wallet architecture** [RUST BASE ON MAIN, `4dc05cf`;
-  OWNER-ONLY DRAFT `ab0b20f`; SWIFT DRAFT `4fec89e902`]: Rust-owned
+  OWNER-ONLY DRAFT `1ef29d2`; SWIFT DRAFT `4fec89e902`]: Rust-owned
   account root, non-migratable device binding, BIP84 fee
   wallet, owner derivation, durable operations, authoritative outpoint
   revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
@@ -143,20 +143,23 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   mixing issuer tranches. Ticker lookalikes and legacy per-wallet preview assets
   remain read-only. Signet now pins one exact, test-only OpenCSV USD Preview
   manifest (`1d58a814…b507`); mainnet/regtest remain empty and Tether is neither
-  implied nor fabricated. Receipt: 28 Rust account-wallet tests, source-built
+  implied nor fabricated. Receipt: 29 Rust account-wallet tests, source-built
   CocoaPods pin, focused selection/amount tests, a full signed Signal simulator
   build, and a live registered simulator showing 0 USD with 20,000 confirmed
   signet fee sats.
-- **B1b. Headless issuer operator** [DRAFT `ab0b20f`; OPERATOR `7882e185`]: issuance remains
+- **B1b. Headless issuer operator** [DRAFT `1ef29d2`; OPERATOR `7882e185`]: issuance remains
   available outside Signal through the non-default `opencsv-issuer` binary.
   It reads distinct issuer root/device-binding secrets from owner-only files,
   creates exact public manifests, mints only by exact asset id, requires exact
   checkpoint acknowledgements, and exposes JSON status, broadcast, resume,
   cancel, and protocol-safe fee-bump operations. Signal's default/CocoaPods
-  graph and C ABI remain owner-only. Four CLI tests plus the exact-checkpoint
-  regression and warnings-denied focused builds pass. The exact signet preview
-  manifest and issuer checkpoint exist outside Signal; the first funded mint is
-  waiting on one faucet-output confirmation.
+  graph and C ABI remain owner-only. Four CLI tests plus 29 account-wallet
+  tests and warnings-denied focused builds pass. Live preparation found and
+  fixed a self-referential checkpoint hash; the corrected exact checkpoint was
+  acknowledged before signing. The first funded mint is broadcast as signet
+  transaction `eb5571a6…1c22c`, and its canonical consignment reached the
+  registered simulator over Signal. The anchor remains unconfirmed, so no USD
+  credit or completed acceptance claim exists yet.
 - **B2. Final validation**: rebase, full suites, both flag configurations under
   `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
   mempool-to-confirmed transitions.
