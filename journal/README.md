@@ -410,7 +410,35 @@ correctly hidden `mint_prepare`. Commit `e505b181` gates that example and all
 issuer state behind an explicit `issuer-tools` feature, adds a dedicated CI
 compile check for the privileged harness, and leaves the default/CocoaPods build
 owner-only. The exact warning-denied workspace test and the feature-specific
-example check pass locally; hosted CI for that corrective tip is pending.
+example check pass locally. Both hosted CI runs for `e505b181` subsequently
+passed; that validates the owner-only default and featured acceptance harness,
+not an issuer activation or merge.
+
+## 2026-08-04 — Issuance belongs to a headless operator, not Signal
+
+Removing mint from Signal was a custody boundary, not a decision to remove
+OpenCSV issuance. The privileged methods are now exposed by a dedicated
+`opencsv-issuer` binary behind the non-default `issuer-tools` feature at
+`7882e185d1721ed4ee56eaa2214f2a670aaafef7`. Signal's C ABI and CocoaPods
+dependency graph still expose no issuer action.
+
+The operator reads independently generated account-root and device-binding
+secrets from owner-only files rather than command-line values and emits JSON
+for automation. It creates exact public manifests from committed terms,
+prepares mints only by exact asset id, exports and exact-hash acknowledges
+checkpoints, and exposes durable status, sign/broadcast, resume, cancel, and
+protocol-safe fee-bump actions. A stale acceptance-example path that still
+accepted a ticker was corrected to require the asset id.
+
+Anyone can run the open-source tool, but only possession of the issuer seed
+committed by an existing manifest can authorize its mint proof. Likewise,
+creating another USD-labelled instrument does not place it in Signal's reviewed
+issuer registry. No Tether authority, affiliation, or manifest is claimed.
+
+Receipts: four issuer-CLI tests, the exact-checkpoint acknowledgement
+regression, focused warnings-denied default/issuer builds, and focused issuer
+Clippy pass locally. Hosted CI for `7882e185` is pending. No Signal source,
+iPhone state, issuer activation, release, merge, or mainnet action changed.
 
 ---
 

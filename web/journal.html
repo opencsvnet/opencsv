@@ -439,7 +439,31 @@
     makes issuer state and methods an explicit <code>issuer-tools</code> feature,
     requires it for that example, and gives the harness its own CI compile
     check. Default/CocoaPods builds remain owner-only. Exact local warning-denied
-    workspace and feature checks pass; hosted CI is pending.</p>
+    workspace and feature checks pass. Both hosted CI runs for
+    <code>e505b181</code> subsequently passed; that validates the owner-only
+    default and featured acceptance harness, not an issuer activation or
+    merge.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>Issuance moved to a headless operator <span class="tag">boundary</span></h2>
+    <p>Removing mint from Signal did not remove OpenCSV issuance. Commit
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/7882e185d1721ed4ee56eaa2214f2a670aaafef7"><code>7882e185</code></a>
+    adds an <code>opencsv-issuer</code> binary behind the non-default
+    <code>issuer-tools</code> feature. Signal's C ABI and CocoaPods graph remain
+    owner-only.</p>
+    <p>The JSON operator reads independently generated issuer root and device
+    binding secrets from owner-only files. It creates exact manifests, prepares
+    mints only by asset id, requires exact checkpoint acknowledgements, and
+    exposes durable broadcast, resume, cancel, and protocol-safe fee bump.
+    Running the open-source binary cannot mint another issuer's asset without
+    its committed seed, and a USD ticker lookalike is not admitted to Signal's
+    reviewed registry. No Tether authority or manifest is claimed.</p>
+    <p>Four CLI tests, an exact-checkpoint regression, and focused
+    warnings-denied/Clippy checks pass locally. Hosted CI for this exact tip is
+    pending; Signal source, the iPhone, issuer activation, merge, release, and
+    mainnet were untouched.</p>
   </div>
 
 </div>

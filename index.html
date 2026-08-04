@@ -161,21 +161,24 @@
         compiles the Rust custody, backup, device-binding, and crash-safe send
         design and removes issuance from Signal entirely. One USD balance may
         contain separately authenticated issuer instruments; every send names
-        and spends exactly one issuer, never a ticker lookalike or silent mix. Rust
-        <a href="https://github.com/opencsvnet/opencsv-rs/pull/5">PR #5</a>
-        and Signal
-        <a href="https://github.com/opencsvnet/Signal-iOS/pull/4">PR #4</a>
-        have local Rust, source-built CocoaPods, full simulator-build, and
-        exact-amount test receipts. Physical crash/retry/RBF acceptance,
-        hosted review gates, and merge remain outstanding.</p>
+        and spends exactly one issuer, never a ticker lookalike or silent mix.
+        Rust <a href="https://github.com/opencsvnet/opencsv-rs/pull/5">PR #5</a>
+        also provides issuance outside Signal through an opt-in, JSON-speaking
+        headless operator that requires the exact issuer authority and asset id.
+        Signal <a href="https://github.com/opencsvnet/Signal-iOS/pull/4">PR #4</a>
+        retains only owner behavior. The drafts have local Rust, source-built
+        CocoaPods, full simulator-build, and exact-amount receipts. Physical
+        crash/retry/RBF acceptance, hosted review gates, and merge remain
+        outstanding.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
     product.</strong> The target Signal wallet exposes fee reserve, UTXOs,
     confirmations, and evidence, but Bitcoin can be spent only by an OpenCSV
     transfer or protocol-safe fee bump. There is no general BTC send, mint
-    interface, issuer secret, or
-    bespoke OpenCSV anchor server. Follow the exact gates in
+    interface, or issuer secret in Signal; issuance is an explicitly featured
+    headless operator workflow outside the app. There is no bespoke OpenCSV
+    anchor server. Follow the exact gates in
     <a href="https://github.com/opencsvnet/opencsv/issues/1">issue #1</a> and
     the Signal architecture in
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">issue #3</a>.
@@ -360,7 +363,8 @@
         evidence. The final serverless account wallet and v3 profile now build
         in a published draft Signal integration with one USD product over
         exact, separately trusted issuer instruments. Signal cannot mint;
-        that branch is not merged or physically accepted.</p>
+        issuance lives in a separately featured headless operator. That branch
+        is not merged or physically accepted.</p>
       </li>
       <li class="done">
         <h3>Scan-first indexing — working</h3>

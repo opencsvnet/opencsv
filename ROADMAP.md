@@ -31,7 +31,8 @@ only by OpenCSV transfer/fee-bump operations; no OpenCSV anchor server or
 general BTC send path exists. The Rust wallet base is on `opencsv-rs/main` at
 `4dc05cf`; recovery/relay hardening plus the owner-only issuer registry are in
 draft [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`e505b181` (owner-only boundary `11ba73ca`). Signal-iOS migration is published but unmerged in draft
+`7882e185` (owner-only boundary `11ba73ca`; headless issuer operator
+`7882e185`). Signal-iOS migration is published but unmerged in draft
 [PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at `645f12574d` and
 remains deliberately last. Signal is an owner wallet, never an issuer console:
 it shows one USD product over reviewed issuer-specific identities and exposes
@@ -140,9 +141,18 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   records its exact identity in the receipt. It rejects rather than silently
   mixing issuer tranches. Ticker lookalikes and legacy per-wallet preview assets
   remain read-only. The registry is empty until real manifests are approved;
-  Tether is neither implied nor fabricated. Receipt: 27 Rust account-wallet
+  Tether is neither implied nor fabricated. Receipt: 28 Rust account-wallet
   tests, source-built CocoaPods pin, focused selection/amount tests, and a full
   unsigned Signal simulator build under target warnings-as-errors.
+- **B1b. Headless issuer operator** [DRAFT `7882e185`]: issuance remains
+  available outside Signal through the non-default `opencsv-issuer` binary.
+  It reads distinct issuer root/device-binding secrets from owner-only files,
+  creates exact public manifests, mints only by exact asset id, requires exact
+  checkpoint acknowledgements, and exposes JSON status, broadcast, resume,
+  cancel, and protocol-safe fee-bump operations. Signal's default/CocoaPods
+  graph and C ABI remain owner-only. Four CLI tests plus the exact-checkpoint
+  regression and warnings-denied focused builds pass; hosted CI for this tip is
+  pending.
 - **B2. Final validation**: rebase, full suites, both flag configurations under
   `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
   mempool-to-confirmed transitions.
