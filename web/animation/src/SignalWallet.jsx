@@ -171,7 +171,7 @@ export const SignalWallet = () => {
           <div style={{height: '100%', width: `${progress * 100}%`, background: C.orange}} />
         </div>
         <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 12, fontFamily: MONO, fontSize: 12, color: C.muted}}>
-          <span>LIVE ACCEPTANCE RECEIPT · 2026-08-04</span>
+          <span>LIVE WALLET RECEIPT · 2026-08-04</span>
           <span>{String(Math.floor(frame / 30)).padStart(2, '0')}s / 40s</span>
         </div>
       </div>

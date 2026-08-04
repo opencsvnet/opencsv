@@ -11,8 +11,9 @@ and committed at `out/opencsv-e2e.mp4` (h264) with `out/poster.png`.
 
 ## Real Signal wallet composition
 
-`Signal-Wallet` is a separate 40-second composition. It places a real,
-full-resolution iOS simulator recording inside the site's visual language and
+`Signal-Wallet` currently contains a separate 40-second prelude composition.
+It places a real, full-resolution iOS simulator recording inside the site's
+visual language and
 changes explanatory copy as the live UI moves through Signal delivery,
 fail-closed shallow confirmation, the Rust-owned wallet, public receive key,
 restricted Bitcoin fee reserve, and exact issuer details. Remotion supplies the
@@ -29,8 +30,32 @@ npm run still:signal
 ```
 
 The captured wallet remains at 0 USD because the live anchor had not reached
-Signal's six-confirmation threshold. Confirmed-balance and send-review footage
-must come from a later real scan; do not synthesize those states.
+Signal's six-confirmation threshold. This prelude is not the final transaction
+film. Confirmed-balance and send-review footage must come from a later real
+scan; do not synthesize those states.
+
+### Two-hop final-film gate
+
+The publishable end-to-end film must show one conserved asset through two real
+transfers: Alice receives 100 preview USD, sends 60 to Bob, and Bob resends 25
+to Carol. The final independently held balances must be Alice 40, Bob 35, and
+Carol 25. Alice, Bob, and Carol must use distinct OpenCSV account roots.
+
+The film is complete only when its capture manifest records:
+
+- Bob's receiving key announced in the Alice/Bob Signal conversation;
+- Alice's exact-issuer review, local proof generation, signed persistence,
+  broadcast, encrypted consignment delivery, and Bob's independent acceptance;
+- Carol's receiving key announced in the Bob/Carol conversation and the same
+  complete evidence sequence for Bob's resend;
+- public signet transaction ids and the required confirmation depth for both
+  transfer anchors;
+- the final 40 + 35 + 25 balance conservation receipt; and
+- a clear separation between today's two sequential anchors and batching v2's
+  future shared-transaction path.
+
+Phone numbers, account roots, device bindings, backup material, and checkpoint
+contents are prohibited from every screenshot, recording, caption, and render.
 
 This render is a historical architecture receipt. It predates the unspendable
 `sha256(OP_RETURN)` marker, frozen production proof profile, co-funded batching
