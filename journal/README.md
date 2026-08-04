@@ -509,8 +509,48 @@ and 2. The canonical 536,508-byte consignment id is
 Signal delivered and the freshly registered simulator downloaded that one
 537 KB attachment. The anchor is still in the signet mempool, so the wallet
 correctly remains at 0 USD. This proves transport and pre-confirmation
-fail-closed behavior; confirmation-depth credit, crash/resume, RBF, and the
+fail-closed behavior; confirmation-depth credit, crash/resume, and the
 physical iPhone acceptance receipt remain open.
+
+## 2026-08-04 — A tracked fee bump preserved the OpenCSV transaction
+
+The first attempt to continue the live fee bump lost terminal ownership and
+briefly left two local processes competing to resume the same operation. Both
+were identified and terminated before either changed the database. The audit
+still showed the original transaction and operation state. This was not treated
+as a harmless retry: the accepted procedure now allows exactly one tracked
+writer session for a live operation.
+
+One clean retry replaced `eb5571a6…1c22c` with signet transaction
+[`2cac7c02…a762c`](https://mempool.space/signet/tx/2cac7c0208f3f8373b1bf96ea99467da480d8906492e45b918ec555c4bda762c)
+at a 5 sat/vB target. The replacement adds 683 sats of fee and reduces only
+change to 8,316 sats. Funding input zero, record vout 0, marker vout 1, change
+vout 2, protocol context, and consignment id remain unchanged. One configured
+signet peer accepted the transaction directly; the other timed out. The new
+post-bump checkpoint was written as a new owner-only file, durably synced,
+hashed as `5b02915a…f3ac1`, and acknowledged exactly. The replacement then
+confirmed at signet height 316228. Signal requires six confirmations, so at
+chain tip 316229 the simulator correctly remained at 0 USD; four more blocks
+are required before credit is expected.
+
+The live run also exposed an operator footgun: printing a multi-megabyte secret
+checkpoint to a terminal is unnecessary and makes exact recovery receipts hard
+to handle. `opencsv-rs@15f0ac2` adds `backup export --output`, which creates a
+new 0600 file, refuses overwrite, syncs the file and parent directory, removes a
+partial file after a write failure, and returns only its path, byte count, and
+checkpoint hash. Five focused issuer-CLI tests pass with warnings denied.
+
+## 2026-08-04 — Website evidence now includes the real Signal simulator
+
+The old homepage animation explains protocol lineage and the weekly screenshots
+prove the CLI/regtest path, but neither showed the current Signal product. A new
+40-second composition combines a real simulator screen recording with Remotion
+labels. Six full-resolution captures separately preserve the encrypted
+consignment, shallow-confirmation rejection, 0-USD overview, public receive key,
+restricted fee reserve, and exact reviewed-issuer details. Every visible value
+comes from the registered signet wallet; the animation supplies framing only.
+Confirmed-balance and send-review captures remain deliberately absent until the
+replacement anchor reaches the required depth and the app credits it.
 
 ---
 

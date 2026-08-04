@@ -4,9 +4,11 @@
   "private": true,
   "description": "Explainer animation: OpenCSV — a payment end to end (Remotion)",
   "scripts": {
-    "render": "remotion render OpenCSV-E2E out/opencsv-e2e.mp4 --codec=h264 --crf=23",
-    "still": "remotion still OpenCSV-E2E out/poster.png",
-    "formals": "for id in T1-inflation T2-conservation T3-nullifiers T4-receiver Scan-soundness; do remotion render $id out/formals/$id.mp4 --codec=h264 --crf=24; done",
+    "render": "remotion render src/index.jsx OpenCSV-E2E out/opencsv-e2e.mp4 --codec=h264 --crf=23",
+    "still": "remotion still src/index.jsx OpenCSV-E2E out/poster.png --frame=300",
+    "render:signal": "remotion render src/index.jsx Signal-Wallet out/signal/opencsv-signal-wallet.mp4 --codec=h264 --crf=23",
+    "still:signal": "remotion still src/index.jsx Signal-Wallet out/signal/poster.png --frame=630",
+    "formals": "for id in T1-inflation T2-conservation T3-nullifiers T4-receiver Scan-soundness; do remotion render src/index.jsx $id out/formals/$id.mp4 --codec=h264 --crf=24; done",
     "studio": "remotion studio"
   },
   "dependencies": {

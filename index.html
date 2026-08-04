@@ -89,8 +89,24 @@
   .provenance { color: var(--muted); font-family: var(--mono); font-size: 12px; margin: -24px 0 32px; }
 
   .watch { text-align: center; }
-  .watch video { width: 100%; max-width: 880px; border-radius: 12px; border: 1px solid var(--border); display: block; margin: 0 auto; }
+  .watch video { width: 100%; max-width: 880px; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--border); display: block; margin: 0 auto; }
   .watch .note { color: var(--muted); font-size: 14px; margin-top: 12px; }
+
+  .signal-film { text-align: center; }
+  .signal-film video { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; border: 1px solid var(--border); display: block; background: #080a0d; }
+  .signal-film .note { color: var(--muted); font-size: 14px; margin: 12px 0 34px; }
+  .phone-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .phone-shot { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .phone-shot img { width: 100%; height: auto; display: block; background: #fff; }
+  .phone-shot figcaption { padding: 14px 16px 16px; color: var(--muted); font-size: 13px; line-height: 1.5; text-align: left; }
+  .phone-shot b { color: var(--fg); }
+
+  @media (max-width: 760px) {
+    .phone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 520px) {
+    .phone-grid { grid-template-columns: 1fr; }
+  }
 
   footer { padding: 48px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
   footer ul { list-style: none; margin-top: 8px; }
@@ -126,6 +142,57 @@
     </video>
     <p class="note">Rendered with Remotion from
     <a href="https://github.com/opencsvnet/opencsv/tree/main/web/animation"><code>web/animation</code></a>.</p>
+  </div>
+</section>
+
+<section id="signal-demo">
+  <div class="wrap signal-film">
+    <h2>Signal wallet, running for real</h2>
+    <p class="sub" style="margin-left:auto;margin-right:auto">A live registered
+    iOS simulator on Bitcoin signet: the encrypted consignment, fail-closed
+    shallow-confirmation state, one-USD wallet, public receive identity, restricted
+    Bitcoin fee reserve, and exact reviewed issuer. The film combines the real
+    screen recording with explanatory Remotion overlays; the wallet screens and
+    values are not mocked.</p>
+    <video controls playsinline preload="metadata" poster="web/animation/out/signal/poster.png">
+      <source src="web/animation/out/signal/opencsv-signal-wallet.mp4" type="video/mp4">
+      Your browser does not support the video tag; download
+      <a href="web/animation/out/signal/opencsv-signal-wallet.mp4">the Signal wallet demo</a> instead.
+    </video>
+    <p class="note">Recorded 2026-08-04 · Signal iOS simulator · public Bitcoin signet · test-only OpenCSV USD Preview</p>
+
+    <div class="phone-grid" aria-label="Signal wallet screenshot receipts">
+      <figure class="phone-shot">
+        <img loading="lazy" src="web/screenshots/signal/01-signal-consignment.png" alt="Signal conversation containing the real 537 kilobyte OpenCSV proof consignment attachment">
+        <figcaption><b>Encrypted delivery.</b> The 537 KB canonical proof
+        consignment arrives as a normal Signal attachment.</figcaption>
+      </figure>
+      <figure class="phone-shot">
+        <img loading="lazy" src="web/screenshots/signal/02-payment-fail-closed.png" alt="OpenCSV Payment screen refusing to spend because the reviewed issuer USD anchor has not reached six confirmations">
+        <figcaption><b>Fail closed.</b> Signal cannot mint; the reviewed-issuer
+        claim remains 0 spendable USD until six confirmations.</figcaption>
+      </figure>
+      <figure class="phone-shot">
+        <img loading="lazy" src="web/screenshots/signal/03-wallet-overview-pending.png" alt="Signal OpenCSV wallet showing zero available USD and 20000 signet satoshis ready for network fees">
+        <figcaption><b>One simple wallet.</b> USD is the product; 20,000 signet
+        sats are visible only as the protocol fee reserve.</figcaption>
+      </figure>
+      <figure class="phone-shot">
+        <img loading="lazy" src="web/screenshots/signal/04-receive-usd.png" alt="OpenCSV receive screen showing a QR code for the wallet public owner identity">
+        <figcaption><b>Receive in chat.</b> The QR encodes the public owner
+        identity, never secret wallet or issuer material.</figcaption>
+      </figure>
+      <figure class="phone-shot">
+        <img loading="lazy" src="web/screenshots/signal/05-network-fee-reserve.png" alt="OpenCSV network fee reserve showing 20000 confirmed signet satoshis and a funding QR code">
+        <figcaption><b>Bitcoin is gas.</b> The app can fund and inspect protocol
+        fees, but exposes no arbitrary Bitcoin-send screen.</figcaption>
+      </figure>
+      <figure class="phone-shot">
+        <img loading="lazy" src="web/screenshots/signal/06-wallet-details-reviewed-issuer.png" alt="OpenCSV wallet details showing two confirmed fee UTXOs and one reviewed test-only USD Preview issuer">
+        <figcaption><b>Exact claims.</b> Two fee UTXOs and one test-only reviewed
+        issuer are explicit beneath the aggregated USD balance.</figcaption>
+      </figure>
+    </div>
   </div>
 </section>
 
@@ -170,11 +237,14 @@
         test-only OpenCSV USD Preview manifest while production registries stay
         empty. A registered simulator shows the intended zero-USD wallet with
         20,000 confirmed fee sats. The first headless-issued consignment was
-        signed only after exact checkpoint acknowledgement, broadcast as
-        signet transaction <code>eb5571a6…1c22c</code>, and delivered as a
-        normal Signal attachment. Its anchor remains unconfirmed, so the
-        simulator correctly withholds the 100 USD credit. Physical
-        crash/retry/RBF acceptance, hosted review gates, and merge remain
+        signed only after exact checkpoint acknowledgement and delivered as a
+        normal Signal attachment. Its first anchor <code>eb5571a6…1c22c</code>
+        was protocol-safely replaced by <code>2cac7c02…a762c</code> at 5 sat/vB:
+        the funding input, record, marker, output positions, and consignment id
+        did not change. The replacement confirmed at signet height 316228, but
+        has not reached Signal's six-confirmation acceptance threshold, so the
+        simulator correctly withholds the 100 USD credit. Depth-qualified credit,
+        physical crash/retry acceptance, hosted review gates, and merge remain
         outstanding.</p>
       </article>
     </div>

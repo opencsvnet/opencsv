@@ -147,19 +147,26 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   CocoaPods pin, focused selection/amount tests, a full signed Signal simulator
   build, and a live registered simulator showing 0 USD with 20,000 confirmed
   signet fee sats.
-- **B1b. Headless issuer operator** [DRAFT `1ef29d2`; OPERATOR `7882e185`]: issuance remains
+- **B1b. Headless issuer operator** [DRAFT `15f0ac2`; OPERATOR `7882e185`]: issuance remains
   available outside Signal through the non-default `opencsv-issuer` binary.
   It reads distinct issuer root/device-binding secrets from owner-only files,
   creates exact public manifests, mints only by exact asset id, requires exact
-  checkpoint acknowledgements, and exposes JSON status, broadcast, resume,
-  cancel, and protocol-safe fee-bump operations. Signal's default/CocoaPods
-  graph and C ABI remain owner-only. Four CLI tests plus 29 account-wallet
+  checkpoint acknowledgements, owner-only create-new checkpoint-file export,
+  and JSON status, broadcast, resume, cancel, and protocol-safe fee-bump
+  operations. Signal's default/CocoaPods graph and C ABI remain owner-only.
+  Five CLI tests plus 29 account-wallet
   tests and warnings-denied focused builds pass. Live preparation found and
   fixed a self-referential checkpoint hash; the corrected exact checkpoint was
   acknowledged before signing. The first funded mint is broadcast as signet
   transaction `eb5571a6…1c22c`, and its canonical consignment reached the
-  registered simulator over Signal. The anchor remains unconfirmed, so no USD
-  credit or completed acceptance claim exists yet.
+  registered simulator over Signal. A tracked protocol-safe bump replaced it
+  with `2cac7c02…a762c` at 5 sat/vB while preserving the funding input, record,
+  marker, output positions, context, and consignment id. The replacement
+  confirmed at signet height 316228 but remains below Signal's six-confirmation
+  threshold, so no USD credit or completed acceptance claim exists yet. The
+  real simulator evidence set now contains six screenshots and a composed
+  40-second screen recording; confirmed balance/send frames remain gated on
+  actual confirmation.
 - **B2. Final validation**: rebase, full suites, both flag configurations under
   `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
   mempool-to-confirmed transitions.

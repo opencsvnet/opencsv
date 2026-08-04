@@ -9,6 +9,29 @@ The rendered video is embedded in the root `index.html` ("Watch the prototype
 lineage end to end")
 and committed at `out/opencsv-e2e.mp4` (h264) with `out/poster.png`.
 
+## Real Signal wallet composition
+
+`Signal-Wallet` is a separate 40-second composition. It places a real,
+full-resolution iOS simulator recording inside the site's visual language and
+changes explanatory copy as the live UI moves through Signal delivery,
+fail-closed shallow confirmation, the Rust-owned wallet, public receive key,
+restricted Bitcoin fee reserve, and exact issuer details. Remotion supplies the
+frame and labels only; it does not recreate or replace the phone UI.
+
+The normalized 30 fps source is
+`public/signal/signal-wallet-walkthrough.mp4`. The publishable output and poster
+are `out/signal/opencsv-signal-wallet.mp4` and `out/signal/poster.png`.
+Full-resolution still receipts live in `../screenshots/signal/`.
+
+```sh
+npm run render:signal
+npm run still:signal
+```
+
+The captured wallet remains at 0 USD because the live anchor had not reached
+Signal's six-confirmation threshold. Confirmed-balance and send-review footage
+must come from a later real scan; do not synthesize those states.
+
 This render is a historical architecture receipt. It predates the unspendable
 `sha256(OP_RETURN)` marker, frozen production proof profile, co-funded batching
 v2, and Rust-owned Signal account wallet. Re-render only after those current

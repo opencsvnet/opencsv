@@ -61,7 +61,7 @@ no arbitrary-Bitcoin-send API. The base account-wallet foundation is on
 `opencsv-rs/main` at `4dc05cf`; its recovery/relay descendant and the
 owner-only USD boundary are under review in
 [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`1ef29d2` (headless operator `7882e185`; owner-only boundary `11ba73ca`).
+`15f0ac2` (headless operator `7882e185`; owner-only boundary `11ba73ca`).
 [Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4)
 with the reviewed-issuer integration at `4fec89e902` presents one USD wallet
 product backed by separately identified,
@@ -80,13 +80,21 @@ mints by asset id. It reads issuer secrets from owner-only files and emits JSON
 for automation. Running it does not confer another issuer's authority, and an
 arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
 
-The first exact preview issuance is live on signet as transaction
-`eb5571a6c2b5e916546dc5a099ef0047e47b8a03d1554c25845142491421c22c`.
-Its canonical consignment was delivered to and downloaded by the registered
-Signal simulator. The anchor is still unconfirmed, so the wallet correctly
-withholds the 100 USD credit; this is a transport and fail-closed receipt, not
-yet a completed acceptance result. The live preparation also found and fixed a
-self-referential checkpoint hash before the valid checkpoint was acknowledged.
+The first exact preview issuance is live on signet. Its original anchor
+`eb5571a6…1c22c` was protocol-safely replaced by `2cac7c02…a762c` at 5 sat/vB
+without changing input zero, record/marker/change positions, protocol context,
+or consignment id. The canonical consignment was delivered to and downloaded
+by the registered Signal simulator. The replacement confirmed at signet height
+316228 but is still below Signal's six-confirmation threshold, so the wallet
+correctly withholds the 100 USD credit; this is a transport and shallow-depth
+fail-closed receipt, not yet a completed acceptance result. The live run also
+found and fixed a self-referential checkpoint hash and added durable owner-only
+checkpoint-file export before the new post-bump checkpoint was acknowledged.
+
+The homepage now includes a 40-second Remotion composition around a real Signal
+simulator recording plus six full-resolution wallet captures. Animation labels
+the evidence; it does not fabricate the wallet state. Confirmed-balance and
+send-review captures wait for the required six-confirmation depth.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 54
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations

@@ -11,6 +11,7 @@ import {T2} from './formals/T2';
 import {T3} from './formals/T3';
 import {T4} from './formals/T4';
 import {ScanSoundness} from './formals/ScanSoundness';
+import {SignalWallet} from './SignalWallet';
 
 const SCENE = 400; // 13.3s per scene at 30fps → 80s total
 
@@ -54,6 +55,14 @@ export const RemotionRoot = () => (
       fps={30}
       durationInFrames={SCENE * 6}
       component={E2E}
+    />
+    <Composition
+      id="Signal-Wallet"
+      width={1280}
+      height={720}
+      fps={30}
+      durationInFrames={1203}
+      component={SignalWallet}
     />
     {FORMALS.map((f) => (
       <Composition

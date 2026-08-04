@@ -27,6 +27,8 @@
   .panel p { color: var(--muted); font-size: 15px; max-width: 640px; margin-bottom: 14px; }
   .panel code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
   .shot { border: 1px solid var(--border); border-radius: 10px; max-width: 100%; }
+  .phone-shot { display: block; width: min(100%, 390px); margin: 0 auto; }
+  .film { width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--border); border-radius: 10px; display: block; margin-top: 14px; }
   .placeholder { border: 1px dashed var(--border); border-radius: 10px; background: var(--card);
     color: var(--muted); font-family: var(--mono); font-size: 13px; padding: 48px 24px; text-align: center; }
   .placeholder b { color: var(--accent2); }
@@ -69,22 +71,28 @@
       <h2>The payment arrives as a Signal message</h2>
       <p>The consignment — coin openings plus a history-independent recursive proof of
       the coin's entire history — travels off-chain, end-to-end encrypted, as an
-      ordinary Signal attachment. Signal sees ciphertext, never coins.</p>
-      <div class="placeholder">S1 — on-device capture pending<br><b>chat view with the consignment message</b><br>(iPhone 16e, signet)</div>
+      ordinary Signal attachment. Signal transport carries ciphertext; after
+      normal message decryption, the local OpenCSV wallet verifies the attachment.</p>
+      <img class="shot phone-shot" src="screenshots/signal/01-signal-consignment.png" alt="Registered Signal simulator conversation containing the live OpenCSV consignment attachment">
+      <div class="cap">registered iOS simulator · public signet · canonical 537 KB consignment</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="n">3</div>
     <div>
-      <h2>The phone verifies — alone</h2>
-      <p>The recipient's phone verifies the v3 recursive proof in tens of
-      milliseconds, syncs
+      <h2>The phone waits, then verifies — alone</h2>
+      <p>The recipient's phone verifies the v3 recursive proof, syncs
       compact block filters (kilobytes), finds the anchor block via the marker,
       and checks locally that the coin was never spent before. No RPC, no
-      indexer, no trusted server — the bubble says <b>+100 USD · verified</b>.</p>
-      <div class="placeholder">S2 — on-device capture pending<br><b>the verified payment bubble</b><br>(iPhone 16e, signet)</div>
-      <div class="placeholder" style="margin-top:12px">⌚ centerpiece video slot — receive → verify → bubble-flip in one take (20–30 s)</div>
+      indexer, no trusted server. Signal requires six confirmations; the live
+      run below is correctly fail-closed at insufficient depth rather than
+      pretending the 100 USD is spendable.</p>
+      <img class="shot phone-shot" src="screenshots/signal/02-payment-fail-closed.png" alt="OpenCSV payment screen refusing to spend before the live signet anchor reaches six confirmations">
+      <video class="film" controls playsinline preload="metadata" poster="animation/out/signal/poster.png">
+        <source src="animation/out/signal/opencsv-signal-wallet.mp4" type="video/mp4">
+      </video>
+      <div class="cap">real simulator recording · Remotion supplies labels only</div>
     </div>
   </div>
 
@@ -136,7 +144,7 @@
     <a href="https://github.com/opencsvnet/opencsv/issues/1">work board</a> and
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">Signal architecture issue</a>.
     The conceptual version of this flow is the
-    <a href="../index.html#watch">end-to-end animation</a>. Specification:
+    <a href="../index.html#signal-demo">live Signal film</a>. Specification:
     <a href="../paper/opencsv.md">the paper</a>.</p>
   </div>
 </footer>
