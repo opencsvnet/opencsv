@@ -525,7 +525,9 @@ One clean retry replaced `eb5571a6…1c22c` with signet transaction
 [`2cac7c02…a762c`](https://mempool.space/signet/tx/2cac7c0208f3f8373b1bf96ea99467da480d8906492e45b918ec555c4bda762c)
 at a 5 sat/vB target. The replacement adds 683 sats of fee and reduces only
 change to 8,316 sats. Funding input zero, record vout 0, marker vout 1, change
-vout 2, protocol context, and consignment id remain unchanged. One configured
+vout 2, protocol context, and proof semantics remain unchanged. This entry
+originally also said the consignment id remained unchanged; that was wrong
+because its anchor reference names the exact transaction id. One configured
 signet peer accepted the transaction directly; the other timed out. The new
 post-bump checkpoint was written as a new owner-only file, durably synced,
 hashed as `5b02915a…f3ac1`, and acknowledged exactly. The replacement then
@@ -539,6 +541,50 @@ to handle. `opencsv-rs@15f0ac2` adds `backup export --output`, which creates a
 new 0600 file, refuses overwrite, syncs the file and parent directory, removes a
 partial file after a write failure, and returns only its path, byte count, and
 checkpoint hash. Five focused issuer-CLI tests pass with warnings denied.
+
+## 2026-08-04 — Pending is visible, but it is not owned or spendable
+
+The confirmed replacement exposed a second, more important fact. A consignment's
+anchor reference commits to the exact transaction id. The attachment already
+delivered to Signal still named `eb5571a6…1c22c`; the chain contained replacement
+`2cac7c02…a762c`. `AnchorNotFound` was therefore correct. Preserving input zero,
+the OpenCSV record, marker, context, output positions, and proof semantics does
+not preserve exact-txid consignment bytes.
+
+Rust commit `53876eb1d702e49ebadb11765a27cae794ff4ab1` imports the durable pending proof,
+atomically invalidates stale delivery bytes, persists the signed replacement,
+and generates a new canonical consignment only after that replacement is
+independently observed. The old attachment is never accepted by relaxing chain
+verification. Thirty focused account-wallet tests pass, including exact-txid
+replacement regeneration, cold reopen, relay failure, and layout invariants.
+
+Signal commit `835ec46f34143f953337a259691db8a6e4c7b2f8` pins that exact Rust source and adds
+a durable incoming presentation state: `confirming → available` or
+`needs attention`. Confirming and failed entries store no amount, acceptance
+verdict, or replay credit; only the complete accept path can add coins to the
+balance and Rust coin selection. The wallet shows confirming payments below the
+available balance as explicitly not included and not spendable. Replaceable
+notifications announce confirming without sound, then replace that notice with
+available (with sound) or needs-attention. The focused 20-test wallet-store suite
+and the complete signed simulator build pass with the app targets' warnings as
+errors. This is a source/build receipt, not a completed live replacement delivery
+or credit receipt.
+
+## 2026-08-04 — A green build still must not be installed over the evidence simulator
+
+After the green focused suite and signed build, a manual `simctl install` was run
+against the registered evidence simulator. Its ordinary application-container
+UUID changed and Signal returned to onboarding. The application-group database
+files still exist, but the prior registration/keychain state is not usable by
+the installed app, so the simulator cannot be counted as preserved or recovered.
+The physical iPhone, private issuer state, and mainnet were untouched.
+
+The corrected rule is stricter than the earlier signing check: compile and test
+on a disposable simulator clone only. Never run unit-test host installation or
+manual app installation against the registered evidence simulator. Before any
+future evidence-device upgrade, record app, app-group, and keychain entitlement
+identity and create a recoverable clone; abort on any mismatch. Re-registration
+is owner work and is not silently automated.
 
 ## 2026-08-04 — Website evidence now includes the real Signal simulator
 

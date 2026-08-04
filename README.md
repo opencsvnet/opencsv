@@ -83,13 +83,15 @@ arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
 The first exact preview issuance is live on signet. Its original anchor
 `eb5571a6…1c22c` was protocol-safely replaced by `2cac7c02…a762c` at 5 sat/vB
 without changing input zero, record/marker/change positions, protocol context,
-or consignment id. The canonical consignment was delivered to and downloaded
-by the registered Signal simulator. The replacement confirmed at signet height
-316228 but is still below Signal's six-confirmation threshold, so the wallet
-correctly withholds the 100 USD credit; this is a transport and shallow-depth
-fail-closed receipt, not yet a completed acceptance result. The live run also
-found and fixed a self-referential checkpoint hash and added durable owner-only
-checkpoint-file export before the new post-bump checkpoint was acknowledged.
+or proof semantics. The already-delivered consignment still named the replaced
+transaction, however, so exact-txid acceptance correctly withheld the 100 USD
+credit even after the replacement confirmed. The wallet now regenerates and
+redelivers canonical consignment bytes for a replacement; the receiver shows
+that transfer as confirming and non-spendable until full verification succeeds.
+This remains a transport/fail-closed receipt, not yet a completed acceptance
+result. The live run also found and fixed a self-referential checkpoint hash and
+added durable owner-only checkpoint-file export before the new post-bump
+checkpoint was acknowledged.
 
 The homepage now includes a 40-second Remotion composition around a real Signal
 simulator recording plus six full-resolution wallet captures. Animation labels

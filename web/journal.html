@@ -555,7 +555,9 @@
     <a href="https://mempool.space/signet/tx/2cac7c0208f3f8373b1bf96ea99467da480d8906492e45b918ec555c4bda762c"><code>2cac7c02…a762c</code></a>
     at 5 sat/vB. The replacement adds 683 sats of fee and reduces only change
     to 8,316 sats. Funding input zero, record vout 0, marker vout 1, change vout
-    2, protocol context, and consignment id remain unchanged. One configured
+    2, protocol context, and proof semantics remain unchanged. This entry
+    originally also said the consignment id remained unchanged; that was wrong
+    because its anchor reference names the exact transaction id. One configured
     peer accepted it directly; the other timed out. The new owner-only recovery
     checkpoint hashes to <code>5b02915a…f3ac1</code> and was acknowledged
     exactly. It then confirmed at signet height 316228. Signal requires six
@@ -566,6 +568,45 @@
     and directory sync, partial-write cleanup, no overwrite, and a small receipt
     instead of terminal-printing a multi-megabyte secret checkpoint. Five
     focused issuer-CLI tests pass with warnings denied.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>Pending is visible, but not owned or spendable <span class="tag">correction + boundary</span></h2>
+    <p>The confirmed replacement exposed the exact failure: a consignment's
+    anchor reference commits to its transaction id. The attachment already in
+    Signal named <code>eb5571a6…1c22c</code>, while the chain contained
+    <code>2cac7c02…a762c</code>. <code>AnchorNotFound</code> was correct.
+    Preserving input zero, the record, marker, context, output positions, and
+    proof semantics does not preserve exact-txid consignment bytes.</p>
+    <p>Rust
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/53876eb1d702e49ebadb11765a27cae794ff4ab1"><code>53876eb1d7</code></a>
+    atomically invalidates stale delivery bytes, persists the signed replacement,
+    and regenerates canonical bytes only after observing the replacement.
+    Signal
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/835ec46f34143f953337a259691db8a6e4c7b2f8"><code>835ec46f34</code></a>
+    pins that source and models incoming activity as
+    <code>confirming → available</code> or <code>needs attention</code>. Pending
+    and failed entries carry no amount, verdict, replay credit, or spendability;
+    only full acceptance credits the Rust wallet. One replaceable notification
+    advances with the state. Thirty Rust account tests, 20 focused Signal wallet
+    tests, and the signed simulator build pass. Live replacement delivery and
+    credit remain open.</p>
+  </div>
+
+  <div class="entry failure">
+    <div class="date">2026-08-04</div>
+    <h2>The registered evidence simulator was not an install target <span class="tag">failure</span></h2>
+    <p>After the green tests and build, a manual <code>simctl install</code> was
+    run against the registered evidence simulator. Its ordinary app-container
+    UUID changed and Signal returned to onboarding. Application-group database
+    files remain, but the old registration/keychain state is not usable, so this
+    is not called a preserved or recovered install. The physical iPhone, private
+    issuer state, and mainnet were untouched.</p>
+    <p>The rule is now strict: compile and test on a disposable simulator clone;
+    never install a test host or manual app over the evidence simulator. A future
+    evidence upgrade requires recorded app/app-group/keychain identity and a
+    recoverable clone first. Re-registration remains owner work.</p>
   </div>
 
   <div class="entry discovery">

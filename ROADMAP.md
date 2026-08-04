@@ -161,9 +161,10 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   transaction `eb5571a6…1c22c`, and its canonical consignment reached the
   registered simulator over Signal. A tracked protocol-safe bump replaced it
   with `2cac7c02…a762c` at 5 sat/vB while preserving the funding input, record,
-  marker, output positions, context, and consignment id. The replacement
-  confirmed at signet height 316228 but remains below Signal's six-confirmation
-  threshold, so no USD credit or completed acceptance claim exists yet. The
+  marker, output positions, context, and proof semantics. Because the first
+  attachment named the replaced txid, exact-txid acceptance withheld it; the
+  repaired wallet regenerates and redelivers replacement-bound consignment
+  bytes. No USD credit or completed acceptance claim exists yet. The
   real simulator evidence set now contains six screenshots and a composed
   40-second screen recording; confirmed balance/send frames remain gated on
   actual confirmation.

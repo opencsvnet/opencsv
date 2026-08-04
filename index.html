@@ -240,10 +240,11 @@
         signed only after exact checkpoint acknowledgement and delivered as a
         normal Signal attachment. Its first anchor <code>eb5571a6…1c22c</code>
         was protocol-safely replaced by <code>2cac7c02…a762c</code> at 5 sat/vB:
-        the funding input, record, marker, output positions, and consignment id
-        did not change. The replacement confirmed at signet height 316228, but
-        has not reached Signal's six-confirmation acceptance threshold, so the
-        simulator correctly withholds the 100 USD credit. Depth-qualified credit,
+        the funding input, record, marker, output positions, and proof semantics
+        did not change. The first attachment still named the replaced txid, so
+        exact-txid acceptance correctly withheld it. The repaired wallet now
+        regenerates and redelivers replacement-bound bytes; Signal shows incoming
+        payments as confirming but non-spendable until full verification. Credit,
         physical crash/retry acceptance, hosted review gates, and merge remain
         outstanding.</p>
       </article>
