@@ -58,14 +58,17 @@ gossip, a verified pure Rust kernel and pure accept-decision boundary on
 architecture is intentionally not presented as shipped: Rust owns an OpenCSV
 asset wallet and a BIP84 Bitcoin **fee** wallet; there is no anchor server and
 no arbitrary-Bitcoin-send API. The base account-wallet foundation is on
-`opencsv-rs/main` at `4dc05cf`; its recovery/relay descendant and the fixed
-instrument boundary are under review in
+`opencsv-rs/main` at `4dc05cf`; its recovery/relay descendant and the
+owner-only USD boundary are under review in
 [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`3bfaa187`. [Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4)
-at `aa9fc331` narrows the preview product to one fixed, test-only
-[USD instrument](usd-preview/terms-v1/): no custom ticker mint, no general
-asset picker, and no implied Tether affiliation. Both PRs are drafts;
-physical-phone acceptance and the merge decision remain outstanding.
+`11ba73ca`. [Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4)
+at `645f12574d` presents one USD wallet product backed by separately identified,
+reviewed issuer instruments. Signal holds owner keys only: it has no issuer
+secret, mint action, arbitrary asset creator, or mint FFI. The current registry
+is deliberately empty until exact issuer manifests are approved; a ticker is
+never enough. The OpenCSV test issuer's disclosure lives in the
+[test USD terms](usd-preview/terms-v1/). Both PRs are drafts; physical-phone
+acceptance and the merge decision remain outstanding.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 54
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations

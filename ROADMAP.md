@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-03, rev 4) — artifact-first
+# OpenCSV Master Plan (2026-08-04, rev 5) — artifact-first
 
 ## Context-robustness rule (from the owner)
 All coordination state lives in repos/issues, never in chat. This file is the
@@ -9,6 +9,8 @@ and freezes production FRI parameters only after circuit-shaping work. Rev 4
 separates historical prototype receipts from the frozen production profile,
 records the co-funded batching/security work that landed, and adopts the
 Signal-native, serverless account-wallet architecture.
+Rev 5 removes issuance authority from Signal and models its one USD product as
+an aggregate view over separately authenticated issuer instruments.
 
 ## Where we are (verified facts)
 Working system end to end: production proof-lineage v3 (94-bit enforced floor,
@@ -25,14 +27,15 @@ transport, native rendering, self-scanning receive, and on-device feasibility;
 its ~0.55–0.96 s numbers are explicitly the historical test profile. The final
 architecture is different: Rust owns the asset wallet, BIP84 fee wallet,
 operation journal, signing, transaction layout, and relay; Bitcoin is spendable
-only by OpenCSV mint/transfer/fee-bump operations; no OpenCSV anchor server or
+only by OpenCSV transfer/fee-bump operations; no OpenCSV anchor server or
 general BTC send path exists. The Rust wallet base is on `opencsv-rs/main` at
-`4dc05cf`; recovery/relay hardening plus the fixed instrument boundary are in
+`4dc05cf`; recovery/relay hardening plus the owner-only issuer registry are in
 draft [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`3bfaa187`. Signal-iOS migration is published but unmerged in draft
-[PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at `aa9fc331` and
-remains deliberately last. Its product surface is narrowed to one fixed
-signet/regtest USD Preview; custom instrument creation is not a v1 goal.
+`11ba73ca`. Signal-iOS migration is published but unmerged in draft
+[PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at `645f12574d` and
+remains deliberately last. Signal is an owner wallet, never an issuer console:
+it shows one USD product over reviewed issuer-specific identities and exposes
+no minting or custom instrument creation.
 
 ## Track A — Executable formal verification (REVISED per spike verdict)
 The spike (REPORT in formal-formal issue #1): **full-crate Aeneas is dead**
@@ -122,18 +125,24 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   explorer UI, persistent client, regtest/hardware receive measurements, and
   story captures. Revalidate; do not redo.
 - **B1. Signal-native wallet architecture** [RUST BASE ON MAIN, `4dc05cf`;
-  HARDENING/INSTRUMENT DRAFT `3bfaa187`; SWIFT DRAFT `aa9fc331`]: Rust-owned
+  OWNER-ONLY DRAFT `11ba73ca`; SWIFT DRAFT `645f12574d`]: Rust-owned
   account root, non-migratable device binding, BIP84 fee
-  wallet, owner/issuer derivation, durable operations, authoritative outpoint
+  wallet, owner derivation, durable operations, authoritative outpoint
   revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
   canonical consignment identity, and action-only FFI. No anchor server,
-  caller-selected inputs/change, arbitrary BTC send, or raw broadcast.
-- **B1a. USD Preview product boundary** [DRAFT PRS + LOCAL TEST RECEIPTS]: one fixed
-  signet/regtest instrument, six-decimal exact amounts, no ticker-defined
-  creation or multi-asset picker, legacy prototypes read-only, and an explicit
-  authenticated version boundary before any future Tether instrument. Receipt:
-  4 core instrument tests, 26 account-wallet tests, source-built CocoaPods pin,
-  full unsigned Signal simulator build, and the focused exact-amount test.
+  caller-selected inputs/change, arbitrary BTC send, raw broadcast, issuer
+  secret, asset-definition call, or mint call.
+- **B1a. One USD product, exact issuers** [DRAFT PRS + LOCAL TEST RECEIPTS]:
+  reviewed public manifests admit issuer-specific assets under the USD wallet
+  product. Every issuer retains its own `asset_id`, key, terms, supply, and
+  redemption claim. Signal aggregates display balances but chooses one
+  priority-ordered issuer that covers the whole send, names it at review, and
+  records its exact identity in the receipt. It rejects rather than silently
+  mixing issuer tranches. Ticker lookalikes and legacy per-wallet preview assets
+  remain read-only. The registry is empty until real manifests are approved;
+  Tether is neither implied nor fabricated. Receipt: 26 Rust account-wallet
+  tests, source-built CocoaPods pin, focused selection/amount tests, and a full
+  unsigned Signal simulator build under target warnings-as-errors.
 - **B2. Final validation**: rebase, full suites, both flag configurations under
   `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
   mempool-to-confirmed transitions.

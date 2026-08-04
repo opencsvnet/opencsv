@@ -401,6 +401,39 @@
     untouched, and physical migration/crash/retry/RBF evidence is still owed.</p>
   </div>
 
+  <div class="entry failure">
+    <div class="date">2026-08-04</div>
+    <h2>“USD” was a label, not a product definition <span class="tag">failure</span></h2>
+    <p>The first Signal mint form accepted a ticker and amount, so typing USD
+    could create an unrelated asset without recognizable issuer, terms,
+    precision, backing, or redemption. A first correction froze one test-only
+    Preview definition and removed custom input. It produced clean local build
+    receipts, but it was only an intermediate design.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>One USD wallet; exact issuers; no minting in Signal <span class="tag">discovery</span></h2>
+    <p>The fixed per-wallet Preview was still wrong: deriving an issuer inside
+    every Signal account created a different <code>asset_id</code> per account
+    and placed supply authority in the consumer wallet. The corrected production
+    boundary is owner-only. Rust accepts reviewed public issuer manifests but
+    retains no issuer secret and exposes no mint C ABI. Signal aggregates exact
+    trusted instruments beneath one USD product, names the chosen issuer at
+    review, records its asset identity in the receipt, and rejects a send that
+    would need to mix issuers. OpenCSV and any future Tether instrument remain
+    separate claims; no Tether identity is invented and the registry remains
+    empty until a real manifest is approved.</p>
+    <p>Draft receipts: Rust
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/11ba73ca92de6eed93805d378d9bf2d9d9adb69d"><code>11ba73ca</code></a>
+    and Signal
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/645f12574dfa2a6c259f67243a837cacc5df42db"><code>645f12574d</code></a>;
+    26 Rust account-wallet tests, focused issuer-selection/amount tests, and the
+    complete unsigned Signal simulator build pass locally. Hosted approval,
+    issuer activation, physical-device acceptance, merge, and mainnet remain
+    open.</p>
+  </div>
+
 </div>
 
 <footer>

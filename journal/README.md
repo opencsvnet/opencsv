@@ -328,7 +328,7 @@ Signal-iOS source, the linked iPhone, releases, and mainnet remain untouched.
 Swift still owes in-place migration, `ThisDeviceOnly` recovery, canonical
 verdict/render storage, both build flags, and physical crash/retry/RBF evidence.
 
-## 2026-08-04 — “USD” is a label, not a product definition
+## 2026-08-04 — “USD” is a label, not a product definition (first correction)
 
 The first Signal mint UI asked for a ticker and amount. Entering `USD` could
 therefore create an unrelated issuer asset without a named issuer, fixed
@@ -362,7 +362,46 @@ These are published-branch local integration receipts, not hosted CI approval,
 a merge, release, mainnet activation, or physical-phone acceptance result. The
 linked iPhone was deliberately untouched because its installed profiles require
 an Apple Development certificate/private key that is not currently present in
-the keychain.
+the keychain. This was an intermediate correction, not the final trust model;
+the next entry records why its per-wallet issuer was removed.
+
+## 2026-08-04 — A fixed per-wallet issuer was still the wrong trust model
+
+The first correction removed the custom ticker form, but it left Signal with a
+derived issuer secret and a button that minted a fixed Preview instrument. That
+still made every Signal account an issuer. Because OpenCSV asset identity binds
+the issuer public key, each account's “same” Preview definition produced a
+different `asset_id`; the wallet could not honestly present those claims as one
+asset. It also put supply authority inside the highest-risk consumer surface.
+
+The corrected boundary makes Signal an **owner-only wallet**. Production C ABI
+symbols for preview activation and mint preparation are gone. Rust accepts only
+public, reviewed issuer manifests in `usd_issuers`; it retains no issuer key in
+production and reports `issuance_enabled: false`. Signal exposes one USD
+product, aggregates balances only from exact `trusted_usd_v1` identities, and
+shows the selected issuer before a send. Selection is deterministic by reviewed
+priority, but a transfer spends one issuer instrument only. If the requested
+amount is available only by adding claims from multiple issuers, version 1
+rejects rather than silently changing the economic promise.
+
+OpenCSV's test issuer and any future Tether issuer remain distinct assets with
+distinct keys, terms, supply, and redemption obligations underneath that one
+display product. No Tether identity is fabricated, and the registry remains
+empty until an exact manifest is actually approved. Old locally minted Preview
+assets are retained as untrusted/read-only history.
+
+The correction is published on draft
+[opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
+`11ba73ca92de6eed93805d378d9bf2d9d9adb69d` and draft
+[Signal-iOS PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4) at
+`645f12574dfa2a6c259f67243a837cacc5df42db`. Rust's 26 account-wallet tests pass,
+including multi-issuer classification and ticker-substitution rejection. The
+source-pinned CocoaPods framework was rebuilt; focused Signal tests cover
+priority selection, exact issuer selection, split rejection, untrusted
+lookalikes, and exact six-decimal amounts; the complete unsigned simulator build
+passes under the app targets' warnings-as-errors. These are local draft-branch
+receipts, not hosted approval, a merge, physical-device acceptance, a real
+issuer activation, or a mainnet claim.
 
 ---
 
