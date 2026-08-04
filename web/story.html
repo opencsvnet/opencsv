@@ -81,13 +81,16 @@
   <div class="panel">
     <div class="n">3</div>
     <div>
-      <h2>The phone waits, then verifies — alone</h2>
+      <h2>The phone verifies — alone</h2>
       <p>The recipient's phone verifies the v3 recursive proof, syncs
       compact block filters (kilobytes), finds the anchor block via the marker,
       and checks locally that the coin was never spent before. No RPC, no
-      indexer, no trusted server. Signal requires six confirmations; the live
-      run below is correctly fail-closed at insufficient depth rather than
-      pretending the 100 USD is spendable.</p>
+      indexer, no trusted server. The recorded build below waited for six
+      confirmations and correctly failed closed at insufficient depth. The
+      current draft adds a narrower provisional capability: after full proof,
+      ownership, binding, exact-transaction, layout, and confirmed-prefix
+      exclusion checks, it can expose the coins as available before settlement
+      while naming replacement risk. Download alone is never enough.</p>
       <img class="shot phone-shot" src="screenshots/signal/02-payment-fail-closed.png" alt="OpenCSV payment screen refusing to spend before the live signet anchor reaches six confirmations">
       <video class="film" controls playsinline preload="metadata" poster="animation/out/signal/poster.png">
         <source src="animation/out/signal/opencsv-signal-wallet.mp4" type="video/mp4">
@@ -104,7 +107,10 @@
       2-in/2-out transfer in about a second under the retired feasibility
       profile. The measured v3 phone cost is 11.25–14.47 seconds. In the final
       design, Rust—not Swift or an anchor server—also reserves Bitcoin fees,
-      derives change, fixes the context, persists signed bytes, and relays.</p>
+      derives change, fixes the context, persists signed bytes, and relays. A
+      child may spend a verified unconfirmed coin, but Rust re-observes the exact
+      parent after selection and again before signing; disappearance or
+      replacement freezes the child.</p>
       <div class="placeholder">S3 — on-device capture pending<br><b>send sheet, prefilled recipient + balance</b><br>(iPhone 16e, signet)</div>
     </div>
   </div>

@@ -594,6 +594,40 @@
     credit remain open.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>Verified unconfirmed is spendable; transport pending still is not <span class="tag">correction + boundary</span></h2>
+    <p>The earlier boundary used “pending” for two different facts. A downloaded
+    attachment is only transport and earns no amount, coin, or spendability. An
+    exact unconfirmed Bitcoin transaction can carry stronger evidence. Rust
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/eee48878eea19c949b794e5c7671001e15318f6a"><code>eee48878ee</code></a>
+    adds a separate provisional capability instead of weakening ordinary
+    verification; follow-up
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/420338280f0f926f89a32b577c9e81a35c02048e"><code>420338280f</code></a>
+    removes a disappeared parent's coins from the already-open wallet
+    immediately.</p>
+    <p>Only the phone-owned self-scan path can use it. The confirmed scan remains
+    the exclusion prefix; generic Esplora supplies the exact mempool transaction
+    as a non-authoritative accelerator. Rust independently verifies proof,
+    ownership, binding, txid, funding context, RBF, and canonical
+    record/marker/change layout. Mempool entries never enter confirmed ordering
+    or first-occurrence audit logic. Cross-check and single-snapshot paths remain
+    confirmation-gated.</p>
+    <p>Parent txids persist in the operation journal, pending export, and Secure
+    Backup checkpoint and are re-observed after selection and immediately before
+    signing. Missing or changed parents freeze provenance. Signal
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/7993fefb382ed900ba5f039525b26fdd6cb91f7c"><code>7993fefb38</code></a>
+    exposes
+    <code>confirming → available-unconfirmed → settled</code>, replacement-risk
+    copy, promotion notifications, and needs-attention recovery. Thirty-four
+    serialized Rust FFI tests and 71 Signal tests in 14 suites pass on a
+    disposable iPhone 16e simulator. Debug feature-on tests and a Testable
+    Release feature-off app build both pass with app-target warnings as errors. A live
+    two-hop signet receipt, replacement/freeze exercise, crash recovery, and
+    refreshed film remain open; no evidence simulator or physical phone was
+    modified.</p>
+  </div>
+
   <div class="entry failure">
     <div class="date">2026-08-04</div>
     <h2>The registered evidence simulator was not an install target <span class="tag">failure</span></h2>

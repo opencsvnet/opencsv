@@ -149,11 +149,13 @@
   <div class="wrap signal-film">
     <h2>Signal wallet, running for real</h2>
     <p class="sub" style="margin-left:auto;margin-right:auto">A live registered
-    iOS simulator on Bitcoin signet: the encrypted consignment, fail-closed
-    shallow-confirmation state, one-USD wallet, public receive identity, restricted
-    Bitcoin fee reserve, and exact reviewed issuer. The film combines the real
-    screen recording with explanatory Remotion overlays; the wallet screens and
-    values are not mocked.</p>
+    iOS simulator on Bitcoin signet: the encrypted consignment, the historical
+    fail-closed shallow-confirmation state, one-USD wallet, public receive
+    identity, restricted Bitcoin fee reserve, and exact reviewed issuer. The
+    film combines the real screen recording with explanatory Remotion overlays;
+    the wallet screens and values are not mocked. The current draft adds a
+    separately labeled, dependency-safe available-before-confirmation state;
+    that newer state is not retroactively inserted into this recording.</p>
     <video controls playsinline preload="metadata" poster="web/animation/out/signal/poster.png">
       <source src="web/animation/out/signal/opencsv-signal-wallet.mp4" type="video/mp4">
       Your browser does not support the video tag; download
@@ -169,8 +171,10 @@
       </figure>
       <figure class="phone-shot">
         <img loading="lazy" src="web/screenshots/signal/02-payment-fail-closed.png" alt="OpenCSV Payment screen refusing to spend because the reviewed issuer USD anchor has not reached six confirmations">
-        <figcaption><b>Fail closed.</b> Signal cannot mint; the reviewed-issuer
-        claim remains 0 spendable USD until six confirmations.</figcaption>
+        <figcaption><b>Historical fail-closed receipt.</b> This build did not
+        yet have provisional acceptance, so the reviewed-issuer claim remained
+        0 spendable USD. The current draft still treats attachment download as
+        non-spendable, but can separately verify an exact mempool parent.</figcaption>
       </figure>
       <figure class="phone-shot">
         <img loading="lazy" src="web/screenshots/signal/03-wallet-overview-pending.png" alt="Signal OpenCSV wallet showing zero available USD and 20000 signet satoshis ready for network fees">
@@ -243,9 +247,14 @@
         the funding input, record, marker, output positions, and proof semantics
         did not change. The first attachment still named the replaced txid, so
         exact-txid acceptance correctly withheld it. The repaired wallet now
-        regenerates and redelivers replacement-bound bytes; Signal shows incoming
-        payments as confirming but non-spendable until full verification. Credit,
-        physical crash/retry acceptance, hosted review gates, and merge remain
+        regenerates and redelivers replacement-bound bytes. Incoming transport
+        starts <code>confirming</code> and non-spendable. Only the self-scan path
+        may promote a fully verified exact mempool transaction to
+        <code>available-unconfirmed</code>; settlement-depth verification then
+        promotes it to <code>settled</code>. Rust persists and rechecks every
+        unconfirmed parent before a dependent signature, freezing the operation
+        if the parent disappears or changes. Live provisional credit, physical
+        crash/retry acceptance, hosted review gates, and merge remain
         outstanding.</p>
       </article>
     </div>

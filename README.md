@@ -86,17 +86,30 @@ without changing input zero, record/marker/change positions, protocol context,
 or proof semantics. The already-delivered consignment still named the replaced
 transaction, however, so exact-txid acceptance correctly withheld the 100 USD
 credit even after the replacement confirmed. The wallet now regenerates and
-redelivers canonical consignment bytes for a replacement; the receiver shows
-that transfer as confirming and non-spendable until full verification succeeds.
-This remains a transport/fail-closed receipt, not yet a completed acceptance
-result. The live run also found and fixed a self-referential checkpoint hash and
-added durable owner-only checkpoint-file export before the new post-bump
-checkpoint was acknowledged.
+redelivers canonical consignment bytes for a replacement. Download remains
+`confirming` and non-spendable; a distinct full verification may promote an
+exact mempool transaction to `available-unconfirmed`, and confirmation depth
+later promotes it to `settled`. This remains a transport/fail-closed receipt,
+not yet a completed live acceptance result. The live run also found and fixed a
+self-referential checkpoint hash and added durable owner-only checkpoint-file
+export before the new post-bump checkpoint was acknowledged.
 
-The homepage now includes a 40-second Remotion composition around a real Signal
+Zero-confirmation availability is deliberately narrower than “trust the
+mempool.” It is enabled only when the phone owns the confirmed-history exclusion
+prefix through self-scan; the proof, ownership, binding, exact transaction id,
+funding input, and canonical record/marker/change layout all verify; and the
+parent transaction is observed through the configured generic Esplora endpoint.
+Rust tags every provisional coin with that parent, persists the dependency in
+the operation journal and recovery checkpoint, and re-observes it after coin
+selection and immediately before signing a child. A missing or replaced parent
+freezes the dependent operation. Single-snapshot and indexer-cross-check modes
+do not grant provisional credit.
+
+The homepage includes a 40-second Remotion composition around a real Signal
 simulator recording plus six full-resolution wallet captures. Animation labels
-the evidence; it does not fabricate the wallet state. Confirmed-balance and
-send-review captures wait for the required six-confirmation depth.
+the evidence; it does not fabricate the wallet state. Those captures preserve
+the earlier fail-closed build and are labeled as historical evidence; a new
+available-unconfirmed/settled film still requires a real end-to-end run.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 54
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations

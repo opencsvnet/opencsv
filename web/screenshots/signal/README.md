@@ -18,6 +18,9 @@ Files 01–06 show the attachment and the wallet before the anchor reached
 Signal's required depth of six confirmations. Zero USD is the expected
 fail-closed result. The 20,000 sats shown in the app are confirmed signet funds
 restricted to OpenCSV protocol fees; there is no arbitrary Bitcoin send path.
+These images predate the dependency-safe provisional verifier. They remain an
+exact receipt of that source revision, not evidence of the newer
+`available-unconfirmed → settled` behavior.
 
 The source screen recording for the composed film is normalized at 30 fps in
 `../../animation/public/signal/signal-wallet-walkthrough.mp4`. Remotion adds the

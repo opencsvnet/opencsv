@@ -570,6 +570,45 @@ and the complete signed simulator build pass with the app targets' warnings as
 errors. This is a source/build receipt, not a completed live replacement delivery
 or credit receipt.
 
+## 2026-08-04 — Verified unconfirmed is spendable; transport pending still is not
+
+The earlier boundary used one word, “pending,” for two different facts. A
+downloaded attachment is only transport: it has not earned an amount, a coin,
+or spendability. An exact unconfirmed Bitcoin transaction can carry much
+stronger evidence. Rust commits
+[`eee48878eea19c949b794e5c7671001e15318f6a`](https://github.com/opencsvnet/opencsv-rs/commit/eee48878eea19c949b794e5c7671001e15318f6a)
+and
+[`420338280f0f926f89a32b577c9e81a35c02048e`](https://github.com/opencsvnet/opencsv-rs/commit/420338280f0f926f89a32b577c9e81a35c02048e)
+therefore add a separate provisional acceptance capability rather than
+weakening ordinary verification, plus immediate in-memory freezing when an
+accepted parent disappears.
+
+That capability is available only on the phone-owned self-scan path. The
+confirmed scan snapshot remains the exclusion prefix; the generic Esplora
+endpoint supplies the exact mempool transaction as a non-authoritative
+accelerator. Rust independently checks the consignment proof, owner, binding,
+transaction id, funding context, RBF signaling, and canonical
+record/marker/change layout before adding a coin tagged with its parent txid.
+Mempool observations never enter confirmed ordering or first-occurrence audit
+logic. Cross-check and single-snapshot paths remain confirmation-gated.
+
+Every dependent operation persists those parent ids in its journal, pending
+export, and Secure Backup checkpoint. Rust re-observes them after coin selection
+and immediately before signing. A missing or changed parent yields a stable
+error, freezes provenance, and cannot silently fall back. Signal commit
+[`7993fefb382ed900ba5f039525b26fdd6cb91f7c`](https://github.com/opencsvnet/Signal-iOS/commit/7993fefb382ed900ba5f039525b26fdd6cb91f7c)
+exposes the distinct
+`confirming → available-unconfirmed → settled` states, replacement-risk copy,
+promotion notifications, and needs-attention recovery. The attachment remains
+non-spendable until the complete provisional or settled accept path succeeds.
+
+Receipts: 34 serialized Rust FFI tests passed; the complete Signal OpenCSV file
+ran 71 tests in 14 suites on a disposable iPhone 16e simulator. Both the Debug
+feature-on test host and Testable Release feature-off app build passed with
+app-target warnings as errors. This is a source/test receipt. A real two-hop signet child,
+parent replacement/freeze exercise, crash recovery, and refreshed film remain
+open; no evidence simulator or physical phone was installed or modified.
+
 ## 2026-08-04 — A green build still must not be installed over the evidence simulator
 
 After the green focused suite and signed build, a manual `simctl install` was run
