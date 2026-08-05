@@ -1082,6 +1082,7 @@ measurements:
 | proof | Apple M4 prove (warm) | verify | size | iPhone 16e prove (cold) |
 |---|---:|---:|---:|---:|
 | genesis mint | 102.35 ms | 14.80 ms | 535,705 B | 180.8 ms |
+| v4 one-input / mint predecessor | 4.803 s | 20.38 ms | 788,068 B | 6.4353 s |
 | transfer / mint predecessors | 7.77 s | 22.20 ms | 854,105 B | 11.253 s |
 | transfer / node predecessors | 9.76 s | 21.38 ms | 841,464 B | 14.469 s |
 | redeem | 4.71 s | 19.94 ms | 778,466 B | 7.283 s |
@@ -1093,8 +1094,19 @@ history-independent; predecessor circuit shape changes the fixed cost. The
 complete cold/warm table, security calculator inputs, and two iOS memory-killed
 profiles are recorded in
 [`BENCHMARKS.md`](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
-Current explicit proof gaps are single-asset transfers and distribution of an
-allowlist for accepted self-described root-circuit commitments.
+Proof lineage v4 retains the same frozen FRI parameters and adds an explicit
+one-input/two-output transfer circuit. It verifies one authenticated v3 or v4
+predecessor, constrains the second nullifier slot to zero, and creates recipient
+plus optional change outputs under exact conservation. This removes the need
+for a fake padding coin in the ordinary “spend one received coin” wallet path.
+New proofs carry the fail-closed
+`opencsv-pcd-coin-v4-with-v3-fri94` verifier-set tag; authenticated v3 roots are
+accepted only as migration predecessors, and changing an outer version byte
+does not relabel a proof. The v4 row above is measured on draft
+[opencsv-rs PR #8](https://github.com/opencsvnet/opencsv-rs/pull/8), not yet a
+reference-main release. Current explicit proof gaps are multi-asset transfers
+and distribution of an allowlist for accepted self-described root-circuit
+commitments.
 
 **Formal verification (specification and Rust adoption merged).** The
 dependency-free Lean project has 54 sorry-free audited specification theorems,

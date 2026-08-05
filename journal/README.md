@@ -696,6 +696,35 @@ through the explicit wallet dependency graph and freezes descendants when an
 exact parent disappears. The live Carol receipt proves provisional receive and
 replay deduplication only. A real Carol-to-Bob child spend remains open.
 
+## 2026-08-05 — One received coin no longer needs a fake second input
+
+The original recursive transfer shape always verified two predecessors. That
+was sound for coin merging, but it made the common wallet action—spend one coin
+into a recipient output plus change—pay for a second verifier and require an
+artificial padding strategy. Proof lineage v4 adds a distinct one-input,
+two-output circuit. It binds one authenticated v3 or v4 predecessor, constrains
+the unused nullifier slot to zero, and preserves exact value conservation. New
+proofs carry `opencsv-pcd-coin-v4-with-v3-fri94`; merely changing a v3 envelope
+byte fails with `StatementMismatch`.
+
+The exact physical iPhone 16e build from `b0bc324432c5` proved the v4 path in
+6.4353 seconds, verified it in 19.75 ms, and emitted 788,047 bytes at a 96-bit
+union-adjusted floor. The same sequential harness completed the existing mint,
+two-input, and redeem rows, so the new circuit did not push those shapes beyond
+the phone's process limit. This is a measured draft receipt on
+[opencsv-rs PR #8](https://github.com/opencsvnet/opencsv-rs/pull/8), not a merge
+or a completed Signal payment.
+
+The first attempt to install that source-built framework into the Bob and Carol
+simulators exposed a separate deployment failure: an ad-hoc app bundle without
+the application-group entitlements caused CoreSimulator to assign new empty
+group containers. The source build itself was valid, but the installation was
+not an in-place Signal upgrade. A corrected bundle now carries the Signal group
+and keychain entitlements; live acceptance is paused until the 14:05 local APFS
+snapshot is mounted read-only and both prior simulator databases are copied,
+verified, and restored. No physical phone, mainnet state, or release was
+touched, and no payment receipt is claimed from the failed install.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

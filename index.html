@@ -226,6 +226,15 @@
         translated-Rust kernel refinement has 15 audited declarations on
         <code>formal-aeneas/main</code>.</p>
       </article>
+      <article class="status-card">
+        <div class="eyebrow">Measured draft · opencsv-rs PR #8</div>
+        <h3>V4 one-input forwarding</h3>
+        <p>The production FRI profile is unchanged. A new authenticated circuit
+        spends one predecessor into recipient plus change with no fake padding
+        coin. On the physical iPhone 16e it proved in 6.435 seconds, verified in
+        19.75 ms, and produced a 788,047-byte proof. Signal signet acceptance
+        and the exact-tip hosted gate remain open.</p>
+      </article>
       <article class="status-card ready">
         <div class="eyebrow">Now on opencsv-rs/main</div>
         <h3>Verified kernel, accept boundary, readiness, wallet</h3>
@@ -398,11 +407,13 @@
     </ul>
     <div class="tablewrap metrics">
       <table>
-        <caption>Frozen proof-lineage-v3 release measurements. The August 1
-        ~0.55 s phone result used the retired test profile.</caption>
+        <caption>Authenticated production-profile measurements. V3 is on the
+        reference main line; the v4 one-input row is measured draft PR #8.
+        The August 1 ~0.55 s phone result used the retired test profile.</caption>
         <thead><tr><th>Proof</th><th>M4 prove (warm)</th><th>Verify</th><th>Size</th><th>iPhone 16e prove (cold)</th></tr></thead>
         <tbody>
           <tr><td>Genesis mint</td><td>102 ms</td><td>14.8 ms</td><td>535,705 B</td><td>181 ms</td></tr>
+          <tr><td>V4 one-input / mint predecessor</td><td>4.80 s</td><td>20.4 ms</td><td>788,068 B</td><td>6.44 s</td></tr>
           <tr><td>Transfer / mint predecessors</td><td>7.77 s</td><td>22.2 ms</td><td>854,105 B</td><td>11.25 s</td></tr>
           <tr><td>Transfer / node predecessors</td><td>9.76 s</td><td>21.4 ms</td><td>841,464 B</td><td>14.47 s</td></tr>
           <tr><td>Redeem</td><td>4.71 s</td><td>19.9 ms</td><td>778,466 B</td><td>7.28 s</td></tr>
@@ -461,6 +472,8 @@
         in-circuit FRI recursion. V3 transfers verify two predecessor proofs
         in-circuit: <b>0.84–0.85 MB proofs, ~21–22 ms verification, and
         history-independent size/work</b> (7.77–9.76 s warm proving on M4).
+        Draft v4 also verifies one predecessor into recipient plus change:
+        788 KB, 19.75 ms verification, and 6.435 s proving on the iPhone 16e.
         The full flow — mint → shielded transfer →
         double-spend rejected → redeem → public supply audit — passes end to end.</p>
       </li>

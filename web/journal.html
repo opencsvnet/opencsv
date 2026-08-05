@@ -697,6 +697,32 @@
     claim of instant finality.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-05</div>
+    <h2>One received coin no longer needs a fake second input <span class="tag">measured draft</span></h2>
+    <p>The first recursive transfer shape always paid for two predecessor
+    verifiers. Proof lineage v4 adds a distinct one-input/two-output path: one
+    authenticated predecessor, one real nullifier, a zero unused nullifier, and
+    exact recipient-plus-change conservation. A relabeled v3 envelope fails
+    closed. On the physical iPhone 16e, exact source
+    <code>b0bc324432c5</code> proved this path in 6.4353 seconds, verified in
+    19.75 ms, and emitted 788,047 bytes at a 96-bit adjusted floor. The receipt
+    is published on <a href="https://github.com/opencsvnet/opencsv-rs/pull/8">draft PR #8</a>;
+    hosted exact-tip CI and a live Signal signet spend remain open.</p>
+  </div>
+
+  <div class="entry failure">
+    <div class="date">2026-08-05</div>
+    <h2>A valid framework is not an entitlement-correct Signal upgrade <span class="tag">failed deployment</span></h2>
+    <p>The first source-built simulator install omitted Signal's application-group
+    entitlements. CoreSimulator assigned new empty group containers, so Bob and
+    Carol could not launch with their prior account databases. The corrected app
+    now carries the Signal group and keychain entitlements, but acceptance is
+    paused until the 14:05 local APFS snapshot is mounted read-only and both
+    simulator databases are copied, verified, and restored. No physical phone,
+    mainnet state, release, or completed payment receipt is implicated.</p>
+  </div>
+
 </div>
 
 <footer>

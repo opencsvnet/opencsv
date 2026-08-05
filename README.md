@@ -37,13 +37,19 @@ production Signal on a physical iPhone. That August 1 phone demo used the
 historical feasibility profile. It proved the interaction model, not production
 parameters.
 
-The frozen proof-lineage-v3 profile now binds issuer authorization and recursive
+The frozen production FRI profile binds issuer authorization and recursive
 predecessor keys in-circuit, rejects legacy proof/profile tags, and enforces a
-94-bit conservative union-adjusted security floor. Current release measurements:
+94-bit conservative union-adjusted security floor. Proof lineage v4 retains
+those parameters and adds a one-input/two-output forwarding circuit: a wallet
+can spend one received coin into a payment plus change without manufacturing a
+fake second input. V4 is published in draft
+[opencsv-rs PR #8](https://github.com/opencsvnet/opencsv-rs/pull/8); it is not
+yet on the reference main line. Current authenticated-lineage measurements:
 
 | proof | Apple M4 prove (warm) | verify | size | iPhone 16e prove (cold) |
 |---|---:|---:|---:|---:|
 | genesis mint | 102 ms | 14.8 ms | 535,705 B | 181 ms |
+| v4 one-input / mint predecessor | 4.80 s | 20.4 ms | 788,068 B | 6.44 s |
 | transfer / mint predecessors | 7.77 s | 22.2 ms | 854,105 B | 11.25 s |
 | transfer / node predecessors | 9.76 s | 21.4 ms | 841,464 B | 14.47 s |
 | redeem | 4.71 s | 19.9 ms | 778,466 B | 7.28 s |
@@ -51,7 +57,9 @@ predecessor keys in-circuit, rejects legacy proof/profile tags, and enforces a
 Proof size and verification remain independent of coin-history length; cost
 depends on the fixed predecessor circuit shape. Full parameters, cold/warm
 rows, failed memory profiles, and the security accounting live in the
-[benchmark receipt](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
+[v4 benchmark receipt](https://github.com/opencsvnet/opencsv-rs/blob/acfb422c171c75c8ee991b9262724a2d1084f608/crates/opencsv-pcd/BENCHMARKS.md).
+The v4 phone row is a source-built physical iPhone 16e receipt at
+`b0bc324432c5`; the exact-tip hosted PR gate remains open.
 
 The transaction-level performance model is deliberately less magical than a
 payload-byte estimate. A solo anchor is bounded at 911 WU; an `N`-participant

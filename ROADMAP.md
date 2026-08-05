@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-04, rev 5) — artifact-first
+# OpenCSV Master Plan (2026-08-05, rev 6) — artifact-first
 
 ## Context-robustness rule (from the owner)
 All coordination state lives in repos/issues, never in chat. This file is the
@@ -11,11 +11,15 @@ records the co-funded batching/security work that landed, and adopts the
 Signal-native, serverless account-wallet architecture.
 Rev 5 removes issuance authority from Signal and models its one USD product as
 an aggregate view over separately authenticated issuer instruments.
+Rev 6 records proof-lineage v4's one-input/two-output forwarding path and keeps
+its measured draft receipt distinct from reference-main release state.
 
 ## Where we are (verified facts)
 Working system end to end: production proof-lineage v3 (94-bit enforced floor,
 0.54–0.85 MB proofs, 15–22 ms desktop verification, 11.25–14.47 s physical
-iPhone transfer proving); real Bitcoin anchoring (regtest e2e and live signet
+iPhone two-input transfer proving), plus draft proof-lineage v4 one-input
+forwarding measured at 6.435 s prove / 19.75 ms verify / 788,047 B on the
+physical iPhone 16e; real Bitcoin anchoring (regtest e2e and live signet
 receipts); scan-first indexing (no-RPC/no-indexer verification and
 cross-implementation anchor discovery); co-funded batching v2 with real
 three-peer gossip→broadcast→replacement evidence; retarget-correct signet
@@ -117,6 +121,11 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
 - **D2. Production FRI parameters**: frozen v3 profile, 94-bit conservative
   enforced floor, explicit version boundary, desktop and physical-device
   benchmarks. Failed high-memory phone profiles are recorded, not hidden.
+- **D5. One-input forwarding** [DRAFT PR #8, PHYSICAL RECEIPT]: proof lineage
+  v4 keeps the frozen v3 FRI parameters, consumes one authenticated predecessor,
+  fixes the unused nullifier slot to zero, and creates recipient plus change.
+  Exact source `b0bc324432c5` completed all five benchmark rows on the iPhone
+  16e; hosted exact-tip CI and live Signal signet acceptance remain gates.
 
 ## Track E — Mainnet path
 - **E1. Signet field validation** [RECEIPTS ON MAIN; FINAL ACCEPTANCE OPEN] through the CLI/reference stack: cold/hot
