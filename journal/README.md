@@ -743,6 +743,36 @@ correspondence gate—not a Lean proof of the Rust AIR, FRI implementation,
 storage, Bitcoin consensus, or networking. The separate Aeneas ledger remains
 the direct refinement path for the pure kernel and remains counted separately.
 
+## 2026-08-05 — The chat no longer waits for the proof
+
+The several-second v4 phone proof is a protocol cost, but it does not belong on
+the send sheet's critical path. Rust commit
+[`46a3e4870e55cc8fe8908c411ae56c1229ce3b76`](https://github.com/opencsvnet/opencsv-rs/commit/46a3e4870e55cc8fe8908c411ae56c1229ce3b76)
+adds a two-step boundary: `transfer_plan` durably records the exact asset,
+recipient, and amount without selecting protocol coins or a Bitcoin input;
+`operation_prove` later resumes the same operation from `planned` or
+`fee_reserved` and is idempotent at `proof_ready`. A release crash receipt used
+a real v4 mint, reopened at `fee_reserved`, re-observed the exact raw parent,
+and returned the identical stored proof receipt on a repeated call.
+
+Signal commit
+[`c14f02025daa557ca9149325dfc3199bced1012b`](https://github.com/opencsvnet/Signal-iOS/commit/c14f02025daa557ca9149325dfc3199bced1012b)
+persists the chat metadata, enqueues an authenticated “payment pending — not
+spendable yet” message, closes the sheet, and leaves proof, checkpoint backup,
+signing, broadcast, and final consignment delivery to one serialized recovery
+worker. The worker does not prove until the pending message is durably
+enqueued; restart resumes the same operation id. Terminal rejection produces
+one idempotent failure follow-up, while successful delivery produces the
+proof-bearing attachment and a local completion notification.
+
+This does not make promises spendable. The recipient gets no amount, coin, or
+balance from the pending text; the existing provisional/settled acceptance
+checks still gate spendability. The exact Signal build passed 76 OpenCSV tests
+with 3 external-fixture skips and the repository precommit checks on a
+disposable iPhone 16e simulator. Bob, Carol, and the physical iPhone were not
+installed or modified. Hosted CI, restoration of the registered simulators,
+and the live Bob-to-Carol-to-Bob child-spend film remain open.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

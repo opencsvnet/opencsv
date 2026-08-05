@@ -742,6 +742,33 @@
     remains separate.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-05</div>
+    <h2>The chat no longer waits for the proof <span class="tag">async boundary</span></h2>
+    <p>Several seconds of phone proving is a protocol cost, not a reason to
+    freeze the send sheet. Rust
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/46a3e4870e55cc8fe8908c411ae56c1229ce3b76"><code>46a3e4870e</code></a>
+    separates durable intent planning from proof generation. The plan records
+    the exact asset, recipient, and amount without selecting a protocol coin or
+    Bitcoin input; the prover resumes the same operation from
+    <code>planned</code> or <code>fee_reserved</code> and returns the exact stored
+    receipt when already <code>proof_ready</code>.</p>
+    <p>Signal
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/c14f02025daa557ca9149325dfc3199bced1012b"><code>c14f02025d</code></a>
+    atomically persists the conversation metadata and enqueues an authenticated
+    “pending — not spendable yet” message, then returns to chat. One serialized
+    recovery worker owns proof, checkpoint backup, signing, broadcast, and
+    final proof-bearing delivery. Restarts reuse the operation id; terminal
+    rejection creates one failure follow-up instead of a stuck pending row.</p>
+    <p>The pending text is not optimistic credit. It creates no coin, amount, or
+    spendability; ordinary proof and exact-parent acceptance still gate value.
+    The real Signal test host built, 76 OpenCSV tests passed with 3 explicit
+    external-fixture skips, and repository precommit checks passed on the
+    disposable iPhone 16e simulator. Registered evidence simulators and the
+    physical iPhone were untouched. Hosted merge and the live two-hop signet
+    film remain open.</p>
+  </div>
+
 </div>
 
 <footer>

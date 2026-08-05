@@ -334,6 +334,13 @@
       disappears or is replaced, Bob’s dependent coin is removed from selection
       immediately, provenance is frozen durably, and the UI moves to “needs
       attention.” A later settled replay is the only normal thaw path.</div>
+      <div class="risk"><strong>The sender does not wait on proving.</strong>
+      Signal acknowledges only a durable payment intent, labels it pending and
+      non-spendable, then returns to chat. Proof generation, backup protection,
+      signing, relay, and proof-bearing attachment delivery resume in background
+      under the same operation id. This makes the interface immediate without
+      treating a promise as a coin: the recipient still needs the proof and the
+      exact parent transaction before value becomes available.</div>
     </div>
   </div>
 </section>

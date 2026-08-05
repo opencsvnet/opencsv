@@ -763,6 +763,23 @@ planned → fee_reserved → proof_ready → signed_persisted → broadcast
         → mempool → confirmed → consignment_delivered
 ```
 
+The interactive messaging boundary is deliberately earlier than
+`proof_ready`. Rust may first persist an exact `planned` intent containing the
+asset, recipient, and amount without selecting an asset coin or Bitcoin
+outpoint. Signal atomically stores the conversation metadata and enqueues an
+authenticated message that labels the payment pending and non-spendable. The
+UI may then return to the conversation while one serialized recovery worker
+resumes proof generation, checkpoint protection, signing, relay, and final
+proof-bearing delivery under the same operation identifier. A restart resumes
+the journaled state; a terminal Rust rejection creates one idempotent failure
+follow-up rather than an indefinitely pending payment.
+
+This is latency hiding, not optimistic acceptance. The first message is a
+transport-level intent and creates no recipient coin, balance, or spendability.
+Only the ordinary provisional or settled accept path—proof, owner, binding,
+exact parent transaction, layout, and exclusion checks included—may credit a
+spendable coin.
+
 Cancellation is allowed only before broadcast. A replacement may reduce the
 original change but must preserve funding input zero, context, record, marker,
 output positions, and change destination. Generic Bitcoin wallet fee-bump
@@ -1170,6 +1187,15 @@ deduplicated two deliveries of the same 536,279-byte consignment. Deterministic
 tests cover parent disappearance and persistence across restart. A real
 recipient-to-next-recipient signet child spend, crash/retry exercise, and final
 film remain open and are not inferred from the receive receipt.
+
+The current asynchronous-send draft is split at exact Rust commit
+`46a3e4870e55cc8fe8908c411ae56c1229ce3b76` and Signal commit
+`c14f02025daa557ca9149325dfc3199bced1012b`. The Rust release receipt resumes a
+real v4 operation from `fee_reserved` to `proof_ready` after reopening and
+returns identical stored bytes on repeat. The Signal source builds in the real
+app test host, and 76 OpenCSV tests pass with three explicitly skipped external
+fixtures. No registered evidence simulator or physical phone was used for that
+receipt, and hosted merge plus live signet acceptance remain open.
 
 ---
 

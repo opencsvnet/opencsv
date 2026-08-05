@@ -274,7 +274,15 @@
         unconfirmed parent before a dependent signature, freezing the operation
         if the parent disappears or changes. Live provisional credit, physical
         crash/retry acceptance, hosted review gates, and merge remain
-        outstanding.</p>
+        outstanding. Signal
+        <a href="https://github.com/opencsvnet/Signal-iOS/pull/5">draft PR #5</a>
+        now also removes proof generation from the send-sheet critical path:
+        Rust journals the exact intent, Signal enqueues an authenticated
+        “pending — not spendable yet” message, and the serial recovery worker
+        proves, protects, signs, broadcasts, and delivers by operation id. The
+        exact draft passed 76 OpenCSV Signal tests with 3 infrastructure-gated
+        skips on a disposable iPhone 16e simulator. That is a source/test
+        receipt, not yet the missing live child-spend receipt.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
