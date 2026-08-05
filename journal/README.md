@@ -637,6 +637,40 @@ comes from the registered signet wallet; the animation supplies framing only.
 Confirmed-balance and send-review captures remain deliberately absent until the
 replacement anchor reaches the required depth and the app credits it.
 
+## 2026-08-04 — Fresh Signal wallets now verify the same chain view they write against
+
+The first newly registered Carol simulator exposed three independent startup
+problems that ordinary warm-cache tests did not. An empty peer setting selected
+the reviewed two-peer signet policy while constructing Rust's account, but the
+receive verifier read that same empty row literally and silently selected the
+single-indexer path. A newly accepted Signal message request could also wait
+behind the phone's first chain scan before its attachment was re-enqueued. Once
+those were corrected, the fresh self-scan still started at signet height 1,
+turning a relevant 260-filter scan into an hours-long full-history bootstrap.
+
+Signal commit `bac3042202` applies one effective-peer policy to account opening,
+receive planning, point verification, self-scan, and the wallet's provenance
+display. It re-enqueues newly downloadable attachments before the slow scan and
+uses reviewed signet birth height 316000 for the current preview instrument
+registry. An explicit stored height still wins, and networks without a reviewed
+lower bound still start conservatively at height 1. The rebuildable filter cache
+is namespaced as v2; v1 is left intact and ignored rather than deleted.
+
+The cold Carol scan reached tip 316259 in 232675 ms after reading 1,653,466
+filter bytes and 3,727,569 matched-block bytes. Signal then accepted the exact
+still-unconfirmed mint anchor `8c3a39aa…8943` through the phone-owned self-scan
+path. Two Signal deliveries of the same 536,279-byte attachment produced one
+canonical consignment id, `38176a0e…d758`; the live Rust account database stores
+one row with `unconfirmed` finality. The complete focused OpenCSV gate passed 73
+tests in 15 suites on the disposable simulator; the Xcode result is
+`Test-Signal-2026.08.04_22-15-41--0400.xcresult`.
+
+This is a live receive, verification, and replay-deduplication receipt. It is not
+yet a spend receipt: independent signet indexers still show no fee-wallet
+transaction for Carol, so the Carol-to-Bob child transaction, crash/resume
+exercise, fee bump, final screenshots, and film remain open. The physical phone
+and mainnet were not touched.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
