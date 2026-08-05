@@ -723,6 +723,25 @@
     mainnet state, release, or completed payment receipt is implicated.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-05</div>
+    <h2>The v4 wallet shape gets a formal specialization <span class="tag">formal + source gate</span></h2>
+    <p><a href="https://github.com/opencsvnet/opencsv-formal/commit/68acca5f89cf1e669333c53c5a057baec871a13a"><code>opencsv-formal@68acca5</code></a>
+    adds seven sorry-free declarations for one authenticated predecessor, one
+    real nullifier plus an exact zero slot, recipient plus optional change,
+    value conservation, one context-bound anchor, and an unchanged live pool.
+    Hosted merge and default-branch CI passed, bringing the independently
+    generated specification audit from the historical C3 milestone of 54 to 61
+    declarations.</p>
+    <p>CI also checks a versioned correspondence manifest against exact
+    <code>opencsv-rs@6278eae</code> and fails on drift in version tags, the
+    one-predecessor API, conservation constraint, nullifier/output order,
+    statement projection, or verifier tag. This is a source-drift gate, not a
+    claim that Lean proves the Rust AIR, FRI, storage, Bitcoin consensus, or
+    networking. The separate 15-declaration Aeneas kernel-refinement ledger
+    remains separate.</p>
+  </div>
+
 </div>
 
 <footer>

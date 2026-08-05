@@ -130,10 +130,13 @@ the evidence; it does not fabricate the wallet state. Those captures preserve
 the earlier fail-closed build and are labeled as historical evidence; a new
 available-unconfirmed/settled film still requires a real end-to-end run.
 
-Formal evidence is kept in two ledgers rather than one inflated count: 54
+Formal evidence is kept in two ledgers rather than one inflated count: 61
 sorry-free protocol theorems in `opencsv-formal`, and 15 audited declarations
 covering the Aeneas-translated Rust kernel refinements, now on
-`formal-aeneas/main` at `3bcafed`. See the
+`formal-aeneas/main` at `3bcafed`. Seven of the 61 specialize the v4 one-input
+forwarding shape and are paired with a fail-closed source-correspondence check
+pinned to `opencsv-rs@6278eae`; that check detects source drift, but is not
+represented as a proof of the Rust AIR or FRI implementation. See the
 [journal](journal/README.md) for the discoveries, failures, and exact receipts.
 
 ## Repositories
@@ -142,7 +145,7 @@ covering the Aeneas-translated Rust kernel refinements, now on
 |---|---|
 | **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — canonical homepage (`index.html`), site assets/pages (`web/`), paper (`paper/`), and journal (`journal/`) |
 | **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, SPV light client + scan engine, bitcoind backend, wallet CLI, Signal transport |
-| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (54 audited theorems): inflation, conservation, nullifier/occurrence, receiver correctness, limb soundness, batching v2, scan exclusion |
+| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (61 audited theorems): inflation, conservation, nullifier/occurrence, receiver correctness, limb soundness, batching v2, scan exclusion, v4 one-input forwarding |
 | **[formal-aeneas](https://github.com/opencsvnet/formal-aeneas)** | Separate Lean 4.31 + mathlib project connecting the Aeneas-translated pure Rust kernel to the specification (15 audited declarations on the green reproducibility receipt) |
 
 ## Reference

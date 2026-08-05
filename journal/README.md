@@ -725,6 +725,24 @@ snapshot is mounted read-only and both prior simulator databases are copied,
 verified, and restored. No physical phone, mainnet state, or release was
 touched, and no payment receipt is claimed from the failed install.
 
+## 2026-08-05 — The v4 wallet shape gets a formal specialization and a source gate
+
+The one-input circuit is no longer documented only by Rust tests and a phone
+benchmark. `opencsv-formal@68acca5` adds seven sorry-free declarations covering
+the exact wallet shape: one authenticated predecessor, one real nullifier, an
+exact zero second slot, recipient plus optional change, value conservation, one
+context-bound anchor, and an unchanged live pool. The hosted merge and default-
+branch CI both passed, bringing the independently generated specification audit
+from the historical C3 milestone of 54 to 61 declarations.
+
+CI also reads a versioned correspondence manifest pinned to exact
+`opencsv-rs@6278eae`. It fails if the reviewed Rust version tags, one-predecessor
+API, conservation constraint, nullifier padding, output order, native statement
+projection, or verifier tag drift. That is deliberately described as a source-
+correspondence gate—not a Lean proof of the Rust AIR, FRI implementation,
+storage, Bitcoin consensus, or networking. The separate Aeneas ledger remains
+the direct refinement path for the pure kernel and remains counted separately.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

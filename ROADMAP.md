@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-05, rev 6) — artifact-first
+# OpenCSV Master Plan (2026-08-05, rev 7) — artifact-first
 
 ## Context-robustness rule (from the owner)
 All coordination state lives in repos/issues, never in chat. This file is the
@@ -13,6 +13,9 @@ Rev 5 removes issuance authority from Signal and models its one USD product as
 an aggregate view over separately authenticated issuer instruments.
 Rev 6 records proof-lineage v4's one-input/two-output forwarding path and keeps
 its measured draft receipt distinct from reference-main release state.
+Rev 7 records the merged v4 Lean specialization and its fail-closed,
+exact-source correspondence gate without inflating that gate into a proof of
+the Rust proof-system implementation.
 
 ## Where we are (verified facts)
 Working system end to end: production proof-lineage v3 (94-bit enforced floor,
@@ -23,7 +26,7 @@ physical iPhone 16e; real Bitcoin anchoring (regtest e2e and live signet
 receipts); scan-first indexing (no-RPC/no-indexer verification and
 cross-implementation anchor discovery); co-funded batching v2 with real
 three-peer gossip→broadcast→replacement evidence; retarget-correct signet
-header sync; and 54 CI-gated Lean specification theorems. The separate Aeneas
+header sync; and 61 CI-gated Lean specification theorems. The separate Aeneas
 project has 15 audited translated-Rust declarations on its default branch.
 
 The August 1 Signal-iOS prototype remains valid evidence for encrypted
@@ -74,6 +77,12 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   the trait-heavy driver retains proof, chain, storage, and transport I/O.
 - **A6. Differential testing** (bridge, standing): executable Lean model vs
   Rust accept() on random traces until A3 covers the kernel surface.
+- **A7. V4 one-input specialization** [DONE ON MAIN, `68acca5`]: seven audited
+  declarations specialize one predecessor into recipient plus optional change,
+  prove exact value conservation, one real context-bound anchor, zero padding,
+  and unchanged live-pool semantics. CI also checks a versioned correspondence
+  manifest against exact `opencsv-rs@6278eae`; this is a fail-closed source-drift
+  gate, not a claim that Lean proves the Rust AIR, FRI, storage, or networking.
 - Code-style rule (new): anything intended for future verification is written
   kernel-shaped from the start (loops, opaque boundaries, no adapters).
   lean2rust-style extraction is dropped as a path.
@@ -96,7 +105,8 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   did not require valid endpoint manifests; `a831b13` closed that gap. Final
   C1 reconciliation then added duplicate-field rejection, reusable
   stock/change floors, nonzero proposal guards, and corrected the
-  64-participant label to reference policy. The checked audit now covers 54
+  64-participant label to reference policy. The C3 merge brought the checked
+  audit to 54
   declarations; [PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2)
   records the exact fast-forward.
 - **C4. Same-transaction sequential payments** [RESEARCH, NOT IMPLEMENTED]:
@@ -199,7 +209,9 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
    on exact green candidate CI. The owner deferred the outstanding independent
    adversarial re-review; it is not represented as completed, and later findings
    must be fixed forward.
-2. The corrected C3 formal model is merged on exact green CI at `c4f970d`.
+2. The corrected C3 formal model is merged at `c4f970d`; the subsequent v4
+   one-input specialization is merged on exact green CI at `68acca5`, bringing
+   the specification audit to 61 declarations.
 3. Finish reference signet acceptance, security review, and reproducible
    packaging. No release or mainnet broadcast is implied.
 4. Last: fresh Signal-iOS checkout, in-place migration, both build flags,

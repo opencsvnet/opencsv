@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — Formal Verification</title>
-<meta name="description" content="OpenCSV formal verification: 54 audited protocol theorems, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
+<meta name="description" content="OpenCSV formal verification: 61 audited protocol theorems, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -267,7 +267,7 @@
     <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-05 18:44 UTC · build green · opencsv-formal@68acca5<!-- /GEN-PROVENANCE --></p>
     <h3 style="margin-top:28px">Translated Rust audit — merged reproducibility receipt</h3>
     <p class="sub">A separate audit of the Aeneas-translated
-    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 54
+    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 61
     specification-theorem count above. The exact green commit was
     fast-forwarded without rewriting history and is now the default
     <code>formal-aeneas</code> branch.</p>
@@ -391,8 +391,19 @@
         <p><code>opencsv-formal/main@c4f970d</code> fixes transaction positions,
         fee allocation and conservation, fail-closed domains, replacement,
         duplicate-field and reusable-output guards, and sign-time readiness.
-        Exact hosted CI passed and the checked specification audit now covers
+        Exact hosted CI passed and brought the checked specification audit to
         54 declarations.</p>
+      </li>
+      <li class="done">
+        <h3>V4 one-input forwarding — shipped and source-gated</h3>
+        <p><code>opencsv-formal/main@68acca5</code> adds seven audited
+        declarations for one predecessor, one real nullifier plus zero padding,
+        recipient plus optional change, exact conservation, one context-bound
+        anchor, and an unchanged live pool. Hosted CI builds Lean, audits all 61
+        declarations, and checks a manifest against exact
+        <code>opencsv-rs@6278eae</code>. That last check detects source drift; it
+        is not presented as a proof of the Rust AIR, FRI, storage, or network
+        implementation.</p>
       </li>
       <li>
         <h3>PCD-tree model</h3>

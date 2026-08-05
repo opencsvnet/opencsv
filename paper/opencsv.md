@@ -1029,7 +1029,7 @@ uniqueness. These are *protocol logic* — independent of the SNARK — and are 
 to mechanized proof.
 
 **Specification ledger (implemented):** a dependency-free Lean 4 development
-with 54 sorry-free, CI-audited theorems covering:
+with 61 sorry-free, CI-audited theorems covering:
 
 1. **Abstract interfaces** — commitment scheme, signature scheme, PRF, each with its
    security property stated as an explicit hypothesis (binding, EUF-CMA,
@@ -1049,6 +1049,13 @@ with 54 sorry-free, CI-audited theorems covering:
 4. **Correspondence documentation** — a mapping from each theorem to (a) the paper
    section and (b) the Rust predicate/circuit it abstracts, so the formal artifact
    stays honest about the gap between verified logic and unverified cryptography.
+5. **V4 one-input forwarding** — seven declarations specialize the valid-step
+   relation to one authenticated predecessor, one real nullifier plus an exact
+   zero pad, recipient plus optional change, one context-bound anchor, and an
+   unchanged live pool. A CI source-correspondence manifest is pinned to exact
+   `opencsv-rs@6278eae` and fails if the Rust version tags, constraints,
+   statement projection, or output ordering drift. It is a source-drift gate,
+   not a proof of AIR/FRI equivalence.
 
 The separate `formal-aeneas` project translates the pure Rust kernel and proves
 15 audited declarations/refinements for binding, occurrence, first-occurrence,
@@ -1109,8 +1116,9 @@ and distribution of an allowlist for accepted self-described root-circuit
 commitments.
 
 **Formal verification (specification and Rust adoption merged).** The
-dependency-free Lean project has 54 sorry-free audited specification theorems,
-including limb arithmetic, batching, and scan-exclusion soundness. The separate
+dependency-free Lean project has 61 sorry-free audited specification theorems,
+including limb arithmetic, batching, scan-exclusion soundness, and the v4
+one-input forwarding specialization. The separate
 Aeneas project has 15 audited declarations on its default branch connecting
 translated `opencsv-kernel` Rust to binding, occurrence, first-occurrence, and
 supply specifications. A4/A5 adopt that kernel and a pure receiver-decision
@@ -1134,7 +1142,8 @@ one absolute frame deadline—are on `opencsv-rs/main`.
 The C3 Lean model is also on `opencsv-formal/main`: exact participant/output
 alignment, allocation and conservation, duplicate-field and reusable-output
 guards, sign-time freshness, fail-closed versioning, and conforming replacement
-are covered by the 54-declaration checked audit.
+were the 54-declaration C3 audit milestone. The merged v4 specialization adds
+seven declarations, bringing the current checked audit to 61.
 
 The checked fee model for that exact implementation is published as a
 versioned JSON receipt and reproduced by documentation CI. At 5 sat/vB the
