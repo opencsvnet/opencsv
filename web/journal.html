@@ -48,7 +48,7 @@
     <h1>The Open<span class="csv">CSV</span> Journal</h1>
     <p class="tagline">Discoveries and how the architecture evolved — told as it
     happened, with the receipts linked.</p>
-    <p class="back"><a href="../">← home</a> · <a href="formal.html">formal verification</a> · <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">source</a></p>
+    <p class="back"><a href="../">← home</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="formal.html">formal verification</a> · <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">source</a></p>
   </div>
 </header>
 
@@ -653,6 +653,48 @@
     issuer. The wallet screens and values are real; animation supplies labels
     only. Confirmed-balance and send-review frames remain absent until the
     replacement anchor reaches the required depth and the app credits it.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-04</div>
+    <h2>A fresh Signal wallet accepted the exact unconfirmed parent <span class="tag">live receipt</span></h2>
+    <p>The first newly registered Carol simulator exposed three cold-start
+    problems hidden by warm caches: account and receiver paths disagreed about
+    the effective peer policy, a newly accepted message request could wait
+    behind the first scan, and signet bootstrapped from height 1 despite the
+    reviewed issuer's much later birth. Signal commit
+    <code>bac3042202</code> uses one effective policy everywhere, re-enqueues
+    downloadable attachments before the slow scan, and applies reviewed signet
+    birth height 316000 while preserving explicit user overrides.</p>
+    <p>The cold phone-owned scan reached tip 316259 in 232675 ms after reading
+    1,653,466 filter bytes and 3,727,569 matched-block bytes. It accepted the
+    exact still-unconfirmed mint anchor <code>8c3a39aa…8943</code>. Two
+    deliveries of the same 536,279-byte attachment produced one canonical
+    consignment id and one live Rust database row with
+    <code>unconfirmed</code> finality. The focused gate passed 73 tests in 15
+    suites. This is a receive and replay-deduplication receipt, not a child-spend
+    receipt; crash/resume, fee bump, final captures, and film remain open.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-05</div>
+    <h2>Performance claims now come from the transaction <span class="tag">correction + receipt</span></h2>
+    <p>The paper repeated an attractive but false shortcut: dividing Bitcoin
+    block space by a 64-byte record and calling the result transaction
+    throughput. A real anchor includes inputs, outputs, witness, discovery
+    marker, and transaction overhead. The pinned Rust model bounds a solo
+    anchor at 911 WU and an <code>N</code>-participant batch at
+    <code>968 + 423N</code> WU. Under an explicitly idealized 4,000,000-WU block
+    every 600 seconds, that is 7.32 solo operations/s and 15.15 operations/s at
+    64 participants—not roughly 100.</p>
+    <p>At 5 sat/vB the model charges 107,904 sats for 64 solo anchors and 35,596
+    sats for one 64-party batch, a 67% reduction. The new
+    <a href="../scale.html">performance explainer</a>, versioned JSON receipt,
+    paper v0.3, and CI verification script use the same formulas pinned to
+    <code>opencsv-rs@4dc05cfd</code>. They also explain that provisional OpenCSV
+    children consume off-chain asset coins with separate Bitcoin fee UTXOs;
+    parent risk is enforced by the wallet dependency graph, not hidden behind a
+    claim of instant finality.</p>
   </div>
 
 </div>

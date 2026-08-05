@@ -16,7 +16,7 @@ export const Batch = () => {
     <Scene
       index="05"
       title="Batching"
-      caption="senders can combine anchors — each computes their own payload; the batcher learns nothing."
+      caption="proof contents stay private; membership, fee inputs, change scripts, and timing can remain visible."
     >
       <ChainStrip y={540} blocks={6} delay={100} highlight={4} />
 
@@ -63,7 +63,7 @@ export const Batch = () => {
                   color: C.orange,
                 }}
               >
-                {s.label} = H(nf∥X)
+                {s.label} = H("bind"∥nfᵢ∥ctx)
               </div>
             ) : null}
           </React.Fragment>

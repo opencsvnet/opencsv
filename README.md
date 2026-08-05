@@ -24,8 +24,9 @@ output; co-funded batches amortize the marker and miner fee.
 - **Issuer-gated supply.** Supply grows only under the issuer key bound into the
   asset's genesis parameters.
 
-**Read the paper: [`paper/opencsv.md`](paper/opencsv.md)** — and the explainer site
-at [`index.html`](index.html).
+**Read the paper: [`paper/opencsv.md`](paper/opencsv.md)** — the main explainer
+at [`index.html`](index.html), and the exact Bitcoin performance model at
+[`scale.html`](scale.html).
 
 ## Status
 
@@ -51,6 +52,16 @@ Proof size and verification remain independent of coin-history length; cost
 depends on the fixed predecessor circuit shape. Full parameters, cold/warm
 rows, failed memory profiles, and the security accounting live in the
 [benchmark receipt](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
+
+The transaction-level performance model is deliberately less magical than a
+payload-byte estimate. A solo anchor is bounded at 911 WU; an `N`-participant
+batch at `968 + 423N` WU. Under an idealized all-OpenCSV 4,000,000-WU block every
+600 seconds, that is 7.32 solo operations/s and 15.15 operations/s for a
+64-party batch. At 5 sat/vB, the same batch costs 35,596 sats versus 107,904
+sats for 64 solo anchors, a 67% saving. These are generated fee rows and
+theoretical saturation bounds, not measured Bitcoin throughput. The
+[performance explainer](scale.html) publishes the calculator, caveats, pinned
+source revision, and machine-readable receipt.
 
 The reference stack also includes co-funded batching v2 and its two-round peer
 gossip, a verified pure Rust kernel and pure accept-decision boundary on

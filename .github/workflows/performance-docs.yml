@@ -1,0 +1,26 @@
+name: Bitcoin performance receipt
+
+on:
+  pull_request:
+  push:
+    branches: [main, codex/bitcoin-performance-explainer]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out documentation
+        uses: actions/checkout@v4
+      - name: Check out pinned Rust model
+        uses: actions/checkout@v4
+        with:
+          repository: opencsvnet/opencsv-rs
+          ref: 4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e
+          path: opencsv-rs
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Verify generated figures and public copy
+        run: python3 scripts/verify-performance-docs.py --rust-source opencsv-rs

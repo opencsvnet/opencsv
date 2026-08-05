@@ -12,6 +12,7 @@ import {T3} from './formals/T3';
 import {T4} from './formals/T4';
 import {ScanSoundness} from './formals/ScanSoundness';
 import {SignalWallet} from './SignalWallet';
+import {ScaleVideo, SCALE_DURATION} from './Scale';
 
 const SCENE = 400; // 13.3s per scene at 30fps → 80s total
 
@@ -63,6 +64,14 @@ export const RemotionRoot = () => (
       fps={30}
       durationInFrames={1203}
       component={SignalWallet}
+    />
+    <Composition
+      id="Bitcoin-Performance"
+      width={1280}
+      height={720}
+      fps={30}
+      durationInFrames={SCALE_DURATION}
+      component={ScaleVideo}
     />
     {FORMALS.map((f) => (
       <Composition

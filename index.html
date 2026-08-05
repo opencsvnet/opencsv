@@ -92,6 +92,14 @@
   .watch video { width: 100%; max-width: 880px; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--border); display: block; margin: 0 auto; }
   .watch .note { color: var(--muted); font-size: 14px; margin-top: 12px; }
 
+  .scale-callout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: center; }
+  .scale-numbers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .scale-number { padding: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .scale-number strong { display: block; color: var(--accent); font: 700 28px var(--mono); }
+  .scale-number span { color: var(--muted); font-size: 13px; }
+  .scale-callout .button { display: inline-block; padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; font-weight: 600; }
+  .scale-callout .button:hover { text-decoration: none; border-color: var(--accent); }
+
   .signal-film { text-align: center; }
   .signal-film video { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; border: 1px solid var(--border); display: block; background: #080a0d; }
   .signal-film .note { color: var(--muted); font-size: 14px; margin: 12px 0 34px; }
@@ -103,6 +111,7 @@
 
   @media (max-width: 760px) {
     .phone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .scale-callout { grid-template-columns: 1fr; }
   }
   @media (max-width: 520px) {
     .phone-grid { grid-template-columns: 1fr; }
@@ -123,6 +132,7 @@
     and Bitcoin ordering — no fork, new chain, or anchor server.</p>
     <div class="cta">
       <a class="primary" href="paper/opencsv.md">Read the paper</a>
+      <a class="secondary" href="scale.html">How it scales</a>
       <a class="secondary" href="#status">Current status</a>
     </div>
   </div>
@@ -270,6 +280,24 @@
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">issue #3</a>.
     The OpenCSV test issuer's canonical disclosure is in the
     <a href="usd-preview/terms-v1/">test USD issuer terms</a>.</p>
+  </div>
+</section>
+
+<section id="scale">
+  <div class="wrap scale-callout">
+    <div>
+      <h2>How Bitcoin becomes fast enough</h2>
+      <p class="sub">Recursive proofs keep history off-chain, co-funded
+      transactions share fixed Bitcoin overhead, and exact unconfirmed parents
+      may become provisionally spendable without pretending settlement is
+      instant. The dedicated explainer publishes the equations, limits, and
+      machine-readable receipt.</p>
+      <p><a class="button" href="scale.html">Read the performance explainer →</a></p>
+    </div>
+    <div class="scale-numbers" aria-label="Bitcoin performance summary">
+      <div class="scale-number"><strong>7.32 → 15.15</strong><span>theoretical full-block operations/s, solo → 64-party batch</span></div>
+      <div class="scale-number"><strong>67%</strong><span>modeled fee saving at N=64 and 5 sat/vB</span></div>
+    </div>
   </div>
 </section>
 
@@ -482,10 +510,10 @@
 
 <footer>
   <div class="wrap">
-    <p><b>OpenCSV</b> — working draft, v0.2. Claims are receipt-backed and
+    <p><b>OpenCSV</b> — working draft, v0.3. Claims are receipt-backed and
     merge state is stated explicitly.</p>
     <ul>
-      <li><a href="paper/opencsv.md">Paper (markdown)</a></li>
+      <li><a href="paper/opencsv.md">Paper (markdown)</a> · <a href="scale.html">Bitcoin performance</a></li>
       <li><a href="web/story.html">A payment, end to end</a> · <a href="web/journal.html">Journal</a> · <a href="web/formal.html">Formal verification</a> · <a href="https://github.com/opencsvnet">github.com/opencsvnet</a></li>
       <li><a href="https://eprint.iacr.org/2025/068">Shielded CSV — Nick, Eagen, Linus (ePrint 2025/068)</a></li>
       <li><a href="https://docs.rgb.info/">RGB</a> · <a href="https://github.com/lightninglabs/taproot-assets">Taproot Assets</a> · <a href="https://github.com/Plonky3/Plonky3">Plonky3</a> · <a href="https://github.com/whisperfish/presage">presage</a></li>

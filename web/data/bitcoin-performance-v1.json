@@ -1,0 +1,65 @@
+{
+  "schema": "opencsv.bitcoin-performance.v1",
+  "generated_at": "2026-08-05",
+  "source": {
+    "repository": "https://github.com/opencsvnet/opencsv-rs",
+    "commit": "4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e",
+    "model": "crates/opencsv-bitcoin/examples/fee_model.rs"
+  },
+  "classification": {
+    "fee_rows": "generated from the pinned Rust fee model",
+    "capacity": "theoretical full-block saturation upper bound",
+    "zero_confirmation": "implemented and live-received; real two-hop signet spend pending"
+  },
+  "constants": {
+    "block_weight_wu": 4000000,
+    "model_block_interval_seconds": 600,
+    "solo_max_weight_wu": 911,
+    "solo_max_vbytes": 228,
+    "batch_base_weight_wu": 968,
+    "batch_per_participant_weight_wu": 423,
+    "marker_cost_sats": 546,
+    "reference_participant_cap": 64
+  },
+  "participant_counts": [1, 2, 4, 8, 16, 32, 64],
+  "fee_rates_sat_vb": [1, 5, 10, 25],
+  "rows": [
+    {"participants":1,"feerate_sat_vb":1,"batch_weight_wu":1391,"batch_vbytes":348,"solo_total_sats":774,"batch_total_sats":894,"savings_sats":-120,"savings_percent":-15.5,"batch_charge_floor_sats":894,"batch_charge_ceil_sats":894,"theoretical_full_block_ops_per_second":4.79},
+    {"participants":2,"feerate_sat_vb":1,"batch_weight_wu":1814,"batch_vbytes":454,"solo_total_sats":1548,"batch_total_sats":1000,"savings_sats":548,"savings_percent":35.4,"batch_charge_floor_sats":500,"batch_charge_ceil_sats":500,"theoretical_full_block_ops_per_second":7.35},
+    {"participants":4,"feerate_sat_vb":1,"batch_weight_wu":2660,"batch_vbytes":665,"solo_total_sats":3096,"batch_total_sats":1211,"savings_sats":1885,"savings_percent":60.9,"batch_charge_floor_sats":302,"batch_charge_ceil_sats":303,"theoretical_full_block_ops_per_second":10.02},
+    {"participants":8,"feerate_sat_vb":1,"batch_weight_wu":4352,"batch_vbytes":1088,"solo_total_sats":6192,"batch_total_sats":1634,"savings_sats":4558,"savings_percent":73.6,"batch_charge_floor_sats":204,"batch_charge_ceil_sats":205,"theoretical_full_block_ops_per_second":12.25},
+    {"participants":16,"feerate_sat_vb":1,"batch_weight_wu":7736,"batch_vbytes":1934,"solo_total_sats":12384,"batch_total_sats":2480,"savings_sats":9904,"savings_percent":80.0,"batch_charge_floor_sats":155,"batch_charge_ceil_sats":155,"theoretical_full_block_ops_per_second":13.79},
+    {"participants":32,"feerate_sat_vb":1,"batch_weight_wu":14504,"batch_vbytes":3626,"solo_total_sats":24768,"batch_total_sats":4172,"savings_sats":20596,"savings_percent":83.2,"batch_charge_floor_sats":130,"batch_charge_ceil_sats":131,"theoretical_full_block_ops_per_second":14.67},
+    {"participants":64,"feerate_sat_vb":1,"batch_weight_wu":28040,"batch_vbytes":7010,"solo_total_sats":49536,"batch_total_sats":7556,"savings_sats":41980,"savings_percent":84.7,"batch_charge_floor_sats":118,"batch_charge_ceil_sats":119,"theoretical_full_block_ops_per_second":15.15},
+    {"participants":1,"feerate_sat_vb":5,"batch_weight_wu":1391,"batch_vbytes":348,"solo_total_sats":1686,"batch_total_sats":2286,"savings_sats":-600,"savings_percent":-35.6,"batch_charge_floor_sats":2286,"batch_charge_ceil_sats":2286,"theoretical_full_block_ops_per_second":4.79},
+    {"participants":2,"feerate_sat_vb":5,"batch_weight_wu":1814,"batch_vbytes":454,"solo_total_sats":3372,"batch_total_sats":2816,"savings_sats":556,"savings_percent":16.5,"batch_charge_floor_sats":1408,"batch_charge_ceil_sats":1408,"theoretical_full_block_ops_per_second":7.35},
+    {"participants":4,"feerate_sat_vb":5,"batch_weight_wu":2660,"batch_vbytes":665,"solo_total_sats":6744,"batch_total_sats":3871,"savings_sats":2873,"savings_percent":42.6,"batch_charge_floor_sats":967,"batch_charge_ceil_sats":968,"theoretical_full_block_ops_per_second":10.02},
+    {"participants":8,"feerate_sat_vb":5,"batch_weight_wu":4352,"batch_vbytes":1088,"solo_total_sats":13488,"batch_total_sats":5986,"savings_sats":7502,"savings_percent":55.6,"batch_charge_floor_sats":748,"batch_charge_ceil_sats":749,"theoretical_full_block_ops_per_second":12.25},
+    {"participants":16,"feerate_sat_vb":5,"batch_weight_wu":7736,"batch_vbytes":1934,"solo_total_sats":26976,"batch_total_sats":10216,"savings_sats":16760,"savings_percent":62.1,"batch_charge_floor_sats":638,"batch_charge_ceil_sats":639,"theoretical_full_block_ops_per_second":13.79},
+    {"participants":32,"feerate_sat_vb":5,"batch_weight_wu":14504,"batch_vbytes":3626,"solo_total_sats":53952,"batch_total_sats":18676,"savings_sats":35276,"savings_percent":65.4,"batch_charge_floor_sats":583,"batch_charge_ceil_sats":584,"theoretical_full_block_ops_per_second":14.67},
+    {"participants":64,"feerate_sat_vb":5,"batch_weight_wu":28040,"batch_vbytes":7010,"solo_total_sats":107904,"batch_total_sats":35596,"savings_sats":72308,"savings_percent":67.0,"batch_charge_floor_sats":556,"batch_charge_ceil_sats":557,"theoretical_full_block_ops_per_second":15.15},
+    {"participants":1,"feerate_sat_vb":10,"batch_weight_wu":1391,"batch_vbytes":348,"solo_total_sats":2826,"batch_total_sats":4026,"savings_sats":-1200,"savings_percent":-42.5,"batch_charge_floor_sats":4026,"batch_charge_ceil_sats":4026,"theoretical_full_block_ops_per_second":4.79},
+    {"participants":2,"feerate_sat_vb":10,"batch_weight_wu":1814,"batch_vbytes":454,"solo_total_sats":5652,"batch_total_sats":5086,"savings_sats":566,"savings_percent":10.0,"batch_charge_floor_sats":2543,"batch_charge_ceil_sats":2543,"theoretical_full_block_ops_per_second":7.35},
+    {"participants":4,"feerate_sat_vb":10,"batch_weight_wu":2660,"batch_vbytes":665,"solo_total_sats":11304,"batch_total_sats":7196,"savings_sats":4108,"savings_percent":36.3,"batch_charge_floor_sats":1799,"batch_charge_ceil_sats":1799,"theoretical_full_block_ops_per_second":10.02},
+    {"participants":8,"feerate_sat_vb":10,"batch_weight_wu":4352,"batch_vbytes":1088,"solo_total_sats":22608,"batch_total_sats":11426,"savings_sats":11182,"savings_percent":49.5,"batch_charge_floor_sats":1428,"batch_charge_ceil_sats":1429,"theoretical_full_block_ops_per_second":12.25},
+    {"participants":16,"feerate_sat_vb":10,"batch_weight_wu":7736,"batch_vbytes":1934,"solo_total_sats":45216,"batch_total_sats":19886,"savings_sats":25330,"savings_percent":56.0,"batch_charge_floor_sats":1242,"batch_charge_ceil_sats":1243,"theoretical_full_block_ops_per_second":13.79},
+    {"participants":32,"feerate_sat_vb":10,"batch_weight_wu":14504,"batch_vbytes":3626,"solo_total_sats":90432,"batch_total_sats":36806,"savings_sats":53626,"savings_percent":59.3,"batch_charge_floor_sats":1150,"batch_charge_ceil_sats":1151,"theoretical_full_block_ops_per_second":14.67},
+    {"participants":64,"feerate_sat_vb":10,"batch_weight_wu":28040,"batch_vbytes":7010,"solo_total_sats":180864,"batch_total_sats":70646,"savings_sats":110218,"savings_percent":60.9,"batch_charge_floor_sats":1103,"batch_charge_ceil_sats":1104,"theoretical_full_block_ops_per_second":15.15},
+    {"participants":1,"feerate_sat_vb":25,"batch_weight_wu":1391,"batch_vbytes":348,"solo_total_sats":6246,"batch_total_sats":9246,"savings_sats":-3000,"savings_percent":-48.0,"batch_charge_floor_sats":9246,"batch_charge_ceil_sats":9246,"theoretical_full_block_ops_per_second":4.79},
+    {"participants":2,"feerate_sat_vb":25,"batch_weight_wu":1814,"batch_vbytes":454,"solo_total_sats":12492,"batch_total_sats":11896,"savings_sats":596,"savings_percent":4.8,"batch_charge_floor_sats":5948,"batch_charge_ceil_sats":5948,"theoretical_full_block_ops_per_second":7.35},
+    {"participants":4,"feerate_sat_vb":25,"batch_weight_wu":2660,"batch_vbytes":665,"solo_total_sats":24984,"batch_total_sats":17171,"savings_sats":7813,"savings_percent":31.3,"batch_charge_floor_sats":4292,"batch_charge_ceil_sats":4293,"theoretical_full_block_ops_per_second":10.02},
+    {"participants":8,"feerate_sat_vb":25,"batch_weight_wu":4352,"batch_vbytes":1088,"solo_total_sats":49968,"batch_total_sats":27746,"savings_sats":22222,"savings_percent":44.5,"batch_charge_floor_sats":3468,"batch_charge_ceil_sats":3469,"theoretical_full_block_ops_per_second":12.25},
+    {"participants":16,"feerate_sat_vb":25,"batch_weight_wu":7736,"batch_vbytes":1934,"solo_total_sats":99936,"batch_total_sats":48896,"savings_sats":51040,"savings_percent":51.1,"batch_charge_floor_sats":3056,"batch_charge_ceil_sats":3056,"theoretical_full_block_ops_per_second":13.79},
+    {"participants":32,"feerate_sat_vb":25,"batch_weight_wu":14504,"batch_vbytes":3626,"solo_total_sats":199872,"batch_total_sats":91196,"savings_sats":108676,"savings_percent":54.4,"batch_charge_floor_sats":2849,"batch_charge_ceil_sats":2850,"theoretical_full_block_ops_per_second":14.67},
+    {"participants":64,"feerate_sat_vb":25,"batch_weight_wu":28040,"batch_vbytes":7010,"solo_total_sats":399744,"batch_total_sats":175796,"savings_sats":223948,"savings_percent":56.0,"batch_charge_floor_sats":2746,"batch_charge_ceil_sats":2747,"theoretical_full_block_ops_per_second":15.15}
+  ],
+  "receipts": {
+    "batching": "https://github.com/opencsvnet/opencsv-rs/blob/4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e/BATCHING_V2.md",
+    "readiness": "https://github.com/opencsvnet/opencsv-rs/blob/4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e/SIGNET_READINESS.md",
+    "live_zero_confirmation_receive": {
+      "signal_commit": "bac3042202",
+      "rust_commit": "420338280f0f926f89a32b577c9e81a35c02048e",
+      "status": "exact unconfirmed mint accepted and replay-deduplicated; child spend pending"
+    }
+  }
+}

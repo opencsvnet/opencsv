@@ -9,6 +9,26 @@ The rendered video is embedded in the root `index.html` ("Watch the prototype
 lineage end to end")
 and committed at `out/opencsv-e2e.mp4` (h264) with `out/poster.png`.
 
+The batching scene does not claim that the assembler learns nothing. Proof
+contents and coin openings remain private, while membership, fee inputs,
+change scripts, and timing can remain observable.
+
+## Bitcoin performance composition
+
+`Bitcoin-Performance` is a separate 48-second conceptual composition for
+`/scale.html`. It separates four claims: recursive proof compression,
+co-funded transaction overhead, verified-unconfirmed availability, and the
+limits that remain. Its figures are generated from the versioned performance
+receipt; it contains no simulated wallet screen or live-payment claim.
+
+```sh
+npm run render:scale
+npm run still:scale
+```
+
+The publishable files are
+`out/scale/opencsv-bitcoin-performance.mp4` and `out/scale/poster.png`.
+
 ## Real Signal wallet composition
 
 `Signal-Wallet` currently contains a separate 40-second prelude composition.

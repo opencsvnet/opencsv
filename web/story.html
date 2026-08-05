@@ -45,7 +45,7 @@
     <p class="tagline">Real Bitcoin anchors. Encrypted Signal transport. Local
     verification on a physical phone. This is the prototype receipt; notes call
     out where the frozen v3 proof, marker, and wallet architecture now differ.</p>
-    <p class="back"><a href="../">← home</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
+    <p class="back"><a href="../">← home</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
   </div>
 </header>
 
@@ -110,7 +110,10 @@
       derives change, fixes the context, persists signed bytes, and relays. A
       child may spend a verified unconfirmed coin, but Rust re-observes the exact
       parent after selection and again before signing; disappearance or
-      replacement freezes the child.</p>
+      replacement freezes the child. The separate
+      <a href="../scale.html">Bitcoin performance explainer</a> shows why this
+      asset dependency does not spend the parent's Bitcoin UTXO and therefore
+      is not an ordinary Bitcoin ancestor chain.</p>
       <div class="placeholder">S3 — on-device capture pending<br><b>send sheet, prefilled recipient + balance</b><br>(iPhone 16e, signet)</div>
     </div>
   </div>
@@ -151,7 +154,8 @@
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">Signal architecture issue</a>.
     The conceptual version of this flow is the
     <a href="../index.html#signal-demo">live Signal film</a>. Specification:
-    <a href="../paper/opencsv.md">the paper</a>.</p>
+    <a href="../paper/opencsv.md">the paper</a> and
+    <a href="../scale.html">the performance model</a>.</p>
   </div>
 </footer>
 

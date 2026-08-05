@@ -671,6 +671,31 @@ transaction for Carol, so the Carol-to-Bob child transaction, crash/resume
 exercise, fee bump, final screenshots, and film remain open. The physical phone
 and mainnet were not touched.
 
+## 2026-08-05 — Performance claims now come from the transaction, not the payload size
+
+The paper repeated an attractive but false shortcut: dividing Bitcoin block
+space by a 64-byte record and calling the result transaction throughput. A real
+anchor also contains inputs, outputs, witness, a discovery marker, and standard
+transaction overhead. The pinned Rust fee model bounds a solo anchor at 911 WU
+and an `N`-participant batch at `968 + 423N` WU. Under an explicitly idealized
+4,000,000-WU block every 600 seconds, that is 7.32 solo operations/s and 15.15
+operations/s for 64-party batches—not roughly 100.
+
+At 5 sat/vB, 64 solo anchors cost 107,904 sats in the model; the 64-party batch
+costs 35,596 sats, a 67% reduction. That larger fee result does not imply a 64×
+capacity result: every participant still adds one fee input, payload, signature,
+and change output. The public `/scale.html` page, versioned JSON receipt, and CI
+verification script now share those exact formulas and pin their source to
+`opencsv-rs@4dc05cfd`.
+
+The same truth pass separates a second performance mechanism. A verified
+unconfirmed OpenCSV child spends an off-chain asset coin and normally uses a
+separate Bitcoin fee UTXO; it does not spend the parent's anchor output and is
+not an ordinary Bitcoin UTXO descendant. Replacement risk still propagates
+through the explicit wallet dependency graph and freezes descendants when an
+exact parent disappears. The live Carol receipt proves provisional receive and
+replay deduplication only. A real Carol-to-Bob child spend remains open.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

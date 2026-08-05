@@ -95,6 +95,12 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
   64-participant label to reference policy. The checked audit now covers 54
   declarations; [PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2)
   records the exact fast-forward.
+- **C4. Same-transaction sequential payments** [RESEARCH, NOT IMPLEMENTED]:
+  current batches combine independent payments and current zero-confirmation
+  children use separate Bitcoin fee anchors. Putting Alice→Bob and Bob→Carol
+  inside one underlying transaction requires a versioned intra-batch dependency
+  model, context/proof timing rules, fee responsibility, replacement semantics,
+  and adversarial receipts. Do not infer this capability from C1 batching.
 - Recorded rejection: silent payments for coordination (quantum break; EC-scan
   costlier than GCS filters on mobile).
 
@@ -115,8 +121,12 @@ aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
 ## Track E — Mainnet path
 - **E1. Signet field validation** [RECEIPTS ON MAIN; FINAL ACCEPTANCE OPEN] through the CLI/reference stack: cold/hot
   sync, bandwidth, latency, recovery, and reliability. iOS is not a gate.
-- **E2. Mainnet beta economics** [MODEL RECORDED; RELEASE GATE OPEN]: anchor fees, marker cost, batch amortization,
-  fee-wallet UX.
+- **E2. Mainnet beta economics** [MODEL RECORDED; PUBLICATION DRAFT]: anchor
+  fees, marker cost, batch amortization, and fee-wallet UX. The pinned model
+  corrects the old payload-only throughput shortcut: 7.32 solo versus 15.15
+  64-party theoretical full-block operations/s, and 67% modeled fee saving at
+  5 sat/vB. `/scale.html`, its JSON receipt, paper v0.3, and CI reproduction must
+  merge together; the release gate remains open.
 - **E3. Security review pass** [IN PROGRESS]: adversarial review of anchor/scan layers +
   optional automated scan (codex-security class) over CLI/FFI/Swift.
 - **E4. Public beta packaging** [CHECKLIST/REPRO RECEIPT; NO RELEASE]: reproducible CLI/reference builds, release
