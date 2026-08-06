@@ -797,6 +797,13 @@
     plus PR run 31113199886 passed at the exact tip; <code>main</code>
     fast-forwarded without a merge commit. Signal PR #6 pins that SHA. Its
     hosted build and the Bob/Carol payment sequence remain open.</p>
+    <p>The first recovery-only Signal hosted job at candidate
+    <code>fb89112e</code> exposed an Xcode-path assumption before compilation:
+    the runner supplied an application-bundle path while the script expected a
+    developer-directory path. Candidate <code>3142394</code> accepts either
+    representation while preserving the fail-closed recovery-symbol checks.
+    The failed run remains part of the public receipt and is not presented as
+    test success.</p>
   </div>
 
 </div>

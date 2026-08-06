@@ -150,9 +150,12 @@ Consolidate work in [Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/
 directly against `main`. PRs #4 and #5 remain historical stacked reviews and
 are closed as superseded only after #6 merges.
 
-Current consolidated candidate `fb89112e82dfb30a16b2eef55b2353fbe44b1ace`
+Current consolidated candidate `31423940620e7c39b7f24729660c1b8cb1101b14`
 adds the final Test USD presentation and default/recovery hosted build gates.
-Its hosted CI and simulator acceptance remain open.
+The first recovery-only hosted job correctly failed before compilation because
+its Xcode path could be either an application bundle or a developer directory;
+the current candidate normalizes both forms without weakening the recovery
+symbol gate. Its replacement hosted CI and simulator acceptance remain open.
 
 Required product behavior:
 

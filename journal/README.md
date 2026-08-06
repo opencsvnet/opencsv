@@ -811,6 +811,13 @@ commit. Signal PR #6 pins that SHA. Its hosted build and the Bob/Carol payment
 sequence remain open; no simulator install, physical-iPhone action, release, or
 mainnet action is claimed here.
 
+The first Signal recovery-only hosted job at candidate `fb89112e` exposed a
+runner-path assumption before compilation: the workflow supplied an Xcode
+application-bundle path while the build script expected a developer-directory
+path. Candidate `3142394` normalizes both forms and keeps the same fail-closed
+recovery-symbol checks. The failed run is retained as a receipt; it is not
+relabelled as product or test success.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
