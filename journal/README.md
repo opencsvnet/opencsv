@@ -846,6 +846,20 @@ receipt. The historical simulator recording and CLI screenshots remain in the
 repository as archival engineering evidence but no longer appear on the
 homepage.
 
+## 2026-08-06 — The product animation was not the requested receipt
+
+The owner asked for a video of quick dollar transactions in Signal. Replacing
+the old diagnostic media with a clearly labeled product animation still missed
+that requirement: it recreated Signal screens instead of recording the actual
+Bob and Carol builds moving Test USD. Labeling a simulation honestly does not
+turn it into transaction evidence.
+
+The animation was withdrawn from the homepage and from social-preview metadata.
+The public page now states that the real capture is in progress. Its replacement
+must use only real simulator recordings tied to actual wallet operations and
+signet receipts; editing is limited to timing, crops, participant labels, and
+captions that do not alter the recorded application state.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
