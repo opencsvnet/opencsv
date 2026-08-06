@@ -769,6 +769,34 @@
     film remain open.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-06</div>
+    <h2>Test USD is permanent signet state <span class="tag">product boundary</span></h2>
+    <p>The current Signal asset is no longer described as a preview that might
+    graduate to production. <b>Test USD</b>, its exact reviewed asset, account
+    database, checkpoint history, backup namespace, and BIP84 fee tree are
+    permanently signet-only and have no monetary or redemption value.
+    Production USD requires a new reviewed asset and registry, separate account
+    and backup namespace, and a separately initialized mainnet fee tree. No
+    Tether claim exists in this test registry.</p>
+    <p>Wire data still says <code>USD</code>; Signal derives the Test USD label
+    from signet plus the exact <code>testOnly</code> manifest. Signal cannot mint
+    or create assets. Issuance remains an opt-in headless
+    <code>opencsv-issuer</code> operation. Draft
+    <a href="https://github.com/opencsvnet/opencsv-rs/pull/10">opencsv-rs PR #10</a>
+    candidate <code>3295cd5</code> removes issuer/mint symbols from the default
+    Signal header and archive while retaining them under
+    <code>issuer-tools</code>.</p>
+    <p>Rust also enforces the exact reviewed asset ID at planning, before proof,
+    at proof commit, and before signing. A removed or unknown instrument stays
+    visible but is read-only with <code>asset_not_reviewed</code>; unsigned solo
+    or frozen-batch work cancels atomically, while already signed work remains
+    recoverable. Receipts separately time proof, pre-sign verification,
+    signing/persistence, relay, pinned observation, and SPV so chain delay cannot
+    be misreported as proof time. Local gates pass; hosted exact-tip CI and the
+    Bob/Carol payment sequence remain open.</p>
+  </div>
+
 </div>
 
 <footer>

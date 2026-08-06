@@ -773,10 +773,45 @@ disposable iPhone 16e simulator. Bob, Carol, and the physical iPhone were not
 installed or modified. Hosted CI, restoration of the registered simulators,
 and the live Bob-to-Carol-to-Bob child-spend film remain open.
 
+## 2026-08-06 — Test USD becomes a permanent signet product, not a preview of mainnet
+
+The earlier plan still left two dangerous ambiguities: it described minting as
+a Signal wallet action, and it treated the current USD identity like something
+that might graduate to production. The owner rejected both. Signal now has one
+user-facing **Test USD** product. Its exact reviewed asset, account database,
+checkpoint history, backup namespace, and BIP84 fee tree are permanently
+signet-only and have no monetary or redemption value. Production USD will use a
+new reviewed asset and registry, a separate account and backup namespace, and a
+separately initialized mainnet fee tree. No Tether claim exists in the test
+registry.
+
+Wire data still uses `USD`; Signal derives the Test USD label from signet plus
+the exact `testOnly` reviewed manifest. Signal cannot mint or create assets.
+Issuance remains possible only through the opt-in headless `opencsv-issuer`
+operator. Draft `opencsv-rs` PR #10 candidate `3295cd5` makes that separation a
+binary property: the default header/archive omit the legacy issuer and mint C
+symbols, while `issuer-tools` retains them for operator and protocol tests.
+
+The same candidate closes a review finding that UI selection alone could not
+close. Rust now requires the exact asset ID in `usd_issuers` when an intent is
+planned, before proof generation, when a proof job commits, and again before
+signing. A removed or unknown asset stays visible but becomes read-only with
+stable `asset_not_reviewed`; revocation cancels an unsigned solo operation or
+the entire unsigned frozen batch. Already signed work remains recoverable.
+
+Receipts now time local proof, dependency observation, pre-sign verification,
+local signing/persistence, relay submission, pinned observer evaluation, and
+CBF/SPV confirmation separately. This prevents a slow chain recheck from being
+published as proof time and makes the under-one-second post-proof signing gate
+measurable. Local default, recovery, issuer, integration, Clippy, formatting,
+and archive-surface checks pass. Hosted exact-tip CI and the Bob/Carol payment
+sequence remain open; no merge, simulator install, physical-iPhone action,
+release, or mainnet action is claimed here.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
 ([workflow](https://github.com/opencsvnet/opencsv/actions/workflows/screenshots.yml)).
 Benchmarks live in
 [BENCHMARKS.md](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
-The formal ledger is at [opencsvnet.github.io/opencsv/web/formal.html](../web/formal.html).*
+The formal ledger is at [opencsv.net/web/formal.html](../web/formal.html).*

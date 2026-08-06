@@ -1,229 +1,255 @@
-# OpenCSV Master Plan (2026-08-05, rev 7) — artifact-first
+# OpenCSV Master Plan (2026-08-06, rev 8) — Rev 4 acceptance baseline
 
-## Context-robustness rule (from the owner)
-All coordination state lives in repos/issues, never in chat. This file is the
-index; the repos are the state. Committed to opencsvnet/opencsv; tracks map to
-GitHub issues. Rev 3 incorporates the handover execution order, makes proof
-reproducibility a gate for kernel adoption, moves iOS to the final workstream,
-and freezes production FRI parameters only after circuit-shaping work. Rev 4
-separates historical prototype receipts from the frozen production profile,
-records the co-funded batching/security work that landed, and adopts the
-Signal-native, serverless account-wallet architecture.
-Rev 5 removes issuance authority from Signal and models its one USD product as
-an aggregate view over separately authenticated issuer instruments.
-Rev 6 records proof-lineage v4's one-input/two-output forwarding path and keeps
-its measured draft receipt distinct from reference-main release state.
-Rev 7 records the merged v4 Lean specialization and its fail-closed,
-exact-source correspondence gate without inflating that gate into a proof of
-the Rust proof-system implementation.
+## Plan of record
 
-## Where we are (verified facts)
-Working system end to end: production proof-lineage v3 (94-bit enforced floor,
-0.54–0.85 MB proofs, 15–22 ms desktop verification, 11.25–14.47 s physical
-iPhone two-input transfer proving), plus draft proof-lineage v4 one-input
-forwarding measured at 6.435 s prove / 19.75 ms verify / 788,047 B on the
-physical iPhone 16e; real Bitcoin anchoring (regtest e2e and live signet
-receipts); scan-first indexing (no-RPC/no-indexer verification and
-cross-implementation anchor discovery); co-funded batching v2 with real
-three-peer gossip→broadcast→replacement evidence; retarget-correct signet
-header sync; and 61 CI-gated Lean specification theorems. The separate Aeneas
-project has 15 audited translated-Rust declarations on its default branch.
+This revision publishes the owner-approved **OpenCSV Rev 4 — Permanent Test
+USD and Final Signal Acceptance** plan. Coordination state lives in repositories
+and GitHub issues, not chat. Earlier roadmap revisions and failed approaches
+remain in Git history and the public journal.
 
-The August 1 Signal-iOS prototype remains valid evidence for encrypted
-transport, native rendering, self-scanning receive, and on-device feasibility;
-its ~0.55–0.96 s numbers are explicitly the historical test profile. The final
-architecture is different: Rust owns the asset wallet, BIP84 fee wallet,
-operation journal, signing, transaction layout, and relay; Bitcoin is spendable
-only by OpenCSV transfer/fee-bump operations; no OpenCSV anchor server or
-general BTC send path exists. The Rust wallet base is on `opencsv-rs/main` at
-`4dc05cf`; recovery/relay hardening plus the owner-only issuer registry are in
-draft [opencsv-rs PR #5](https://github.com/opencsvnet/opencsv-rs/pull/5) at
-`ab0b20f` (owner-only boundary `11ba73ca`; headless issuer operator
-`7882e185`). Signal-iOS migration is published but unmerged in draft
-[PR #4](https://github.com/opencsvnet/Signal-iOS/pull/4), with the reviewed
-signet-issuer integration at `4fec89e902`, and
-remains deliberately last. Signal is an owner wallet, never an issuer console:
-it shows one USD product over reviewed issuer-specific identities and exposes
-no minting or custom instrument creation.
+The execution order is still:
 
-## Track A — Executable formal verification (REVISED per spike verdict)
-The spike (REPORT in formal-formal issue #1): **full-crate Aeneas is dead**
-(charon std-iterator bug, dyn/GAT/serde rejection, aeneas crash, sorries in
-aeneas's own Lean library). **Kernel-extraction-then-Aeneas is proven**
-(spike crate translated, built, and proved `binding_eq_spec`,
-`well_formed_spec` with only core axioms + opaque hash).
-- **A2. `opencsv-kernel`** [DONE, `b64bdf4`]: carve the pure decision logic
-  from opencsv-core — binding, well_formed, first_occurrence, supply audit —
-  in the Aeneas-compatible shape (loops only, no iterator adapters, no
-  serde/dyn/RNG/generics, opaque hash boundary). Byte-identical semantics;
-  kernel≡core tests as the immediate bridge.
-- **A3. `formal-aeneas` project** [DONE, `3bcafed`]: a **separate** Lean 4.31.0 +
-  mathlib project (Aeneas pins its toolchain — the main repo stays v4.15
-  dependency-free; this fork is deliberate and recorded). Refinement theorems:
-  translated kernel ≡ Lean spec (occurrence, first-occurrence, §4.9 supply
-  equation). Sorry-free, with the `#print axioms` audit ported from
-  `axiom-audit.sh`. Adoption is gated on a pinned Git dependency, green CI,
-  duplicate-theorem removal, and an expanded 15-declaration audit surface. The
-  exact green commit was reviewed and fast-forwarded to the default branch;
-  [PR #1](https://github.com/opencsvnet/formal-aeneas/pull/1) records the
-  no-rewrite merge and its audit artifact.
-- **A4. Production adoption (the sharpened endgame)** [DONE ON MAIN, `e4265b9`]: once A3 is reproducible,
-  dual-run kernel and legacy decisions in tests, then have opencsv-core/FFI
-  **adopt the verified kernel as the shipped implementation**. No
-  language crossing — the verified Rust kernel IS the code. "The model is the
-  code" achieved via verify-then-adopt, not extraction.
-- **A5. accept() decision logic** [DONE ON MAIN, `e4265b9`]: a verifiable pure
-  decision boundary with explicit input state and stable rejection reasons;
-  the trait-heavy driver retains proof, chain, storage, and transport I/O.
-- **A6. Differential testing** (bridge, standing): executable Lean model vs
-  Rust accept() on random traces until A3 covers the kernel surface.
-- **A7. V4 one-input specialization** [DONE ON MAIN, `68acca5`]: seven audited
-  declarations specialize one predecessor into recipient plus optional change,
-  prove exact value conservation, one real context-bound anchor, zero padding,
-  and unchanged live-pool semantics. CI also checks a versioned correspondence
-  manifest against exact `opencsv-rs@6278eae`; this is a fail-closed source-drift
-  gate, not a claim that Lean proves the Rust AIR, FRI, storage, or networking.
-- Code-style rule (new): anything intended for future verification is written
-  kernel-shaped from the start (loops, opaque boundaries, no adapters).
-  lean2rust-style extraction is dropped as a path.
+1. formal/kernel
+2. prover
+3. batching
+4. reference signet/mainnet readiness
+5. Signal/iOS integration last
 
-## Track C — Batching v2 (gossip over authenticated transports)
-- **C0. Protocol + threat model** [DONE]: commit the participant commitments, fee and
-  output rules, abort/retry semantics, coordinator DoS boundary, replay,
-  ordering, and transcript serialization before implementation.
-- **C1. Co-funded (coinjoin-style) batches** [DONE]: a signed reusable stock
-  input fixes the shared context; each sender contributes one separate fee
-  input, payload, and change output; no coordinator funds participant fees. Issue
-  opencsv-rs#4.
-- **C2. Authenticated gossip handshake** [DONE ON MAIN, `e4265b9`]: two rounds,
-  canonical bodies, stock/fee-key authorization,
-  durable reservations and exact-manifest recovery. The TCP/CLI relay key is a
-  transport profile, not a Signal protocol requirement. Historical v2 is
-  read-only; new sessions use the safe-marker v3 profile.
-- **C3. Lean extension** [DONE ON MAIN, `c4f970d`]: co-funded batch model
-  reusing `OpenCsv.Batch`. Review found that the first replacement relation
-  did not require valid endpoint manifests; `a831b13` closed that gap. Final
-  C1 reconciliation then added duplicate-field rejection, reusable
-  stock/change floors, nonzero proposal guards, and corrected the
-  64-participant label to reference policy. The C3 merge brought the checked
-  audit to 54
-  declarations; [PR #2](https://github.com/opencsvnet/opencsv-formal/pull/2)
-  records the exact fast-forward.
-- **C4. Same-transaction sequential payments** [RESEARCH, NOT IMPLEMENTED]:
-  current batches combine independent payments and current zero-confirmation
-  children use separate Bitcoin fee anchors. Putting Alice→Bob and Bob→Carol
-  inside one underlying transaction requires a versioned intra-batch dependency
-  model, context/proof timing rules, fee responsibility, replacement semantics,
-  and adversarial receipts. Do not infer this capability from C1 batching.
-- Recorded rejection: silent payments for coordination (quantum break; EC-scan
-  costlier than GCS filters on mobile).
+Tracks 1–4 have reached their reference implementation baselines. Signal
+simulator integration is the active final workstream. This does not imply a
+release, an upstream Signal submission, a physical-device rollout, or mainnet
+readiness.
 
-## Track D — Prover production readiness [DONE ON MAIN]
-- **D1. Prover setup caching**: complete setup/vk identity; bounded reuse;
-  cold/warm/invalidation/concurrency receipts.
-- **D4. Predecessor vk hard-binding**: recursive predecessor commitments are
-  constrained in-circuit; root-circuit commitment distribution remains an
-  explicit deployment boundary.
-- **D3. AIR-native issuer authorization**: v3 mints prove knowledge of the
-  issuer seed bound by genesis and transcript-bind the mint statement in the
-  same circuit. The coin proof is the authorization artifact; it is not a
-  conventional standalone signature. Legacy Ed25519 records are read-only.
-- **D2. Production FRI parameters**: frozen v3 profile, 94-bit conservative
-  enforced floor, explicit version boundary, desktop and physical-device
-  benchmarks. Failed high-memory phone profiles are recorded, not hidden.
-- **D5. One-input forwarding** [DRAFT PR #8, PHYSICAL RECEIPT]: proof lineage
-  v4 keeps the frozen v3 FRI parameters, consumes one authenticated predecessor,
-  fixes the unused nullifier slot to zero, and creates recipient plus change.
-  Exact source `b0bc324432c5` completed all five benchmark rows on the iPhone
-  16e; hosted exact-tip CI and live Signal signet acceptance remain gates.
+## Verified completed baselines
 
-## Track E — Mainnet path
-- **E1. Signet field validation** [RECEIPTS ON MAIN; FINAL ACCEPTANCE OPEN] through the CLI/reference stack: cold/hot
-  sync, bandwidth, latency, recovery, and reliability. iOS is not a gate.
-- **E2. Mainnet beta economics** [MODEL RECORDED; PUBLICATION DRAFT]: anchor
-  fees, marker cost, batch amortization, and fee-wallet UX. The pinned model
-  corrects the old payload-only throughput shortcut: 7.32 solo versus 15.15
-  64-party theoretical full-block operations/s, and 67% modeled fee saving at
-  5 sat/vB. `/scale.html`, its JSON receipt, paper v0.3, and CI reproduction must
-  merge together; the release gate remains open.
-- **E3. Security review pass** [IN PROGRESS]: adversarial review of anchor/scan layers +
-  optional automated scan (codex-security class) over CLI/FFI/Swift.
-- **E4. Public beta packaging** [CHECKLIST/REPRO RECEIPT; NO RELEASE]: reproducible CLI/reference builds, release
-  checklist, and receipts for every public claim.
+### Formal and kernel
 
-## Track B — iOS product completion (final workstream)
-- **B0. Prototype evidence** [DONE on feature branch]: PR blockers and S-items,
-  explorer UI, persistent client, regtest/hardware receive measurements, and
-  story captures. Revalidate; do not redo.
-- **B1. Signal-native wallet architecture** [RUST BASE ON MAIN, `4dc05cf`;
-  OWNER-ONLY DRAFT `1ef29d2`; SWIFT DRAFT `4fec89e902`]: Rust-owned
-  account root, non-migratable device binding, BIP84 fee
-  wallet, owner derivation, durable operations, authoritative outpoint
-  revalidation, signed-before-relay persistence, safe RBF, direct P2P relay,
-  canonical consignment identity, and action-only FFI. No anchor server,
-  caller-selected inputs/change, arbitrary BTC send, raw broadcast, issuer
-  secret, asset-definition call, or mint call.
-- **B1a. One USD product, exact issuers** [DRAFT PRS + LOCAL TEST RECEIPTS]:
-  reviewed public manifests admit issuer-specific assets under the USD wallet
-  product. Every issuer retains its own `asset_id`, key, terms, supply, and
-  redemption claim. Signal aggregates display balances but chooses one
-  priority-ordered issuer that covers the whole send, names it at review, and
-  records its exact identity in the receipt. It rejects rather than silently
-  mixing issuer tranches. Ticker lookalikes and legacy per-wallet preview assets
-  remain read-only. Signet now pins one exact, test-only OpenCSV USD Preview
-  manifest (`1d58a814…b507`); mainnet/regtest remain empty and Tether is neither
-  implied nor fabricated. Receipt: 29 Rust account-wallet tests, source-built
-  CocoaPods pin, focused selection/amount tests, a full signed Signal simulator
-  build, and a live registered simulator showing 0 USD with 20,000 confirmed
-  signet fee sats.
-- **B1b. Headless issuer operator** [DRAFT `15f0ac2`; OPERATOR `7882e185`]: issuance remains
-  available outside Signal through the non-default `opencsv-issuer` binary.
-  It reads distinct issuer root/device-binding secrets from owner-only files,
-  creates exact public manifests, mints only by exact asset id, requires exact
-  checkpoint acknowledgements, owner-only create-new checkpoint-file export,
-  and JSON status, broadcast, resume, cancel, and protocol-safe fee-bump
-  operations. Signal's default/CocoaPods graph and C ABI remain owner-only.
-  Five CLI tests plus 29 account-wallet
-  tests and warnings-denied focused builds pass. Live preparation found and
-  fixed a self-referential checkpoint hash; the corrected exact checkpoint was
-  acknowledged before signing. The first funded mint is broadcast as signet
-  transaction `eb5571a6…1c22c`, and its canonical consignment reached the
-  registered simulator over Signal. A tracked protocol-safe bump replaced it
-  with `2cac7c02…a762c` at 5 sat/vB while preserving the funding input, record,
-  marker, output positions, context, and proof semantics. Because the first
-  attachment named the replaced txid, exact-txid acceptance withheld it; the
-  repaired wallet regenerates and redelivers replacement-bound consignment
-  bytes. No USD credit or completed acceptance claim exists yet. The
-  real simulator evidence set now contains six screenshots and a composed
-  40-second screen recording; confirmed balance/send frames remain gated on
-  actual confirmation.
-- **B2. Final validation**: rebase, full suites, both flag configurations under
-  `-warnings-as-errors`, physical-device two-way flow, crash recovery, and
-  mempool-to-confirmed transitions.
-- **B3. PR #2 final pass + upstream decision** (owner's explicit call).
-- **B4. Optional self-hosted macOS runner** scoped to opencsvnet/Signal-iOS
-  (owner approval — runner token).
+- **A3 — reproducible Aeneas refinement: complete.** `formal-aeneas@3bcafed`
+  pins its dependency, builds without `sorry`/`admit`, removes the duplicated
+  theorem, and publishes a 15-declaration axiom audit. Default-branch CI:
+  [run 30835243209](https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209).
+- **A4 — staged kernel adoption: complete.** Production binding,
+  occurrence/well-formedness, first-occurrence, and supply decisions use the
+  adopted kernel, with generated valid/mutated differential tests retaining a
+  test-only independent oracle.
+- **A5 — pure accept decision boundary: complete.** Explicit observed input
+  state maps to deterministic accept/reject results and stable reasons; proof,
+  chain, storage, and transport I/O remain in the driver.
+- A4/A5 are integrated in `opencsv-rs@e4265b9`; exact-tip CI passed in
+  [run 30830366654](https://github.com/opencsvnet/opencsv-rs/actions/runs/30830366654).
+- The public formal ledger contains **72 audited declarations** at
+  `opencsv-formal@dc7e8eb`; default-branch CI passed in
+  [run 31044400073](https://github.com/opencsvnet/opencsv-formal/actions/runs/31044400073),
+  and the generated site deployed at `opencsv@75de1b7` in
+  [run 31044493886](https://github.com/opencsvnet/opencsv/actions/runs/31044493886).
 
-## Sequencing & gates
-1. A4/A5/readiness/C2-audit and the Rust account-wallet descendant are merged
-   on exact green candidate CI. The owner deferred the outstanding independent
-   adversarial re-review; it is not represented as completed, and later findings
-   must be fixed forward.
-2. The corrected C3 formal model is merged at `c4f970d`; the subsequent v4
-   one-input specialization is merged on exact green CI at `68acca5`, bringing
-   the specification audit to 61 declarations.
-3. Finish reference signet acceptance, security review, and reproducible
-   packaging. No release or mainnet broadcast is implied.
-4. Last: fresh Signal-iOS checkout, in-place migration, both build flags,
-   physical-device crash/recovery/confirmation/fee-bump acceptance, and PR
-   decision.
-5. Gates: no silent protocol fallback, every public claim has a receipt, every
-   design failure is journaled, and upstream/release/mainnet actions require the
-   owner's separate approval.
+The standing bridge remains executable differential testing. The Lean/source
+correspondence gate is fail-closed source-drift evidence; it is not represented
+as a proof of the Rust AIR, FRI, storage, networking, or iOS implementation.
 
-## Standing coordination
-- opencsvnet/Signal-iOS#3 — iOS host channel.
-- opencsvnet/opencsv-formal#1 — formal roadmap (spike verdict recorded).
-- opencsvnet/opencsv-rs#3 (Track D), #4 (Track C).
-- opencsvnet/formal-aeneas — separate Lean 4.31 + mathlib refinement project.
-- web/journal.html — narrative of record.
+### Prover production readiness
+
+- **D1 — setup caching: complete** at `ca8ad37`, keyed by complete setup and
+  verification-key identity with cold, warm, invalidation, and concurrency
+  coverage.
+- **D4 — predecessor verification-key hard binding: complete** at `97187e6`.
+- **D3 — AIR-native issuer authorization: complete** at `8ee7a81`.
+- **D2 — production FRI profile: complete** at `d18c235`, with a 94-bit
+  conservative enforced floor and explicit proof-version boundaries.
+- Proof-lineage v4 one-input forwarding is on `opencsv-rs/main` through
+  `46a3e48`. The measured physical iPhone 16e release receipt is 6.435 seconds
+  proving, 19.75 ms verification, and 788,047 bytes. Debug multi-minute proofs
+  are development behavior and are never product performance claims.
+
+### Batching v2
+
+- **C0 — protocol/threat model: complete** at `d51d139`.
+- **C1 — co-funded deterministic batches: complete** at `0af0258`, followed
+  by the reviewed remediation integrated at `e4265b9`.
+- **C2 — authenticated two-round gossip: complete** at `54c0833`, with live
+  relay admission, identity quotas, replay rules, durable reservations, abort
+  guards, and gossip-to-broadcast/replacement receipts integrated at `e4265b9`.
+- **C3 — Lean batch model: complete** at `opencsv-formal@c4f970d`; subsequent
+  formal work is included in the 72-declaration ledger.
+
+Current batching combines recipients collected before one proposal freezes.
+It does not yet put a dependent Alice→Bob→Carol chain inside one underlying
+Bitcoin transaction; that remains a separately versioned research item.
+
+### Reference signet readiness
+
+- Reference cold/hot sync, bandwidth, latency, recovery, fee, marker, and batch
+  amortization receipts are integrated through `cfb902b`, `a7fe2e0`, and
+  `e4265b9`.
+- Reproducible reference builds and the release checklist exist. They are
+  evidence and preparation, not a release.
+- Independent mainnet security review, release signing/distribution, and any
+  mainnet broadcast remain open.
+
+### Domain
+
+- Cloudflare delegation, GitHub organization verification, apex and `www`
+  Pages records, TLS, and enforced HTTPS are complete. Current public checks
+  return HTTP 200 for the homepage, journal, and formal ledger; `www` resolves
+  to the canonical apex.
+- DNSSEC remains open. No DS record is currently published for `opencsv.net`;
+  completion requires enabling DNSSEC in Cloudflare and publishing the exact DS
+  at Namecheap.
+
+## Permanent Test USD product boundary
+
+Signal exposes one user-facing product: **Test USD**.
+
+- The wire unit code remains `USD`; no protocol encoding changes.
+- Presentation becomes **Test USD** only when the account is signet and the
+  exact reviewed manifest is marked `testOnly`.
+- Test USD has no monetary or redemption value and is permanently bound to the
+  signet account database, backup namespace, asset checkpoint, and BIP84 fee
+  tree. It is never promoted to mainnet.
+- Every underlying issuer retains its own exact asset ID, authorization key,
+  terms, supply, priority, and claim. Signal may aggregate reviewed issuer
+  balances for display, but one send selects one exact issuer instrument and
+  records it in review and receipt details.
+- The currently reviewed asset is
+  `1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507`.
+  No Tether asset or redemption claim exists in this test registry.
+- Unknown, removed, or ticker-lookalike instruments remain visible and
+  read-only. New unsigned work fails with stable `asset_not_reviewed`.
+- Signal cannot mint or create assets. Privileged issuance remains available
+  only through the non-default headless `opencsv-issuer` tool.
+- Production USD requires a new reviewed asset and registry, separate account
+  database and backup namespace, and a separately initialized mainnet fee tree.
+
+## Active Rust merge gate
+
+Draft [opencsv-rs PR #10](https://github.com/opencsvnet/opencsv-rs/pull/10)
+is the Rust prerequisite for final Signal integration. Candidate
+`3295cd5896aa2615c992faf45a9075ad138094ca` adds:
+
+- exact `usd_issuers` enforcement at planning, before proving, at proof commit,
+  and before pre-broadcast signing;
+- atomic cancellation of a revoked unsigned solo operation or frozen batch;
+- recovery of already signed/broadcast operations despite later registry
+  changes;
+- issuer C symbols absent from the default Signal archive/header and available
+  only under `issuer-tools`;
+- separate proof, verification, signing/persistence, relay, observer, and SPV
+  timing receipts.
+
+Local default, recovery, issuer, integration, Clippy, formatting, and archive
+surface gates pass. Hosted exact-tip CI is the merge authority:
+[run 31113193237](https://github.com/opencsvnet/opencsv-rs/actions/runs/31113193237).
+Merge only that reviewed exact-green tip, then pin Signal to the merged SHA.
+
+## Active final workstream — Signal simulator integration
+
+Consolidate work in [Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/pull/6)
+directly against `main`. PRs #4 and #5 remain historical stacked reviews and
+are closed as superseded only after #6 merges.
+
+Required product behavior:
+
+- show **Test USD** on balance, send, review, pending, verified receipt,
+  notification, activity, and explorer surfaces;
+- keep exact issuer identity and “no monetary value” in details;
+- expose receive, send, evidence, fee reserve, and recovery state—never mint or
+  custom-asset UI;
+- render cached state in under one second as
+  `Cached <time> · Updating…`, preserving known balances through refresh errors;
+- durably persist the send intent and dismiss the sheet in under 500 ms;
+- run proof generation outside the account-registry lock;
+- keep release one-input proving under 10 seconds on iPhone-class hardware and
+  local post-proof signing/persistence under one second;
+- label P2P writes as submission only and require both configured pinned
+  observers to return identical transaction bytes before zero-confirmation
+  forwarding;
+- keep Secure Backup mandatory for new writes and linked devices watch-only.
+
+Hosted CI must run actual tests. After checkout, submodule, and Ruby setup it
+runs `bundle exec pod install --deployment`, then fails if `Podfile.lock`
+changes. `Pods/Manifest.lock` synchronization is not a dependency-pin change.
+
+## Bob/Carol acceptance sequence
+
+Bob and Carol are fresh disposable simulator wallets; restore/rebind is a
+separate release gate and does not block this demonstration. The physical
+iPhone 16e is out of scope.
+
+Current verified funding state:
+
+- Bob: 30,000 confirmed signet sats.
+- Carol: 20,890 confirmed signet sats.
+- The first 100 Test USD mint is confirmed and its canonical consignment is
+  ready for Signal delivery.
+
+Acceptance must produce exact operation IDs, transaction IDs, timings, and
+receipts for this order:
+
+1. Install the exact consolidated branch on Bob and Carol without erasing or
+   relinking either Signal account.
+2. Sync both fee wallets and prepare Carol’s confirmed count-2 batch stock.
+3. Deliver and verify the existing 100 Test USD consignment through Signal.
+4. Headlessly mint `[50, 50]` more of the same exact Test USD asset to Carol and
+   deliver it; no issuance UI or issuer ABI appears in Signal.
+5. Carol sends 25 Test USD to Bob. The pending chat entry is immediate; proof
+   continues in the background; both pinned observers must match exact bytes.
+6. Before the parent confirms, Bob sends 10 Test USD back to Carol. If signet
+   confirms too quickly, repeat with a fresh transfer rather than relabeling a
+   confirmed hop as zero-confirmation.
+7. Carol explicitly batches 5 Test USD to Bob and 5 Test USD to Note to Self.
+   Both envelopes share one Bitcoin txid and record exact manifest positions.
+   This is a two-recipient Bob/Carol-plus-self test, not a three-party claim.
+8. Run a separate low-fee 1 Test USD Bob→Carol transfer and a protocol-safe
+   RBF that preserves protected inputs, records, marker, membership, positions,
+   context, and delivery identities.
+9. Use the DEBUG-only pause harness at planning, signed persistence, broadcast,
+   and pre-delivery. Relaunch must resume the same operation ID with no duplicate
+   spend or chat credit.
+10. Observe every parent, child, batch, and replacement through pinned mempool
+    evidence to CBF/SPV-confirmed settlement.
+
+Recovery validation then runs in a separate clean simulator using Secure
+Backup and DEBUG-only rebind. It must not replace or erase Bob or Carol.
+
+## Publication after acceptance
+
+Only after the live sequence passes:
+
+- capture the complete screenshot set;
+- record real Carol→Bob→Carol and shared-batch simulator footage;
+- combine footage with Remotion annotations and explanatory animation without
+  fabricating transaction state;
+- update the homepage, Bitcoin performance page, paper, formal/public table
+  where applicable, roadmap, and journal with exact txids, timings, CI links,
+  and explicit testnet-only language.
+
+## Open gates
+
+- Signal PR #6 consolidated hosted CI and exact-green merge.
+- Separate clean-install Secure Backup recovery/rebind acceptance.
+- Independent mainnet security review.
+- Release packaging/signing and upstream Signal submission decision.
+- Physical-device rollout.
+- Cloudflare DNSSEC activation and Namecheap DS publication. A missing DS means
+  DNSSEC is not complete.
+- All releases and every mainnet broadcast.
+
+## Rules of engagement
+
+- No fabricated state, silent fallback, or mock presented as product evidence.
+- Every public claim has measured or CI-generated receipts.
+- Every design change and failed approach receives a source and rendered journal
+  entry.
+- One agent owns one isolated branch/worktree; no force pushes or edits to
+  another agent’s checkout.
+- GitHub merges require reviewed exact-green tips.
+- Releases, upstream submissions, physical-device migration, registrar changes,
+  and mainnet actions require separate owner approval.
+
+## Coordination channels
+
+- [opencsvnet/opencsv#1](https://github.com/opencsvnet/opencsv/issues/1) — master work board.
+- [opencsvnet/Signal-iOS#3](https://github.com/opencsvnet/Signal-iOS/issues/3) — Signal architecture and acceptance log.
+- [opencsvnet/opencsv-rs#3](https://github.com/opencsvnet/opencsv-rs/issues/3) — completed prover track receipt.
+- [opencsvnet/opencsv-rs#4](https://github.com/opencsvnet/opencsv-rs/issues/4) — completed batching track receipt.
+- [Public journal](https://opencsv.net/web/journal.html) — narrative and failed approaches.
