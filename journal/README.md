@@ -814,9 +814,19 @@ mainnet action is claimed here.
 The first Signal recovery-only hosted job at candidate `fb89112e` exposed a
 runner-path assumption before compilation: the workflow supplied an Xcode
 application-bundle path while the build script expected a developer-directory
-path. Candidate `3142394` normalizes both forms and keeps the same fail-closed
-recovery-symbol checks. The failed run is retained as a receipt; it is not
-relabelled as product or test success.
+path. Candidate `3142394` normalized both forms. A local deployment-mode pass
+then found the locked dependency graph had a stale CocoaPods checksum;
+`5324150` regenerated only that checksum. Full recovery validation next showed
+that setting warnings-as-errors across the whole workspace contradicted the
+explicit `-suppress-warnings` policy of several third-party pods. Candidate
+`0da5a47` instead asserts Signal's existing owned-target warning policy.
+
+At `0da5a47`, deployment-mode pod synchronization passes, the default OpenCSV
+framework omits issuer/mint and recovery symbols, the full Signal simulator
+app builds, and 81 OpenCSV tests pass with zero failures and two
+environment-gated skips. The complete DEBUG recovery build contains the
+test-only rebind symbol, then restores a default framework without it. All
+failed or superseded runs remain receipts; none is relabelled as test success.
 
 ---
 

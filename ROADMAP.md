@@ -150,12 +150,18 @@ Consolidate work in [Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/
 directly against `main`. PRs #4 and #5 remain historical stacked reviews and
 are closed as superseded only after #6 merges.
 
-Current consolidated candidate `31423940620e7c39b7f24729660c1b8cb1101b14`
+Current consolidated candidate `0da5a47dc2cb5261a66cdbb364baead9ddc9a57e`
 adds the final Test USD presentation and default/recovery hosted build gates.
 The first recovery-only hosted job correctly failed before compilation because
 its Xcode path could be either an application bundle or a developer directory;
-the current candidate normalizes both forms without weakening the recovery
-symbol gate. Its replacement hosted CI and simulator acceptance remain open.
+`3142394` normalized both forms. Local deployment validation then caught a
+stale CocoaPods checksum, corrected by `5324150` without moving a dependency.
+Full recovery validation found that workspace-wide warnings-as-errors
+conflicted with third-party pods that explicitly suppress warnings; `0da5a47`
+keeps the policy on Signal-owned targets. The exact tip builds the full Signal
+app, passes 81 OpenCSV tests with zero failures and two environment-gated
+skips, and passes the complete recovery build while restoring a default
+framework afterward. Hosted CI and Bob/Carol acceptance remain open.
 
 Required product behavior:
 

@@ -798,12 +798,19 @@
     fast-forwarded without a merge commit. Signal PR #6 pins that SHA. Its
     hosted build and the Bob/Carol payment sequence remain open.</p>
     <p>The first recovery-only Signal hosted job at candidate
-    <code>fb89112e</code> exposed an Xcode-path assumption before compilation:
-    the runner supplied an application-bundle path while the script expected a
-    developer-directory path. Candidate <code>3142394</code> accepts either
-    representation while preserving the fail-closed recovery-symbol checks.
-    The failed run remains part of the public receipt and is not presented as
-    test success.</p>
+    <code>fb89112e</code> exposed an Xcode-path assumption before compilation;
+    <code>3142394</code> normalized application-bundle and developer-directory
+    forms. Local deployment validation then caught a stale CocoaPods checksum,
+    corrected by <code>5324150</code> without moving a dependency. Full
+    recovery validation next showed that workspace-wide warnings-as-errors
+    contradicted explicit warning suppression in third-party pods.
+    <code>0da5a47</code> asserts Signal's existing owned-target policy instead.</p>
+    <p>At <code>0da5a47</code>, deployment-mode pod synchronization passes, the
+    default framework omits issuer/mint and recovery symbols, the complete
+    Signal simulator app builds, and 81 OpenCSV tests pass with zero failures
+    and two environment-gated skips. The DEBUG recovery build contains the
+    test-only rebind symbol and restores a default framework afterward. Failed
+    and superseded runs remain public receipts, not passing claims.</p>
   </div>
 
 </div>
