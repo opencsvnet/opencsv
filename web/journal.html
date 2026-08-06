@@ -782,9 +782,9 @@
     <p>Wire data still says <code>USD</code>; Signal derives the Test USD label
     from signet plus the exact <code>testOnly</code> manifest. Signal cannot mint
     or create assets. Issuance remains an opt-in headless
-    <code>opencsv-issuer</code> operation. Draft
+    <code>opencsv-issuer</code> operation.
     <a href="https://github.com/opencsvnet/opencsv-rs/pull/10">opencsv-rs PR #10</a>
-    candidate <code>3295cd5</code> removes issuer/mint symbols from the default
+    at <code>3295cd5</code> removes issuer/mint symbols from the default
     Signal header and archive while retaining them under
     <code>issuer-tools</code>.</p>
     <p>Rust also enforces the exact reviewed asset ID at planning, before proof,
@@ -793,8 +793,10 @@
     or frozen-batch work cancels atomically, while already signed work remains
     recoverable. Receipts separately time proof, pre-sign verification,
     signing/persistence, relay, pinned observation, and SPV so chain delay cannot
-    be misreported as proof time. Local gates pass; hosted exact-tip CI and the
-    Bob/Carol payment sequence remain open.</p>
+    be misreported as proof time. Local gates and hosted push run 31113193237
+    plus PR run 31113199886 passed at the exact tip; <code>main</code>
+    fast-forwarded without a merge commit. Signal PR #6 pins that SHA. Its
+    hosted build and the Bob/Carol payment sequence remain open.</p>
   </div>
 
 </div>

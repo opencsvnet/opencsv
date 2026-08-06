@@ -120,11 +120,11 @@ Signal exposes one user-facing product: **Test USD**.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
 
-## Active Rust merge gate
+## Completed Rust merge gate
 
-Draft [opencsv-rs PR #10](https://github.com/opencsvnet/opencsv-rs/pull/10)
-is the Rust prerequisite for final Signal integration. Candidate
-`3295cd5896aa2615c992faf45a9075ad138094ca` adds:
+[opencsv-rs PR #10](https://github.com/opencsvnet/opencsv-rs/pull/10)
+is merged by exact fast-forward on `opencsv-rs/main` at
+`3295cd5896aa2615c992faf45a9075ad138094ca`. It adds:
 
 - exact `usd_issuers` enforcement at planning, before proving, at proof commit,
   and before pre-broadcast signing;
@@ -137,15 +137,22 @@ is the Rust prerequisite for final Signal integration. Candidate
   timing receipts.
 
 Local default, recovery, issuer, integration, Clippy, formatting, and archive
-surface gates pass. Hosted exact-tip CI is the merge authority:
-[run 31113193237](https://github.com/opencsvnet/opencsv-rs/actions/runs/31113193237).
-Merge only that reviewed exact-green tip, then pin Signal to the merged SHA.
+surface gates passed. Hosted push
+[run 31113193237](https://github.com/opencsvnet/opencsv-rs/actions/runs/31113193237)
+and PR
+[run 31113199886](https://github.com/opencsvnet/opencsv-rs/actions/runs/31113199886)
+both succeeded at the exact tip, including twice-built byte-identical reference
+binaries. Signal PR #6 pins this merged SHA.
 
 ## Active final workstream — Signal simulator integration
 
 Consolidate work in [Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/pull/6)
 directly against `main`. PRs #4 and #5 remain historical stacked reviews and
 are closed as superseded only after #6 merges.
+
+Current consolidated candidate `fb89112e82dfb30a16b2eef55b2353fbe44b1ace`
+adds the final Test USD presentation and default/recovery hosted build gates.
+Its hosted CI and simulator acceptance remain open.
 
 Required product behavior:
 

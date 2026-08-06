@@ -788,8 +788,8 @@ registry.
 Wire data still uses `USD`; Signal derives the Test USD label from signet plus
 the exact `testOnly` reviewed manifest. Signal cannot mint or create assets.
 Issuance remains possible only through the opt-in headless `opencsv-issuer`
-operator. Draft `opencsv-rs` PR #10 candidate `3295cd5` makes that separation a
-binary property: the default header/archive omit the legacy issuer and mint C
+operator. `opencsv-rs` PR #10 at `3295cd5` makes that separation a binary
+property: the default header/archive omit the legacy issuer and mint C
 symbols, while `issuer-tools` retains them for operator and protocol tests.
 
 The same candidate closes a review finding that UI selection alone could not
@@ -804,9 +804,12 @@ local signing/persistence, relay submission, pinned observer evaluation, and
 CBF/SPV confirmation separately. This prevents a slow chain recheck from being
 published as proof time and makes the under-one-second post-proof signing gate
 measurable. Local default, recovery, issuer, integration, Clippy, formatting,
-and archive-surface checks pass. Hosted exact-tip CI and the Bob/Carol payment
-sequence remain open; no merge, simulator install, physical-iPhone action,
-release, or mainnet action is claimed here.
+and archive-surface checks passed. Hosted push run 31113193237 and PR run
+31113199886 then passed at the exact tip, including the twice-built
+byte-identical reference packages, and `main` fast-forwarded without a merge
+commit. Signal PR #6 pins that SHA. Its hosted build and the Bob/Carol payment
+sequence remain open; no simulator install, physical-iPhone action, release, or
+mainnet action is claimed here.
 
 ---
 
