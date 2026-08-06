@@ -29,7 +29,23 @@ npm run still:scale
 The publishable files are
 `out/scale/opencsv-bitcoin-performance.mp4` and `out/scale/poster.png`.
 
-## Real Signal wallet composition
+## Consumer USD composition
+
+`Consumer-USD` is the homepage film: a 24-second product animation showing
+Carol send 25 Test USD to Bob and Bob send 10 Test USD back inside their Signal
+conversation. It deliberately omits setup, minting, attachments, Bitcoin fee
+management, and protocol diagnostics. It is labeled as a product animation and
+as signet-only test value; it is not presented as a live transaction receipt.
+
+```sh
+npm run render:consumer
+npm run still:consumer
+```
+
+The publishable files are `out/consumer/opencsv-signal-usd.mp4` and
+`out/consumer/poster.png`.
+
+## Historical Signal wallet composition
 
 `Signal-Wallet` currently contains a separate 40-second prelude composition.
 It places a real, full-resolution iOS simulator recording inside the site's

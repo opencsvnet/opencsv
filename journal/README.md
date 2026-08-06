@@ -828,6 +828,24 @@ environment-gated skips. The complete DEBUG recovery build contains the
 test-only rebind symbol, then restores a default framework without it. All
 failed or superseded runs remain receipts; none is relabelled as test success.
 
+## 2026-08-06 — The homepage starts with a dollar payment, not a diagnostic
+
+The first Signal film tried to explain attachment transport, shallow-confirmation
+failure, Rust policy, receive identities, fee reserves, and issuer review in one
+consumer-facing sequence. Its screenshots were honest development receipts, but
+they did not tell a coherent payment story: the visible user saw a binary
+attachment, a zero balance, a blocked send, and wallet internals before seeing
+any dollars move.
+
+The homepage now uses one new 24-second composition: Carol sends 25 Test USD to
+Bob and Bob sends 10 Test USD back inside their Signal conversation. Setup,
+minting, fee management, explorer data, and protocol terminology are absent.
+The film is explicitly marked **product animation**, **Test USD**, and
+**signet**, with no monetary or redemption value. It is not a live transaction
+receipt. The historical simulator recording and CLI screenshots remain in the
+repository as archival engineering evidence but no longer appear on the
+homepage.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

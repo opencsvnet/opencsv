@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OpenCSV — Client-Side Verified RWAs, Stables &amp; More on Bitcoin</title>
-<meta name="description" content="OpenCSV: issuer-backed assets verified by the parties to a payment, not a consensus network. Shielded transfers, auditable supply, client-side proofs, and Bitcoin ordering — no fork or anchor server.">
+<title>OpenCSV — Send dollars in Signal</title>
+<meta name="description" content="Send private dollar payments to the people in your Signal conversations, with Bitcoin ordering in the background.">
 <link rel="canonical" href="https://opencsv.net/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="OpenCSV — Proofs travel. Bitcoin orders.">
-<meta property="og:description" content="Client-side verified issuer assets with shielded transfers, auditable supply, and Bitcoin ordering — no fork or anchor server.">
+<meta property="og:title" content="OpenCSV — Send dollars in Signal">
+<meta property="og:description" content="Carol sends $25 to Bob. Bob sends $10 back. Dollar payments stay inside their Signal conversation.">
 <meta property="og:url" content="https://opencsv.net/">
-<meta property="og:image" content="https://opencsv.net/web/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="OpenCSV: Proofs travel. Bitcoin orders.">
+<meta property="og:image" content="https://opencsv.net/web/animation/out/consumer/poster.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="Carol sends 25 Test USD to Bob inside Signal">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OpenCSV — Proofs travel. Bitcoin orders.">
-<meta name="twitter:description" content="Client-side verified issuer assets with shielded transfers, auditable supply, and Bitcoin ordering.">
-<meta name="twitter:image" content="https://opencsv.net/web/og.png">
+<meta name="twitter:title" content="OpenCSV — Send dollars in Signal">
+<meta name="twitter:description" content="Quick private dollar payments inside a Signal conversation.">
+<meta name="twitter:image" content="https://opencsv.net/web/animation/out/consumer/poster.png">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -100,21 +100,12 @@
   .scale-callout .button { display: inline-block; padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; font-weight: 600; }
   .scale-callout .button:hover { text-decoration: none; border-color: var(--accent); }
 
-  .signal-film { text-align: center; }
-  .signal-film video { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; border: 1px solid var(--border); display: block; background: #080a0d; }
-  .signal-film .note { color: var(--muted); font-size: 14px; margin: 12px 0 34px; }
-  .phone-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .phone-shot { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-  .phone-shot img { width: 100%; height: auto; display: block; background: #fff; }
-  .phone-shot figcaption { padding: 14px 16px 16px; color: var(--muted); font-size: 13px; line-height: 1.5; text-align: left; }
-  .phone-shot b { color: var(--fg); }
+  .consumer-film { text-align: center; }
+  .consumer-film video { width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; border: 1px solid var(--border); display: block; background: #080a0d; box-shadow: 0 24px 70px rgba(0,0,0,.28); }
+  .consumer-film .note { color: var(--muted); font-size: 14px; margin-top: 12px; }
 
   @media (max-width: 760px) {
-    .phone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .scale-callout { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 520px) {
-    .phone-grid { grid-template-columns: 1fr; }
   }
 
   footer { padding: 48px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
@@ -127,9 +118,8 @@
 <header class="hero">
   <div class="wrap">
     <h1>Open<span class="csv">CSV</span></h1>
-    <p class="tagline">Issuer-backed assets verified by the parties to a
-    payment, not by a consensus network. Shielded transfers, auditable supply,
-    and Bitcoin ordering — no fork, new chain, or anchor server.</p>
+    <p class="tagline">Send dollars in Signal. Private payments for the people
+    in your conversations, with Bitcoin ordering in the background.</p>
     <div class="cta">
       <a class="primary" href="paper/opencsv.md">Read the paper</a>
       <a class="secondary" href="scale.html">How it scales</a>
@@ -138,75 +128,18 @@
   </div>
 </header>
 
-<section id="watch">
-  <div class="wrap watch">
-    <h2>Watch the prototype lineage end to end</h2>
-    <p class="sub" style="margin-left:auto;margin-right:auto">Eighty seconds:
-    mint, anchor, off-chain transport, scan-first verification, batching —
-    and what you trust. The animation predates the safe-marker, co-funded-v2,
-    production-proof, and Rust account-wallet changes documented below.</p>
-    <video controls preload="metadata" poster="web/animation/out/poster.png">
-      <source src="web/animation/out/opencsv-e2e.mp4" type="video/mp4">
+<section id="consumer-demo">
+  <div class="wrap consumer-film">
+    <h2>Send dollars. Get dollars. Keep chatting.</h2>
+    <p class="sub" style="margin-left:auto;margin-right:auto">Carol sends $25
+    to Bob. Bob sends $10 back. The whole experience stays inside their Signal
+    conversation.</p>
+    <video controls autoplay muted loop playsinline preload="metadata" poster="web/animation/out/consumer/poster.png">
+      <source src="web/animation/out/consumer/opencsv-signal-usd.mp4" type="video/mp4">
       Your browser does not support the video tag; download
-      <a href="web/animation/out/opencsv-e2e.mp4">opencsv-e2e.mp4</a> instead.
+      <a href="web/animation/out/consumer/opencsv-signal-usd.mp4">the Signal dollar-payment animation</a> instead.
     </video>
-    <p class="note">Rendered with Remotion from
-    <a href="https://github.com/opencsvnet/opencsv/tree/main/web/animation"><code>web/animation</code></a>.</p>
-  </div>
-</section>
-
-<section id="signal-demo">
-  <div class="wrap signal-film">
-    <h2>Signal wallet, running for real</h2>
-    <p class="sub" style="margin-left:auto;margin-right:auto">A live registered
-    iOS simulator on Bitcoin signet: the encrypted consignment, the historical
-    fail-closed shallow-confirmation state, one-USD wallet, public receive
-    identity, restricted Bitcoin fee reserve, and exact reviewed issuer. The
-    film combines the real screen recording with explanatory Remotion overlays;
-    the wallet screens and values are not mocked. The current draft adds a
-    separately labeled, dependency-safe available-before-confirmation state;
-    that newer state is not retroactively inserted into this recording.</p>
-    <video controls playsinline preload="metadata" poster="web/animation/out/signal/poster.png">
-      <source src="web/animation/out/signal/opencsv-signal-wallet.mp4" type="video/mp4">
-      Your browser does not support the video tag; download
-      <a href="web/animation/out/signal/opencsv-signal-wallet.mp4">the Signal wallet demo</a> instead.
-    </video>
-    <p class="note">Recorded 2026-08-04 · Signal iOS simulator · public Bitcoin signet · test-only OpenCSV USD Preview</p>
-
-    <div class="phone-grid" aria-label="Signal wallet screenshot receipts">
-      <figure class="phone-shot">
-        <img loading="lazy" src="web/screenshots/signal/01-signal-consignment.png" alt="Signal conversation containing the real 537 kilobyte OpenCSV proof consignment attachment">
-        <figcaption><b>Encrypted delivery.</b> The 537 KB canonical proof
-        consignment arrives as a normal Signal attachment.</figcaption>
-      </figure>
-      <figure class="phone-shot">
-        <img loading="lazy" src="web/screenshots/signal/02-payment-fail-closed.png" alt="OpenCSV Payment screen refusing to spend because the reviewed issuer USD anchor has not reached six confirmations">
-        <figcaption><b>Historical fail-closed receipt.</b> This build did not
-        yet have provisional acceptance, so the reviewed-issuer claim remained
-        0 spendable USD. The current draft still treats attachment download as
-        non-spendable, but can separately verify an exact mempool parent.</figcaption>
-      </figure>
-      <figure class="phone-shot">
-        <img loading="lazy" src="web/screenshots/signal/03-wallet-overview-pending.png" alt="Signal OpenCSV wallet showing zero available USD and 20000 signet satoshis ready for network fees">
-        <figcaption><b>One simple wallet.</b> USD is the product; 20,000 signet
-        sats are visible only as the protocol fee reserve.</figcaption>
-      </figure>
-      <figure class="phone-shot">
-        <img loading="lazy" src="web/screenshots/signal/04-receive-usd.png" alt="OpenCSV receive screen showing a QR code for the wallet public owner identity">
-        <figcaption><b>Receive in chat.</b> The QR encodes the public owner
-        identity, never secret wallet or issuer material.</figcaption>
-      </figure>
-      <figure class="phone-shot">
-        <img loading="lazy" src="web/screenshots/signal/05-network-fee-reserve.png" alt="OpenCSV network fee reserve showing 20000 confirmed signet satoshis and a funding QR code">
-        <figcaption><b>Bitcoin is gas.</b> The app can fund and inspect protocol
-        fees, but exposes no arbitrary Bitcoin-send screen.</figcaption>
-      </figure>
-      <figure class="phone-shot">
-        <img loading="lazy" src="web/screenshots/signal/06-wallet-details-reviewed-issuer.png" alt="OpenCSV wallet details showing two confirmed fee UTXOs and one reviewed test-only USD Preview issuer">
-        <figcaption><b>Exact claims.</b> Two fee UTXOs and one test-only reviewed
-        issuer are explicit beneath the aggregated USD balance.</figcaption>
-      </figure>
-    </div>
+    <p class="note">Product animation · Test USD on public Bitcoin signet · no monetary or redemption value</p>
   </div>
 </section>
 
@@ -347,35 +280,6 @@
         view. Explorer data may accelerate discovery; it cannot decide acceptance.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<section id="demo">
-  <div class="wrap">
-    <h2>See it working</h2>
-    <p class="sub">The real CLI against a real <code>bitcoind</code> (regtest):
-    every anchor is a broadcast Bitcoin transaction carrying a 64-byte
-    <code>OP_RETURN</code> record and a compact-filter marker — no demo chain,
-    no mocked chain. These captures show the historical feasibility profile;
-    current production-profile measurements are below.</p>
-    <p class="provenance"><!-- CAPTURE-PROVENANCE -->captured 2026-08-03 08:53 UTC · regtest · opencsv-rs@b64bdf4<!-- /CAPTURE-PROVENANCE --></p>
-    <figure class="shot">
-      <img src="web/screenshots/mint.png" alt="Issuer initializes a USD asset and mints 100 to Bob; the anchor transaction is broadcast and confirmed on regtest">
-      <figcaption>The issuer creates a USD asset and mints 100 to Bob — the
-      anchor is a real transaction, confirmed on-chain
-      (<code>gettransaction</code> shows 6 confirmations).</figcaption>
-    </figure>
-    <figure class="shot">
-      <img src="web/screenshots/receive.png" alt="Bob verifies the mint consignment: VERIFIED 100, coins stored, balance 100">
-      <figcaption>Bob verifies the consignment — constant-size proof plus the
-      on-chain anchor — and his wallet credits the coins.</figcaption>
-    </figure>
-    <figure class="shot">
-      <img src="web/screenshots/send-double-spend-audit.png" alt="Bob sends 60+40 back to the issuer (VERIFIED); a double-spend of the same coins is REJECTED by the first-occurrence rule; the supply audit reads 100 from chain data">
-      <figcaption>Bob sends 60+40 back (<code>VERIFIED</code>); re-anchoring the
-      same nullifiers loses to first occurrence (<code>REJECTED</code>); the
-      public supply audit sums mints − redeems from chain data.</figcaption>
-    </figure>
   </div>
 </section>
 
