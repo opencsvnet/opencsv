@@ -1198,21 +1198,25 @@ seconds, and did not count as required success. A complete P2P write is recorded
 as submission, not mempool acceptance.
 
 The current repair candidate supersedes that one-required-observer policy.
-Rust `cd1e678fdcb91ce81ed16d670c441d89e9d2e108` derives an omitted raw-byte
+Rust `2543c25` derives an omitted raw-byte
 quorum from every API marked `Require` and rejects an explicit mismatch; Signal
 `4c27eca874206ee942e7baf8eaaf4954bc016286` derives the same count and exposes no
 caller override. In a warning-denied simulator test, both pinned providers
 returned identical raw bytes for the known return transaction in 1.831 seconds.
-This is an observer-client receipt. It is not substituted for the still-open
-wallet-level provisional-forwarding rerun.
-
-This receipt is intentionally narrower than a zero-confirmation chain claim:
-the first anchor had already confirmed before Bob signed the return. The run
-proves real wallet forwarding and a provisionally accepted second anchor, not a
-child spending an unconfirmed parent. A shared-transaction batch, protocol-safe
-RBF, crash-state replay, a true unconfirmed-parent child, dual-required-observer
-acceptance, hosted CI on the repaired tips, and physical-device rollout remain
-open.
+The subsequent wallet-level rerun produced an actual unconfirmed parent and
+child. Carol→Bob transaction
+`2c3bc97c39615094486f8d1786974aed34ed426ba7d97a949890e073cfbf4786`
+remained unconfirmed while Bob verified and selected its exact OpenCSV coin.
+Bob→Carol child
+`f77ff98673107a94391fd0509bfa8c2ec40e4551f62b7b6674319d8098d24554`
+records that dependency and was also accepted before either provider reported
+confirmation. For parent/child, mempool.space matched exact bytes in 256/239ms
+and Blockstream in 377/359ms. Local proving took 6.096/5.995 seconds and
+signing/persistence 23/18ms. Both operations survived a post-broadcast relaunch
+and delivered exactly once. This proves sequential zero-confirmation
+forwarding across two Bitcoin transactions; a shared-transaction batch,
+protocol-safe RBF, the complete crash-state matrix, hosted CI on the repaired
+tips, and physical-device rollout remain open.
 
 The run also found three local defects whose repairs are not yet merged: the
 value gadget needed a signed low-limb borrow for `25 = 10 + 15`; confirmed

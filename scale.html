@@ -446,15 +446,14 @@
         <a href="web/journal.html">Read the journal receipt</a>
       </article>
       <article class="receipt">
-        <div class="state">LIVE · TWO-HOP SIGNET RECEIPT</div>
-        <h3>Real two-hop signet forwarding</h3>
-        <p>Carol sent 25 Test USD to Bob; Bob spent the received coin into 10
-        for Carol plus 15 change. Carol accepted the exact mempool transaction
-        before its confirmation and both anchors later settled on signet. The
-        first anchor confirmed before Bob's child was signed, so this does not
-        yet prove an unconfirmed-parent child. The local forwarding proof took
-        6.237 seconds; the full instrumented operation took 5m28s because chain
-        checks and recovery scheduling dominated.</p>
+        <div class="state">LIVE · ZERO-CONFIRMATION CHILD</div>
+        <h3>Real unconfirmed parent and child</h3>
+        <p>Carol sent 1 Test USD to Bob; while that Bitcoin transaction was
+        still unconfirmed, Bob verified and spent its exact OpenCSV coin back
+        to Carol. Both pinned APIs returned identical bytes for both parent and
+        child before either confirmed. Local proofs took 6.096s and 5.995s;
+        signing and persistence took 23ms and 18ms. Each operation survived a
+        post-broadcast relaunch and delivered once.</p>
         <a href="index.html#consumer-demo">Watch the real Signal footage</a>
       </article>
     </div>

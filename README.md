@@ -114,14 +114,23 @@ and was recorded as unavailable rather than success.
 
 That historical one-required-observer policy is superseded in the current
 candidate. Rust
-[`cd1e678`](https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108)
+[`2543c25`](https://github.com/opencsvnet/opencsv-rs/commit/2543c25)
 and Signal
 [`4c27eca874`](https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286)
 derive the raw-byte gate from every API marked `Require`; fresh signet wallets
 therefore require both pinned providers. A warning-denied simulator test fetched
 the known return transaction from both providers in 1.831 seconds and received
-identical bytes under the bundled certificate profiles. That proves the
-observer client, not yet a new wallet-level provisional-forwarding receipt.
+identical bytes under the bundled certificate profiles.
+
+The wallet-level rerun is now complete. Carol sent 1 Test USD to Bob in
+[`2c3bc97c…f4786`](https://mempool.space/signet/tx/2c3bc97c39615094486f8d1786974aed34ed426ba7d97a949890e073cfbf4786).
+While it remained unconfirmed at both providers, Bob accepted the exact proof
+and raw bytes and sent that coin back in the true child
+[`f77ff986…24554`](https://mempool.space/signet/tx/f77ff98673107a94391fd0509bfa8c2ec40e4551f62b7b6674319d8098d24554).
+Both providers also reported the child unconfirmed while Carol exposed it as
+`available before confirmation · replacement risk`. Local proving took 6.096s
+and 5.995s; signing/persistence took 23ms and 18ms. Each operation survived a
+post-broadcast relaunch with the same operation id and no duplicate credit.
 
 The same run found two honest integration defects. Exact forwarding of
 `25_000_000 = 10_000_000 + 15_000_000` needs a `-1` limb borrow, but the value

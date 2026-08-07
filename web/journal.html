@@ -922,6 +922,31 @@
     this proves the observer client rather than payment acceptance.</p>
   </div>
 
+  <div class="entry">
+    <div class="date">2026-08-07</div>
+    <h2>A real unconfirmed parent and child <span class="tag">live signet receipt</span></h2>
+    <p>Carol sent 1 Test USD in
+    <a href="https://mempool.space/signet/tx/2c3bc97c39615094486f8d1786974aed34ed426ba7d97a949890e073cfbf4786"><code>2c3bc97c…f4786</code></a>.
+    While it remained unconfirmed, Bob accepted its exact proof and raw bytes
+    and spent that coin into child
+    <a href="https://mempool.space/signet/tx/f77ff98673107a94391fd0509bfa8c2ec40e4551f62b7b6674319d8098d24554"><code>f77ff986…24554</code></a>.
+    The child was also unconfirmed when Carol displayed it as available before
+    confirmation with replacement risk.</p>
+    <p>For parent/child, mempool.space matched the exact transaction in
+    256ms/239ms and Blockstream in 377ms/359ms. Local proving took
+    6.096s/5.995s, signing and persistence 23ms/18ms, and relay
+    1.462s/1.461s. Durable intent took 90ms/107ms and the send sheet dismissed
+    in 250ms/331ms. Both operations survived a post-broadcast relaunch and
+    delivered the same operation id exactly once.</p>
+    <p>A transient Blockstream 404 held the child at <code>1 of 2</code> until
+    retry, proving the required quorum fails closed. The run also exposed stale
+    <code>broadcast_unobserved</code> error text after successful observation;
+    Rust <a href="https://github.com/opencsvnet/opencsv-rs/commit/2543c25"><code>2543c25</code></a>
+    clears it atomically. The warning-denied FFI suite passed 61 tests with zero
+    failures and two explicitly ignored slow recursive-receipt tests. Hosted
+    exact-tip CI remains a merge gate.</p>
+  </div>
+
 </div>
 
 <footer>

@@ -188,7 +188,7 @@
         represented as completed.</p>
       </article>
       <article class="status-card last">
-        <div class="eyebrow">Live two-hop signet receipt · integration branch</div>
+        <div class="eyebrow">Live zero-confirmation chain · integration branch</div>
         <h3>Signal-iOS + one Test USD wallet</h3>
         <p>Two registered simulator wallets completed the live path: Carol sent
         25 Test USD to Bob, Bob accepted it, and Bob sent 10 back. Carol
@@ -200,9 +200,12 @@
         proving and 42ms signing/persistence; most elapsed time was repeated
         chain verification and recovery scheduling, not proof time. The run
         also found and locally repaired a negative-carry witness bug and a
-        confirmed-parent snapshot conflict. Hosted CI, the dual-required-
-        observer policy, batch/RBF/crash matrix, clean recovery, merge, and
-        physical rollout remain open.</p>
+        confirmed-parent snapshot conflict. A subsequent 1 Test USD rerun
+        produced a true unconfirmed parent and child: both pinned APIs matched
+        both exact transactions, local proofs took 6.096s and 5.995s, and each
+        operation resumed after a post-broadcast relaunch. Hosted CI, shared
+        batching, safe RBF, the complete crash matrix, clean recovery, merge,
+        and physical rollout remain open.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
@@ -408,8 +411,8 @@
       </li>
       <li>
         <h3>Finish Signal release gates</h3>
-        <p>The live two-hop receipt is complete. Remaining work is hosted CI and
-        review, two-required-observer enforcement, explicit shared batching,
+        <p>The live two-hop and two-required-observer zero-confirmation receipts
+        are complete. Remaining work is hosted CI and review, explicit shared batching,
         safe RBF, the crash-state matrix, clean backup recovery, and physical
         device acceptance. No mainnet or release action is implied.</p>
       </li>

@@ -162,7 +162,7 @@ confirmed-parent snapshot handling, and corrupt BIP158 cache refetch. Hosted CI
 and review apply to the repaired exact tip, not merely the earlier base commits.
 
 The current repair candidates are Rust
-[`cd1e678`](https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108)
+[`2543c25`](https://github.com/opencsvnet/opencsv-rs/commit/2543c25)
 and Signal
 [`4c27eca874`](https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286).
 They close a policy mismatch discovered in the live Advanced screen: both
@@ -173,7 +173,9 @@ same count instead of accepting a caller override. Local receipts are 61 Rust
 FFI tests passed with two explicitly ignored slow recursive-receipt tests. The
 warning-denied Signal observer suite then passed all three tests, including a
 1.831-second live run where both pinned providers returned the same exact raw
-signet transaction bytes. Hosted exact-tip CI remains pending.
+signet transaction bytes. The wallet-level rerun then completed a true
+unconfirmed parent/child chain with both required observers. Hosted exact-tip
+CI remains pending.
 
 Required product behavior:
 
@@ -226,19 +228,30 @@ Acceptance status, preserving the original order:
    change in
    `a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`.
    Carol accepted it before confirmation; it settled at height 316620. The
-   first anchor had confirmed before the return was signed, so an actual
-   unconfirmed-parent child remains open. The
+   first anchor had confirmed before the return was signed, so that historical
+   run was not an unconfirmed-parent child. The
    required Blockstream observer matched raw bytes; mempool.space was Observe,
-   timed out, and was honestly recorded unavailable. The final dual-Require
-   policy therefore remains a separate gate.
+   timed out, and was honestly recorded unavailable.
+
+   The corrected dual-Require rerun is also complete. Carol→Bob operation
+   `1bf04f226bdb5ed71c2d7b7035365da0` anchored in
+   `2c3bc97c39615094486f8d1786974aed34ed426ba7d97a949890e073cfbf4786`.
+   Before confirmation, Bob accepted it and operation
+   `8b3bb9f703bb83a09b4315adad39a95b` spent that exact unconfirmed dependency
+   into child
+   `f77ff98673107a94391fd0509bfa8c2ec40e4551f62b7b6674319d8098d24554`.
+   mempool.space and Blockstream returned matching bytes for both transactions;
+   both were still unconfirmed when Bob and Carol exposed the received dollar
+   as spendable with replacement risk.
 7. **Open:** Carol explicitly batches 5 Test USD to Bob and 5 Test USD to Note to Self.
    Both envelopes share one Bitcoin txid and record exact manifest positions.
    This is a two-recipient Bob/Carol-plus-self test, not a three-party claim.
 8. **Open:** run a separate low-fee 1 Test USD Bob→Carol transfer and a protocol-safe
    RBF that preserves protected inputs, records, marker, membership, positions,
    context, and delivery identities.
-9. **Partial:** the return resumed from durable proof state and delivered the
-   same operation id after relaunch. The full DEBUG pause matrix at planning,
+9. **Partial:** both new operations resumed from `broadcast_unobserved` and
+   delivered the same operation id after relaunch, without duplicate spend or
+   duplicate chat credit. The full DEBUG pause matrix at planning,
    signed persistence, broadcast, and pre-delivery remains open; every relaunch
    must resume the same operation ID with no duplicate spend or chat credit.
 10. **Partial:** both solo anchors reached confirmed settlement. Batch and RBF
@@ -269,10 +282,8 @@ captures remain tied to their still-open acceptance gates.
 
 ## Open gates
 
-- Review Rust `cd1e678` and Signal `4c27eca874`, complete their exact-tip hosted
+- Review Rust `2543c25` and Signal `4c27eca874`, complete their exact-tip hosted
   CI, and merge only reviewed green candidates.
-- Rerun provisional forwarding with the now-implemented two-of-two pinned
-  observer policy; implementation and local tests alone are not a live receipt.
 - Explicit shared batch, protocol-safe RBF, and complete crash-state matrix.
 - Separate clean-install Secure Backup recovery/rebind acceptance.
 - Independent mainnet security review.

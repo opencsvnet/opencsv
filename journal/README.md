@@ -931,6 +931,44 @@ returned the same exact raw bytes for the known signet return transaction.
 Hosted exact-tip CI and a new wallet-level provisional-forwarding receipt remain
 open, so this proves the observer client rather than final payment acceptance.
 
+## 2026-08-07 — A real unconfirmed parent and child pass both required observers
+
+The wallet-level rerun closed the gate the earlier film could not. Carol queued
+1 Test USD as operation `1bf04f226bdb5ed71c2d7b7035365da0`; its signed
+signet transaction is
+[`2c3bc97c…f4786`](https://mempool.space/signet/tx/2c3bc97c39615094486f8d1786974aed34ed426ba7d97a949890e073cfbf4786).
+Three ordinary peers accepted complete socket writes. mempool.space returned
+the exact 309-byte transaction in 256ms and Blockstream returned the same bytes
+in 377ms. Signal then delivered the consignment, and Bob displayed
+`+1 Test USD · available before confirmation · replacement risk` while both
+providers still reported the anchor unconfirmed.
+
+Bob immediately sent that exact coin back. Operation
+`8b3bb9f703bb83a09b4315adad39a95b` durably records the unconfirmed dependency
+on the parent txid and anchors the child in
+[`f77ff986…24554`](https://mempool.space/signet/tx/f77ff98673107a94391fd0509bfa8c2ec40e4551f62b7b6674319d8098d24554).
+The child was also still unconfirmed at both providers when Carol accepted it.
+mempool.space matched the exact child bytes in 239ms and Blockstream in 359ms.
+The child is a separate Bitcoin transaction; this proves sequential
+zero-confirmation forwarding, not two sequential owners inside one transaction.
+
+Parent/child local proving took 6.096s/5.995s, total proof preparation
+10.556s/10.326s, signing and persistence 23ms/18ms, and relay
+1.462s/1.461s. Durable intent was saved in 90ms/107ms and Signal dismissed the
+send sheet in 250ms/331ms. Both apps were terminated after broadcast but before
+delivery; relaunch resumed the same operation ids, re-observed the exact bytes,
+and delivered once. A transient Blockstream 404 held the child at
+`1 of 2` required observers until the next retry, demonstrating fail-closed
+behavior rather than silent quorum downgrade.
+
+The live database also exposed a bookkeeping defect: after state advanced to
+`mempool`, `rejection_reason` still contained `broadcast_unobserved`. Rust
+[`2543c25`](https://github.com/opencsvnet/opencsv-rs/commit/2543c25) clears that
+stale reason atomically with observer acceptance. The focused regression and
+the complete warning-denied FFI suite passed: 61 tests, zero failures, two
+explicitly ignored slow recursive-receipt tests. Hosted exact-tip CI remains a
+merge gate.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
