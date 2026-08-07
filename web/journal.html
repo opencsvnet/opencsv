@@ -846,6 +846,53 @@
     application state.</p>
   </div>
 
+  <div class="entry failure">
+    <div class="date">2026-08-07</div>
+    <h2>A real forwarding proof found a signed-carry bug <span class="tag">failure → repair</span></h2>
+    <p>Carol's real 25 Test USD payment reached Bob and was accepted from its
+    exact Signal consignment. Bob's attempt to send 10 back then failed at one
+    BabyBear witness value: <code>2013265920</code>, or field <code>-1</code>.
+    The transfer was valid—<code>25,000,000 = 10,000,000 + 15,000,000</code>—but
+    the value gadget allowed only Boolean intermediate carries. This split
+    needs a <code>-1</code> borrow across its 24-bit low limb.</p>
+    <p>The local repair constrains intermediate carries to
+    <code>{-1,0,1}</code> with <code>c(c-1)(c+1)=0</code> and still pins the final
+    carry to zero. The exact persisted-consignment reproducer passes; focused
+    transfer tests pass; and release one-input forwarding proves in 6.522s then
+    7.226s on the development Mac. The same run fixed a confirmed parent being
+    duplicated as its own mempool sentinel and a corrupt rebuildable BIP158
+    cache candidate blocking healthy peers. These are reviewed local repairs,
+    not yet a merged release claim.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-07</div>
+    <h2>The real Signal round trip replaces the animation <span class="tag">live signet receipt</span></h2>
+    <p>Carol sent 25 Test USD to Bob in
+    <a href="https://mempool.space/signet/tx/e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9"><code>e5ffe607…d9ee9</code></a>,
+    confirmed at signet height 316611. Bob then spent the received coin into 10
+    for Carol plus 15 change in
+    <a href="https://mempool.space/signet/tx/a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a"><code>a3a3f4b1…12dc0a</code></a>,
+    confirmed at height 316620. Carol verified the second proof, ownership,
+    anchor binding, and exact mempool bytes and exposed it as available before
+    confirmation with replacement risk. The first anchor had confirmed before
+    the return was signed, so a true unconfirmed-parent child is still an open
+    gate.</p>
+    <p>The return operation took 328s from durable intent to consignment
+    delivery. Its receipt separates 6.237s local proving, 42ms signing and
+    persistence, 1.826s relay, 77.861s funding verification, and 93.163s
+    pre-sign verification. Two peers accepted complete socket writes. Required
+    pinned Blockstream observation matched raw bytes in 347ms; optional
+    mempool.space observation timed out after 8.025s and was recorded
+    unavailable. The final two-required-observer policy therefore remains open.</p>
+    <p>The homepage film is a 38.067s cut of those real simulator recordings.
+    It removes waiting time but reconstructs no Signal screen or payment state.
+    MP4 SHA-256:
+    <code>ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0</code>.
+    Test USD is permanently signet-only and has no monetary or redemption
+    value.</p>
+  </div>
+
 </div>
 
 <footer>

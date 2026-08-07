@@ -1,11 +1,12 @@
-# OpenCSV Master Plan (2026-08-06, rev 8) — Rev 4 acceptance baseline
+# OpenCSV Master Plan (2026-08-07, rev 9) — Live Signal round-trip receipt
 
 ## Plan of record
 
-This revision publishes the owner-approved **OpenCSV Rev 4 — Permanent Test
-USD and Final Signal Acceptance** plan. Coordination state lives in repositories
-and GitHub issues, not chat. Earlier roadmap revisions and failed approaches
-remain in Git history and the public journal.
+This revision reconciles the owner-approved **OpenCSV Rev 4 — Permanent Test
+USD and Final Signal Acceptance** plan with the first real Carol→Bob→Carol
+Signal simulator receipt. Coordination state lives in repositories and GitHub
+issues, not chat. Earlier roadmap revisions and failed approaches remain in Git
+history and the public journal.
 
 The execution order is still:
 
@@ -16,8 +17,9 @@ The execution order is still:
 5. Signal/iOS integration last
 
 Tracks 1–4 have reached their reference implementation baselines. Signal
-simulator integration is the active final workstream. This does not imply a
-release, an upstream Signal submission, a physical-device rollout, or mainnet
+simulator integration remains the active final workstream, but the real solo
+two-hop signet path is no longer an open gate. This does not imply a merge,
+release, upstream Signal submission, physical-device rollout, or mainnet
 readiness.
 
 ## Verified completed baselines
@@ -150,18 +152,14 @@ Consolidate work in [Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/
 directly against `main`. PRs #4 and #5 remain historical stacked reviews and
 are closed as superseded only after #6 merges.
 
-Current consolidated candidate `0da5a47dc2cb5261a66cdbb364baead9ddc9a57e`
-adds the final Test USD presentation and default/recovery hosted build gates.
-The first recovery-only hosted job correctly failed before compilation because
-its Xcode path could be either an application bundle or a developer directory;
-`3142394` normalized both forms. Local deployment validation then caught a
-stale CocoaPods checksum, corrected by `5324150` without moving a dependency.
-Full recovery validation found that workspace-wide warnings-as-errors
-conflicted with third-party pods that explicitly suppress warnings; `0da5a47`
-keeps the policy on Signal-owned targets. The exact tip builds the full Signal
-app, passes 81 OpenCSV tests with zero failures and two environment-gated
-skips, and passes the complete recovery build while restoring a default
-framework afterward. Hosted CI and Bob/Carol acceptance remain open.
+The live acceptance build starts from Rust `3295cd5` and Signal
+`c14f02025daa557ca9149325dfc3199bced1012b`. It preserves Test USD presentation,
+queues a durable chat intent before proving, moves proof work off the sheet's
+critical path, and resumes by operation id. The real run produced two confirmed
+signet anchors and a verified provisional return. It also found local repairs
+that are not yet merged: signed limb borrows in the value gadget, canonical
+confirmed-parent snapshot handling, and corrupt BIP158 cache refetch. Hosted CI
+and review apply to the repaired exact tip, not merely the earlier base commits.
 
 Required product behavior:
 
@@ -191,57 +189,77 @@ Bob and Carol are fresh disposable simulator wallets; restore/rebind is a
 separate release gate and does not block this demonstration. The physical
 iPhone 16e is out of scope.
 
-Current verified funding state:
+Pre-run funding receipt:
 
 - Bob: 30,000 confirmed signet sats.
 - Carol: 20,890 confirmed signet sats.
 - The first 100 Test USD mint is confirmed and its canonical consignment is
   ready for Signal delivery.
 
-Acceptance must produce exact operation IDs, transaction IDs, timings, and
-receipts for this order:
+Acceptance status, preserving the original order:
 
-1. Install the exact consolidated branch on Bob and Carol without erasing or
-   relinking either Signal account.
-2. Sync both fee wallets and prepare Carol’s confirmed count-2 batch stock.
-3. Deliver and verify the existing 100 Test USD consignment through Signal.
-4. Headlessly mint `[50, 50]` more of the same exact Test USD asset to Carol and
-   deliver it; no issuance UI or issuer ABI appears in Signal.
-5. Carol sends 25 Test USD to Bob. The pending chat entry is immediate; proof
-   continues in the background; both pinned observers must match exact bytes.
-6. Before the parent confirms, Bob sends 10 Test USD back to Carol. If signet
-   confirms too quickly, repeat with a fresh transfer rather than relabeling a
-   confirmed hop as zero-confirmation.
-7. Carol explicitly batches 5 Test USD to Bob and 5 Test USD to Note to Self.
+1. **Complete:** install the consolidated build on Bob and Carol without
+   erasing or relinking either Signal account.
+2. **Partial:** both fee wallets synced; confirmed count-2 batch stock is still
+   required for the explicit shared-batch test.
+3. **Complete:** deliver and verify funded Test USD through Signal.
+4. **Superseded for this run:** additional `[50, 50]` issuance was unnecessary
+   for the solo round trip; Signal still exposes no issuance UI or issuer ABI.
+5. **Complete:** Carol sent 25 Test USD to Bob in
+   `e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`,
+   confirmed at signet height 316611.
+6. **Complete:** Bob spent the received coin into 10 Test USD for Carol plus 15
+   change in
+   `a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`.
+   Carol accepted it before confirmation; it settled at height 316620. The
+   first anchor had confirmed before the return was signed, so an actual
+   unconfirmed-parent child remains open. The
+   required Blockstream observer matched raw bytes; mempool.space was Observe,
+   timed out, and was honestly recorded unavailable. The final dual-Require
+   policy therefore remains a separate gate.
+7. **Open:** Carol explicitly batches 5 Test USD to Bob and 5 Test USD to Note to Self.
    Both envelopes share one Bitcoin txid and record exact manifest positions.
    This is a two-recipient Bob/Carol-plus-self test, not a three-party claim.
-8. Run a separate low-fee 1 Test USD Bob→Carol transfer and a protocol-safe
+8. **Open:** run a separate low-fee 1 Test USD Bob→Carol transfer and a protocol-safe
    RBF that preserves protected inputs, records, marker, membership, positions,
    context, and delivery identities.
-9. Use the DEBUG-only pause harness at planning, signed persistence, broadcast,
-   and pre-delivery. Relaunch must resume the same operation ID with no duplicate
-   spend or chat credit.
-10. Observe every parent, child, batch, and replacement through pinned mempool
-    evidence to CBF/SPV-confirmed settlement.
+9. **Partial:** the return resumed from durable proof state and delivered the
+   same operation id after relaunch. The full DEBUG pause matrix at planning,
+   signed persistence, broadcast, and pre-delivery remains open; every relaunch
+   must resume the same operation ID with no duplicate spend or chat credit.
+10. **Partial:** both solo anchors reached confirmed settlement. Batch and RBF
+    replacement observation remain open.
+
+The return operation id is `052f6e79210ca3a847cca6eded9871ca` and its durable
+intent-to-delivery interval was 328 seconds. Phase receipts separate 6.237s
+local proving, 42ms signing/persistence, 1.826s relay, 77.861s funding
+verification, and 93.163s pre-sign verification. This is instrumented
+acceptance behavior, not a production UX target.
 
 Recovery validation then runs in a separate clean simulator using Secure
 Backup and DEBUG-only rebind. It must not replace or erase Bob or Carol.
 
-## Publication after acceptance
+## Publication receipt
 
-Only after the live sequence passes:
+Published from the completed solo round trip:
 
-- capture the complete screenshot set;
-- record real Carol→Bob→Carol and shared-batch simulator footage;
-- combine footage with Remotion annotations and explanatory animation without
-  fabricating transaction state;
-- update the homepage, Bitcoin performance page, paper, formal/public table
-  where applicable, roadmap, and journal with exact txids, timings, CI links,
-  and explicit testnet-only language.
+- a 38.067-second Carol→Bob→Carol film containing only real Signal simulator
+  screens, with waiting time removed and no reconstructed transaction state;
+- homepage, story, performance page, paper, roadmap, README, and journal updates
+  with exact txids, timings, and explicit signet-only language;
+- source MP4 SHA-256
+  `ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
+
+The shared-batch film, full final screenshot set, RBF evidence, and crash-matrix
+captures remain tied to their still-open acceptance gates.
 
 ## Open gates
 
-- Signal PR #6 consolidated hosted CI and exact-green merge.
+- Commit and review the live-found Rust and Signal repairs; run exact-tip hosted
+  CI and merge only a reviewed green candidate.
+- Enforce the planned dual-Require observer policy and rerun the provisional
+  forwarding receipt.
+- Explicit shared batch, protocol-safe RBF, and complete crash-state matrix.
 - Separate clean-install Secure Backup recovery/rebind acceptance.
 - Independent mainnet security review.
 - Release packaging/signing and upstream Signal submission decision.

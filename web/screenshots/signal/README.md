@@ -1,4 +1,4 @@
-# Signal wallet screenshot receipt
+# Historical Signal wallet screenshot receipt
 
 These are full-resolution `simctl` captures from a live, registered Signal iOS
 simulator. They are not reconstructed product mockups.
@@ -36,3 +36,22 @@ DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer \
 
 No recovery root, issuer seed, Signal phone number, or private checkpoint is
 present in these assets.
+
+## Current homepage receipt
+
+The homepage no longer uses these zero-balance captures as its principal
+Signal evidence. The current lead film is
+`../../media/opencsv-real-signal-test-usd-roundtrip.mp4`, a 38.067-second edit of
+real registered-simulator footage showing Carol send 25 Test USD to Bob and Bob
+send 10 Test USD back. Waiting time was removed; no Signal screen or payment
+state was reconstructed. Its SHA-256 is
+`ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
+
+The public signet anchors are
+`e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`
+(25 Test USD, height 316611) and
+`a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`
+(10 Test USD returned, height 316620). Test USD has no monetary or redemption
+value. The second payment was accepted provisionally before its confirmation;
+the first anchor had already confirmed, so the footage is not evidence of an
+unconfirmed-parent child.

@@ -1,7 +1,7 @@
 # OpenCSV: Client-Side Verified RWAs, Stables, and More on Bitcoin
 
-**Status:** Working draft (v0.3)
-**Date:** 2026-08-05
+**Status:** Working draft (v0.4)
+**Date:** 2026-08-07
 
 ---
 
@@ -1046,7 +1046,7 @@ uniqueness. These are *protocol logic* — independent of the SNARK — and are 
 to mechanized proof.
 
 **Specification ledger (implemented):** a dependency-free Lean 4 development
-with 61 sorry-free, CI-audited theorems covering:
+with 72 sorry-free, CI-audited declarations covering:
 
 1. **Abstract interfaces** — commitment scheme, signature scheme, PRF, each with its
    security property stated as an explicit hypothesis (binding, EUF-CMA,
@@ -1126,14 +1126,14 @@ for a fake padding coin in the ordinary “spend one received coin” wallet pat
 New proofs carry the fail-closed
 `opencsv-pcd-coin-v4-with-v3-fri94` verifier-set tag; authenticated v3 roots are
 accepted only as migration predecessors, and changing an outer version byte
-does not relabel a proof. The v4 row above is measured on draft
-[opencsv-rs PR #8](https://github.com/opencsvnet/opencsv-rs/pull/8), not yet a
-reference-main release. Current explicit proof gaps are multi-asset transfers
+does not relabel a proof. The v4 row above is measured evidence for the proof
+lineage now on `opencsv-rs/main` through `46a3e48`; it is not a product-release
+claim. Current explicit proof gaps are multi-asset transfers
 and distribution of an allowlist for accepted self-described root-circuit
 commitments.
 
 **Formal verification (specification and Rust adoption merged).** The
-dependency-free Lean project has 61 sorry-free audited specification theorems,
+dependency-free Lean project has 72 sorry-free audited specification declarations,
 including limb arithmetic, batching, scan-exclusion soundness, and the v4
 one-input forwarding specialization. The separate
 Aeneas project has 15 audited declarations on its default branch connecting
@@ -1159,8 +1159,9 @@ one absolute frame deadline—are on `opencsv-rs/main`.
 The C3 Lean model is also on `opencsv-formal/main`: exact participant/output
 alignment, allocation and conservation, duplicate-field and reusable-output
 guards, sign-time freshness, fail-closed versioning, and conforming replacement
-were the 54-declaration C3 audit milestone. The merged v4 specialization adds
-seven declarations, bringing the current checked audit to 61.
+were the 54-declaration C3 audit milestone. The subsequent v4 specialization
+and follow-up audit work bring the current public ledger to 72 declarations at
+`dc7e8eb`.
 
 The checked fee model for that exact implementation is published as a
 versioned JSON receipt and reproduced by documentation CI. At 5 sat/vB the
@@ -1169,33 +1170,50 @@ solo anchors. The resulting 67% saving and 15.15 operations/s theoretical
 full-block upper bound are explicitly separated from measured network
 throughput.
 
-**Signal transport (prototype live-tested; final product last).** Production
-Signal carried consignments in both directions on a physical iPhone and rendered
-a native verified bubble under the historical proof profile. That is preserved
-as transport/UI evidence. The final product uses the §4.10 Rust account wallet:
-Bitcoin as protocol fee reserve only, no anchor server, direct P2P relay,
-authoritative outpoint revalidation, durable crash recovery, non-migratable
-device binding, and canonical-consignment verdict identity. The hardened Rust
-wallet foundation is on `opencsv-rs/main`; Signal-iOS migration, in-place backup/database work,
-both build flags, and physical v3 crash/recovery/fee-bump acceptance remain the
-final codebase and are not claimed complete.
+**Signal transport (real two-hop signet receipt; release gates remain).** The
+current product exposes one permanently signet-only **Test USD** instrument,
+with no monetary or redemption value. Signal can receive, send, and inspect
+that reviewed instrument but cannot mint it; issuance remains a non-default
+headless Rust capability. Its account wallet uses Bitcoin only as a protocol
+fee reserve, has no bespoke anchor server, persists signed transactions before
+relay, and carries consignments through Signal attachments.
 
-The owner-only one-USD Signal draft additionally has a live provisional receive
-receipt: a cold phone-owned signet scan reached tip 316259, accepted the exact
-still-unconfirmed mint anchor, persisted one `unconfirmed` credit, and
-deduplicated two deliveries of the same 536,279-byte consignment. Deterministic
-tests cover parent disappearance and persistence across restart. A real
-recipient-to-next-recipient signet child spend, crash/retry exercise, and final
-film remain open and are not inferred from the receive receipt.
+On 2026-08-07, two registered Signal simulators completed a real round trip.
+Carol sent 25 Test USD to Bob in signet transaction
+`e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`,
+confirmed at height 316611. Bob then sent 10 Test USD back to Carol, preserving
+15 Test USD as change, in transaction
+`a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`,
+confirmed at height 316620. Carol accepted the returning coin provisionally
+before the second anchor confirmed and the UI labeled replacement risk. Both
+anchors later settled.
 
-The current asynchronous-send draft is split at exact Rust commit
-`46a3e4870e55cc8fe8908c411ae56c1229ce3b76` and Signal commit
-`c14f02025daa557ca9149325dfc3199bced1012b`. The Rust release receipt resumes a
-real v4 operation from `fee_reserved` to `proof_ready` after reopening and
-returns identical stored bytes on repeat. The Signal source builds in the real
-app test host, and 76 OpenCSV tests pass with three explicitly skipped external
-fixtures. No registered evidence simulator or physical phone was used for that
-receipt, and hosted merge plus live signet acceptance remain open.
+The return operation took 328 seconds end to end in this development build.
+The durable receipt attributes 6.237 seconds to local proving, 42 ms to local
+signing and persistence, 1.826 seconds to two complete P2P socket submissions,
+347 ms to the required pinned Blockstream raw-byte observation, 77.861 seconds
+to funding verification, and 93.163 seconds to pre-sign verification. The
+mempool.space observer was configured as `Observe`, timed out after 8.025
+seconds, and did not count as required success. A complete P2P write is recorded
+as submission, not mempool acceptance.
+
+This receipt is intentionally narrower than a zero-confirmation chain claim:
+the first anchor had already confirmed before Bob signed the return. The run
+proves real wallet forwarding and a provisionally accepted second anchor, not a
+child spending an unconfirmed parent. A shared-transaction batch, protocol-safe
+RBF, crash-state replay, a true unconfirmed-parent child, dual-required-observer
+acceptance, hosted CI on the repaired tips, and physical-device rollout remain
+open.
+
+The run also found three local defects whose repairs are not yet merged: the
+value gadget needed a signed low-limb borrow for `25 = 10 + 15`; confirmed
+parents needed canonical snapshot handling instead of a mempool sentinel; and
+corrupt cached BIP158 filters needed refetch/bad-peer failover. The live build
+starts from Rust `3295cd5896aa2615c992faf45a9075ad138094ca` and Signal
+`c14f02025daa557ca9149325dfc3199bced1012b`; release claims must wait for exact-tip
+review and hosted CI of the repaired branches. A 38.067-second cut of the real
+Signal screens is published on the project homepage. Waiting time was removed;
+no Signal screen or transaction state was reconstructed.
 
 ---
 

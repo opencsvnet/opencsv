@@ -5,9 +5,10 @@ animation in the site's visual language (dark `#0d1117`, orange `#f7931a`,
 blue `#58a6ff`, monospace accents). Six scenes: mint → anchor → off-chain
 transport → scan-first verification → batching → trust summary.
 
-The rendered video is embedded in the root `index.html` ("Watch the prototype
-lineage end to end")
-and committed at `out/opencsv-e2e.mp4` (h264) with `out/poster.png`.
+The rendered video is retained as a conceptual protocol explainer at
+`out/opencsv-e2e.mp4` (h264), with `out/poster.png`. It is not the homepage
+lead; the homepage now leads with the real Signal round-trip film documented
+below.
 
 The batching scene does not claim that the assembler learns nothing. Proof
 contents and coin openings remain private, while membership, fee inputs,
@@ -29,20 +30,38 @@ npm run still:scale
 The publishable files are
 `out/scale/opencsv-bitcoin-performance.mp4` and `out/scale/poster.png`.
 
-## Consumer USD composition
+## Real Signal round-trip film
 
-`Consumer-USD` is the homepage film: a 24-second product animation showing
-Carol send 25 Test USD to Bob and Bob send 10 Test USD back inside their Signal
-conversation. It deliberately omits setup, minting, attachments, Bitcoin fee
-management, and protocol diagnostics. It is labeled as a product animation and
-as signet-only test value; it is not presented as a live transaction receipt.
+The homepage film is a 38.067-second cut of real, registered iOS simulator
+footage. Carol sends 25 Test USD to Bob, then Bob sends 10 Test USD back to
+Carol inside Signal. Waiting time is removed; the Signal interface and payment
+states are never recreated by Remotion or another renderer.
+
+- MP4: `../media/opencsv-real-signal-test-usd-roundtrip.mp4`
+- poster: `../media/opencsv-real-signal-test-usd-poster.jpg`
+- social card: `../media/opencsv-real-signal-test-usd-social.jpg`
+- MP4 SHA-256: `ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`
+- Carol → Bob anchor: `e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`
+- Bob → Carol anchor: `a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`
+
+Both anchors are public Bitcoin signet receipts. Test USD has no monetary or
+redemption value. The second receipt was accepted provisionally before its own
+confirmation, but the first anchor had already confirmed before Bob signed the
+return; the film therefore does not claim an unconfirmed-parent child.
+
+## Withdrawn Consumer USD composition
+
+`Consumer-USD` is a 24-second reconstructed product animation made before the
+live round trip existed. Its source and output remain available as design
+history, but it is withdrawn from publication and must not be presented as
+transaction evidence or as the homepage film.
 
 ```sh
 npm run render:consumer
 npm run still:consumer
 ```
 
-The publishable files are `out/consumer/opencsv-signal-usd.mp4` and
+The archival files are `out/consumer/opencsv-signal-usd.mp4` and
 `out/consumer/poster.png`.
 
 ## Historical Signal wallet composition
@@ -66,37 +85,23 @@ npm run still:signal
 ```
 
 The captured wallet remains at 0 USD because the live anchor had not reached
-Signal's six-confirmation threshold. This prelude is not the final transaction
-film. Confirmed-balance and send-review footage must come from a later real
-scan; do not synthesize those states.
+Signal's six-confirmation threshold. This prelude is historical. The homepage
+film supersedes it with real confirmed-balance and send-review footage.
 
-### Two-hop final-film gate
+### Remaining acceptance-media gates
 
-The publishable end-to-end film must show one conserved asset through two real
-transfers: Alice receives 100 preview USD, sends 60 to Bob, and Bob resends 25
-to Carol. The final independently held balances must be Alice 40, Bob 35, and
-Carol 25. Alice, Bob, and Carol must use distinct OpenCSV account roots.
-
-The film is complete only when its capture manifest records:
-
-- Bob's receiving key announced in the Alice/Bob Signal conversation;
-- Alice's exact-issuer review, local proof generation, signed persistence,
-  broadcast, encrypted consignment delivery, and Bob's independent acceptance;
-- Carol's receiving key announced in the Bob/Carol conversation and the same
-  complete evidence sequence for Bob's resend;
-- public signet transaction ids and the required confirmation depth for both
-  transfer anchors;
-- the final 40 + 35 + 25 balance conservation receipt; and
-- a clear separation between today's two sequential anchors and batching v2's
-  future shared-transaction path.
+The real round-trip film closes the basic consumer send/receive media gate. A
+future evidence film may add the still-open shared-transaction batch,
+protocol-safe RBF, crash-state resume, and true unconfirmed-parent child. Those
+states must come from actual receipts and must not be inferred from this film.
 
 Phone numbers, account roots, device bindings, backup material, and checkpoint
-contents are prohibited from every screenshot, recording, caption, and render.
+contents remain prohibited from every screenshot, recording, caption, and
+render.
 
-This render is a historical architecture receipt. It predates the unspendable
-`sha256(OP_RETURN)` marker, frozen production proof profile, co-funded batching
-v2, and Rust-owned Signal account wallet. Re-render only after those current
-semantics are represented; until then the homepage labels the deltas explicitly.
+The older `Signal-Wallet` render predates the unspendable `sha256(OP_RETURN)`
+marker, frozen production proof profile, co-funded batching v2, and Rust-owned
+Signal account wallet. Preserve its historical label if it is ever republished.
 
 A second series — one short composition per formal-verification theorem
 family — lives under `src/formals/` and renders to `out/formals/`

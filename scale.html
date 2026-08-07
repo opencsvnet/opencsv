@@ -432,7 +432,7 @@
       <article class="receipt">
         <div class="state">MEASURED · PRODUCTION PROFILE</div>
         <h3>History-independent verification</h3>
-        <p>V3 records the two-input shapes. Draft v4 adds a one-input forwarding
+        <p>V3 records the two-input shapes. V4 adds a one-input forwarding
         shape measured end to end on a physical iPhone 16e: 6.435 seconds to
         prove, 19.75 ms to verify, and 788,047 bytes.</p>
         <a href="https://github.com/opencsvnet/opencsv-rs/blob/acfb422c171c75c8ee991b9262724a2d1084f608/crates/opencsv-pcd/BENCHMARKS.md">Open the exact v4 benchmark receipt</a>
@@ -445,13 +445,17 @@
         same 536,279-byte attachment.</p>
         <a href="web/journal.html">Read the journal receipt</a>
       </article>
-      <article class="receipt pending">
-        <div class="state">OPEN ACCEPTANCE GATE</div>
-        <h3>Real two-hop signet child spend</h3>
-        <p>The dependency checks, freeze behavior, and restart behavior have
-        deterministic simulator tests. A complete sender → recipient → next
-        recipient signet transaction and final film remain pending.</p>
-        <a href="https://github.com/opencsvnet/opencsv/issues/1">Follow the work board</a>
+      <article class="receipt">
+        <div class="state">LIVE · TWO-HOP SIGNET RECEIPT</div>
+        <h3>Real two-hop signet forwarding</h3>
+        <p>Carol sent 25 Test USD to Bob; Bob spent the received coin into 10
+        for Carol plus 15 change. Carol accepted the exact mempool transaction
+        before its confirmation and both anchors later settled on signet. The
+        first anchor confirmed before Bob's child was signed, so this does not
+        yet prove an unconfirmed-parent child. The local forwarding proof took
+        6.237 seconds; the full instrumented operation took 5m28s because chain
+        checks and recovery scheduling dominated.</p>
+        <a href="index.html#consumer-demo">Watch the real Signal footage</a>
       </article>
     </div>
     <aside class="research">

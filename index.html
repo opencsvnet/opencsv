@@ -8,11 +8,13 @@
 <link rel="canonical" href="https://opencsv.net/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="OpenCSV — Send dollars in Signal">
-<meta property="og:description" content="A real Signal simulator transaction film is being captured on Bitcoin signet.">
+<meta property="og:description" content="Watch Carol send Test USD to Bob and Bob send it back in real Signal simulator builds on Bitcoin signet.">
 <meta property="og:url" content="https://opencsv.net/">
+<meta property="og:image" content="https://opencsv.net/web/media/opencsv-real-signal-test-usd-social.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="OpenCSV — Send dollars in Signal">
-<meta name="twitter:description" content="Real Signal simulator transaction footage is in progress.">
+<meta name="twitter:description" content="A real Test USD round trip inside Signal, anchored and verified on Bitcoin signet.">
+<meta name="twitter:image" content="https://opencsv.net/web/media/opencsv-real-signal-test-usd-social.jpg">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -96,11 +98,16 @@
   .scale-callout .button:hover { text-decoration: none; border-color: var(--accent); }
 
   .consumer-film { text-align: center; }
-  .capture-note { max-width: 720px; margin: 28px auto 0; padding: 22px 24px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); color: var(--muted); }
-  .capture-note strong { display: block; color: var(--fg); margin-bottom: 6px; }
+  .consumer-film .real-film { width: min(100%, 430px); aspect-ratio: 720 / 1566; display: block; margin: 26px auto 0; border: 1px solid var(--border); border-radius: 22px; background: #000; box-shadow: 0 28px 90px rgba(0,0,0,.52); }
+  .consumer-film .note { max-width: 760px; margin: 18px auto 0; color: var(--muted); font-size: 14px; }
+  .live-receipt { max-width: 760px; margin: 24px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: left; }
+  .live-receipt div { padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+  .live-receipt strong { display: block; color: var(--accent); font: 700 18px var(--mono); }
+  .live-receipt span { color: var(--muted); font-size: 13px; }
 
   @media (max-width: 760px) {
     .scale-callout { grid-template-columns: 1fr; }
+    .live-receipt { grid-template-columns: 1fr; }
   }
 
   footer { padding: 48px 0 64px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
@@ -125,15 +132,24 @@
 
 <section id="consumer-demo">
   <div class="wrap consumer-film">
-    <h2>Real Signal transaction film in progress</h2>
-    <p class="sub" style="margin-left:auto;margin-right:auto">The replacement
-    will show Carol send Test USD to Bob and Bob send Test USD back using the
-    real Signal simulator builds and public Bitcoin signet.</p>
-    <div class="capture-note">
-      <strong>No recreated Signal interface.</strong>
-      We withdrew the product animation. This space will contain only real
-      screen recordings tied to actual wallet operations and transaction
-      receipts.
+    <h2>25 dollars out. 10 dollars back. Inside Signal.</h2>
+    <p class="sub" style="margin-left:auto;margin-right:auto">Carol sends Test
+    USD to Bob. Bob spends part of what he received and sends it back. These are
+    real Signal simulator builds using public Bitcoin signet—not a recreated
+    wallet interface.</p>
+    <video class="real-film" controls autoplay muted loop playsinline preload="metadata" poster="web/media/opencsv-real-signal-test-usd-poster.jpg">
+      <source src="web/media/opencsv-real-signal-test-usd-roundtrip.mp4" type="video/mp4">
+      Your browser does not support the video tag; download
+      <a href="web/media/opencsv-real-signal-test-usd-roundtrip.mp4">the real Signal round-trip recording</a> instead.
+    </video>
+    <p class="note"><strong>38 seconds · actual iOS simulator footage.</strong>
+    Waiting time is removed; the Signal screens and payment states are not
+    reconstructed. Test USD is signet-only test value with no monetary or
+    redemption claim.</p>
+    <div class="live-receipt" aria-label="Live Signal payment receipt">
+      <div><strong>25 Test USD</strong><span>Carol → Bob · confirmed at signet height 316611</span></div>
+      <div><strong>10 Test USD</strong><span>Bob → Carol · tx a3a3f4b1…12dc0a · height 316620</span></div>
+      <div><strong>6.237 s</strong><span>local forwarding proof · 42 ms signing and persistence</span></div>
     </div>
   </div>
 </section>
@@ -154,14 +170,14 @@
         translated-Rust kernel refinement has 15 audited declarations on
         <code>formal-aeneas/main</code>.</p>
       </article>
-      <article class="status-card">
-        <div class="eyebrow">Measured draft · opencsv-rs PR #8</div>
+      <article class="status-card ready">
+        <div class="eyebrow">On opencsv-rs/main · physical receipt</div>
         <h3>V4 one-input forwarding</h3>
         <p>The production FRI profile is unchanged. A new authenticated circuit
         spends one predecessor into recipient plus change with no fake padding
         coin. On the physical iPhone 16e it proved in 6.435 seconds, verified in
-        19.75 ms, and produced a 788,047-byte proof. Signal signet acceptance
-        and the exact-tip hosted gate remain open.</p>
+        19.75 ms, and produced a 788,047-byte proof. The shape is on the
+        reference main line through <code>46a3e48</code>.</p>
       </article>
       <article class="status-card ready">
         <div class="eyebrow">Now on opencsv-rs/main</div>
@@ -172,45 +188,21 @@
         represented as completed.</p>
       </article>
       <article class="status-card last">
-        <div class="eyebrow">Published drafts · live signet acceptance</div>
-        <h3>Signal-iOS + one USD wallet</h3>
-        <p>The physical-phone prototype proved encrypted delivery, native
-        rendering, and local scanning. The isolated final integration now
-        compiles the Rust custody, backup, device-binding, and crash-safe send
-        design and removes issuance from Signal entirely. One USD balance may
-        contain separately authenticated issuer instruments; every send names
-        and spends exactly one issuer, never a ticker lookalike or silent mix.
-        Rust <a href="https://github.com/opencsvnet/opencsv-rs/pull/5">PR #5</a>
-        also provides issuance outside Signal through an opt-in, JSON-speaking
-        headless operator that requires the exact issuer authority and asset id.
-        Signal <a href="https://github.com/opencsvnet/Signal-iOS/pull/4">PR #4</a>
-        retains only owner behavior. Its signet build now pins one exact,
-        test-only OpenCSV USD Preview manifest while production registries stay
-        empty. A registered simulator shows the intended zero-USD wallet with
-        20,000 confirmed fee sats. The first headless-issued consignment was
-        signed only after exact checkpoint acknowledgement and delivered as a
-        normal Signal attachment. Its first anchor <code>eb5571a6…1c22c</code>
-        was protocol-safely replaced by <code>2cac7c02…a762c</code> at 5 sat/vB:
-        the funding input, record, marker, output positions, and proof semantics
-        did not change. The first attachment still named the replaced txid, so
-        exact-txid acceptance correctly withheld it. The repaired wallet now
-        regenerates and redelivers replacement-bound bytes. Incoming transport
-        starts <code>confirming</code> and non-spendable. Only the self-scan path
-        may promote a fully verified exact mempool transaction to
-        <code>available-unconfirmed</code>; settlement-depth verification then
-        promotes it to <code>settled</code>. Rust persists and rechecks every
-        unconfirmed parent before a dependent signature, freezing the operation
-        if the parent disappears or changes. Live provisional credit, physical
-        crash/retry acceptance, hosted review gates, and merge remain
-        outstanding. Signal
-        <a href="https://github.com/opencsvnet/Signal-iOS/pull/5">draft PR #5</a>
-        now also removes proof generation from the send-sheet critical path:
-        Rust journals the exact intent, Signal enqueues an authenticated
-        “pending — not spendable yet” message, and the serial recovery worker
-        proves, protects, signs, broadcasts, and delivers by operation id. The
-        exact draft passed 76 OpenCSV Signal tests with 3 infrastructure-gated
-        skips on a disposable iPhone 16e simulator. That is a source/test
-        receipt, not yet the missing live child-spend receipt.</p>
+        <div class="eyebrow">Live two-hop signet receipt · integration branch</div>
+        <h3>Signal-iOS + one Test USD wallet</h3>
+        <p>Two registered simulator wallets completed the live path: Carol sent
+        25 Test USD to Bob, Bob accepted it, and Bob sent 10 back. Carol
+        verified the proof, ownership, anchor binding, and exact mempool bytes
+        before confirmation; both anchors later confirmed. Rust owns custody,
+        Bitcoin fees, change, signed persistence, relay, and recovery. Signal
+        has no mint or general Bitcoin-send surface. The return operation took
+        5m28s end to end in the instrumented acceptance build: 6.237s was local
+        proving and 42ms signing/persistence; most elapsed time was repeated
+        chain verification and recovery scheduling, not proof time. The run
+        also found and locally repaired a negative-carry witness bug and a
+        confirmed-parent snapshot conflict. Hosted CI, the dual-required-
+        observer policy, batch/RBF/crash matrix, clean recovery, merge, and
+        physical rollout remain open.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
@@ -379,28 +371,25 @@
         in-circuit FRI recursion. V3 transfers verify two predecessor proofs
         in-circuit: <b>0.84–0.85 MB proofs, ~21–22 ms verification, and
         history-independent size/work</b> (7.77–9.76 s warm proving on M4).
-        Draft v4 also verifies one predecessor into recipient plus change:
+        V4 also verifies one predecessor into recipient plus change:
         788 KB, 19.75 ms verification, and 6.435 s proving on the iPhone 16e.
         The full flow — mint → shielded transfer →
         double-spend rejected → redeem → public supply audit — passes end to end.</p>
       </li>
       <li class="done">
         <h3>Formal ledgers — machine checked</h3>
-        <p>Sixty-one Lean specification theorems are sorry-free and CI-audited,
+        <p>Seventy-two Lean specification declarations are sorry-free and CI-audited,
         including seven for v4 one-input forwarding. A fail-closed manifest
         checks those seven against the exact reviewed Rust source. A separate
         15-declaration Aeneas audit connects the pure Rust kernel to the model;
         none of these ledgers are collapsed into an inflated count.</p>
       </li>
       <li class="done">
-        <h3>Signal prototype — live-tested</h3>
-        <p>Both directions worked over production Signal on a physical iPhone
-        using the feasibility proof profile. This is preserved as prototype
-        evidence. The final serverless account wallet and v3 profile now build
-        in a published draft Signal integration with one USD product over
-        exact, separately trusted issuer instruments. Signal cannot mint;
-        issuance lives in a separately featured headless operator. That branch
-        is not merged or physically accepted.</p>
+        <h3>Signal Test USD round trip — live on signet</h3>
+        <p>Real simulator wallets completed Carol→Bob→Carol with the serverless
+        Rust account wallet and production proof profile. The exact footage,
+        operation receipt, and confirmed signet transaction ids are published
+        above. This is integration evidence, not a merged Signal release.</p>
       </li>
       <li class="done">
         <h3>Scan-first indexing — working</h3>
@@ -418,13 +407,11 @@
         reservations, and real multi-party regtest receipts.</p>
       </li>
       <li>
-        <h3>Finish readiness, then iOS last</h3>
-        <p>The kernel/readiness work and base wallet are on the reference main
-        line. Wallet recovery/instrument hardening and Signal integration are
-        published draft descendants. The corrected C3 model is on the formal
-        main line; finish signet and hosted review gates, then run physical
-        Signal crash/recovery acceptance. No mainnet or release action is
-        implied.</p>
+        <h3>Finish Signal release gates</h3>
+        <p>The live two-hop receipt is complete. Remaining work is hosted CI and
+        review, two-required-observer enforcement, explicit shared batching,
+        safe RBF, the crash-state matrix, clean backup recovery, and physical
+        device acceptance. No mainnet or release action is implied.</p>
       </li>
     </ol>
   </div>
@@ -432,7 +419,7 @@
 
 <footer>
   <div class="wrap">
-    <p><b>OpenCSV</b> — working draft, v0.3. Claims are receipt-backed and
+    <p><b>OpenCSV</b> — working draft, v0.4. Claims are receipt-backed and
     merge state is stated explicitly.</p>
     <ul>
       <li><a href="paper/opencsv.md">Paper (markdown)</a> · <a href="scale.html">Bitcoin performance</a></li>

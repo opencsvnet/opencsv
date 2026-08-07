@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — A payment, end to end</title>
-<meta name="description" content="The OpenCSV prototype payment receipt: real Bitcoin anchoring, encrypted Signal transport, local phone verification, double-spend rejection, and the production architecture learned from it.">
+<meta name="description" content="A real Carol-to-Bob-to-Carol Test USD round trip in Signal, with exact Bitcoin signet transaction and verification receipts.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -28,7 +28,7 @@
   .panel code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
   .shot { border: 1px solid var(--border); border-radius: 10px; max-width: 100%; }
   .phone-shot { display: block; width: min(100%, 390px); margin: 0 auto; }
-  .film { width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--border); border-radius: 10px; display: block; margin-top: 14px; }
+  .film { width: min(100%, 430px); aspect-ratio: 720 / 1566; border: 1px solid var(--border); border-radius: 18px; display: block; margin: 18px auto 0; background: #000; }
   .placeholder { border: 1px dashed var(--border); border-radius: 10px; background: var(--card);
     color: var(--muted); font-family: var(--mono); font-size: 13px; padding: 48px 24px; text-align: center; }
   .placeholder b { color: var(--accent2); }
@@ -42,9 +42,9 @@
 <header class="hero">
   <div class="wrap">
     <h1>A payment, end to end</h1>
-    <p class="tagline">Real Bitcoin anchors. Encrypted Signal transport. Local
-    verification on a physical phone. This is the prototype receipt; notes call
-    out where the production proof profile, marker, and wallet architecture now differ.</p>
+    <p class="tagline">A real Test USD round trip in Signal: Carol pays Bob,
+    Bob spends part of what he received, and Carol verifies the return before
+    confirmation. Bitcoin signet supplies ordering; the phones verify locally.</p>
     <p class="back"><a href="../">← home</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
   </div>
 </header>
@@ -52,9 +52,25 @@
 <div class="wrap">
 
   <div class="panel">
+    <div class="n">▶</div>
+    <div>
+      <h2>The complete live round trip</h2>
+      <p>This 38-second cut contains only real iOS simulator footage. Waiting
+      time was removed, but the Signal interface and transaction states were
+      not reconstructed. Carol sent 25 Test USD to Bob; Bob then sent 10 back.
+      The anchors confirmed at signet heights 316611 and 316620. Test USD has no
+      monetary or redemption value.</p>
+      <video class="film" controls autoplay muted loop playsinline preload="metadata" poster="media/opencsv-real-signal-test-usd-poster.jpg">
+        <source src="media/opencsv-real-signal-test-usd-roundtrip.mp4" type="video/mp4">
+      </video>
+      <div class="cap">real registered Signal simulators · public Bitcoin signet · SHA-256 ca859b8e…808e0</div>
+    </div>
+  </div>
+
+  <div class="panel">
     <div class="n">1</div>
     <div>
-      <h2>The issuer mints 100 USD</h2>
+      <h2>The issuer mints 100 Test USD</h2>
       <p>A mint is <em>public</em>: asset and amount go into the anchor, so anyone
       can audit supply. In proof lineage v3, the coin proof itself proves
       knowledge of the issuer seed bound by genesis. New anchors use the
@@ -92,31 +108,32 @@
       exclusion checks, it can expose the coins as available before settlement
       while naming replacement risk. Download alone is never enough.</p>
       <img class="shot phone-shot" src="screenshots/signal/02-payment-fail-closed.png" alt="OpenCSV payment screen refusing to spend before the live signet anchor reaches six confirmations">
-      <video class="film" controls playsinline preload="metadata" poster="animation/out/signal/poster.png">
-        <source src="animation/out/signal/opencsv-signal-wallet.mp4" type="video/mp4">
-      </video>
-      <div class="cap">real simulator recording · Remotion supplies labels only</div>
+      <div class="cap">historical fail-closed capture · the live provisional acceptance appears in the film above</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="n">4</div>
     <div>
-      <h2>Bob pays 40 back</h2>
-      <p>The recipient key prefills from the chat. The prototype proved a
-      2-in/2-out transfer in about a second under the retired feasibility
-      profile. The measured v3 two-input phone cost is 11.25–14.47 seconds.
-      Draft v4's ordinary one-input payment-plus-change path measured 6.435
-      seconds on the same physical iPhone 16e and verified in 19.75 ms. In the final
-      design, Rust—not Swift or an anchor server—also reserves Bitcoin fees,
+      <h2>Bob sends 10 back</h2>
+      <p>Bob's recipient key prefills from the Signal chat. The v4
+      one-input/payment-plus-change path spent the received 25 Test USD coin
+      into 10 for Carol and 15 change. The live simulator generated the proof
+      locally in 6.237 seconds, then signed and persisted the exact Bitcoin
+      transaction in 42 ms. The complete instrumented operation took 5m28s
+      because chain verification ran for 77.861s before proving and 93.163s
+      before signing, with backup/recovery scheduling between phases. That is
+      an acceptance-harness receipt, not a consumer-latency claim. Rust—not
+      Swift or an anchor server—reserves Bitcoin fees,
       derives change, fixes the context, persists signed bytes, and relays. A
       child may spend a verified unconfirmed coin, but Rust re-observes the exact
       parent after selection and again before signing; disappearance or
       replacement freezes the child. The separate
       <a href="../scale.html">Bitcoin performance explainer</a> shows why this
       asset dependency does not spend the parent's Bitcoin UTXO and therefore
-      is not an ordinary Bitcoin ancestor chain.</p>
-      <div class="placeholder">S3 — on-device capture pending<br><b>send sheet, prefilled recipient + balance</b><br>(iPhone 16e, signet)</div>
+      is not an ordinary Bitcoin ancestor chain. Return transaction
+      <a href="https://mempool.space/signet/tx/a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a"><code>a3a3f4b1…12dc0a</code></a>
+      later confirmed at height 316620.</p>
     </div>
   </div>
 
@@ -149,13 +166,14 @@
 
 <footer>
   <div class="wrap">
-    <p>Every displayed artifact is real, but the panels combine regtest CLI
-    receipts with historical physical-phone prototype evidence; they are not a
-    claim that the final v3 Signal wallet is shipped. Current gates live in the
+    <p>Every displayed artifact is real. The new film is a two-simulator signet
+    integration receipt; the remaining panels also preserve regtest CLI and
+    historical physical-phone prototype evidence. None is a claim that a
+    production Signal release is shipped. Current gates live in the
     <a href="https://github.com/opencsvnet/opencsv/issues/1">work board</a> and
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">Signal architecture issue</a>.
-    The conceptual version of this flow is the
-    <a href="../index.html#signal-demo">live Signal film</a>. Specification:
+    The homepage centerpiece is the same
+    <a href="../index.html#consumer-demo">real Signal film</a>. Specification:
     <a href="../paper/opencsv.md">the paper</a> and
     <a href="../scale.html">the performance model</a>.</p>
   </div>

@@ -860,6 +860,49 @@ must use only real simulator recordings tied to actual wallet operations and
 signet receipts; editing is limited to timing, crops, participant labels, and
 captions that do not alter the recorded application state.
 
+## 2026-08-07 — A real forwarding proof found a signed-carry bug
+
+Carol's real 25 Test USD payment reached Bob and was accepted from its exact
+Signal consignment. Bob's attempt to send 10 back then failed at BabyBear value
+`2013265920`, or field `-1`. The transfer was valid:
+`25,000,000 = 10,000,000 + 15,000,000`. Its 24-bit low limb needs a `-1`
+borrow, but the value gadget had incorrectly allowed only Boolean intermediate
+carries.
+
+The local repair constrains each intermediate carry to `{-1,0,1}` with
+`c(c-1)(c+1)=0` while still pinning the final carry to zero. The exact persisted-
+consignment reproducer and focused transfer target pass; release one-input
+forwarding proves in 6.522s then 7.226s on the development Mac. The same run
+fixed a confirmed parent being duplicated as its own mempool sentinel and a
+corrupt rebuildable BIP158 cache candidate blocking healthy peers. These are
+reviewed local repairs, not yet a merged release claim.
+
+## 2026-08-07 — The real Signal round trip replaces the animation
+
+Carol sent 25 Test USD to Bob in signet transaction
+[`e5ffe607…d9ee9`](https://mempool.space/signet/tx/e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9),
+confirmed at height 316611. Bob then spent the received coin into 10 for Carol
+plus 15 change in
+[`a3a3f4b1…12dc0a`](https://mempool.space/signet/tx/a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a),
+confirmed at height 316620. Carol verified the second proof, ownership, anchor
+binding, and exact mempool bytes and exposed it as available before confirmation
+with replacement risk. The first anchor had confirmed before the return was
+signed, so a true unconfirmed-parent child remains open.
+
+The return operation took 328s from durable intent to consignment delivery. Its
+receipt separates 6.237s local proving, 42ms signing/persistence, 1.826s relay,
+77.861s funding verification, and 93.163s pre-sign verification. Two peers
+accepted complete socket writes. Required pinned Blockstream observation
+matched raw bytes in 347ms; optional mempool.space observation timed out after
+8.025s and was recorded unavailable. The planned two-required-observer gate is
+therefore still open.
+
+The homepage film is a 38.067s cut of those real simulator recordings. Waiting
+time is removed; no Signal screen or payment state is reconstructed. Its MP4
+SHA-256 is
+`ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
+Test USD is permanently signet-only and has no monetary or redemption value.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
