@@ -903,6 +903,30 @@ SHA-256 is
 `ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
 Test USD is permanently signet-only and has no monetary or redemption value.
 
+## 2026-08-07 — `Require` now means every required observer
+
+The live Signal Advanced screen exposed a policy contradiction after the round
+trip. Both mempool.space and Blockstream were configured as `Require`, but a
+separate default quorum still read `1 of 2`. That made one provider an optional
+member of an availability quorum despite its required mode, contradicting the
+approved rule that both pinned APIs must return the exact transaction bytes
+before an unconfirmed Test USD coin becomes forwardable.
+
+Rust commit
+[`cd1e678fdcb91ce81ed16d670c441d89e9d2e108`](https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108)
+derives an omitted raw-observer quorum from every raw-transaction check marked
+`Require` and rejects any explicit count that differs. Signal commit
+[`4270f1904a4d1e7d9bdf3ae52dfdf1b6f0d3e55c`](https://github.com/opencsvnet/Signal-iOS/commit/4270f1904a4d1e7d9bdf3ae52dfdf1b6f0d3e55c)
+removes the caller override, derives the same count, and labels the policy as
+`Required pinned APIs: 2 of 2`.
+
+Local receipts: 61 Rust FFI tests passed with zero failures and two explicitly
+ignored slow recursive-receipt tests. The warning-denied Signal observer suite
+passed both runnable tests; its separately gated live-provider test skipped
+because no transaction fixture was supplied. Hosted exact-tip CI and a new
+two-provider live provisional-forwarding receipt remain open, so this is an
+implementation receipt rather than a network-acceptance claim.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

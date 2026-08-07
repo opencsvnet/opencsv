@@ -161,6 +161,19 @@ that are not yet merged: signed limb borrows in the value gadget, canonical
 confirmed-parent snapshot handling, and corrupt BIP158 cache refetch. Hosted CI
 and review apply to the repaired exact tip, not merely the earlier base commits.
 
+The current repair candidates are Rust
+[`cd1e678`](https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108)
+and Signal
+[`4270f1904a`](https://github.com/opencsvnet/Signal-iOS/commit/4270f1904a4d1e7d9bdf3ae52dfdf1b6f0d3e55c).
+They close a policy mismatch discovered in the live Advanced screen: both
+pinned APIs were marked `Require`, but a separate one-of-two quorum still let
+one required provider fail. Rust now derives an omitted quorum from every raw
+observer marked `Require` and rejects explicit mismatches. Signal derives the
+same count instead of accepting a caller override. Local receipts are 61 Rust
+FFI tests passed with two explicitly ignored slow recursive-receipt tests, plus
+the warning-denied Signal observer suite with two tests passed and one
+environment-gated live test skipped. Hosted exact-tip CI remains pending.
+
 Required product behavior:
 
 - show **Test USD** on balance, send, review, pending, verified receipt,
@@ -255,10 +268,10 @@ captures remain tied to their still-open acceptance gates.
 
 ## Open gates
 
-- Commit and review the live-found Rust and Signal repairs; run exact-tip hosted
-  CI and merge only a reviewed green candidate.
-- Enforce the planned dual-Require observer policy and rerun the provisional
-  forwarding receipt.
+- Review Rust `cd1e678` and Signal `4270f1904a`, complete their exact-tip hosted
+  CI, and merge only reviewed green candidates.
+- Rerun provisional forwarding with the now-implemented two-of-two pinned
+  observer policy; implementation and local tests alone are not a live receipt.
 - Explicit shared batch, protocol-safe RBF, and complete crash-state matrix.
 - Separate clean-install Secure Backup recovery/rebind acceptance.
 - Independent mainnet security review.
