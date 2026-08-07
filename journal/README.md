@@ -916,16 +916,20 @@ Rust commit
 [`cd1e678fdcb91ce81ed16d670c441d89e9d2e108`](https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108)
 derives an omitted raw-observer quorum from every raw-transaction check marked
 `Require` and rejects any explicit count that differs. Signal commit
-[`4270f1904a4d1e7d9bdf3ae52dfdf1b6f0d3e55c`](https://github.com/opencsvnet/Signal-iOS/commit/4270f1904a4d1e7d9bdf3ae52dfdf1b6f0d3e55c)
+[`4c27eca874206ee942e7baf8eaaf4954bc016286`](https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286)
 removes the caller override, derives the same count, and labels the policy as
 `Required pinned APIs: 2 of 2`.
 
 Local receipts: 61 Rust FFI tests passed with zero failures and two explicitly
-ignored slow recursive-receipt tests. The warning-denied Signal observer suite
-passed both runnable tests; its separately gated live-provider test skipped
-because no transaction fixture was supplied. Hosted exact-tip CI and a new
-two-provider live provisional-forwarding receipt remain open, so this is an
-implementation receipt rather than a network-acceptance claim.
+ignored slow recursive-receipt tests. The first attempt to enable Signal's
+separately gated live-provider test crashed before networking because its test
+host had not installed `DependenciesBridge`; the test had previously only run
+in its skipped form. `4c27eca874` activates and tears down Signal's mock test
+environment around that live test. The warning-denied rerun passed all three
+tests in the suite, including a 1.831-second fetch where both pinned providers
+returned the same exact raw bytes for the known signet return transaction.
+Hosted exact-tip CI and a new wallet-level provisional-forwarding receipt remain
+open, so this proves the observer client rather than final payment acceptance.
 
 ---
 

@@ -907,15 +907,19 @@
     <a href="https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108"><code>cd1e678</code></a>
     derives an omitted quorum from every raw-transaction check marked
     <code>Require</code> and rejects explicit mismatches. Signal
-    <a href="https://github.com/opencsvnet/Signal-iOS/commit/4270f1904a4d1e7d9bdf3ae52dfdf1b6f0d3e55c"><code>4270f1904a</code></a>
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286"><code>4c27eca874</code></a>
     removes the caller override, derives the same count, and labels the policy
     <code>Required pinned APIs: 2 of 2</code>.</p>
     <p>Local receipts are 61 Rust FFI tests passed with zero failures and two
-    explicitly ignored slow recursive-receipt tests, plus two runnable Signal
-    observer tests passed under warnings-as-errors. The environment-gated live
-    provider test skipped because no transaction fixture was supplied. Hosted
-    exact-tip CI and a new two-provider live forwarding receipt remain open;
-    this is an implementation receipt, not network acceptance.</p>
+    explicitly ignored slow recursive-receipt tests. The first enabled Signal
+    live-provider run crashed before networking because the test host had never
+    installed <code>DependenciesBridge</code>; the test had previously only
+    run while skipped. <code>4c27eca874</code> activates and tears down Signal's
+    mock test environment around it. The warning-denied rerun passed all three
+    tests, including a 1.831-second live fetch where both pinned providers
+    returned the same exact bytes for the known signet return transaction.
+    Hosted exact-tip CI and a new wallet-level forwarding receipt remain open;
+    this proves the observer client rather than payment acceptance.</p>
   </div>
 
 </div>
