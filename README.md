@@ -112,6 +112,17 @@ writes. The required pinned Blockstream observer returned identical raw bytes
 in 347 ms; the optional mempool.space observer timed out after 8.025 seconds
 and was recorded as unavailable rather than success.
 
+That historical one-required-observer policy is superseded in the current
+candidate. Rust
+[`cd1e678`](https://github.com/opencsvnet/opencsv-rs/commit/cd1e678fdcb91ce81ed16d670c441d89e9d2e108)
+and Signal
+[`4c27eca874`](https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286)
+derive the raw-byte gate from every API marked `Require`; fresh signet wallets
+therefore require both pinned providers. A warning-denied simulator test fetched
+the known return transaction from both providers in 1.831 seconds and received
+identical bytes under the bundled certificate profiles. That proves the
+observer client, not yet a new wallet-level provisional-forwarding receipt.
+
 The same run found two honest integration defects. Exact forwarding of
 `25_000_000 = 10_000_000 + 15_000_000` needs a `-1` limb borrow, but the value
 gadget had constrained carries to `{0,1}`. The local repair permits

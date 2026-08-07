@@ -1197,6 +1197,15 @@ mempool.space observer was configured as `Observe`, timed out after 8.025
 seconds, and did not count as required success. A complete P2P write is recorded
 as submission, not mempool acceptance.
 
+The current repair candidate supersedes that one-required-observer policy.
+Rust `cd1e678fdcb91ce81ed16d670c441d89e9d2e108` derives an omitted raw-byte
+quorum from every API marked `Require` and rejects an explicit mismatch; Signal
+`4c27eca874206ee942e7baf8eaaf4954bc016286` derives the same count and exposes no
+caller override. In a warning-denied simulator test, both pinned providers
+returned identical raw bytes for the known return transaction in 1.831 seconds.
+This is an observer-client receipt. It is not substituted for the still-open
+wallet-level provisional-forwarding rerun.
+
 This receipt is intentionally narrower than a zero-confirmation chain claim:
 the first anchor had already confirmed before Bob signed the return. The run
 proves real wallet forwarding and a provisionally accepted second anchor, not a
