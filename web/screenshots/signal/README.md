@@ -44,12 +44,14 @@ Signal evidence. The current lead film is
 `../../media/opencsv-real-signal-test-usd-roundtrip.mp4`, a 59.3-second edit
 made entirely from one uninterrupted 230.803-second recording of the real Bob
 simulator. It begins on Bob's received +1 Test USD card and follows his 1 Test
-USD return through pending to verified. Action runs at normal speed with Signal
-centered alone. During the static wait, the phone moves left and four reading
-cards use a separate right-hand panel; no card obscures the app. Its DEBUG proof
-and network-verification interval runs at 8.5× and is labeled on every card. No
-Signal screen or payment state was reconstructed. Its SHA-256 is
-`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
+USD return through pending to verified. Signal stays on the left and a
+synchronized explainer stays in a separate right-hand panel for the full film.
+The first panel identifies the received +1 card and later panels explain each
+send and verification stage. No panel obscures the app. Action runs at normal
+speed; only the static DEBUG proof and network-verification interval runs at
+8.5×, labeled on every affected panel. No Signal screen or payment state was
+reconstructed. Its SHA-256 is
+`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
 
 The public signet anchors are
 `445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd`

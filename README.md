@@ -100,13 +100,15 @@ block for each transaction.
 
 The published film is a 59.3-second cut made entirely from one uninterrupted
 230.803-second recording of Bob's actual Signal simulator. It starts on the
-real received +1 card and follows his return through pending to verified. User
-action plays at normal speed with the Signal screen centered alone. During the
-static wait, the phone moves left and four reading cards occupy a separate
-right-hand panel; no card covers the app. The DEBUG proof and
-network-verification interval runs at 8.5× and is labeled on every card. No
-Signal or transaction state is reconstructed. The MP4 SHA-256 is
-`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
+real received +1 card and follows his return through pending to verified. The
+Signal screen remains on the left and a synchronized explainer remains beside
+it for the whole film. The opening identifies the received payment; subsequent
+panels explain choosing, review, pending, proof, durable signing, relay,
+observer checks, and verified delivery. No panel covers the app. User action
+plays at normal speed; only the static DEBUG proof and network-verification
+interval runs at 8.5×, labeled on every affected panel. No Signal or transaction
+state is reconstructed. The MP4 SHA-256 is
+`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
 Test USD is signet-only and has no monetary or redemption value.
 
 The live simulator acceptance completed a real round trip. Carol sent 25 Test
@@ -213,7 +215,7 @@ one-dollar return described above. Action remains at normal speed; the only
 speed change is the labeled 8.5× static wait described above;
 no Signal screen or payment state is reconstructed. The published MP4 has
 SHA-256
-`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
+`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
 Historical 25/10 and zero-confirmation captures remain labeled separately.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 72
