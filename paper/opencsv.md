@@ -1254,9 +1254,31 @@ Bob→Carol child
 records that dependency and was also accepted before either provider reported
 confirmation. For parent/child, mempool.space matched exact bytes in 256/239ms
 and Blockstream in 377/359ms. Local proving took 6.096/5.995 seconds and
-signing/persistence 23/18ms. Both operations survived a post-broadcast relaunch
-and delivered exactly once. This proves sequential zero-confirmation
-forwarding across two Bitcoin transactions.
+signing/persistence 23/18ms. Both operations survived a post-broadcast relaunch,
+and protocol credit remained deduplicated at that checkpoint. This proves
+sequential zero-confirmation forwarding across two Bitcoin transactions.
+
+A fresh 2026-08-08 repeat exercised the same boundary with 45 Test USD in
+parent `b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269`
+and 10 Test USD in child
+`2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286`.
+Both required providers returned identical bytes while both were unconfirmed;
+the child was therefore a real spend of provisionally accepted parent state,
+not a replay of a confirmed run. Both later settled in signet block 316824.
+Each transaction was 309 bytes, 909 WU, and paid 455 sats. Parent/child local
+proving took 6.149/6.171 seconds; signing and persistence took 24/22ms.
+
+The wider relaunch audit distinguished protocol credit from UI delivery. The
+credit stayed deduplicated, but an outgoing attachment could be reinserted
+after restart because Signal queried by the raw consignment id rather than the
+canonical payment id. Signal PR #8 repairs that lookup. The same run found that
+Rust's deterministic selector failed the whole send when its first candidate
+was already spent on the verified chain, even if a valid alternate coin was
+available. Rust PR #16 reconciles confirmed spends and retries selection. These
+fixes are merged at Signal `1e3472b9` and Rust `908bbb53`; Rust PR and
+post-merge CI are green. Signal `9b72d86d` pins the merged Rust SHA. Its PR-tip
+default/recovery jobs passed, but its post-merge default Xcode job failed while
+recovery passed. This is fix-forward integration evidence, not a release claim.
 
 The same implementation completed the separate shared-transaction gate. Carol sent
 5 Test USD to Bob and 5 Test USD to Note to Self under batch

@@ -455,8 +455,18 @@
         to Carol. Both pinned APIs returned identical bytes for both parent and
         child before either confirmed. Local proofs took 6.096s and 5.995s;
         signing and persistence took 23ms and 18ms. Each operation survived a
-        post-broadcast relaunch and delivered once.</p>
-        <a href="index.html#consumer-demo">Watch the real Signal footage</a>
+        post-broadcast relaunch; protocol credit remained deduplicated at that
+        checkpoint.</p>
+        <p>A fresh 45/10 Test USD repeat again spent an unconfirmed parent into
+        an unconfirmed child. Both required observers matched exact bytes; both
+        transactions later settled together at height 316824. The wider audit
+        found follow-up fixes in
+        <a href="https://github.com/opencsvnet/Signal-iOS/pull/8">Signal PR #8</a>
+        and <a href="https://github.com/opencsvnet/opencsv-rs/pull/16">Rust PR #16</a>.
+        Both are merged; <a href="https://github.com/opencsvnet/Signal-iOS/pull/9">Signal
+        PR #9</a> pins the Rust fix, with its post-merge default Xcode job still
+        an explicit fix-forward gate.</p>
+        <a href="https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286">Inspect the fresh child transaction</a>
       </article>
       <article class="receipt">
         <div class="state">LIVE · SHARED SIGNET TRANSACTION</div>

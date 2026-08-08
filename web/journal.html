@@ -939,7 +939,7 @@
     6.096s/5.995s, signing and persistence 23ms/18ms, and relay
     1.462s/1.461s. Durable intent took 90ms/107ms and the send sheet dismissed
     in 250ms/331ms. Both operations survived a post-broadcast relaunch and
-    delivered the same operation id exactly once.</p>
+    protocol credit appeared once at that checkpoint.</p>
     <p>A transient Blockstream 404 held the child at <code>1 of 2</code> until
     retry, proving the required quorum fails closed. The run also exposed stale
     <code>broadcast_unobserved</code> error text after successful observation;
@@ -1172,18 +1172,62 @@
     owner-approved 36.288-second, 2,881,105-byte two-screen film with SHA-256
     <code>5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c</code>.
     Historical entries remain unchanged; only current claims were updated.</p>
-    <p>No code PR remains open across the five core repositories. Recovery and
+    <p>At this checkpoint, no code PR remained open across the five core repositories. Recovery and
     the OpenCSV wallet tests passed, but the broad post-merge Xcode run stopped
     at <code>OWSSwiftUtils.swift:56: Missing attachment file</code>. Live
     pause-state recovery, clean-install Secure Backup recovery, physical
     rollout, release/security decisions, DNSSEC, and mainnet remain open.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-08</div>
+    <h2>A larger zero-confirmation repeat finds two boundary bugs <span class="tag">live receipt + fix-forward</span></h2>
+    <p>Bob operation <code>4837cc8c104ce828346b618a686bb828</code>
+    sent 45 Test USD to Carol in parent
+    <a href="https://mempool.space/signet/tx/b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269"><code>b8cf7015…b851269</code></a>.
+    Carol forwarded 10 Test USD before confirmation in operation
+    <code>48d9400065a26187ef6c6584a97c6b10</code>, child
+    <a href="https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286"><code>2fbec40a…db0d286</code></a>.
+    Both required pinned observers returned exact bytes while both transactions
+    were unconfirmed. Bob then accepted the exact child proof and dependency.</p>
+    <p>Each transaction was 309 bytes, 909 WU, and paid 455 sats. Parent/child
+    local proving took 6.149s/6.171s; signing and persistence took 24ms/22ms;
+    relay took 1.586s/1.549s. The child survived terminate/relaunch with the
+    same operation id and advanced through observation and delivery. Both later
+    settled in signet block 316824, hash
+    <code>00000013c6be519c185986b59a65a05570488743a4b629a40375425984d4a9e2</code>.</p>
+    <p>An apparent five-minute backup stall was host suspension, not proof or
+    backup work: after wake, the 23,621,924-byte backup uploaded in 3.54s. No
+    product-performance claim or scheduler change is based on the suspended
+    interval.</p>
+    <p>The relaunch exposed a presentation/credit distinction. Protocol credit
+    stayed deduplicated, but Signal could reinsert an outgoing attachment
+    because storage used a canonical payment id while lookup checked only the
+    raw consignment id. Signal
+    <a href="https://github.com/opencsvnet/Signal-iOS/pull/8">PR #8</a>
+    checks both identities; 28 focused tests pass locally and a live Carol
+    relaunch suppressed every prior operation. Rust also failed a send when its
+    first deterministic coin candidate was already spent on the verified chain
+    even if an alternate was valid. Rust
+    <a href="https://github.com/opencsvnet/opencsv-rs/pull/16">PR #16</a>
+    reconciles confirmed spends and retries selection, including a pre-sign
+    batch recheck. Its local default/recovery suites pass 71/73 tests with two
+    deliberate slow ignores each. At this point in the run, hosted CI and merge
+    remained open for both fixes, so neither was represented as release code.</p>
+    <p>Final reconciliation: Signal PR #8 merged at <code>1e3472b9</code>; Rust
+    PR #16 merged at <code>908bbb53</code> after green PR and post-merge Rust CI;
+    Signal PR #9 then pinned that Rust SHA at <code>9b72d86d</code>. The Signal
+    PR-tip default/recovery jobs passed, but post-merge run
+    <a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31283234786">31283234786</a>
+    failed the default Xcode job while recovery passed. That failure remains an
+    explicit fix-forward gate, and no release is claimed.</p>
+  </div>
+
 </div>
 
 <footer>
   <div class="wrap">
-    <p>Screenshots regenerate weekly from real regtest runs
+    <p>Screenshot regeneration is defined by CI from real regtest runs
     (<a href="https://github.com/opencsvnet/opencsv/actions/workflows/screenshots.yml">workflow</a>).
     Benchmarks: <a href="https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md">BENCHMARKS.md</a>.
     Journal source: <a href="https://github.com/opencsvnet/opencsv/tree/main/journal">journal/</a>.

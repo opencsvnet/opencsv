@@ -1,6 +1,6 @@
 {
   "schema": "opencsv-roadmap-v1",
-  "snapshot": "2026-08-08T16:50:00-04:00",
+  "snapshot": "2026-08-08T18:22:43-04:00",
   "plan_revision": 13,
   "source": {
     "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
@@ -57,11 +57,16 @@
       "order": 5,
       "title": "Signal Test USD integration",
       "state": "active",
-      "summary": "Signal PR #6 is merged at db818658; PR #7 closed the hosted CI gate at 4804e094 with green default-branch CI (1,552 tests passed, 0 failed). Crash-matrix, clean recovery, remaining batch/RBF acceptance, and physical-device gates remain. The protocol-safe RBF settled at signet height 316803.",
+      "summary": "Signal PR #6 is merged at db818658; PR #7 closed the broad hosted gate at 4804e094 with 1,552 tests passed and PR #8 merged the canonical presentation fix at 1e3472b9. A fresh exact unconfirmed parent/child run settled at height 316824. Rust PR #16 merged at 908bbb53 with green Rust CI; Signal PR #9 pins it at 9b72d86d. PR-tip Signal jobs passed, but the post-merge default Xcode job failed while recovery passed. Crash-matrix, clean recovery, and physical-device gates remain open.",
       "receipts": [
         "https://github.com/opencsvnet/Signal-iOS/pull/6",
         "https://github.com/opencsvnet/Signal-iOS/pull/7",
         "https://github.com/opencsvnet/Signal-iOS/actions/runs/31272225305",
+        "https://github.com/opencsvnet/Signal-iOS/pull/8",
+        "https://github.com/opencsvnet/opencsv-rs/pull/16",
+        "https://github.com/opencsvnet/Signal-iOS/pull/9",
+        "https://github.com/opencsvnet/Signal-iOS/actions/runs/31283234786",
+        "https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286",
         "https://github.com/opencsvnet/Signal-iOS/issues/3"
       ]
     },

@@ -156,7 +156,33 @@ and raw bytes and sent that coin back in the true child
 Both providers also reported the child unconfirmed while Carol exposed it as
 `available before confirmation · replacement risk`. Local proving took 6.096s
 and 5.995s; signing/persistence took 23ms and 18ms. Each operation survived a
-post-broadcast relaunch with the same operation id and no duplicate credit.
+post-broadcast relaunch with the same operation id; protocol credit remained
+deduplicated at that checkpoint.
+
+A fresh 45/10 Test USD repeat on 2026-08-08 exercised the same path with larger
+coins. Bob operation `4837cc8c104ce828346b618a686bb828` anchored
+[`b8cf7015…b851269`](https://mempool.space/signet/tx/b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269),
+and Carol forwarded 10 of the received 45 Test USD before confirmation in
+operation `48d9400065a26187ef6c6584a97c6b10`, child
+[`2fbec40a…db0d286`](https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286).
+Both pinned observers matched exact bytes while both transactions were still
+unconfirmed; both later settled in signet block 316824. Local proving took
+6.149s/6.171s and signing/persistence 24ms/22ms.
+
+That wider relaunch audit also found two narrower integration defects. Signal
+could retry an already-present outgoing attachment because its lookup used the
+raw consignment id instead of the canonical payment id; the protocol credit
+itself remained deduplicated. [Signal PR
+#8](https://github.com/opencsvnet/Signal-iOS/pull/8) repairs the presentation
+lookup. Rust could reject a send when deterministic selection first chose a
+coin already spent on the verified chain, even when another valid coin was
+available; [Rust PR #16](https://github.com/opencsvnet/opencsv-rs/pull/16)
+reconciles confirmed spends and retries deterministic selection. Both fixes
+are merged: Signal #8 at `1e3472b9` and Rust #16 at `908bbb53`, whose PR and
+post-merge Rust CI are green. Signal #9 repins that Rust SHA at `9b72d86d`;
+its PR-tip default/recovery jobs passed, but post-merge default Build and Test
+failed while the recovery build passed. That exact default-branch failure
+remains a fix-forward gate, and none of these merges is a release claim.
 
 Carol subsequently created one real two-recipient batch: 5 Test USD to Bob and
 5 Test USD to Note to Self. Operations

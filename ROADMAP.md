@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-08, rev 12) — Final Signal acceptance and release gates
+# OpenCSV Master Plan (2026-08-08, rev 13) — Final Signal acceptance and release gates
 
 ## Plan of record
 
@@ -19,10 +19,13 @@ The execution order is still:
 
 Tracks 1–4 have reached their reference implementation baselines. Signal PR #6
 is merged at `db818658`; the solo two-hop, true zero-confirmation child, shared
-batch, and protocol-safe RBF have all settled on signet. Post-merge
-default-branch CI still needs a fix-forward. Neither merge implies a
-release, upstream Signal submission, physical-device rollout, or mainnet
-readiness. The public execution view is a separate evidence page at
+batch, and protocol-safe RBF have all settled on signet. A fresh live audit
+opened and closed two narrow fix-forwards: Signal PR #8 for canonical
+presentation lookup and Rust PR #16 for verified spent-coin reselection.
+Signal PR #9 pins the merged Rust SHA; its PR-tip jobs passed, but its
+post-merge default Build and Test failed while recovery passed. Neither merge
+implies a release, upstream Signal submission, physical-device rollout, or
+mainnet readiness. The public execution view is a separate evidence page at
 [`roadmap.html`](roadmap.html), with a versioned snapshot in
 [`web/data/roadmap-v1.json`](web/data/roadmap-v1.json).
 
@@ -177,7 +180,7 @@ passed on that SHA. Signal is merged at
 [`db818658`](https://github.com/opencsvnet/Signal-iOS/commit/db818658f1511eed0dc98df42affce1be78b486f).
 They include the corrected two-required-observer policy, the true unconfirmed
 parent/child receipt, batch-envelope verification and account identity fixes,
-exact-once replacement delivery, and a cryptographic logical-payment identity
+cryptographic replacement identity, and a canonical logical-payment identity
 that keeps an RBF replacement to one payment bubble while retaining both exact
 attachments. The exact Rust recovery-feature suite passes 71 tests with two
 explicitly ignored slow release-only cases; the warning-denied Signal store
@@ -193,6 +196,26 @@ adding owner-only consignment export to the headless issuer CLI and keeping
 Presage/AGPL Signal transport opt-in; default-branch CI
 [31266597981](https://github.com/opencsvnet/opencsv-rs/actions/runs/31266597981)
 passed on that exact tip.
+
+The 2026-08-08 45/10 Test USD repeat then found two boundary edges. Signal PR
+[#8](https://github.com/opencsvnet/Signal-iOS/pull/8) makes outgoing
+presentation lookup use the same canonical payment identity as verdict storage;
+the focused suite passes 28 tests and live relaunch suppressed prior
+operations. Rust PR
+[#16](https://github.com/opencsvnet/opencsv-rs/pull/16) reconciles locally
+available coins against the registered PoW-verified spent set and retries the
+next deterministic candidate, including a batch pre-sign check. Its local
+default/recovery suites pass 71/73 tests with two deliberate slow ignores in
+each. At discovery time both were locally green but still awaited hosted CI;
+the intended sequence was Rust merge, Signal repin, then a hosted Signal build.
+
+That sequence is now complete through the pin but not through the final hosted
+gate. Signal PR #8 merged at `1e3472b9`; Rust PR #16 merged at `908bbb53` with
+green PR and post-merge Rust CI; Signal PR #9 pins `908bbb53` at `9b72d86d`.
+PR-tip default/recovery jobs passed, but post-merge Signal run
+[31283234786](https://github.com/opencsvnet/Signal-iOS/actions/runs/31283234786)
+failed its default Xcode job while the recovery build passed. A clean
+default-branch rerun or fix remains required.
 
 Required product behavior:
 
@@ -293,16 +316,32 @@ Acceptance status, preserving the original order:
    and delivery identity remained protected. Both observers see the replacement
    and no longer find the original.
 9. **Partial:** batch operations survived deliberate relaunches after proof and
-   broadcast with the same operation ids, and the replacement redelivered
-   exactly once after its nonce rotated. The full DEBUG pause matrix at
-   planning, signed persistence, broadcast, and pre-delivery remains open;
-   every relaunch must resume the same operation ID with no duplicate spend or
-   chat credit.
+   broadcast with the same operation ids. A wider 2026-08-08 relaunch audit
+   found that an outgoing attachment could be inserted again even though
+   protocol credit remained deduplicated. Signal PR #8 fixes the canonical
+   payment-id lookup and has local 28/28 wallet-store tests; hosted exact-tip CI
+   remains the merge gate. The full DEBUG pause matrix at planning, signed
+   persistence, broadcast, and pre-delivery remains open; every relaunch must
+   resume the same operation ID with no duplicate spend or chat credit.
 10. **Complete:** the solo round trip, true parent/child, shared batch, and RBF
     replacement reached confirmed settlement. Both public observers report
     replacement `4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7`
     in signet block 316803 with block hash
     `000000110b921854bf388cfdfb480a73f5effb1a14603abcf2031dc47bcf72a5`.
+
+The fresh 2026-08-08 parent/child repeat used Bob operation
+`4837cc8c104ce828346b618a686bb828` and Carol operation
+`48d9400065a26187ef6c6584a97c6b10`. Parent
+`b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269`
+carried 45 Test USD; child
+`2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286`
+forwarded 10 Test USD while both were unconfirmed. Both required observers
+matched exact bytes and both later settled in block 316824. The run exposed a
+stale deterministic coin-selection edge: Rust PR #16 now marks candidates
+already spent on the verified chain and retries the next-best valid coin. Its
+default/recovery local suites pass, and PR plus post-merge Rust CI are green at
+merged commit `908bbb53`. Signal PR #9 pins that exact SHA; its post-merge
+default Xcode job is the remaining hosted gate.
 
 The return operation id is `052f6e79210ca3a847cca6eded9871ca` and its durable
 intent-to-delivery interval was 328 seconds. Phase receipts separate 6.237s
@@ -332,9 +371,9 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Fix the default Xcode build failure in post-merge Signal run
-  [31262161093](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093)
-  and obtain a complete green default-branch run.
+- Fix or rerun the failed default Xcode job in post-merge Signal run
+  [31283234786](https://github.com/opencsvnet/Signal-iOS/actions/runs/31283234786)
+  and obtain a complete green default-branch run at or after the PR #9 Rust pin.
 - Complete the live crash-state pause matrix at planning, signed persistence,
   broadcast, and pre-delivery.
 - Separate clean-install Secure Backup recovery/rebind acceptance.

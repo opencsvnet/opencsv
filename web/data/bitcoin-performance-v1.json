@@ -1,6 +1,6 @@
 {
   "schema": "opencsv.bitcoin-performance.v1",
-  "generated_at": "2026-08-05",
+  "generated_at": "2026-08-08",
   "source": {
     "repository": "https://github.com/opencsvnet/opencsv-rs",
     "commit": "4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e",
@@ -9,7 +9,7 @@
   "classification": {
     "fee_rows": "generated from the pinned Rust fee model",
     "capacity": "theoretical full-block saturation upper bound",
-    "zero_confirmation": "implemented and live-received; real two-hop signet spend pending"
+    "zero_confirmation": "implemented and repeated live: an exact unconfirmed parent was spent into an exact unconfirmed child on signet"
   },
   "constants": {
     "block_weight_wu": 4000000,
@@ -56,10 +56,32 @@
   "receipts": {
     "batching": "https://github.com/opencsvnet/opencsv-rs/blob/4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e/BATCHING_V2.md",
     "readiness": "https://github.com/opencsvnet/opencsv-rs/blob/4dc05cfdc7c2a08bf3c8b4591b47f9c40493e15e/SIGNET_READINESS.md",
-    "live_zero_confirmation_receive": {
-      "signal_commit": "bac3042202",
-      "rust_commit": "420338280f0f926f89a32b577c9e81a35c02048e",
-      "status": "exact unconfirmed mint accepted and replay-deduplicated; child spend pending"
+    "live_zero_confirmation_forwarding": {
+      "network": "signet",
+      "parent_operation_id": "4837cc8c104ce828346b618a686bb828",
+      "parent_txid": "b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269",
+      "parent_amount_test_usd": 45,
+      "child_operation_id": "48d9400065a26187ef6c6584a97c6b10",
+      "child_txid": "2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286",
+      "child_amount_test_usd": 10,
+      "unconfirmed_at_forwarding": true,
+      "required_observers": ["mempool.space signet", "Blockstream signet"],
+      "exact_raw_bytes_matched": true,
+      "parent_local_proving_ms": 6149,
+      "child_local_proving_ms": 6171,
+      "parent_signing_persistence_ms": 24,
+      "child_signing_persistence_ms": 22,
+      "transaction_bytes_each": 309,
+      "transaction_weight_wu_each": 909,
+      "transaction_fee_sats_each": 455,
+      "settled_height": 316824,
+      "settled_block_hash": "00000013c6be519c185986b59a65a05570488743a4b629a40375425984d4a9e2",
+      "status": "both required observers matched exact bytes while parent and child were unconfirmed; both later settled in one signet block"
+    },
+    "acceptance_fix_forwards": {
+      "signal_duplicate_presentation": "https://github.com/opencsvnet/Signal-iOS/pull/8",
+      "rust_verified_coin_selection": "https://github.com/opencsvnet/opencsv-rs/pull/16",
+      "status": "Signal PR #8 and Rust PR #16 merged; Signal PR #9 pins Rust 908bbb53, with green PR-tip jobs but a failed post-merge default Xcode job while recovery passed"
     }
   }
 }

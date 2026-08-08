@@ -960,7 +960,8 @@ Parent/child local proving took 6.096s/5.995s, total proof preparation
 1.462s/1.461s. Durable intent was saved in 90ms/107ms and Signal dismissed the
 send sheet in 250ms/331ms. Both apps were terminated after broadcast but before
 delivery; relaunch resumed the same operation ids, re-observed the exact bytes,
-and delivered once. A transient Blockstream 404 held the child at
+and protocol credit appeared once at that checkpoint. A transient Blockstream
+404 held the child at
 `1 of 2` required observers until the next retry, demonstrating fail-closed
 behavior rather than silent quorum downgrade.
 
@@ -1210,16 +1211,70 @@ homepage lead. The live homepage actually uses the owner-approved 36.288-second,
 Historical journal entries remain unchanged; only current claims were brought
 forward.
 
-No code PR remains open across the five core repositories. The active Signal
+At this checkpoint, no code PR remained open across the five core repositories. The active Signal
 gate is narrower: recovery and the OpenCSV wallet tests passed, but the broad
 post-merge Xcode run stopped at the upstream Signal fixture assertion
 `OWSSwiftUtils.swift:56: Missing attachment file`. Live pause-state recovery,
 clean-install Secure Backup recovery, physical rollout, release/security
 decisions, DNSSEC, and mainnet remain open.
 
+## 2026-08-08 — A larger zero-confirmation repeat finds two boundary bugs
+
+Bob operation `4837cc8c104ce828346b618a686bb828` sent 45 Test USD to
+Carol in parent
+[`b8cf7015…b851269`](https://mempool.space/signet/tx/b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269).
+Carol displayed the received coin as available before confirmation, then
+operation `48d9400065a26187ef6c6584a97c6b10` forwarded 10 Test USD to
+Bob in child
+[`2fbec40a…db0d286`](https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286).
+mempool.space and Blockstream each returned the exact parent and child bytes
+while both were unconfirmed. Bob recorded both required observer receipts for
+the child, and the self-scan accepted its exact proof and dependency.
+
+Both 309-byte transactions weighed 909 WU and paid 455 sats. Parent phase
+timings were 940ms funding verification, 6.149s local proving, 297ms dependency
+observation, 7.390s proof preparation, 952ms pre-sign verification, 24ms
+signing/persistence, 1.586s relay, and 22ms observer work. Child timings were
+11.844s, 6.171s, 345ms, 18.368s, 2.772s, 22ms, 1.549s, and 34ms respectively.
+The child persisted signed bytes before broadcast, survived a terminate and
+relaunch with the same operation id, advanced through mempool observation, and
+delivered. Both transactions later settled together in signet block 316824,
+hash `00000013c6be519c185986b59a65a05570488743a4b629a40375425984d4a9e2`.
+
+The apparent five-minute backup stall was not wallet work. The Mac and
+simulator had locked and suspended; once awake, the 23,621,924-byte Secure
+Backup uploaded in 3.54s. This was recorded as an environment interruption, not
+used to justify a scheduler rewrite or a product-performance number.
+
+The wider relaunch audit exposed a distinction the earlier exact-once wording
+had hidden. Protocol credit remained deduplicated, but Signal could insert an
+outgoing attachment again because verdict storage used a canonical payment id
+while the presentation lookup checked only the raw consignment id. Signal PR
+[#8](https://github.com/opencsvnet/Signal-iOS/pull/8) decodes the verdict and
+checks both identities. Its focused wallet-store suite passes 28 tests locally,
+and a live Carol relaunch suppressed every already-present operation. At this
+point in the run, hosted Build and Test and recovery jobs remained merge gates.
+
+The run also found a wallet-selection edge. Deterministic selection could pick
+a locally unspent coin that the registered PoW-verified scan already knew was
+spent and fail the entire send, even when another valid coin was available.
+Rust PR [#16](https://github.com/opencsvnet/opencsv-rs/pull/16) compares selected
+nullifiers to the verified snapshot, marks confirmed-spent candidates, retries
+the next-best one- or two-coin selection, and repeats the check for batch
+members before signing. Local default/recovery suites pass 71/73 tests with two
+deliberate slow ignores in each configuration. Both hosted exact-tip runs
+were still merge gates at the time, so neither fix was then represented as
+merged or release code.
+
+Final reconciliation: Signal PR #8 merged at `1e3472b9`; Rust PR #16 merged at
+`908bbb53` after green PR and post-merge Rust CI; Signal PR #9 then pinned that
+Rust SHA at `9b72d86d`. The Signal PR-tip default/recovery jobs passed, but
+post-merge run `31283234786` failed the default Xcode job while recovery passed.
+That failure remains an explicit fix-forward gate, and no release is claimed.
+
 ---
 
-*Screenshots are regenerated weekly by CI from real regtest runs
+*Screenshot regeneration is defined by CI from real regtest runs
 ([workflow](https://github.com/opencsvnet/opencsv/actions/workflows/screenshots.yml)).
 Benchmarks live in
 [BENCHMARKS.md](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).

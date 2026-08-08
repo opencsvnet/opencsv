@@ -165,7 +165,7 @@
     (<a href="https://github.com/opencsvnet/Signal-iOS/pull/8">Signal #8</a>
     at <code>1e3472b9</code>,
     <a href="https://github.com/opencsvnet/opencsv-rs/pull/16">opencsv-rs #16</a>
-    at <code>908bbb53</code>).
+    at <code>908bbb53</code>). Both anchors later settled at height 316824.
     Detailed receipts are in the status cards and the
     <a href="web/journal.html">journal</a>.</p>
   </div>
@@ -214,9 +214,9 @@
           relaunch recovery. Receipts:
           <a href="web/story.html">payment story</a> ·
           <a href="web/journal.html">journal</a>.</li>
-          <li>Instrumented return operation: 6.237s local proving, 42ms
-          signing/persistence, 5m28s end to end — most elapsed time was chain
-          verification and recovery scheduling, not proof time.</li>
+          <li>Fresh 45/10 zero-confirmation repeat: 6.149s/6.171s local
+          proving, 24ms/22ms signing and persistence, with both exact
+          transactions still unconfirmed when the child was accepted.</li>
           <li>Rust owns custody, Bitcoin fees, change, signed persistence,
           relay, and recovery. Signal has no mint or general
           Bitcoin-send surface.</li>
@@ -226,8 +226,19 @@
           closed the hosted CI gate at <code>4804e094</code> with
           <a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31272225305">green
           default-branch CI</a> (1,552 tests passed, 0 failed).</li>
-          <li>Still open: the crash matrix, clean-install recovery, remaining
-          batch/RBF acceptance, and physical rollout.</li>
+          <li><a href="https://github.com/opencsvnet/Signal-iOS/pull/8">Signal
+          PR #8</a> is merged at <code>1e3472b9</code> with all hosted gates
+          green. It fixes canonical outgoing-presentation lookup.</li>
+          <li>
+          <a href="https://github.com/opencsvnet/opencsv-rs/pull/16">Rust PR
+          #16</a> retries selection after a verified confirmed spend and is
+          merged at <code>908bbb53</code> with green Rust CI.</li>
+          <li><a href="https://github.com/opencsvnet/Signal-iOS/pull/9">Signal
+          PR #9</a> pins that Rust SHA at <code>9b72d86d</code>. Its PR-tip jobs
+          passed; the post-merge default Xcode job failed while recovery passed.</li>
+          <li>Still open: a green default-branch Signal rerun/fix, the crash
+          matrix, clean-install recovery, remaining batch/RBF acceptance, and
+          physical rollout.</li>
         </ul>
       </article>
     </div>
