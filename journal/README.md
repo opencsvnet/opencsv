@@ -1114,6 +1114,40 @@ axiom-audit gate before the table and provenance can be committed. An explicit
 weekly forced rebuild remains as an independent integrity backstop. This avoids
 storing a broad cross-repository personal token merely to remove the lag.
 
+## 2026-08-08 — A two-screen message-flow cut starts in review
+
+The approved homepage film and its documentation were fast-forwarded exactly
+to `opencsv/main` at
+[`4e698b7`](https://github.com/opencsvnet/opencsv/commit/4e698b7eec40da782da5f6a7e4dc9096d5744ea8).
+The post-merge verification run
+[31262158883](https://github.com/opencsvnet/opencsv/actions/runs/31262158883)
+and Pages deployment
+[31262158263](https://github.com/opencsvnet/opencsv/actions/runs/31262158263)
+both passed. That establishes the current homepage receipt; the next edit is a
+separate editorial draft and does not replace it while under review.
+
+The new 36.288-second cut uses a simple rhythm: one real Signal screen beside
+plain-language context, then two synchronized real Signal screens when the
+payment moves between Bob and Carol. The small dot crossing the space between
+the phones is explicitly an explanatory representation of the encrypted
+consignment path, not recreated Signal UI or evidence of a packet capture.
+Dead pauses are cut, while retained application action remains at normal speed.
+The raw Bob and Carol screen recordings have the same creation timestamp,
+`2026-08-08T10:15:29Z`, and SHA-256 values
+`a19880e24921f0d08ec13364fcf0120985946ea89330838f88fd3d5446b39b68`
+and
+`de7de06a4d5e28312608f41cd505ee2bd7649c22aea1e42ada37691c0592aeb2`.
+The opening Bob source hashes to
+`bbf524608a040bd0d7f5af561028d181dda776f1272ead529482528653a4851f`.
+
+The first render failed because the ignored source media had been staged one
+directory deeper than Remotion's static-file path expected. The path was
+corrected without substituting footage. The review MP4 is 2,881,105 bytes and
+has SHA-256
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
+It is exposed only on an unlinked review page until the owner approves the
+visual language.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

@@ -10,6 +10,8 @@
     "still:signal": "remotion still src/index.jsx Signal-Wallet out/signal/poster.png --frame=630",
     "render:consumer": "remotion render src/index.jsx Consumer-USD out/consumer/opencsv-signal-usd.mp4 --codec=h264 --crf=21",
     "still:consumer": "remotion still src/index.jsx Consumer-USD out/consumer/poster.png --frame=300",
+    "render:message-flow": "remotion render src/index.jsx Signal-Message-Flow out/message-flow/opencsv-signal-message-flow-draft.mp4 --codec=h264 --crf=21",
+    "still:message-flow": "remotion still src/index.jsx Signal-Message-Flow out/message-flow/poster.png --frame=570",
     "render:scale": "remotion render src/index.jsx Bitcoin-Performance out/scale/opencsv-bitcoin-performance.mp4 --codec=h264 --crf=23",
     "still:scale": "remotion still src/index.jsx Bitcoin-Performance out/scale/poster.png --frame=960",
     "formals": "for id in T1-inflation T2-conservation T3-nullifiers T4-receiver Scan-soundness; do remotion render src/index.jsx $id out/formals/$id.mp4 --codec=h264 --crf=24; done",

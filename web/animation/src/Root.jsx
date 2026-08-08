@@ -14,6 +14,7 @@ import {ScanSoundness} from './formals/ScanSoundness';
 import {SignalWallet} from './SignalWallet';
 import {ScaleVideo, SCALE_DURATION} from './Scale';
 import {ConsumerUsd, CONSUMER_USD_DURATION} from './ConsumerUsd';
+import {MessageFlow, MESSAGE_FLOW_DURATION} from './MessageFlow';
 
 const SCENE = 400; // 13.3s per scene at 30fps → 80s total
 
@@ -73,6 +74,14 @@ export const RemotionRoot = () => (
       fps={30}
       durationInFrames={CONSUMER_USD_DURATION}
       component={ConsumerUsd}
+    />
+    <Composition
+      id="Signal-Message-Flow"
+      width={1280}
+      height={720}
+      fps={30}
+      durationInFrames={MESSAGE_FLOW_DURATION}
+      component={MessageFlow}
     />
     <Composition
       id="Bitcoin-Performance"
