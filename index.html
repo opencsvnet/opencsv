@@ -156,8 +156,16 @@
     <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">5 + 5 Test USD shared one Bitcoin transaction</a>,
     and a separate 1 Test USD payment was
     <a href="https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7">fee-bumped without becoming a second payment</a>
-    (replacement confirmed at height 316803). Detailed receipts are in the
-    status cards and the <a href="web/journal.html">journal</a>.</p>
+    (replacement confirmed at height 316803). A later zero-confirmation round
+    trip moved 45 Test USD and a 10 Test USD return while both anchors were
+    still unconfirmed
+    (<a href="https://mempool.space/signet/tx/b8cf70152dfd84a85367e19fec1ace53c6ae6708147faba79b1d9d810b851269">parent</a>,
+    <a href="https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286">child</a>);
+    two follow-up fixes from that run are in open PRs
+    (<a href="https://github.com/opencsvnet/Signal-iOS/pull/8">Signal #8</a>,
+    <a href="https://github.com/opencsvnet/opencsv-rs/pull/16">opencsv-rs #16</a>).
+    Detailed receipts are in the status cards and the
+    <a href="web/journal.html">journal</a>.</p>
   </div>
 </section>
 
@@ -211,12 +219,13 @@
           relay, and recovery. Signal has no mint or general
           Bitcoin-send surface.</li>
           <li><a href="https://github.com/opencsvnet/Signal-iOS/pull/6">Signal
-          PR #6</a> is merged at <code>db818658</code>; its post-merge recovery
-          job passed but the
-          <a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093">default
-          Xcode build failed</a>.</li>
-          <li>Still open: a green fix-forward Xcode run, the crash matrix,
-          clean-install recovery, and physical rollout.</li>
+          PR #6</a> is merged at <code>db818658</code>;
+          <a href="https://github.com/opencsvnet/Signal-iOS/pull/7">PR #7</a>
+          closed the hosted CI gate at <code>4804e094</code> with
+          <a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31272225305">green
+          default-branch CI</a> (1,552 tests passed, 0 failed).</li>
+          <li>Still open: the crash matrix, clean-install recovery, remaining
+          batch/RBF acceptance, and physical rollout.</li>
         </ul>
       </article>
     </div>
