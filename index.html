@@ -8,13 +8,13 @@
 <link rel="canonical" href="https://opencsv.net/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="OpenCSV — A Signal dollar-payment demonstration">
-<meta property="og:description" content="Watch a non-production Signal prototype send Test USD from Carol to Bob and back on Bitcoin signet.">
+<meta property="og:description" content="Watch Bob send Test USD to Carol in a non-production Signal prototype on Bitcoin signet.">
 <meta property="og:url" content="https://opencsv.net/">
-<meta property="og:image" content="https://opencsv.net/web/media/opencsv-real-signal-test-usd-social.jpg">
+<meta property="og:image" content="https://opencsv.net/web/animation/out/message-flow/poster.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="OpenCSV — A Signal dollar-payment demonstration">
-<meta name="twitter:description" content="A real Test USD round trip in a non-production Signal prototype on Bitcoin signet.">
-<meta name="twitter:image" content="https://opencsv.net/web/media/opencsv-real-signal-test-usd-social.jpg">
+<meta name="twitter:description" content="A real Bob-to-Carol Test USD payment in a non-production Signal prototype on Bitcoin signet.">
+<meta name="twitter:image" content="https://opencsv.net/web/animation/out/message-flow/poster.png">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -132,34 +132,31 @@
 
 <section id="consumer-demo">
   <div class="wrap consumer-film">
-    <h2>Receive $1. Send it back. Inside Signal.</h2>
+    <h2>Send $1. Watch it arrive. Inside Signal.</h2>
     <p class="receipt"><strong>Consumer demonstration, not a production Signal
     or OpenCSV interface.</strong> The Signal fork and temporary Swift bridge
     exist to show this experience to Signal's team. They are not a shipped
     feature, supported ABI, upstream commitment, or formal-verification layer.</p>
-    <p class="sub" style="margin-left:auto;margin-right:auto">The film opens on
-    Bob's real received payment from Carol, then follows Bob sending the same
-    amount back. It is actual Signal simulator footage using public Bitcoin
-    signet—not a recreated wallet interface.</p>
-    <video class="real-film" controls autoplay muted loop playsinline preload="metadata" poster="web/media/opencsv-real-signal-test-usd-poster.jpg">
-      <source src="web/media/opencsv-real-signal-test-usd-roundtrip.mp4" type="video/mp4">
+    <p class="sub" style="margin-left:auto;margin-right:auto">The film follows
+    Bob sending 1 Test USD to Carol. One-screen moments keep the explanation
+    beside the real interface; the handoff switches to synchronized Bob and
+    Carol views. It uses public Bitcoin signet—not a recreated wallet.</p>
+    <video class="real-film" controls autoplay muted loop playsinline preload="metadata" poster="web/animation/out/message-flow/poster.png">
+      <source src="web/animation/out/message-flow/opencsv-signal-message-flow-draft.mp4" type="video/mp4">
       Your browser does not support the video tag; download
-      <a href="web/media/opencsv-real-signal-test-usd-roundtrip.mp4">the real Signal round-trip recording</a> instead.
+      <a href="web/animation/out/message-flow/opencsv-signal-message-flow-draft.mp4">the real Signal message-flow film</a> instead.
     </video>
-    <p class="note"><strong>59.3 seconds · actual Signal simulator footage.</strong>
-    The real Signal screen stays on the left and a synchronized explainer stays
-    beside it for the entire film. The opening identifies Bob's received +1
-    card and labels the older debug receipts still visible nearby; later panels
-    explain choosing, reviewing, pending, local proof,
-    durable signing, relay, two-observer checking, and final delivery. Nothing
-    covers the app. Action plays at normal speed; only the static DEBUG interval
-    runs at 8.5×, labeled on every affected panel. No transaction state or
-    Signal screen is reconstructed. Test USD is signet-only test value with no
-    monetary or redemption claim.</p>
+    <p class="note"><strong>36.288 seconds · actual Signal simulator footage.</strong>
+    The cut alternates one real screen plus a side explanation with two real,
+    synchronized screens while the payment moves between Bob and Carol. Dead
+    pauses are removed; retained application action stays at normal speed. The
+    moving dot is an explicitly labeled explanation of the encrypted
+    consignment path—not recreated Signal UI or packet-capture evidence. Test
+    USD is signet-only test value with no monetary or redemption claim.</p>
     <div class="live-receipt" aria-label="Live Signal payment receipt">
       <div><strong>1 Test USD</strong><span>Carol → Bob · tx <a href="https://mempool.space/signet/tx/445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd">445c43cb…400fd</a> · height 316765</span></div>
       <div><strong>1 Test USD</strong><span>Bob → Carol · tx <a href="https://mempool.space/signet/tx/6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa">6d85895f…f49aa</a> · height 316766</span></div>
-      <div><strong>230.803 s raw</strong><span>59.3 s published cut · action at 1× · wait at 8.5×</span></div>
+      <div><strong>36.288 s cut</strong><span>one-screen context · two synchronized views · retained action at 1×</span></div>
     </div>
     <p class="note">Later live gates used the same Bob and Carol wallets:
     <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">5 + 5 Test USD shared one Bitcoin transaction</a>,
