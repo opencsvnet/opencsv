@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV Signal demo — A payment, end to end</title>
-<meta name="description" content="A non-production Signal integration demo showing a real Carol-to-Bob-to-Carol Test USD round trip on Bitcoin signet.">
+<meta name="description" content="A non-production Signal integration demo showing a real one-dollar Test USD payment between Bob and Carol on Bitcoin signet.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -45,9 +45,9 @@
 <header class="hero">
   <div class="wrap">
     <h1>A payment, end to end</h1>
-    <p class="tagline">A real Test USD return in Signal: Bob receives one dollar
-    from Carol and sends one dollar back. Bitcoin signet supplies ordering; the
-    phones verify locally.</p>
+    <p class="tagline">A real Test USD payment in Signal: Bob sends one dollar
+    and Carol receives it. Bitcoin signet supplies ordering; the phones verify
+    locally.</p>
     <p class="back"><a href="../">← home</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="../roadmap.html">roadmap</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
   </div>
 </header>
@@ -66,24 +66,20 @@
   <div class="panel">
     <div class="n">▶</div>
     <div>
-      <h2>Receive one Test USD, send it back</h2>
-      <p>This 59.3-second cut contains only real Signal simulator footage. It
-      begins on Bob's actual received +1 card and follows his 1 Test USD return
-      through pending to verified. Signal remains on the left and a synchronized
-      explainer remains in a separate right-hand panel for the whole film. The
-      opening identifies the received +1 card and names the older debug receipts
-      still visible nearby; later panels explain each send step, pending state,
-      proof, durable signing, relay, observer checks, and
-      verified delivery. Nothing covers the app. Action plays at normal speed;
-      only the static DEBUG proof and network-verification interval runs at
-      8.5×, labeled on every affected panel. No application or transaction state
-      was reconstructed. The
-      anchors confirmed at signet heights 316765 and 316766. Test USD has no
-      monetary or redemption value.</p>
-      <video class="film" controls autoplay muted loop playsinline preload="metadata" poster="media/opencsv-real-signal-test-usd-poster.jpg">
-        <source src="media/opencsv-real-signal-test-usd-roundtrip.mp4" type="video/mp4">
+      <h2>Send one Test USD and watch it arrive</h2>
+      <p>This 36.288-second cut contains only real Bob and Carol Signal
+      simulator footage. One-screen moments pair the real interface with a side
+      explanation; the handoff uses synchronized two-screen footage. Dead
+      pauses are removed while retained application action stays at normal
+      speed. The moving dot is editorial motion explaining the encrypted
+      consignment path—not Signal UI or packet-capture evidence. No application
+      or transaction state was reconstructed. The underlying two-hop receipt
+      confirmed at signet heights 316765 and 316766. Test USD has no monetary
+      or redemption value.</p>
+      <video class="film" controls autoplay muted loop playsinline preload="metadata" poster="animation/out/message-flow/poster.png">
+        <source src="animation/out/message-flow/opencsv-signal-message-flow-draft.mp4" type="video/mp4">
       </video>
-      <div class="cap">real registered Signal simulators · public Bitcoin signet · SHA-256 e3c0c70e…8cb3</div>
+      <div class="cap">real registered Signal simulators · public Bitcoin signet · SHA-256 5a59058f…b0c</div>
     </div>
   </div>
 
@@ -168,8 +164,8 @@
       <a href="https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7"><code>4ae0f1c6…cbd7f7</code></a>.
       The replacement preserved the protocol layout and logical payment
       identity: Carol credited once and Signal displays one payment while both
-      exact attachments remain available as receipts. The replacement remains
-      unconfirmed.</p>
+      exact attachments remain available as receipts. Both public observers
+      report the replacement confirmed at signet height 316803.</p>
     </div>
   </div>
 
@@ -203,7 +199,7 @@
 <footer>
   <div class="wrap">
     <p>Every displayed artifact is real. The new film records Bob's real Signal
-    simulator during a two-wallet signet return; the remaining panels preserve regtest CLI and
+    simulators during a two-wallet signet payment; the remaining panels preserve regtest CLI and
     historical physical-phone prototype evidence. None is a claim that a
     production Signal release or production Swift interface is shipped. This
     page is deliberately separate from the formal-methods proof map. Current
