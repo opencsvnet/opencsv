@@ -24,9 +24,13 @@ output; co-funded batches amortize the marker and miner fee.
 - **Issuer-gated supply.** Supply grows only under the issuer key bound into the
   asset's genesis parameters.
 
-**Read the paper: [`paper/opencsv.md`](paper/opencsv.md)** — the main explainer
-at [`index.html`](index.html), and the exact Bitcoin performance model at
-[`scale.html`](scale.html).
+**Read the paper: [`paper/opencsv.md`](paper/opencsv.md).** The public research
+surface is deliberately split by question: the interactive
+[`web/formal.html`](web/formal.html) proof map explains what is mechanized,
+[`scale.html`](scale.html) publishes the exact Bitcoin performance model and
+calculator, and [`roadmap.html`](roadmap.html) separates completed reference
+work from active, owner-gated, and unauthorized work. The consumer demonstration
+remains at [`index.html`](index.html).
 
 ## Status
 
@@ -72,8 +76,9 @@ source revision, and machine-readable receipt.
 
 The reference stack also includes co-funded batching v2 and its two-round peer
 gossip, a verified pure Rust kernel and pure accept-decision boundary on
-`opencsv-rs/main`, and dated signet/readiness receipts. The Signal product is
-still an integration branch, not a release. Rust owns the OpenCSV asset wallet
+`opencsv-rs/main`, and dated signet/readiness receipts. Signal PR #6 is merged
+at `db818658`, but the post-merge default-branch Xcode job failed; it remains a
+prototype in fix-forward, not a release. Rust owns the OpenCSV asset wallet
 and BIP84 Bitcoin **fee** wallet; there is no anchor server and no
 arbitrary-Bitcoin-send API. Signal holds owner keys only: it has no issuer
 secret, mint action, arbitrary asset creator, or mint FFI. It presents one
@@ -137,10 +142,10 @@ in 347 ms; the optional mempool.space observer timed out after 8.025 seconds
 and was recorded as unavailable rather than success.
 
 That historical one-required-observer policy is superseded in the merged Rust
-implementation and the current Signal candidate. Rust
+implementation and merged Signal integration. Rust
 [`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
 and Signal
-[`348b8e1d20`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41)
+[`db818658`](https://github.com/opencsvnet/Signal-iOS/commit/db818658f1511eed0dc98df42affce1be78b486f)
 derive the raw-byte gate from every API marked `Require`; fresh signet wallets
 therefore require both pinned providers. A warning-denied simulator test fetched
 the known return transaction from both providers in 1.831 seconds and received
@@ -188,7 +193,7 @@ persisted-consignment reproducer plus focused transfer tests. A confirmed
 parent was also being duplicated as a mempool sentinel and could conflict with
 itself; that snapshot path now resolves to one canonical occurrence. These
 repairs, batch-envelope/account-identity fixes, and replacement-delivery changes
-are consolidated in Rust `main` and the Signal candidate above. Rust PR #13 was
+are consolidated in Rust `main` and the merged Signal integration above. Rust PR #13 was
 fast-forwarded exactly at `28010d8` after hosted runs
 [31231128052](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052)
 and
@@ -197,7 +202,10 @@ passed on that SHA. This is not represented as release code. The
 exact Rust recovery-feature suite passes 71 tests with two deliberate slow
 release-only ignores; the warning-denied Signal store suite passes 27 tests and
 the full simulator app builds locally against the exact Rust XCFramework.
-Signal still requires dependency repinning, hosted CI, and merge review.
+Signal PR #6 is merged, but post-merge run
+[`31262161093`](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093)
+still requires a fix-forward for the failing default Xcode build. The recovery
+job passed; this is not represented as a release.
 
 Zero-confirmation availability is deliberately narrower than “trust the
 mempool.” It is enabled only when the phone owns the confirmed-history exclusion

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCSV Roadmap — what is done, active, and still gated</title>
+<meta name="description" content="The receipt-backed OpenCSV execution map: completed reference baselines, active Signal integration, and the gates before release or mainnet.">
+<link rel="canonical" href="https://opencsv.net/roadmap.html">
+<style>
+  :root { --bg:#0b0d10; --panel:#14181e; --ink:#f3f5f7; --muted:#a2abb5; --line:#343a43; --orange:#f7931a; --green:#54d38a; --blue:#68a9ff; --red:#ff7878; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; color:var(--ink); background:var(--bg); font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  a { color:var(--blue); text-underline-offset:3px; }
+  button { font:inherit; }
+  code { font-family:var(--mono); color:#a8cfff; }
+  .wrap { width:min(1180px,calc(100% - 40px)); margin:0 auto; }
+  nav { min-height:62px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid var(--line); }
+  nav a { color:var(--muted); text-decoration:none; font-size:14px; }
+  nav strong { color:var(--ink); font:800 14px var(--mono); text-transform:uppercase; }
+  nav .links { display:flex; flex-wrap:wrap; gap:18px; }
+  header { padding:clamp(64px,10vw,126px) 0 58px; border-bottom:1px solid var(--line); }
+  .eyebrow { color:var(--orange); font:700 12px var(--mono); letter-spacing:.15em; text-transform:uppercase; }
+  h1 { max-width:1000px; margin:18px 0 24px; font-size:clamp(52px,9vw,112px); line-height:.9; letter-spacing:-.065em; }
+  .lede { max-width:790px; color:var(--muted); font-size:clamp(19px,2.4vw,27px); }
+  .sourcebar { display:flex; flex-wrap:wrap; gap:10px; margin-top:34px; }
+  .sourcebar a, .sourcebar span { padding:8px 11px; border:1px solid var(--line); border-radius:999px; color:var(--muted); font:12px var(--mono); text-decoration:none; }
+  .metrics { display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line); }
+  .metric { min-height:150px; padding:24px; border-right:1px solid var(--line); }
+  .metric:last-child { border-right:0; }
+  .metric b { display:block; font-size:clamp(42px,6vw,72px); line-height:1; letter-spacing:-.06em; }
+  .metric span { display:block; margin-top:12px; color:var(--muted); font:11px/1.4 var(--mono); text-transform:uppercase; }
+  main { padding:68px 0 90px; }
+  .toolbar { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:24px; }
+  h2 { margin:0; font-size:clamp(34px,5vw,60px); letter-spacing:-.045em; line-height:1; }
+  .filters { display:flex; flex-wrap:wrap; gap:8px; }
+  .filter { padding:9px 12px; color:var(--muted); background:transparent; border:1px solid var(--line); border-radius:999px; cursor:pointer; }
+  .filter.active, .filter:hover { color:#120c04; background:var(--orange); border-color:var(--orange); }
+  .tracklist { display:grid; gap:12px; }
+  .track { display:grid; grid-template-columns:72px minmax(0,1fr) 180px; gap:20px; align-items:start; padding:24px; border:1px solid var(--line); border-radius:16px; background:linear-gradient(145deg,var(--panel),#101318); }
+  .track[hidden] { display:none; }
+  .track .num { color:#606a76; font:700 32px var(--mono); }
+  .track h3 { margin:0 0 8px; font-size:24px; }
+  .track p { margin:0; color:var(--muted); }
+  .state { justify-self:end; padding:7px 9px; border:1px solid currentColor; border-radius:999px; font:700 11px var(--mono); text-transform:uppercase; }
+  .complete .state { color:var(--green); } .active .state { color:var(--orange); } .open .state { color:var(--red); } .owner .state { color:var(--blue); }
+  details { grid-column:2 / -1; border-top:1px solid var(--line); padding-top:14px; }
+  summary { cursor:pointer; color:var(--blue); font:700 12px var(--mono); text-transform:uppercase; }
+  .receipts { display:flex; flex-wrap:wrap; gap:10px; margin-top:13px; }
+  .receipts a { padding:8px 10px; border:1px solid var(--line); border-radius:8px; font:12px var(--mono); text-decoration:none; }
+  .next { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:54px; }
+  .next a { min-height:190px; padding:24px; color:var(--ink); background:var(--panel); border:1px solid var(--line); border-radius:16px; text-decoration:none; }
+  .next b { display:block; margin:8px 0; font-size:28px; }
+  .next span { color:var(--muted); }
+  footer { padding:38px 0 54px; border-top:1px solid var(--line); color:var(--muted); font-size:14px; }
+  @media (max-width:760px) { .metrics{grid-template-columns:1fr 1fr}.track{grid-template-columns:48px 1fr}.state{grid-column:2;justify-self:start}details{grid-column:1/-1}.next{grid-template-columns:1fr}.links a:nth-child(2){display:none} }
+  @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+<nav class="wrap" aria-label="Primary navigation">
+  <strong>OpenCSV / roadmap</strong>
+  <div class="links"><a href="./">Home</a><a href="web/formal.html">Formal methods</a><a href="scale.html">Performance</a><a href="paper/opencsv.md">Paper</a></div>
+</nav>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Execution map · snapshot 2026-08-08</div>
+    <h1>Done is not shipped.</h1>
+    <p class="lede">Four reference baselines are complete. Signal integration is merged but still has a failing default-branch build and acceptance gates. Release and mainnet remain separate decisions.</p>
+    <div class="sourcebar"><a href="ROADMAP.md">Plan of record</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Live work board ↗</a><a href="web/data/roadmap-v1.json">Machine-readable snapshot</a><span id="data-state">static snapshot visible</span></div>
+  </div>
+</header>
+<div class="wrap metrics" aria-label="Roadmap summary">
+  <div class="metric"><b>4</b><span>reference baselines complete</span></div>
+  <div class="metric"><b>1</b><span>merged integration in fix-forward</span></div>
+  <div class="metric"><b>0</b><span>production releases</span></div>
+  <div class="metric"><b>0</b><span>mainnet broadcasts</span></div>
+</div>
+<main>
+  <div class="wrap">
+    <div class="toolbar">
+      <h2>Every track, with receipts.</h2>
+      <div class="filters" aria-label="Filter roadmap tracks">
+        <button class="filter active" data-filter="all">All</button><button class="filter" data-filter="complete">Complete</button><button class="filter" data-filter="active">Active</button><button class="filter" data-filter="open">Open</button><button class="filter" data-filter="owner">Owner action</button>
+      </div>
+    </div>
+    <div class="tracklist">
+      <article class="track complete" data-state="complete"><div class="num">01</div><div><h3>Formal specification + pure kernel</h3><p>72 audited Lean specification declarations and 15 translated-Rust refinements. The verified pure kernel is adopted; the whole Rust/Swift system is not mechanized.</p></div><span class="state">complete</span><details><summary>Open receipts</summary><div class="receipts"><a href="web/formal.html">Interactive proof map</a><a href="https://github.com/opencsvnet/opencsv-formal/tree/dc7e8eb">Lean @ dc7e8eb ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/tree/3bcafed">Aeneas @ 3bcafed ↗</a></div></details></article>
+      <article class="track complete" data-state="complete"><div class="num">02</div><div><h3>Production prover baseline</h3><p>Setup caching, verification-key binding, AIR-native issuer authorization, frozen production parameters, and proof-version boundaries are complete on the reference line.</p></div><span class="state">complete</span><details><summary>Open receipts</summary><div class="receipts"><a href="https://github.com/opencsvnet/opencsv-rs/issues/3">Prover receipt ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/commit/46a3e4870e55cc8fe8908c411ae56c1229ce3b76">V4 forwarding ↗</a></div></details></article>
+      <article class="track complete" data-state="complete"><div class="num">03</div><div><h3>Batching v2 + authenticated gossip</h3><p>Threat model, co-funded transactions, two-round gossip, durable reservations, adversarial repairs, and Lean batch semantics have reproducible receipts.</p></div><span class="state">complete</span><details><summary>Open receipts</summary><div class="receipts"><a href="https://github.com/opencsvnet/opencsv-rs/issues/4">Batching receipt ↗</a><a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">Shared signet tx ↗</a></div></details></article>
+      <article class="track complete" data-state="complete"><div class="num">04</div><div><h3>Reference signet readiness</h3><p>Synchronization, discovery, fee modeling, recovery, batch amortization, and reference build evidence exist. This baseline does not authorize a release.</p></div><span class="state">complete</span><details><summary>Open receipts</summary><div class="receipts"><a href="https://github.com/opencsvnet/opencsv/issues/1">Master receipts ↗</a><a href="scale.html">Performance model</a></div></details></article>
+      <article class="track active" data-state="active"><div class="num">05</div><div><h3>Signal Test USD integration</h3><p>PR #6 merged at <code>db818658</code>. Recovery CI is green; the post-merge default-branch Xcode build failed. Crash-matrix, clean recovery, and physical-device gates remain.</p></div><span class="state">fix-forward</span><details open><summary>Open receipts</summary><div class="receipts"><a href="https://github.com/opencsvnet/Signal-iOS/pull/6">Merged PR #6 ↗</a><a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093">Post-merge CI ↗</a><a href="https://github.com/opencsvnet/Signal-iOS/issues/3">Acceptance log ↗</a></div></details></article>
+      <article class="track open" data-state="open"><div class="num">06</div><div><h3>Release + mainnet</h3><p>Independent security review, signed distribution, upstream submission, production issuer policy, and every mainnet transaction are deliberately still open.</p></div><span class="state">not authorized</span><details><summary>Open source of truth</summary><div class="receipts"><a href="ROADMAP.md#open-gates">Open gates</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Owner work board ↗</a></div></details></article>
+      <article class="track owner" data-state="owner"><div class="num">07</div><div><h3>Domain hardening</h3><p>Apex, www, TLS, HTTPS, and organization verification are live. DNSSEC requires Cloudflare activation and publishing the exact DS at Namecheap.</p></div><span class="state">owner action</span><details><summary>Open receipts</summary><div class="receipts"><a href="https://opencsv.net/">Live site ↗</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Domain checklist ↗</a></div></details></article>
+    </div>
+    <div class="next"><a href="web/formal.html"><div class="eyebrow">Proof boundary</div><b>What is formally proved?</b><span>Walk from specification to code, tests, and external assumptions.</span></a><a href="scale.html"><div class="eyebrow">Performance boundary</div><b>How is it fast enough?</b><span>Change participants and fees against the checked Rust-derived model.</span></a></div>
+  </div>
+</main>
+<footer><div class="wrap">Snapshot data is versioned; live coordination remains in GitHub issue #1. A completed reference track is not a release claim.</div></footer>
+<script>
+(() => {
+  const filters=[...document.querySelectorAll('.filter')];
+  const tracks=[...document.querySelectorAll('.track')];
+  filters.forEach(button=>button.addEventListener('click',()=>{
+    filters.forEach(item=>item.classList.toggle('active',item===button));
+    tracks.forEach(track=>{ track.hidden=button.dataset.filter!=='all' && track.dataset.state!==button.dataset.filter; });
+  }));
+  fetch('web/data/roadmap-v1.json').then(response=>response.ok?response.json():Promise.reject()).then(data=>{
+    document.querySelector('#data-state').textContent=`loaded ${data.schema} · rev ${data.plan_revision}`;
+  }).catch(()=>{ document.querySelector('#data-state').textContent='static snapshot · data file unavailable'; });
+})();
+</script>
+</body>
+</html>

@@ -1161,6 +1161,12 @@ translated `opencsv-kernel` Rust to binding, occurrence, first-occurrence, and
 supply specifications. A4/A5 adopt that kernel and a pure receiver-decision
 boundary on `opencsv-rs/main`. Proof-system soundness, Poseidon2
 cryptanalysis, chain backends, storage, and networking are not mechanized.
+The public [interactive proof map](https://opencsv.net/web/formal.html) exposes
+the exact declaration ledger, axioms, source correspondence, and gaps. Delivery
+status lives separately in the [receipt-backed roadmap](https://opencsv.net/roadmap.html),
+while throughput and fee claims live in the checked
+[performance model](https://opencsv.net/scale.html); neither is presented as a
+consequence of the Lean theorems.
 
 **Scan-first indexing and readiness (implemented on main; release still gated).**
 Wallets find marker-bearing blocks via compact filters, merkle-verify candidates,

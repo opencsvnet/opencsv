@@ -17,11 +17,13 @@ The execution order is still:
 4. reference signet/mainnet readiness
 5. Signal/iOS integration last
 
-Tracks 1–4 have reached their reference implementation baselines. Signal
-simulator integration remains the active final workstream, but the real solo
-two-hop signet path is no longer an open gate. Rust has merged; this does not
-imply a Signal merge, release, upstream Signal submission, physical-device
-rollout, or mainnet readiness.
+Tracks 1–4 have reached their reference implementation baselines. Signal PR #6
+is merged at `db818658`, and the real solo two-hop signet path is complete, but
+post-merge default-branch CI now needs a fix-forward. Neither merge implies a
+release, upstream Signal submission, physical-device rollout, or mainnet
+readiness. The public execution view is a separate evidence page at
+[`roadmap.html`](roadmap.html), with a versioned snapshot in
+[`web/data/roadmap-v1.json`](web/data/roadmap-v1.json).
 
 ## Verified completed baselines
 
@@ -147,11 +149,12 @@ and PR
 both succeeded at the exact tip, including twice-built byte-identical reference
 binaries. Signal PR #6 pins this merged SHA.
 
-## Active final workstream — Signal simulator integration
+## Merged Signal integration — fix-forward gates
 
-Consolidate work in [Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/pull/6)
-directly against `main`. PRs #4 and #5 remain historical stacked reviews and
-are closed as superseded only after #6 merges.
+Signal work was consolidated in
+[Signal-iOS PR #6](https://github.com/opencsvnet/Signal-iOS/pull/6) and merged
+at exact commit `db818658f1511eed0dc98df42affce1be78b486f`. PRs #4 and #5
+remain historical stacked reviews.
 
 The live acceptance build starts from Rust `3295cd5` and Signal
 `c14f02025daa557ca9149325dfc3199bced1012b`. It preserves Test USD presentation,
@@ -160,8 +163,8 @@ critical path, and resumes by operation id. The real run produced two confirmed
 signet anchors and a verified provisional return. It also found repairs—signed
 limb borrows in the value gadget, canonical confirmed-parent snapshot handling,
 and corrupt BIP158 cache refetch—now consolidated in merged Rust and the
-unmerged Signal candidate. Signal hosted CI and review apply to its repaired
-exact tip, not merely the earlier base commit.
+merged Signal integration. The post-merge hosted run is the current gate, not
+the earlier branch candidate.
 
 The consolidated Rust implementation is merged on `opencsv-rs/main` at
 [`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
@@ -169,8 +172,8 @@ by exact fast-forward after hosted runs
 [31231128052](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052)
 and
 [31231129868](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231129868)
-passed on that SHA. The current Signal candidate is
-[`348b8e1d20`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41).
+passed on that SHA. Signal is merged at
+[`db818658`](https://github.com/opencsvnet/Signal-iOS/commit/db818658f1511eed0dc98df42affce1be78b486f).
 They include the corrected two-required-observer policy, the true unconfirmed
 parent/child receipt, batch-envelope verification and account identity fixes,
 exact-once replacement delivery, and a cryptographic logical-payment identity
@@ -178,9 +181,10 @@ that keeps an RBF replacement to one payment bubble while retaining both exact
 attachments. The exact Rust recovery-feature suite passes 71 tests with two
 explicitly ignored slow release-only cases; the warning-denied Signal store
 suite passes 27 tests and the full simulator app builds against the exact Rust
-XCFramework. Signal's recovery hosted job is green, while its ordinary job
-stops before compilation at the separately tracked Rust repin/CocoaPods
-lockfile checksum gate.
+XCFramework. In post-merge
+[run 31262161093](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093),
+the recovery job passed while the default Xcode build failed. That failure is a
+fix-forward gate and prevents any release claim.
 
 Required product behavior:
 
@@ -320,9 +324,9 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Repin Signal `348b8e1d20` to merged Rust `28010d8`, repair the CocoaPods
-  checksum, complete exact-tip hosted CI, and merge only the reviewed green
-  Signal tip.
+- Fix the default Xcode build failure in post-merge Signal run
+  [31262161093](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093)
+  and obtain a complete green default-branch run.
 - Complete the crash-state matrix and observe the fee replacement through
   CBF/SPV-confirmed settlement.
 - Separate clean-install Secure Backup recovery/rebind acceptance.

@@ -90,10 +90,9 @@
   .thm h3 .id { font-family: var(--mono); color: var(--orange); font-size: 14px; margin-right: 10px; vertical-align: middle; }
   .thm p { color: var(--muted); font-size: 16px; }
   .thm code { font-family: var(--mono); font-size: 13px; color: var(--blue); }
-  .thm video, .rmv { width: 100%; height: 100%; min-height: 270px; object-fit: cover; border-left: 2px solid var(--line); display: block; background: #111; }
+  .thm video { width: 100%; height: 100%; min-height: 270px; object-fit: cover; border-left: 2px solid var(--line); display: block; background: #111; }
   .thm-links { margin-top: auto; padding-top: 22px; display: flex; gap: 14px; flex-wrap: wrap; }
   .thm-links a { font: 700 12px/1.2 var(--mono); }
-  .rmv { max-width: 640px; height: auto; border: 2px solid var(--line); margin-top: 18px; }
 
   table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--paper2); }
   th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--soft-line); }
@@ -117,13 +116,13 @@
   #gaps .sub { color: #2d211c; }
   #gaps .layers { grid-template-columns: repeat(2, 1fr); }
   #gaps .layers li { border-bottom: 2px solid var(--line); }
-  ol.roadmap { list-style: none; counter-reset: step; border: 2px solid var(--line); background: var(--paper2); }
-  ol.roadmap li { counter-increment: step; padding: 23px 24px 23px 90px; position: relative; border-bottom: 1px solid var(--soft-line); }
-  ol.roadmap li:last-child { border-bottom: 0; }
-  ol.roadmap li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 24px; top: 24px; font: 700 18px/1 var(--mono); color: var(--red); }
-  ol.roadmap h3 { font-size: 21px; }
-  ol.roadmap p { color: var(--muted); font-size: 15px; max-width: 900px; margin-top: 5px; }
-  ol.roadmap li.done::after { content: "SHIPPED"; position: absolute; right: 22px; top: 23px; color: var(--green); font: 700 10px/1 var(--mono); }
+  .research-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 2px solid var(--line); }
+  .research-link { min-height: 240px; padding: 26px; color: var(--ink); background: var(--paper2); border-right: 2px solid var(--line); text-decoration: none; }
+  .research-link:last-child { border-right: 0; }
+  .research-link:hover { background: var(--yellow); text-decoration: none; }
+  .research-link h3 { margin: 36px 0 12px; font-size: 30px; line-height: 1; }
+  .research-link p { color: var(--muted); font-size: 15px; }
+  .research-link:hover p { color: #382f22; }
   footer { padding: 44px 0 60px; border-top: 6px solid var(--line); color: var(--muted); font-size: 14px; background: var(--paper2); }
 
   @media (max-width: 980px) {
@@ -151,7 +150,9 @@
     .coverage-panel { padding: 24px; }
     .evidence-links { border-left: 0; border-top: 1px solid #4a4945; padding: 22px 0 0; }
     #gaps .layers { grid-template-columns: 1fr; }
-    ol.roadmap li.done::after { display: none; }
+    .research-grid { grid-template-columns: 1fr; }
+    .research-link { border-right: 0; border-bottom: 2px solid var(--line); }
+    .research-link:last-child { border-bottom: 0; }
   }
 </style>
 </head>
@@ -160,7 +161,7 @@
 <nav class="poster-nav" aria-label="Formal methods navigation">
   <div class="wrap">
     <strong>OpenCSV / proof map</strong>
-    <div class="links"><a href="#coverage">Coverage</a><a href="#theorems">Claims</a><a href="#axioms">Ledger</a><a href="#gaps">Gaps</a><a href="../">Project home ↗</a></div>
+    <div class="links"><a href="#coverage">Coverage</a><a href="#theorems">Claims</a><a href="#axioms">Ledger</a><a href="#gaps">Gaps</a><a href="../roadmap.html">Roadmap ↗</a><a href="../scale.html">Performance ↗</a></div>
   </div>
 </nav>
 
@@ -558,101 +559,25 @@
   </div>
 </section>
 
-<section id="roadmap">
+<section id="next">
   <div class="wrap">
-    <div class="section-number">08 / NEXT PROOF BOUNDARIES</div>
-    <h2>What should be proved next.</h2>
-    <p class="sub">Tracked as <a href="https://github.com/opencsvnet/opencsv-formal/issues/1">opencsv-formal#1</a>.
-    Completed work remains visible here so the frontier cannot be confused with
-    the history.</p>
-    <ol class="roadmap">
-      <li class="done">
-        <h3>CI axiom gating — shipped</h3>
-        <p>Every headline specification theorem and translated-Rust refinement
-        declaration has normalized <code>#print axioms</code> output. The model
-        table is regenerated from its default branch; the translated-Rust table
-        is pinned to the exact green reproducibility receipt now adopted by
-        <code>formal-aeneas/main</code>.</p>
-      </li>
-      <li class="done">
-        <h3>Limb-arithmetic soundness — shipped</h3>
-        <p>The u64 conservation gadget's carry argument (24/24/16-bit limbs,
-        field equality ⟺ integer equality) is mechanized
-        (<a href="https://github.com/opencsvnet/opencsv-formal/commit/b036cf3">b036cf3</a>)
-        — wrap-around cannot fake balance. Honest bonus: the general converse
-        is false (completeness, not soundness) — documented.</p>
-      </li>
-      <li class="done">
-        <h3>Scan soundness — shipped, roadmap item eliminated</h3>
-        <p><code>OpenCsv.Scan</code>
-        (<a href="https://github.com/opencsvnet/opencsv-formal/commit/00edaed">00edaed</a>):
-        no-false-negatives of filter discovery, scan-exclusion soundness
-        (scan-first ≡ full-block scanning), marker zero-authority, accelerator
-        fraud-provability. The N-of-M honesty hypothesis is eliminated — the
-        architecture got better, so the assumptions got fewer.</p>
-        <video class="rmv" muted loop playsinline controls preload="metadata" src="animation/out/formals/Scan-soundness.mp4"></video>
-      </li>
-      <li class="done">
-        <h3>Differential testing, model ↔ code — shipped</h3>
-        <p>Generated valid and mutated traces dual-run legacy decisions and the
-        adopted kernel. The exact receipt and generated mutation corpus are on
-        <code>opencsv-rs/main</code>.</p>
-      </li>
-      <li class="done">
-        <h3>Verify-then-adopt — shipped</h3>
-        <p>Core binding, occurrence, first-occurrence, and supply use the
-        verified kernel, and receiver decisions pass through a pure A5 boundary
-        with stable rejection reasons on <code>opencsv-rs/main</code>. The
-        independent adversarial review was deferred by the owner, not recorded
-        as completed; later findings are fix-forward work.</p>
-      </li>
-      <li class="done">
-        <h3>Co-funded batching v2 model — shipped</h3>
-        <p><code>opencsv-formal/main@c4f970d</code> fixes transaction positions,
-        fee allocation and conservation, fail-closed domains, replacement,
-        duplicate-field and reusable-output guards, and sign-time readiness.
-        Exact hosted CI passed and brought the checked specification audit to
-        54 declarations.</p>
-      </li>
-      <li class="done">
-        <h3>V4 one-input forwarding — shipped and source-gated</h3>
-        <p><code>opencsv-formal/main@68acca5</code> adds seven audited
-        declarations for one predecessor, one real nullifier plus zero padding,
-        recipient plus optional change, exact conservation, one context-bound
-        anchor, and an unchanged live pool. Hosted CI builds Lean, audits all 72
-        declarations, and checks a manifest against exact
-        <code>opencsv-rs@9b9eca2</code>. That last check detects source drift; it
-        is not presented as a proof of the Rust AIR, FRI, storage, or network
-        implementation.</p>
-      </li>
-      <li class="done">
-        <h3>Recursive PCD lineage model — shipped</h3>
-        <p>Eleven audited declarations now model the recursive tree: predecessor
-        validity, edge matching, distinct inputs and nullifiers, current
-        lineage, conservation, and fail-closed legacy transfer/redeem policy.
-        Read the exact model in
-        <a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Lineage.lean"><code>OpenCsv/Lineage.lean</code></a>.</p>
-      </li>
-      <li>
-        <h3>Verified predicate→AIR compiler (research track)</h3>
-        <p>Rather than verifying hand-written AIR constraints after the fact:
-        define predicates in a Lean-embedded DSL, prove the translation sound
-        once, generate circuits. Every future predicate inherits the proof.</p>
-      </li>
-      <li>
-        <h3>Account journal and crash-state refinement</h3>
-        <p>Model the durable operation state machine and connect its reservation,
-        signing, broadcast, resume, and cancellation transitions to the account
-        implementation.</p>
-      </li>
-    </ol>
+    <div class="section-number">08 / KEEP THE QUESTIONS SEPARATE</div>
+    <h2>Follow the boundary you care about.</h2>
+    <p class="sub">This page answers what is proved. Delivery status and
+    throughput have their own interactive, receipt-backed pages so neither can
+    quietly borrow certainty from the formal model.</p>
+    <div class="research-grid">
+      <a class="research-link" href="../roadmap.html"><span class="eyebrow">Delivery boundary</span><h3>Roadmap</h3><p>Completed reference work, active fix-forward work, owner gates, and everything still unauthorized.</p></a>
+      <a class="research-link" href="../scale.html"><span class="eyebrow">Performance boundary</span><h3>How it gets fast</h3><p>A checked fee model, live calculator, benchmarks, limits, and machine-readable receipts.</p></a>
+      <a class="research-link" href="../paper/opencsv.md"><span class="eyebrow">Technical narrative</span><h3>Paper</h3><p>The complete protocol design, security argument, assumptions, and formal-methods interpretation.</p></a>
+    </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
     <p><b>OpenCSV formal verification</b> — machine-checked protocol logic, with no whole-system claim.</p>
-    <p><a href="https://github.com/opencsvnet/opencsv-formal">opencsvnet/opencsv-formal</a> · <a href="../paper/opencsv.md">Paper (§6)</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="../">Home</a></p>
+    <p><a href="https://github.com/opencsvnet/opencsv-formal">opencsvnet/opencsv-formal</a> · <a href="../paper/opencsv.md">Paper (§6)</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="../roadmap.html">Roadmap</a> · <a href="../">Home</a></p>
   </div>
 </footer>
 

@@ -1,0 +1,89 @@
+{
+  "schema": "opencsv-roadmap-v1",
+  "snapshot": "2026-08-08T16:20:00-04:00",
+  "plan_revision": 11,
+  "source": {
+    "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
+    "master_issue": "https://github.com/opencsvnet/opencsv/issues/1"
+  },
+  "tracks": [
+    {
+      "id": "formal-kernel",
+      "order": 1,
+      "title": "Formal specification + pure kernel",
+      "state": "complete",
+      "summary": "72 audited Lean specification declarations and 15 translated-Rust refinement declarations; the verified kernel is adopted in the reference implementation.",
+      "receipts": [
+        "https://github.com/opencsvnet/opencsv-formal/tree/dc7e8eb",
+        "https://github.com/opencsvnet/formal-aeneas/tree/3bcafed",
+        "https://github.com/opencsvnet/opencsv-rs/commit/e4265b946f0aaa31a9230aa67a2f964f5bb0362e"
+      ]
+    },
+    {
+      "id": "prover",
+      "order": 2,
+      "title": "Production prover baseline",
+      "state": "complete",
+      "summary": "Setup caching, predecessor-key binding, AIR-native issuer authorization, frozen proof parameters, and explicit proof-version boundaries are on the reference main line.",
+      "receipts": [
+        "https://github.com/opencsvnet/opencsv-rs/issues/3",
+        "https://github.com/opencsvnet/opencsv-rs/commit/46a3e4870e55cc8fe8908c411ae56c1229ce3b76"
+      ]
+    },
+    {
+      "id": "batching",
+      "order": 3,
+      "title": "Batching v2 + authenticated gossip",
+      "state": "complete",
+      "summary": "The threat model, deterministic co-funded batch, two-round gossip, durable reservations, adversarial repairs, and Lean batch semantics have reproducible receipts.",
+      "receipts": [
+        "https://github.com/opencsvnet/opencsv-rs/issues/4",
+        "https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3"
+      ]
+    },
+    {
+      "id": "signet",
+      "order": 4,
+      "title": "Reference signet readiness",
+      "state": "complete",
+      "summary": "Cold/hot synchronization, marker discovery, fees, recovery, batching amortization, and reproducible reference builds are documented. This is preparation, not a release.",
+      "receipts": [
+        "https://github.com/opencsvnet/opencsv/issues/1",
+        "https://github.com/opencsvnet/opencsv-rs/tree/main/docs"
+      ]
+    },
+    {
+      "id": "signal",
+      "order": 5,
+      "title": "Signal Test USD integration",
+      "state": "active",
+      "summary": "Signal PR #6 is merged at db818658. The recovery job is green; the post-merge default-branch Xcode build is failing and remains a fix-forward gate alongside crash-matrix, clean recovery, and physical-device acceptance.",
+      "receipts": [
+        "https://github.com/opencsvnet/Signal-iOS/pull/6",
+        "https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093",
+        "https://github.com/opencsvnet/Signal-iOS/issues/3"
+      ]
+    },
+    {
+      "id": "release-mainnet",
+      "order": 6,
+      "title": "Release + mainnet",
+      "state": "open",
+      "summary": "Independent security review, release signing/distribution, upstream submission, production issuer policy, and every mainnet broadcast remain deliberately unauthorized.",
+      "receipts": [
+        "https://github.com/opencsvnet/opencsv/issues/1"
+      ]
+    },
+    {
+      "id": "domain",
+      "order": 7,
+      "title": "Domain hardening",
+      "state": "owner",
+      "summary": "Apex, www, TLS, HTTPS, and organization verification are live. DNSSEC still needs Cloudflare activation and the exact DS record published at Namecheap.",
+      "receipts": [
+        "https://opencsv.net/",
+        "https://github.com/opencsvnet/opencsv/issues/1"
+      ]
+    }
+  ]
+}

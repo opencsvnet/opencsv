@@ -1169,10 +1169,33 @@ not Signal UI or packet evidence. The historical output filename still contains
 `draft`; renaming it would add no evidence and would needlessly change the
 reviewed artifact path and receipt.
 
+## 2026-08-08 — Proof, performance, and delivery become separate public pages
+
+The homepage and formal poster had each accumulated a second responsibility:
+they were also carrying abbreviated performance and roadmap sections. That made
+three different kinds of evidence look interchangeable. A machine-checked
+protocol theorem does not prove a throughput projection, and a completed
+reference baseline does not mean the software has shipped.
+
+We split the public research surface into three pages. The formal billboard
+answers what is mechanized and exposes the 72-declaration specification ledger,
+15 translated-Rust refinements, assumptions, and gaps. The performance page
+answers how OpenCSV uses recursive proofs, batching, and carefully bounded
+zero-confirmation forwarding, with a calculator backed by a versioned JSON
+receipt. The new roadmap page answers what is complete, active, open, or owner
+gated and publishes its own machine-readable snapshot.
+
+The homepage now points to those pages instead of repeating their conclusions,
+and the formal page no longer embeds a delivery plan. README, paper, plan of
+record, and navigation use the same boundary. Current Signal status was also
+corrected: PR #6 is merged at `db818658`, recovery CI passed, and the failed
+default Xcode job in run `31262161093` remains a fix-forward gate—not a release.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs
 ([workflow](https://github.com/opencsvnet/opencsv/actions/workflows/screenshots.yml)).
 Benchmarks live in
 [BENCHMARKS.md](https://github.com/opencsvnet/opencsv-rs/blob/main/crates/opencsv-pcd/BENCHMARKS.md).
-The formal ledger is at [opencsv.net/web/formal.html](../web/formal.html).*
+The formal ledger is at [opencsv.net/web/formal.html](../web/formal.html), and
+current delivery gates are at [opencsv.net/roadmap.html](../roadmap.html).*

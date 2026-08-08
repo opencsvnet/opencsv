@@ -71,14 +71,6 @@
   tr.me td { background: rgba(247,147,26,.07); font-weight: 600; }
   .tablewrap { overflow-x: auto; }
 
-  ol.roadmap { list-style: none; counter-reset: phase; }
-  ol.roadmap li { counter-increment: phase; padding: 16px 0 16px 56px; position: relative; border-left: 2px solid var(--border); }
-  ol.roadmap li::before { content: counter(phase); position: absolute; left: -16px; top: 16px; width: 30px; height: 30px; border-radius: 50%;
-    background: var(--card); border: 1px solid var(--border); color: var(--accent); font-family: var(--mono);
-    display: flex; align-items: center; justify-content: center; }
-  ol.roadmap li.done::before { background: var(--accent); color: #111; border-color: var(--accent); }
-  ol.roadmap h3 { font-size: 18px; } ol.roadmap p { color: var(--muted); font-size: 15px; }
-
   .shot { margin-bottom: 36px; }
   .shot img { width: 100%; border-radius: 12px; display: block; }
   .shot figcaption { color: var(--muted); font-size: 14px; margin-top: 10px; }
@@ -89,13 +81,13 @@
   .watch video { width: 100%; max-width: 880px; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--border); display: block; margin: 0 auto; }
   .watch .note { color: var(--muted); font-size: 14px; margin-top: 12px; }
 
-  .scale-callout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: center; }
-  .scale-numbers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .scale-number { padding: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
-  .scale-number strong { display: block; color: var(--accent); font: 700 28px var(--mono); }
-  .scale-number span { color: var(--muted); font-size: 13px; }
-  .scale-callout .button { display: inline-block; padding: 10px 16px; border: 1px solid var(--border); border-radius: 8px; font-weight: 600; }
-  .scale-callout .button:hover { text-decoration: none; border-color: var(--accent); }
+  .research-pages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .research-card { min-height: 230px; padding: 24px; color: var(--fg); background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .research-card:hover { border-color: var(--accent); text-decoration: none; }
+  .research-card .eyebrow { color: var(--accent); font: 12px var(--mono); letter-spacing: 1.5px; text-transform: uppercase; }
+  .research-card h3 { margin: 10px 0; font-size: 23px; }
+  .research-card p { color: var(--muted); font-size: 15px; }
+  .research-card .arrow { display: block; margin-top: 20px; color: var(--accent2); font-weight: 700; }
 
   .consumer-film { text-align: center; }
   .consumer-film .real-film { width: min(100%, 960px); aspect-ratio: 16 / 9; display: block; margin: 26px auto 0; border: 1px solid var(--border); border-radius: 22px; background: #000; box-shadow: 0 28px 90px rgba(0,0,0,.52); }
@@ -106,7 +98,7 @@
   .live-receipt span { color: var(--muted); font-size: 13px; }
 
   @media (max-width: 760px) {
-    .scale-callout { grid-template-columns: 1fr; }
+    .research-pages { grid-template-columns: 1fr; }
     .live-receipt { grid-template-columns: 1fr; }
   }
 
@@ -124,8 +116,8 @@
     non-production demonstration with Bitcoin ordering in the background.</p>
     <div class="cta">
       <a class="primary" href="paper/opencsv.md">Read the paper</a>
-      <a class="secondary" href="scale.html">How it scales</a>
-      <a class="secondary" href="#status">Current status</a>
+      <a class="secondary" href="web/formal.html">Formal methods</a>
+      <a class="secondary" href="roadmap.html">Roadmap</a>
     </div>
   </div>
 </header>
@@ -172,7 +164,7 @@
     <h2>What is real, what is under review, what comes last</h2>
     <p class="sub">OpenCSV publishes receipts at the boundary between those
     three states. A prototype result is evidence, not a production claim; a
-    green draft branch is not a merge.</p>
+    merged prototype is not a release.</p>
     <div class="status-grid">
       <article class="status-card ready">
         <div class="eyebrow">On the reference main line</div>
@@ -201,7 +193,7 @@
         represented as completed.</p>
       </article>
       <article class="status-card last">
-        <div class="eyebrow">Live zero-confirmation chain · integration branch</div>
+        <div class="eyebrow">Merged prototype · fix-forward gates remain</div>
         <h3>Signal-iOS demonstration + one Test USD wallet</h3>
         <p>Two registered simulator wallets completed multiple live paths. The
         current film shows the simplest one: Bob received 1 Test USD from Carol
@@ -221,9 +213,11 @@
         Test USD to Bob and 5 to Note to Self in one confirmed Bitcoin
         transaction. A separate 1 Test USD payment was safely replaced from 2
         to 5 sat/vB; Carol credited it once, and Signal retains both attachments
-        while displaying one payment. Hosted CI, the complete crash matrix,
-        replacement settlement, clean recovery, merge, and physical rollout
-        remain open.</p>
+        while displaying one payment. Signal PR #6 is merged at
+        <code>db818658</code>; its post-merge recovery job passed but the default
+        Xcode build failed. A green fix-forward run, the complete crash matrix,
+        replacement settlement, clean recovery, and physical rollout remain
+        open.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
@@ -241,20 +235,31 @@
   </div>
 </section>
 
-<section id="scale">
-  <div class="wrap scale-callout">
-    <div>
-      <h2>How Bitcoin becomes fast enough</h2>
-      <p class="sub">Recursive proofs keep history off-chain, co-funded
-      transactions share fixed Bitcoin overhead, and exact unconfirmed parents
-      may become provisionally spendable without pretending settlement is
-      instant. The dedicated explainer publishes the equations, limits, and
-      machine-readable receipt.</p>
-      <p><a class="button" href="scale.html">Read the performance explainer →</a></p>
-    </div>
-    <div class="scale-numbers" aria-label="Bitcoin performance summary">
-      <div class="scale-number"><strong>7.32 → 15.15</strong><span>theoretical full-block operations/s, solo → 64-party batch</span></div>
-      <div class="scale-number"><strong>67%</strong><span>modeled fee saving at N=64 and 5 sat/vB</span></div>
+<section id="research">
+  <div class="wrap">
+    <h2>Follow the evidence</h2>
+    <p class="sub">The proof boundary, the performance model, and the delivery
+    plan are different questions. Each now has its own interactive page and
+    links to the underlying source, CI, and machine-readable data.</p>
+    <div class="research-pages">
+      <a class="research-card" href="web/formal.html">
+        <span class="eyebrow">Formal methods</span>
+        <h3>What is actually proved?</h3>
+        <p>Explore the 72-declaration specification ledger, the 15 translated-Rust refinements, axioms, assumptions, and gaps.</p>
+        <span class="arrow">Open the proof map →</span>
+      </a>
+      <a class="research-card" href="scale.html">
+        <span class="eyebrow">Performance</span>
+        <h3>How does it get fast?</h3>
+        <p>Change batch size and fee rate in the checked model, then inspect equations, limits, and benchmark receipts.</p>
+        <span class="arrow">Open the calculator →</span>
+      </a>
+      <a class="research-card" href="roadmap.html">
+        <span class="eyebrow">Roadmap</span>
+        <h3>What is done versus shipped?</h3>
+        <p>Filter completed, active, open, and owner-gated tracks without confusing reference evidence with a release.</p>
+        <span class="arrow">Open the execution map →</span>
+      </a>
     </div>
   </div>
 </section>
@@ -376,77 +381,12 @@
   </div>
 </section>
 
-<section id="roadmap">
-  <div class="wrap">
-    <h2>Roadmap</h2>
-    <p class="sub">From paper to a payment that arrives like a text message.</p>
-    <ol class="roadmap">
-      <li class="done">
-        <h3>Paper &amp; site — done</h3>
-        <p>Scheme specification, security analysis, comparison. You are here.</p>
-      </li>
-      <li class="done">
-        <h3>Rust core — real PCD, working</h3>
-        <p><code>opencsv-core</code> + <code>opencsv-pcd</code>: Poseidon2 commitments and
-        nullifiers over BabyBear, mint/transfer/redeem predicates as hand-written AIR,
-        in-circuit FRI recursion. V3 transfers verify two predecessor proofs
-        in-circuit: <b>0.84–0.85 MB proofs, ~21–22 ms verification, and
-        history-independent size/work</b> (7.77–9.76 s warm proving on M4).
-        V4 also verifies one predecessor into recipient plus change:
-        788 KB, 19.75 ms verification, and 6.435 s proving on the iPhone 16e.
-        The full flow — mint → shielded transfer →
-        double-spend rejected → redeem → public supply audit — passes end to end.</p>
-      </li>
-      <li class="done">
-        <h3>Formal ledgers — machine checked</h3>
-        <p>Seventy-two Lean specification declarations are sorry-free and CI-audited,
-        including seven for v4 one-input forwarding. A fail-closed manifest
-        checks those seven against the exact reviewed Rust source. A separate
-        15-declaration Aeneas audit connects the pure Rust kernel to the model;
-        none of these ledgers are collapsed into an inflated count.</p>
-      </li>
-      <li class="done">
-        <h3>Signal prototype round trip — live on signet</h3>
-        <p>Real simulator wallets completed Carol→Bob→Carol with the serverless
-        Rust account wallet and production proof profile. The exact footage,
-        operation receipt, and confirmed signet transaction ids are published
-        above. This is demonstration evidence, not a production interface or
-        merged Signal release.</p>
-      </li>
-      <li class="done">
-        <h3>Scan-first indexing — working</h3>
-        <p>A protocol-constant marker output makes anchor blocks discoverable
-        via compact filters. A real consignment was verified with <b>no RPC and
-        no indexer</b> — 320 filter bytes + 1,140 block bytes for the window —
-        and an anchor hand-crafted with raw <code>bitcoin-cli</code> from the
-        spec was discovered by the scan engine purely via the filter walk.
-        Two implementations, one protocol, zero coordination.</p>
-      </li>
-      <li class="done">
-        <h3>Production prover &amp; batching v2 — reference stack</h3>
-        <p>Frozen proof parameters, in-circuit issuer authorization and
-        predecessor keys, co-funded batches, authenticated gossip, durable
-        reservations, and real multi-party regtest receipts.</p>
-      </li>
-      <li>
-        <h3>Finish Signal demonstration evidence</h3>
-        <p>The live two-hop, two-required-observer zero-confirmation, explicit
-        shared-batch, and one protocol-safe RBF receipts are complete. Remaining
-        work is hosted CI and review, the crash-state matrix, replacement
-        settlement, clean backup recovery, and physical-device acceptance for
-        the prototype. No production Swift ABI, mainnet action, upstream
-        submission, or Signal release is implied.</p>
-      </li>
-    </ol>
-  </div>
-</section>
-
 <footer>
   <div class="wrap">
     <p><b>OpenCSV</b> — working draft, v0.4. Claims are receipt-backed and
     merge state is stated explicitly.</p>
     <ul>
-      <li><a href="paper/opencsv.md">Paper (markdown)</a> · <a href="scale.html">Bitcoin performance</a></li>
+      <li><a href="paper/opencsv.md">Paper (markdown)</a> · <a href="scale.html">Bitcoin performance</a> · <a href="roadmap.html">Roadmap</a></li>
       <li><a href="web/story.html">A payment, end to end</a> · <a href="web/journal.html">Journal</a> · <a href="web/formal.html">Formal verification</a> · <a href="https://github.com/opencsvnet">github.com/opencsvnet</a></li>
       <li><a href="https://eprint.iacr.org/2025/068">Shielded CSV — Nick, Eagen, Linus (ePrint 2025/068)</a></li>
       <li><a href="https://docs.rgb.info/">RGB</a> · <a href="https://github.com/lightninglabs/taproot-assets">Taproot Assets</a> · <a href="https://github.com/Plonky3/Plonky3">Plonky3</a> · <a href="https://github.com/whisperfish/presage">presage</a></li>
