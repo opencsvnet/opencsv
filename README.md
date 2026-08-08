@@ -101,11 +101,12 @@ block for each transaction.
 The published film is a 59.3-second cut made entirely from one uninterrupted
 230.803-second recording of Bob's actual Signal simulator. It starts on the
 real received +1 card and follows his return through pending to verified. User
-action plays at normal speed with no explanatory overlay. Four reading cards
-appear only during the static wait; the DEBUG proof and network-verification
-interval runs at 8.5× and is labeled in-frame. No Signal or transaction state
-is reconstructed. The MP4 SHA-256 is
-`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
+action plays at normal speed with the Signal screen centered alone. During the
+static wait, the phone moves left and four reading cards occupy a separate
+right-hand panel; no card covers the app. The DEBUG proof and
+network-verification interval runs at 8.5× and is labeled on every card. No
+Signal or transaction state is reconstructed. The MP4 SHA-256 is
+`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
 Test USD is signet-only and has no monetary or redemption value.
 
 The live simulator acceptance completed a real round trip. Carol sent 25 Test
@@ -212,7 +213,7 @@ one-dollar return described above. Action remains at normal speed; the only
 speed change is the labeled 8.5× static wait described above;
 no Signal screen or payment state is reconstructed. The published MP4 has
 SHA-256
-`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
+`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
 Historical 25/10 and zero-confirmation captures remain labeled separately.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 72

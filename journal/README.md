@@ -1052,12 +1052,15 @@ large explanatory panel beside the phone and sped interactions to 2–2.5×. The
 owner correctly found the action chunky and the composition too artificial.
 It was replaced before merge.
 
-The final 59.3-second portrait cut leaves every action segment at normal speed
-with only Signal visible. During the otherwise static wait, four cards explain
-durable intent, local proof, signed persistence and relay, and the two-observer
-raw-byte check. Only that wait is compressed, to 8.5×, and the rate is printed
-on every card. MP4 SHA-256:
-`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
+The next 59.3-second portrait cut left every action segment at normal speed and
+put four reading cards over the otherwise static phone view. The owner rejected
+that geometry too: the explanation should accompany the evidence, not obscure
+it. The final landscape cut keeps Signal centered alone during action. During
+the wait, the phone moves left and the four cards occupy a separate right-hand
+panel. They explain durable intent, local proof, signed persistence and relay,
+and the two-observer raw-byte check without covering the application. Only that
+wait is compressed, to 8.5×, and the rate is printed on every card. MP4 SHA-256:
+`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
 Test USD remains signet-only and has no monetary or redemption value.
 
 ---

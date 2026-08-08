@@ -35,15 +35,17 @@ The publishable files are
 The homepage film is a 59.3-second cut made entirely from one uninterrupted
 230.803-second recording of the real Bob Signal simulator. It begins on Bob's
 received +1 Test USD card and follows his 1 Test USD return through pending to
-verified. Action runs at normal speed with only Signal visible. Four reading
-cards appear only during the otherwise static wait; the DEBUG proof and network
-verification interval runs at 8.5× and is labeled in-frame. The Signal interface
-and payment states are never recreated by Remotion or another renderer.
+verified. Action runs at normal speed with Signal centered alone. During the
+otherwise static wait, the phone moves left and four reading cards appear in a
+separate right-hand panel; no card covers the app. The DEBUG proof and network
+verification interval runs at 8.5× and is labeled on every card. The Signal
+interface and payment states are never recreated by Remotion or another
+renderer.
 
 - MP4: `../media/opencsv-real-signal-test-usd-roundtrip.mp4`
 - poster: `../media/opencsv-real-signal-test-usd-poster.jpg`
 - social card: `../media/opencsv-real-signal-test-usd-social.jpg`
-- MP4 SHA-256: `6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`
+- MP4 SHA-256: `b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`
 - Carol → Bob anchor: `445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd`
 - Bob → Carol anchor: `6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`
 

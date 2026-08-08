@@ -1186,10 +1186,11 @@ confirmed at height 316765. Bob sent 1 Test USD back in
 confirmed at height 316766. mempool.space and Blockstream returned the same
 confirmed block for each transaction. The published 59.3-second cut is made
 entirely from one uninterrupted 230.803-second Bob simulator recording. User
-action remains at normal speed with no explanatory overlay. Four reading cards
-appear only during the static wait; the DEBUG proof and network-verification
-interval is compressed 8.5× and labeled in-frame. No application or transaction
-state is reconstructed.
+action remains at normal speed with Signal centered alone. During the static
+wait, the phone moves left and four reading cards occupy a separate right-hand
+panel; no card obscures the application. The DEBUG proof and
+network-verification interval is compressed 8.5× and labeled on every card. No
+application or transaction state is reconstructed.
 
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction
@@ -1279,7 +1280,7 @@ hosted CI, review, dependency repinning, and merge. The complete crash-state mat
 clean-install recovery, RBF settlement, and physical-device rollout remain
 open. The simple 59.3-second real-Signal cut described above is published on
 the project homepage with its speed changes visible in-frame. Its SHA-256 is
-`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
+`b9c7e6538f3322451362c9651884d7d1e60a8b348a295b69e67aaae365cdbf14`.
 
 ---
 
