@@ -1148,6 +1148,27 @@ has SHA-256
 It is exposed only on an unlinked review page until the owner approves the
 visual language.
 
+## 2026-08-08 — The two-screen cut becomes the homepage film
+
+The owner approved the exact review artifact without requesting another edit.
+PR [#20](https://github.com/opencsvnet/opencsv/pull/20) was marked ready and
+fast-forwarded without force to `opencsv/main` at
+[`227d4f5`](https://github.com/opencsvnet/opencsv/commit/227d4f58dbd0c9d9cc6254179a58019556378c2f).
+The post-merge documentation run
+[31268281380](https://github.com/opencsvnet/opencsv/actions/runs/31268281380)
+and Pages deployment
+[31268280785](https://github.com/opencsvnet/opencsv/actions/runs/31268280785)
+both passed.
+
+The homepage now points to those same approved MP4 bytes and poster rather than
+rerendering the footage. Its headline and surrounding copy describe what this
+cut actually shows: Bob sends 1 Test USD to Carol; one-screen moments pair the
+real interface with context, and the handoff uses synchronized Bob and Carol
+views. The explanatory dot remains explicitly disclaimed as editorial motion,
+not Signal UI or packet evidence. The historical output filename still contains
+`draft`; renaming it would add no evidence and would needlessly change the
+reviewed artifact path and receipt.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

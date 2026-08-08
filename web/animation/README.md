@@ -55,13 +55,12 @@ Both anchors are public Bitcoin signet receipts and confirmed at heights 316765
 and 316766. Test USD has no monetary or redemption value. The film is a simple
 consumer payment receipt; it does not claim an unconfirmed-parent child.
 
-## Two-screen message-flow draft
+## Two-screen message-flow film
 
-`Signal-Message-Flow` is the next editorial cut. It preserves the approved
-homepage film and renders to a separate draft asset. The composition alternates
-between one real simulator plus a side explanation and two real simulator
-recordings. Its moving dot explains the encrypted Signal attachment path; it
-does not recreate a Signal bubble or claim network acceptance.
+`Signal-Message-Flow` is the owner-approved homepage film. The composition
+alternates between one real simulator plus a side explanation and two real
+simulator recordings. Its moving dot explains the encrypted Signal attachment
+path; it does not recreate a Signal bubble or claim network acceptance.
 
 The Bob/Carol two-screen passage uses recordings whose media creation times are
 identical (`2026-08-08T10:15:29Z`). The active send passage cuts dead pauses from
@@ -79,9 +78,10 @@ npm run render:message-flow
 npm run still:message-flow
 ```
 
-The draft outputs are `out/message-flow/opencsv-signal-message-flow-draft.mp4`
-and `out/message-flow/poster.png`. They are review artifacts, not transaction
-receipts and not yet the homepage hero.
+The published outputs are
+`out/message-flow/opencsv-signal-message-flow-draft.mp4` and
+`out/message-flow/poster.png`. The historical filename retains `draft`; the
+bytes reviewed and approved by the owner were not rerendered or renamed.
 
 ## Withdrawn Consumer USD composition
 
