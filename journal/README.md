@@ -107,7 +107,7 @@ merkle + one block) takes over the point check. The exclusion scan is
 
 ## 2026-08-01 — u64 limb soundness becomes a theorem
 
-The u64 conservation gadget's carry argument — the scariest informal claim in
+The u64 conservation gadget's carry argument — the most failure-sensitive informal claim in
 the codebase (a wrap-around bug there would mint money) — is mechanized
 ([b036cf3](https://github.com/opencsvnet/opencsv-formal/commit/b036cf3)):
 field equality ⟺ integer equality within the checked range. Bonus honest
@@ -1080,15 +1080,23 @@ phone. Each layer names its status and opens the exact source or CI receipt:
 72 audited protocol/state/value/scan/batch/lineage declarations, a separate
 15-declaration Aeneas refinement of four pure-kernel families, a source-shape
 gate rather than an equivalence proof for the AIR prover, external Bitcoin and
-Poseidon2/FRI security assumptions, and an integration-tested—not
-mechanized—Rust↔Swift↔Signal boundary. The current V4 correspondence is pinned
-to `opencsv-rs@9b9eca2`, and the shipped eleven-declaration recursive-lineage
-model is no longer presented as roadmap work.
+Poseidon2/FRI security assumptions, and general runtime boundaries outside the
+proof. The current V4 correspondence is pinned to `opencsv-rs@9b9eca2`, and the
+shipped eleven-declaration recursive-lineage model is no longer presented as
+roadmap work.
 
 We rejected a synthetic completeness percentage and also rejected adding 72
 and 15 into an “87 theorem” headline: the two ledgers make different claims.
 The page instead exposes a searchable, CI-regenerated declaration ledger and
 links every major statement back to Lean, Rust, the paper, or its hosted run.
+
+The first poster draft put the temporary Swift bridge and Signal fork on the
+same horizontal coverage rail as the protocol and Rust implementation. The
+owner rejected that implication. They are demonstration code built to show a
+consumer dollar-payment experience to Signal's team, not an OpenCSV production
+interface or a formal coverage layer. The formal page now contains neither;
+the homepage and end-to-end story label them only as a separate non-production
+demonstration.
 
 ---
 

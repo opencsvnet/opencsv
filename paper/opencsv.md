@@ -113,7 +113,8 @@ matter for verification:
   source revision and generated rows as a machine-checkable receipt.
 - A security analysis (inflation soundness, double-spend resistance, privacy bounds,
   failure modes) and a roadmap for mechanized verification of the protocol logic in
-  Lean 4 and a Rust reference implementation with a Signal-based transport.
+  Lean 4, plus a Rust reference implementation. A separate Signal fork demonstrates
+  one possible consumer transport and UI; it is not a production interface.
 
 ### 1.4 Organization
 
@@ -742,6 +743,14 @@ fully determines supply. This gives the attestation workflow issuers already per
 
 ### 4.10 Client wallet, custody, and recovery boundary
 
+This section's custody and transaction rules belong to the Rust reference
+wallet. The Signal fork and temporary Swift bridge used in the public film are
+a separate demonstration adapter for showing a consumer dollar-payment
+experience to Signal's team. They are not a supported production ABI, an
+upstream commitment, or part of the formal-verification claim. Signal-specific
+details below document that prototype's acceptance work rather than define the
+OpenCSV protocol boundary.
+
 The reference product architecture keeps custody and Bitcoin policy in Rust,
 not in the messaging UI and not in an OpenCSV server. One random 32-byte
 OpenCSV account root derives domain-separated owner and BIP84 fee-wallet
@@ -1092,9 +1101,9 @@ pure Rust kernel decisions have a narrow translated refinement. The concrete
 AIR/recursive prover is adversarially tested and source-shape gated, but not
 proved equivalent to the Lean predicate. Poseidon2 and concrete FRI security,
 Bitcoin consensus/finality, storage and crash safety, networking, issuer-key
-operations, the Rust↔Swift FFI, and Signal lifecycle/UI remain distinct
-external or tested trust surfaces. None of the 72 specification declarations or
-15 refinement declarations implies whole-wallet correctness.
+operations, host-language adapters, and application lifecycle/UI remain
+distinct external or tested trust surfaces. None of the 72 specification
+declarations or 15 refinement declarations implies whole-wallet correctness.
 
 ---
 
@@ -1181,8 +1190,8 @@ solo anchors. The resulting 67% saving and 15.15 operations/s theoretical
 full-block upper bound are explicitly separated from measured network
 throughput.
 
-**Signal transport (real two-hop signet receipt; release gates remain).** The
-current product exposes one permanently signet-only **Test USD** instrument,
+**Signal demonstration transport (real two-hop signet receipt; not a production
+interface).** The current prototype exposes one permanently signet-only **Test USD** instrument,
 with no monetary or redemption value. Signal can receive, send, and inspect
 that reviewed instrument but cannot mint it; issuance remains a non-default
 headless Rust capability. Its account wallet uses Bitcoin only as a protocol
@@ -1363,5 +1372,6 @@ the project homepage with its speed changes visible in-frame. Its SHA-256 is
 ---
 
 *OpenCSV is a working draft. Phases 1–3 (paper/site, Rust core with recursive PCD,
-Lean 4 formalization) are implemented; §7 reports measured numbers. Phase 4 (Signal
-transport) is in progress.*
+Lean 4 formalization) are implemented; §7 reports measured numbers. The separate
+Signal/Swift demonstration is prototype evidence for discussion with Signal's
+team, not Phase 4 of the production protocol.*

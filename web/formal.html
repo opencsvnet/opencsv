@@ -51,9 +51,8 @@
 
   .coverage { background: var(--ink); color: var(--paper2); }
   .coverage .sub { color: #b8b5ac; }
-  .boundary-rail { display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid #4a4945; margin: 34px 0 24px; }
-  .boundary { min-height: 164px; background: transparent; color: inherit; border: 0; border-right: 1px solid #4a4945; padding: 18px; text-align: left; cursor: pointer; transition: background .15s, color .15s, transform .15s; }
-  .boundary:last-child { border-right: 0; }
+  .boundary-rail { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; border: 1px solid #4a4945; background: #4a4945; margin: 34px 0 24px; }
+  .boundary { min-height: 164px; background: var(--ink); color: inherit; border: 0; padding: 18px; text-align: left; cursor: pointer; transition: background .15s, color .15s, transform .15s; }
   .boundary:hover, .boundary:focus-visible { background: #252525; outline: 3px solid var(--orange); outline-offset: -3px; }
   .boundary[aria-selected="true"] { background: var(--orange); color: #111; }
   .boundary .step { font: 700 11px/1 var(--mono); display: block; opacity: .7; }
@@ -133,8 +132,6 @@
     .metric:nth-child(2) { border-right: 0; }
     .metric:nth-child(-n+2) { border-bottom: 2px solid var(--line); }
     .boundary-rail { grid-template-columns: repeat(3, 1fr); }
-    .boundary:nth-child(3) { border-right: 0; }
-    .boundary:nth-child(-n+3) { border-bottom: 1px solid #4a4945; }
     .foundation-grid { grid-template-columns: repeat(2, 1fr); }
     .foundation:nth-child(2) { border-right: 0; }
     .foundation:nth-child(-n+2) { border-bottom: 2px solid var(--line); }
@@ -151,8 +148,6 @@
     .metrics, .foundation-grid { grid-template-columns: 1fr; }
     .metric, .foundation { border-right: 0; border-bottom: 2px solid var(--line); }
     .boundary-rail { grid-template-columns: repeat(2, 1fr); }
-    .boundary, .boundary:nth-child(3) { border-right: 1px solid #4a4945; border-bottom: 1px solid #4a4945; }
-    .boundary:nth-child(even) { border-right: 0; }
     .coverage-panel { padding: 24px; }
     .evidence-links { border-left: 0; border-top: 1px solid #4a4945; padding: 22px 0 0; }
     #gaps .layers { grid-template-columns: 1fr; }
@@ -178,7 +173,7 @@
         <p class="tagline">OpenCSV machine-checks the rules that prevent inflation,
         value creation, and quiet double spends. It does not pretend that Lean
         has proved Bitcoin, Poseidon2, the AIR prover, storage, networking, or
-        Signal.</p>
+        application software.</p>
       </div>
       <aside class="hero-note">
         <div class="eyebrow">How to read this page</div>
@@ -201,7 +196,7 @@
 <section id="coverage" class="coverage">
   <div class="wrap">
     <div class="section-number">01 / COMPLETENESS</div>
-    <h2>Follow the claim from paper to phone.</h2>
+    <h2>Follow the claim from model to implementation.</h2>
     <p class="sub">No single percentage can describe this. Select a layer to see
     its exact status, proof boundary, pinned source, and receipt.</p>
     <div class="boundary-rail" role="tablist" aria-label="Formal coverage layers">
@@ -210,7 +205,6 @@
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-kernel" data-panel="panel-kernel"><span class="step">03</span><strong>Pure Rust kernel</strong><em>refinement-proved</em></button>
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-air" data-panel="panel-air"><span class="step">04</span><strong>AIR + recursive prover</strong><em>tested / shape-gated</em></button>
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-bitcoin" data-panel="panel-bitcoin"><span class="step">05</span><strong>Bitcoin chain view</strong><em>external + tested</em></button>
-      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-signal" data-panel="panel-signal"><span class="step">06</span><strong>Rust ↔ Swift ↔ Signal</strong><em>integration-tested</em></button>
     </div>
 
     <article id="panel-spec" class="coverage-panel active" role="tabpanel">
@@ -222,7 +216,7 @@
       <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Lineage.lean">RECURSIVE LINEAGE SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Batch.lean">BATCH MODEL SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Forward.lean">ONE-INPUT FORWARDING ↗</a><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER §6 ↗</a></div>
     </article>
     <article id="panel-kernel" class="coverage-panel" role="tabpanel" hidden>
-      <div><span class="verdict partial">Narrow direct refinement</span><h3>Four families of pure Rust decisions are connected to Lean.</h3><p>Aeneas translates the pure <code>opencsv-kernel</code> implementation and proves binding, well-formed occurrence, first occurrence, and supply audit refine their specifications. Fifteen declarations support that bridge. Proof verification, chain I/O, storage, concurrency, the account registry, and FFI glue are outside it.</p></div>
+      <div><span class="verdict partial">Narrow direct refinement</span><h3>Four families of pure Rust decisions are connected to Lean.</h3><p>Aeneas translates the pure <code>opencsv-kernel</code> implementation and proves binding, well-formed occurrence, first occurrence, and supply audit refine their specifications. Fifteen declarations support that bridge. Proof verification, chain I/O, storage, concurrency, and the account registry are outside it.</p></div>
       <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/formal-aeneas/tree/3bcafed">AENEAS PROJECT @ 3bcafed ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Refinement.lean">BINDING + WELL-FORMED REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec3.lean">FIRST-OCCURRENCE REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec4.lean">SUPPLY REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209">GREEN REPRODUCIBILITY CI ↗</a></div>
     </article>
     <article id="panel-air" class="coverage-panel" role="tabpanel" hidden>
@@ -232,10 +226,6 @@
     <article id="panel-bitcoin" class="coverage-panel" role="tabpanel" hidden>
       <div><span class="verdict assumed">External security boundary</span><h3>Bitcoin supplies ordering and probabilistic settlement.</h3><p>Lean proves scan-first exclusion relative to a verified ordered chain view. Rust validates proof-of-work headers, BIP158 candidates, Merkle inclusion, confirmations, and reorgs. The security of Bitcoin consensus, sufficient honest hashpower, network availability, and the meaning of <code>k</code> confirmations remain external assumptions.</p></div>
       <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN SOUNDNESS SOURCE ↗</a><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN WHITEPAPER ↗</a><a href="https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki">BIP158 COMPACT FILTERS ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/tree/e4265b946f0aaa31a9230aa67a2f964f5bb0362e/crates/opencsv-cbf">OPENCSV CHAIN VERIFIER ↗</a></div>
-    </article>
-    <article id="panel-signal" class="coverage-panel" role="tabpanel" hidden>
-      <div><span class="verdict tested">Integration-tested</span><h3>The product boundary is real code, not a theorem.</h3><p>The Rust↔Swift C ABI decodes requests, resolves wallet handles, manages memory and locks, serializes receipts and stable rejection reasons, and controls the exported symbol surface. Signal then handles lifecycle, attachments, notifications, backup, and presentation. These surfaces have adversarial and simulator receipts, but no direct Lean refinement.</p></div>
-      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-rs/tree/main/crates/opencsv-ffi">RUST FFI SOURCE ↗</a><a href="https://github.com/opencsvnet/Signal-iOS/pull/6">SIGNAL INTEGRATION CANDIDATE ↗</a><a href="https://github.com/opencsvnet/Signal-iOS/issues/3">ARCHITECTURE + LIVE RECEIPTS ↗</a><a href="../journal/">FAILURES AND ACCEPTANCE JOURNAL ↗</a></div>
     </article>
   </div>
 </section>
@@ -557,16 +547,11 @@
         issuer-seed knowledge and predecessor keys in-circuit and enforces its
         94-bit floor. Deployments still need an explicit allowlist/distribution
         boundary for accepted self-described root-circuit commitments.</p></li>
-      <li><b>5. Rust↔Swift FFI correctness is tested, not proved.</b>
-        <p>The C ABI, JSON decoding, handle registry, memory ownership, locking,
-        stable rejection reasons, and exported-symbol policy sit between the
-        Rust wallet and Signal. CI and simulator acceptance exercise them; no
-        Lean theorem currently connects those calls to the account model.</p></li>
-      <li><b>6. Crash safety and product behavior are runtime properties.</b>
+      <li><b>5. Crash safety and runtime orchestration are tested, not proved.</b>
         <p>The durable operation journal, SQLite transactions, attachment
-        delivery, backup, notifications, and Signal UI are validated by
-        adversarial and end-to-end tests. They are not included in the 72 or 15
-        declaration ledgers.</p></li>
+        delivery, backup, notifications, memory ownership, and concurrency are
+        validated by adversarial and end-to-end tests. They are not included in
+        the 72 or 15 declaration ledgers.</p></li>
     </ul>
   </div>
 </section>
@@ -613,7 +598,7 @@
       </li>
       <li class="done">
         <h3>Verify-then-adopt — shipped</h3>
-        <p>Core/FFI binding, occurrence, first-occurrence, and supply use the
+        <p>Core binding, occurrence, first-occurrence, and supply use the
         verified kernel, and receiver decisions pass through a pure A5 boundary
         with stable rejection reasons on <code>opencsv-rs/main</code>. The
         independent adversarial review was deferred by the owner, not recorded
@@ -657,12 +642,6 @@
         <p>Model the durable operation state machine and connect its reservation,
         signing, broadcast, resume, and cancellation transitions to the account
         implementation.</p>
-      </li>
-      <li>
-        <h3>Typed FFI contract</h3>
-        <p>Replace JSON-shaped trust at the product boundary with a generated,
-        versioned interface whose ownership, error, and state-transition rules
-        can be checked on both Rust and Swift sides.</p>
       </li>
     </ol>
   </div>

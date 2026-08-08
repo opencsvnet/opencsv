@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OpenCSV — Send dollars in Signal</title>
-<meta name="description" content="Send private dollar payments to the people in your Signal conversations, with Bitcoin ordering in the background.">
+<title>OpenCSV — A Signal dollar-payment demonstration</title>
+<meta name="description" content="See what private dollar payments in Signal could feel like, demonstrated with a non-production prototype on Bitcoin signet.">
 <link rel="canonical" href="https://opencsv.net/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="OpenCSV — Send dollars in Signal">
-<meta property="og:description" content="Watch Carol send Test USD to Bob and Bob send it back in real Signal simulator builds on Bitcoin signet.">
+<meta property="og:title" content="OpenCSV — A Signal dollar-payment demonstration">
+<meta property="og:description" content="Watch a non-production Signal prototype send Test USD from Carol to Bob and back on Bitcoin signet.">
 <meta property="og:url" content="https://opencsv.net/">
 <meta property="og:image" content="https://opencsv.net/web/media/opencsv-real-signal-test-usd-social.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="OpenCSV — Send dollars in Signal">
-<meta name="twitter:description" content="A real Test USD round trip inside Signal, anchored and verified on Bitcoin signet.">
+<meta name="twitter:title" content="OpenCSV — A Signal dollar-payment demonstration">
+<meta name="twitter:description" content="A real Test USD round trip in a non-production Signal prototype on Bitcoin signet.">
 <meta name="twitter:image" content="https://opencsv.net/web/media/opencsv-real-signal-test-usd-social.jpg">
 <style>
   :root {
@@ -120,8 +120,8 @@
 <header class="hero">
   <div class="wrap">
     <h1>Open<span class="csv">CSV</span></h1>
-    <p class="tagline">Send dollars in Signal. Private payments for the people
-    in your conversations, with Bitcoin ordering in the background.</p>
+    <p class="tagline">What sending dollars in Signal could feel like. A
+    non-production demonstration with Bitcoin ordering in the background.</p>
     <div class="cta">
       <a class="primary" href="paper/opencsv.md">Read the paper</a>
       <a class="secondary" href="scale.html">How it scales</a>
@@ -133,6 +133,10 @@
 <section id="consumer-demo">
   <div class="wrap consumer-film">
     <h2>Receive $1. Send it back. Inside Signal.</h2>
+    <p class="receipt"><strong>Consumer demonstration, not a production Signal
+    or OpenCSV interface.</strong> The Signal fork and temporary Swift bridge
+    exist to show this experience to Signal's team. They are not a shipped
+    feature, supported ABI, upstream commitment, or formal-verification layer.</p>
     <p class="sub" style="margin-left:auto;margin-right:auto">The film opens on
     Bob's real received payment from Carol, then follows Bob sending the same
     amount back. It is actual Signal simulator footage using public Bitcoin
@@ -195,13 +199,13 @@
         <div class="eyebrow">Now on opencsv-rs/main</div>
         <h3>Verified kernel, accept boundary, readiness, wallet</h3>
         <p>A4/A5 adoption, dated signet/readiness evidence, C2 adversarial
-        fixes, and the Rust-owned Signal account-wallet foundation are merged.
+        fixes, and the Rust-owned account-wallet foundation are merged.
         The independent adversarial re-review was deferred by the owner, not
         represented as completed.</p>
       </article>
       <article class="status-card last">
         <div class="eyebrow">Live zero-confirmation chain · integration branch</div>
-        <h3>Signal-iOS + one Test USD wallet</h3>
+        <h3>Signal-iOS demonstration + one Test USD wallet</h3>
         <p>Two registered simulator wallets completed multiple live paths. The
         current film shows the simplest one: Bob received 1 Test USD from Carol
         and sent 1 back; both public anchors confirmed. Earlier acceptance runs
@@ -226,7 +230,7 @@
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
-    product.</strong> The target Signal wallet exposes fee reserve, UTXOs,
+    product.</strong> The Signal demonstration wallet exposes fee reserve, UTXOs,
     confirmations, and evidence, but Bitcoin can be spent only by an OpenCSV
     transfer or protocol-safe fee bump. There is no general BTC send, mint
     interface, or issuer secret in Signal; issuance is an explicitly featured
@@ -405,11 +409,12 @@
         none of these ledgers are collapsed into an inflated count.</p>
       </li>
       <li class="done">
-        <h3>Signal Test USD round trip — live on signet</h3>
+        <h3>Signal prototype round trip — live on signet</h3>
         <p>Real simulator wallets completed Carol→Bob→Carol with the serverless
         Rust account wallet and production proof profile. The exact footage,
         operation receipt, and confirmed signet transaction ids are published
-        above. This is integration evidence, not a merged Signal release.</p>
+        above. This is demonstration evidence, not a production interface or
+        merged Signal release.</p>
       </li>
       <li class="done">
         <h3>Scan-first indexing — working</h3>
@@ -427,12 +432,13 @@
         reservations, and real multi-party regtest receipts.</p>
       </li>
       <li>
-        <h3>Finish Signal release gates</h3>
+        <h3>Finish Signal demonstration evidence</h3>
         <p>The live two-hop, two-required-observer zero-confirmation, explicit
         shared-batch, and one protocol-safe RBF receipts are complete. Remaining
         work is hosted CI and review, the crash-state matrix, replacement
-        settlement, clean backup recovery, and physical-device acceptance. No
-        mainnet or release action is implied.</p>
+        settlement, clean backup recovery, and physical-device acceptance for
+        the prototype. No production Swift ABI, mainnet action, upstream
+        submission, or Signal release is implied.</p>
       </li>
     </ol>
   </div>
