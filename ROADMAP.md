@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-07, rev 10) — Live batch and fee-replacement receipts
+# OpenCSV Master Plan (2026-08-08, rev 11) — Exact Rust merge and final Signal gates
 
 ## Plan of record
 
@@ -19,9 +19,9 @@ The execution order is still:
 
 Tracks 1–4 have reached their reference implementation baselines. Signal
 simulator integration remains the active final workstream, but the real solo
-two-hop signet path is no longer an open gate. This does not imply a merge,
-release, upstream Signal submission, physical-device rollout, or mainnet
-readiness.
+two-hop signet path is no longer an open gate. Rust has merged; this does not
+imply a Signal merge, release, upstream Signal submission, physical-device
+rollout, or mainnet readiness.
 
 ## Verified completed baselines
 
@@ -157,14 +157,19 @@ The live acceptance build starts from Rust `3295cd5` and Signal
 `c14f02025daa557ca9149325dfc3199bced1012b`. It preserves Test USD presentation,
 queues a durable chat intent before proving, moves proof work off the sheet's
 critical path, and resumes by operation id. The real run produced two confirmed
-signet anchors and a verified provisional return. It also found local repairs
-that are not yet merged: signed limb borrows in the value gadget, canonical
-confirmed-parent snapshot handling, and corrupt BIP158 cache refetch. Hosted CI
-and review apply to the repaired exact tip, not merely the earlier base commits.
+signet anchors and a verified provisional return. It also found repairs—signed
+limb borrows in the value gadget, canonical confirmed-parent snapshot handling,
+and corrupt BIP158 cache refetch—now consolidated in merged Rust and the
+unmerged Signal candidate. Signal hosted CI and review apply to its repaired
+exact tip, not merely the earlier base commit.
 
-The current consolidated candidates are Rust
+The consolidated Rust implementation is merged on `opencsv-rs/main` at
 [`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
-and Signal
+by exact fast-forward after hosted runs
+[31231128052](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052)
+and
+[31231129868](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231129868)
+passed on that SHA. The current Signal candidate is
 [`348b8e1d20`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41).
 They include the corrected two-required-observer policy, the true unconfirmed
 parent/child receipt, batch-envelope verification and account identity fixes,
@@ -173,9 +178,9 @@ that keeps an RBF replacement to one payment bubble while retaining both exact
 attachments. The exact Rust recovery-feature suite passes 71 tests with two
 explicitly ignored slow release-only cases; the warning-denied Signal store
 suite passes 27 tests and the full simulator app builds against the exact Rust
-XCFramework. Rust hosted CI remains a merge gate. Signal's recovery hosted job
-is green, while its ordinary job stops before compilation at the separately
-tracked CocoaPods lockfile checksum gate.
+XCFramework. Signal's recovery hosted job is green, while its ordinary job
+stops before compilation at the separately tracked Rust repin/CocoaPods
+lockfile checksum gate.
 
 Required product behavior:
 
@@ -296,8 +301,9 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Complete exact-tip hosted CI for Rust `28010d8` and Signal `348b8e1d20`,
-  repin Signal to the merged Rust SHA, and merge only reviewed green candidates.
+- Repin Signal `348b8e1d20` to merged Rust `28010d8`, repair the CocoaPods
+  checksum, complete exact-tip hosted CI, and merge only the reviewed green
+  Signal tip.
 - Complete the crash-state matrix and observe the fee replacement through
   CBF/SPV-confirmed settlement.
 - Separate clean-install Secure Backup recovery/rebind acceptance.

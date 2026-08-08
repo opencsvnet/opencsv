@@ -113,8 +113,8 @@ required pinned Blockstream observer returned identical raw bytes
 in 347 ms; the optional mempool.space observer timed out after 8.025 seconds
 and was recorded as unavailable rather than success.
 
-That historical one-required-observer policy is superseded in the current
-candidate. Rust
+That historical one-required-observer policy is superseded in the merged Rust
+implementation and the current Signal candidate. Rust
 [`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
 and Signal
 [`348b8e1d20`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41)
@@ -165,11 +165,16 @@ persisted-consignment reproducer plus focused transfer tests. A confirmed
 parent was also being duplicated as a mempool sentinel and could conflict with
 itself; that snapshot path now resolves to one canonical occurrence. These
 repairs, batch-envelope/account-identity fixes, and replacement-delivery changes
-are consolidated in the Rust and Signal candidates above. They remain under
-hosted-CI and merge review and are not represented as release code. The exact
-Rust recovery-feature suite passes 71 tests with two deliberate slow
+are consolidated in Rust `main` and the Signal candidate above. Rust PR #13 was
+fast-forwarded exactly at `28010d8` after hosted runs
+[31231128052](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052)
+and
+[31231129868](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231129868)
+passed on that SHA. This is not represented as release code. The
+exact Rust recovery-feature suite passes 71 tests with two deliberate slow
 release-only ignores; the warning-denied Signal store suite passes 27 tests and
 the full simulator app builds locally against the exact Rust XCFramework.
+Signal still requires dependency repinning, hosted CI, and merge review.
 
 Zero-confirmation availability is deliberately narrower than “trust the
 mempool.” It is enabled only when the phone owns the confirmed-history exclusion

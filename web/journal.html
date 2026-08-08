@@ -971,12 +971,18 @@
     <p>The first retry rotated an attachment nonce and initially produced two
     visible <code>+1 Test USD</code> bubbles. A display-text deduplication
     shortcut was rejected. Rust <a href="https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd"><code>28010d8</code></a>
-    now supplies one cryptographic logical-payment id across replacements;
+    now supplies one cryptographic logical-payment id across replacements and
+    was fast-forwarded exactly to <code>opencsv-rs/main</code> after hosted runs
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052">31231128052</a>
+    and
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31231129868">31231129868</a>
+    passed;
     Signal <a href="https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41"><code>348b8e1</code></a>
     supersedes the presentation while retaining both signed receipts. Local
     Rust recovery validation passed 71 tests plus two integration tests, and
-    the warning-denied Signal wallet-store suite passed 27 tests. Hosted Rust
-    tests and Signal's tracked CocoaPods checksum repair remain merge gates.</p>
+    the warning-denied Signal wallet-store suite passed 27 tests. Signal's
+    tracked Rust repin/CocoaPods checksum repair and hosted CI remain merge
+    gates.</p>
   </div>
 
 </div>

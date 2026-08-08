@@ -1000,9 +1000,14 @@ exactly once. Settlement of the replacement remains open.
 The first replacement delivery rotated an attachment nonce. That was useful for
 transport retry, but Signal initially rendered the original and replacement
 receipts as two `+1 Test USD` bubbles. A text-based deduplication shortcut was
-rejected because display text is not a payment identity. Rust candidate
+rejected because display text is not a payment identity. Rust
 [`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
-now gives every replacement one cryptographic logical-payment id; Signal
+now gives every replacement one cryptographic logical-payment id and was
+fast-forwarded exactly to `opencsv-rs/main` after hosted runs
+[31231128052](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052)
+and
+[31231129868](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231129868)
+passed. Signal
 candidate
 [`348b8e1`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41)
 uses it to supersede presentation while retaining both signed receipts as
@@ -1010,8 +1015,8 @@ evidence. Local Rust recovery-feature validation passed 71 tests plus two
 integration tests, with two intentional slow release-only tests ignored. The
 warning-denied Signal wallet-store suite passed 27 tests, and the exact
 framework built and installed on Bob and Carol without replacing their state.
-Rust hosted tests are still running; Signal's ordinary hosted build remains
-blocked before compilation by the separately tracked CocoaPods checksum repair.
+Signal's ordinary hosted build remains blocked before compilation by the
+separately tracked Rust repin/CocoaPods checksum repair.
 
 ---
 
