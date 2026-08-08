@@ -1070,9 +1070,14 @@ with 72 sorry-free, CI-audited declarations covering:
    relation to one authenticated predecessor, one real nullifier plus an exact
    zero pad, recipient plus optional change, one context-bound anchor, and an
    unchanged live pool. A CI source-correspondence manifest is pinned to exact
-   `opencsv-rs@6278eae` and fails if the Rust version tags, constraints,
+   `opencsv-rs@9b9eca2` and fails if the Rust version tags, constraints,
    statement projection, or output ordering drift. It is a source-drift gate,
    not a proof of AIR/FRI equivalence.
+6. **Recursive lineage and batching** — eleven declarations model recursive
+   predecessor validity, edge matching, distinct inputs and nullifiers,
+   current lineage, conservation, and fail-closed legacy behavior, on top of
+   the reviewed batch semantics. They prove the state-transition model, not the
+   encoding or verification of serialized recursive proof bytes.
 
 The separate `formal-aeneas` project translates the pure Rust kernel and proves
 15 audited declarations/refinements for binding, occurrence, first-occurrence,
@@ -1081,9 +1086,15 @@ and was fast-forwarded to `formal-aeneas/main` without rewriting history. A4/A5
 implement verify-then-adopt and a pure receiver-decision boundary on
 `opencsv-rs/main`.
 
-Deliberately not mechanized: AIR/FRI soundness, Poseidon security, Bitcoin
-consensus/backends, networking, storage, and the root-circuit allowlist. These
-are distinct trust/review surfaces, not theorems implied by the model.
+The completeness claim is intentionally **layered, not a percentage**. Protocol
+state/value/scan/batch/lineage semantics are machine-checked. Four families of
+pure Rust kernel decisions have a narrow translated refinement. The concrete
+AIR/recursive prover is adversarially tested and source-shape gated, but not
+proved equivalent to the Lean predicate. Poseidon2 and concrete FRI security,
+Bitcoin consensus/finality, storage and crash safety, networking, issuer-key
+operations, the Rust↔Swift FFI, and Signal lifecycle/UI remain distinct
+external or tested trust surfaces. None of the 72 specification declarations or
+15 refinement declarations implies whole-wallet correctness.
 
 ---
 
