@@ -1067,6 +1067,29 @@ SHA-256:
 `e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
 Test USD remains signet-only and has no monetary or redemption value.
 
+## 2026-08-08 — Formal methods become a proof map, not a theorem counter
+
+The earlier formal page accurately exposed the axiom audit but made readers
+assemble its most important fact themselves: the proof is deep at the protocol
+layer and deliberately incomplete at the product boundary. Its roadmap also
+still described recursive PCD lineage as future work and showed the superseded
+Rust correspondence pin `6278eae`.
+
+The replacement is an interactive academic-poster-style map from protocol to
+phone. Each layer names its status and opens the exact source or CI receipt:
+72 audited protocol/state/value/scan/batch/lineage declarations, a separate
+15-declaration Aeneas refinement of four pure-kernel families, a source-shape
+gate rather than an equivalence proof for the AIR prover, external Bitcoin and
+Poseidon2/FRI security assumptions, and an integration-tested—not
+mechanized—Rust↔Swift↔Signal boundary. The current V4 correspondence is pinned
+to `opencsv-rs@9b9eca2`, and the shipped eleven-declaration recursive-lineage
+model is no longer presented as roadmap work.
+
+We rejected a synthetic completeness percentage and also rejected adding 72
+and 15 into an “87 theorem” headline: the two ledgers make different claims.
+The page instead exposes a searchable, CI-regenerated declaration ledger and
+links every major statement back to Lean, Rust, the paper, or its hosted run.
+
 ## 2026-08-08 — A two-screen message-flow cut starts in review
 
 The approved homepage film and its documentation were fast-forwarded exactly

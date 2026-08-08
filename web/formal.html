@@ -7,75 +7,260 @@
 <meta name="description" content="OpenCSV formal verification: 72 audited protocol declarations, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
 <style>
   :root {
-    --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
-    --accent2: #58a6ff; --card: #161b22; --border: #30363d; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --paper: #f3efe5; --paper2: #fffdf7; --ink: #121212; --muted: #5d5b55;
+    --orange: #f15a24; --blue: #254edb; --green: #14764a; --red: #b8322a;
+    --line: #121212; --soft-line: #c9c3b7; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  a { color: var(--accent2); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background-image: linear-gradient(rgba(18,18,18,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(18,18,18,.045) 1px, transparent 1px); background-size: 24px 24px; }
+  a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { color: var(--orange); }
+  button, input { font: inherit; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .mono { font-family: var(--mono); }
+  .eyebrow { font: 700 12px/1.2 var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+  .poster-nav { border-bottom: 2px solid var(--line); background: rgba(243,239,229,.95); position: sticky; top: 0; z-index: 20; }
+  .poster-nav .wrap { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 22px; }
+  .poster-nav strong { font: 800 14px/1 var(--mono); text-transform: uppercase; }
+  .poster-nav .links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; }
+  .poster-nav a { color: var(--ink); text-decoration: none; }
 
-  header.hero { padding: 72px 0 48px; text-align: center; }
-  .hero h1 { font-size: 40px; letter-spacing: -1px; }
-  .hero h1 .csv { color: var(--accent); }
-  .tagline { font-size: 19px; color: var(--muted); margin: 14px auto 24px; max-width: 680px; }
-  .back { font-size: 14px; }
+  header.hero { padding: clamp(58px, 9vw, 118px) 0 44px; border-bottom: 6px solid var(--line); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .65fr); gap: 48px; align-items: end; }
+  .hero h1 { font-size: clamp(56px, 9.4vw, 136px); line-height: .83; letter-spacing: -.075em; text-transform: uppercase; max-width: 940px; }
+  .hero h1 span { color: var(--orange); }
+  .tagline { font-size: clamp(20px, 2.2vw, 31px); line-height: 1.2; margin-top: 34px; max-width: 850px; }
+  .hero-note { border: 2px solid var(--line); background: var(--paper2); padding: 24px; box-shadow: 9px 9px 0 var(--blue); }
+  .hero-note strong { font-size: 25px; line-height: 1.05; display: block; margin: 8px 0 14px; }
+  .hero-note p { color: var(--muted); }
+  .hero-note a { display: inline-block; margin-top: 14px; font: 700 12px/1.3 var(--mono); }
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); border: 2px solid var(--line); border-top: 0; }
+  .metric { min-height: 160px; padding: 23px; background: var(--paper2); border-right: 2px solid var(--line); }
+  .metric:last-child { border-right: 0; }
+  .metric b { display: block; font-size: clamp(44px, 6vw, 80px); line-height: .95; letter-spacing: -.06em; }
+  .metric span { display: block; margin-top: 13px; font: 700 12px/1.35 var(--mono); text-transform: uppercase; }
+  .metric.orange { background: var(--orange); color: #111; }
 
-  section { padding: 44px 0; border-top: 1px solid var(--border); }
-  h2 { font-size: 26px; margin-bottom: 10px; }
-  .sub { color: var(--muted); max-width: 760px; margin-bottom: 28px; }
+  section { padding: 72px 0; border-top: 2px solid var(--line); }
+  section:first-of-type { border-top: 0; }
+  h2 { font-size: clamp(38px, 6vw, 82px); line-height: .95; letter-spacing: -.055em; margin-bottom: 18px; max-width: 980px; }
+  .sub { color: var(--muted); max-width: 820px; margin-bottom: 32px; font-size: 18px; }
+  .section-number { font: 700 13px/1 var(--mono); color: var(--orange); letter-spacing: .12em; margin-bottom: 18px; }
 
-  .thm { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px;
-         display: flex; gap: 24px; align-items: flex-start; }
-  .thm .thm-text { flex: 1; }
-  .thm h3 { font-size: 18px; margin-bottom: 6px; }
-  .thm h3 .id { font-family: var(--mono); color: var(--accent); font-size: 14px; margin-right: 8px; }
-  .thm p { color: var(--muted); font-size: 15px; }
-  .thm code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
-  .thm video, .rmv { width: 400px; max-width: 100%; border-radius: 10px; border: 1px solid var(--border); flex-shrink: 0; display: block; }
-  .rmv { margin-top: 14px; }
-  @media (max-width: 860px) { .thm { flex-direction: column; } .thm video { width: 100%; } }
+  .coverage { background: var(--ink); color: var(--paper2); }
+  .coverage .sub { color: #b8b5ac; }
+  .boundary-rail { display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid #4a4945; margin: 34px 0 24px; }
+  .boundary { min-height: 164px; background: transparent; color: inherit; border: 0; border-right: 1px solid #4a4945; padding: 18px; text-align: left; cursor: pointer; transition: background .15s, color .15s, transform .15s; }
+  .boundary:last-child { border-right: 0; }
+  .boundary:hover, .boundary:focus-visible { background: #252525; outline: 3px solid var(--orange); outline-offset: -3px; }
+  .boundary[aria-selected="true"] { background: var(--orange); color: #111; }
+  .boundary .step { font: 700 11px/1 var(--mono); display: block; opacity: .7; }
+  .boundary strong { display: block; margin: 24px 0 10px; font-size: 19px; line-height: 1.05; }
+  .boundary em { font: 700 11px/1.25 var(--mono); text-transform: uppercase; font-style: normal; }
+  .coverage-panel { display: none; grid-template-columns: 1.2fr .8fr; gap: 40px; padding: 34px; border: 1px solid #4a4945; background: #191919; }
+  .coverage-panel.active { display: grid; }
+  .coverage-panel h3 { font-size: clamp(30px, 4vw, 55px); line-height: .95; letter-spacing: -.04em; }
+  .coverage-panel p { color: #c8c4ba; margin-top: 18px; max-width: 720px; }
+  .evidence-links { border-left: 1px solid #4a4945; padding-left: 28px; }
+  .evidence-links a { display: block; color: #9db2ff; margin: 0 0 12px; font-family: var(--mono); font-size: 13px; }
+  .verdict { display: inline-block; padding: 7px 9px; background: var(--green); color: white; font: 700 11px/1 var(--mono); text-transform: uppercase; margin-bottom: 18px; }
+  .verdict.partial { background: var(--blue); }
+  .verdict.assumed { background: var(--red); }
+  .verdict.tested { background: #6f5b18; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 15px; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-  th { color: var(--muted); font-weight: 600; }
-  td code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
-  .tablewrap { overflow-x: auto; }
+  .foundation-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 2px solid var(--line); }
+  .foundation { background: var(--paper2); padding: 25px; min-height: 250px; border-right: 2px solid var(--line); }
+  .foundation:last-child { border-right: 0; }
+  .foundation h3 { font-size: 27px; line-height: 1; margin: 34px 0 14px; }
+  .foundation p { color: var(--muted); font-size: 15px; }
+  .foundation .status { font: 700 11px/1 var(--mono); color: var(--red); text-transform: uppercase; }
+  .foundation a { display: inline-block; margin-top: 16px; font: 700 12px/1.3 var(--mono); }
 
-  .layers { list-style: none; }
-  .layers li { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 12px; }
-  .layers b { color: var(--accent); }
-  .layers p { color: var(--muted); font-size: 15px; margin-top: 4px; }
+  .layers { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); border: 2px solid var(--line); }
+  .layers li { background: var(--paper2); padding: 26px; min-height: 210px; border-right: 2px solid var(--line); }
+  .layers li:last-child { border-right: 0; }
+  .layers b { color: var(--ink); font-size: 24px; line-height: 1.05; display: block; }
+  .layers p { color: var(--muted); font-size: 15px; margin-top: 14px; }
 
-  ol.roadmap { list-style: none; counter-reset: step; }
-  ol.roadmap li { counter-increment: step; padding: 14px 0 14px 52px; position: relative; border-left: 2px solid var(--border); }
-  ol.roadmap li::before { content: counter(step); position: absolute; left: -14px; top: 14px; width: 26px; height: 26px; border-radius: 50%;
-    background: var(--card); border: 1px solid var(--border); color: var(--accent); font-family: var(--mono); font-size: 13px;
-    display: flex; align-items: center; justify-content: center; }
-  ol.roadmap h3 { font-size: 17px; } ol.roadmap p { color: var(--muted); font-size: 15px; }
-  ol.roadmap li.done::before { background: var(--accent); color: #111; border-color: var(--accent); }
+  #theorems { background: var(--paper2); }
+  .thm { border: 2px solid var(--line); margin-bottom: 24px; display: grid; grid-template-columns: 1fr 470px; align-items: stretch; background: var(--paper); }
+  .thm .thm-text { padding: 30px; display: flex; flex-direction: column; }
+  .thm h3 { font-size: clamp(27px, 3vw, 43px); line-height: 1; margin-bottom: 18px; }
+  .thm h3 .id { font-family: var(--mono); color: var(--orange); font-size: 14px; margin-right: 10px; vertical-align: middle; }
+  .thm p { color: var(--muted); font-size: 16px; }
+  .thm code { font-family: var(--mono); font-size: 13px; color: var(--blue); }
+  .thm video, .rmv { width: 100%; height: 100%; min-height: 270px; object-fit: cover; border-left: 2px solid var(--line); display: block; background: #111; }
+  .thm-links { margin-top: auto; padding-top: 22px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .thm-links a { font: 700 12px/1.2 var(--mono); }
+  .rmv { max-width: 640px; height: auto; border: 2px solid var(--line); margin-top: 18px; }
 
-  footer { padding: 40px 0 56px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--paper2); }
+  th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--soft-line); }
+  th { color: var(--muted); font: 700 11px/1.2 var(--mono); text-transform: uppercase; }
+  td code { font-family: var(--mono); font-size: 12px; color: var(--blue); overflow-wrap: anywhere; }
+  .tablewrap { overflow-x: auto; border: 2px solid var(--line); }
+  .ledger-tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0; align-items: center; }
+  .ledger-tools input { flex: 1 1 280px; border: 2px solid var(--line); background: var(--paper2); padding: 12px 14px; min-width: 0; }
+  .filter-button { border: 2px solid var(--line); background: var(--paper2); padding: 10px 13px; cursor: pointer; font: 700 11px/1 var(--mono); text-transform: uppercase; }
+  .filter-button.active, .filter-button:hover { background: var(--ink); color: var(--paper2); }
+  .ledger-count { font: 700 12px/1 var(--mono); }
+  details.ledger { border: 2px solid var(--line); background: var(--paper2); margin-top: 18px; }
+  details.ledger summary { cursor: pointer; padding: 17px 20px; font-weight: 800; list-style: none; display: flex; justify-content: space-between; }
+  details.ledger summary::-webkit-details-marker { display: none; }
+  details.ledger summary::after { content: "+"; font: 700 22px/1 var(--mono); }
+  details.ledger[open] summary::after { content: "−"; }
+  details.ledger > table, details.ledger > .tablewrap { border-top: 2px solid var(--line); }
+  .gen-summary { padding: 14px 18px; font-family: var(--mono); font-size: 12px; }
+
+  #gaps { background: var(--orange); }
+  #gaps .sub { color: #2d211c; }
+  #gaps .layers { grid-template-columns: repeat(2, 1fr); }
+  #gaps .layers li { border-bottom: 2px solid var(--line); }
+  ol.roadmap { list-style: none; counter-reset: step; border: 2px solid var(--line); background: var(--paper2); }
+  ol.roadmap li { counter-increment: step; padding: 23px 24px 23px 90px; position: relative; border-bottom: 1px solid var(--soft-line); }
+  ol.roadmap li:last-child { border-bottom: 0; }
+  ol.roadmap li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 24px; top: 24px; font: 700 18px/1 var(--mono); color: var(--red); }
+  ol.roadmap h3 { font-size: 21px; }
+  ol.roadmap p { color: var(--muted); font-size: 15px; max-width: 900px; margin-top: 5px; }
+  ol.roadmap li.done::after { content: "SHIPPED"; position: absolute; right: 22px; top: 23px; color: var(--green); font: 700 10px/1 var(--mono); }
+  footer { padding: 44px 0 60px; border-top: 6px solid var(--line); color: var(--muted); font-size: 14px; background: var(--paper2); }
+
+  @media (max-width: 980px) {
+    .hero-grid, .coverage-panel { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .metric:nth-child(2) { border-right: 0; }
+    .metric:nth-child(-n+2) { border-bottom: 2px solid var(--line); }
+    .boundary-rail { grid-template-columns: repeat(3, 1fr); }
+    .boundary:nth-child(3) { border-right: 0; }
+    .boundary:nth-child(-n+3) { border-bottom: 1px solid #4a4945; }
+    .foundation-grid { grid-template-columns: repeat(2, 1fr); }
+    .foundation:nth-child(2) { border-right: 0; }
+    .foundation:nth-child(-n+2) { border-bottom: 2px solid var(--line); }
+    .layers { grid-template-columns: 1fr; }
+    .layers li { border-right: 0; border-bottom: 2px solid var(--line); }
+    .thm { grid-template-columns: 1fr; }
+    .thm video { border-left: 0; border-top: 2px solid var(--line); }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 0 18px; }
+    .poster-nav .links a:nth-child(-n+2) { display: none; }
+    .hero-grid { gap: 28px; }
+    .hero h1 { font-size: clamp(51px, 17vw, 86px); }
+    .metrics, .foundation-grid { grid-template-columns: 1fr; }
+    .metric, .foundation { border-right: 0; border-bottom: 2px solid var(--line); }
+    .boundary-rail { grid-template-columns: repeat(2, 1fr); }
+    .boundary, .boundary:nth-child(3) { border-right: 1px solid #4a4945; border-bottom: 1px solid #4a4945; }
+    .boundary:nth-child(even) { border-right: 0; }
+    .coverage-panel { padding: 24px; }
+    .evidence-links { border-left: 0; border-top: 1px solid #4a4945; padding: 22px 0 0; }
+    #gaps .layers { grid-template-columns: 1fr; }
+    ol.roadmap li.done::after { display: none; }
+  }
 </style>
 </head>
 <body>
 
+<nav class="poster-nav" aria-label="Formal methods navigation">
+  <div class="wrap">
+    <strong>OpenCSV / proof map</strong>
+    <div class="links"><a href="#coverage">Coverage</a><a href="#theorems">Claims</a><a href="#axioms">Ledger</a><a href="#gaps">Gaps</a><a href="../">Project home ↗</a></div>
+  </div>
+</nav>
+
 <header class="hero">
   <div class="wrap">
-    <h1>Formal verification of Open<span class="csv">CSV</span></h1>
-    <p class="tagline">What is proven, what is assumed, and exactly where the gap
-    between the two lives. The dependency-free protocol model and the separate
-    Aeneas-translated Rust refinements are sorry-free, with every cryptographic
-    assumption labeled.</p>
-    <p class="back"><a href="../">← back to OpenCSV</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="https://github.com/opencsvnet/opencsv-formal">opencsvnet/opencsv-formal</a></p>
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Formal methods / living evidence poster</div>
+        <h1>Protocol rules: <span>proven.</span><br>Whole wallet: no.</h1>
+        <p class="tagline">OpenCSV machine-checks the rules that prevent inflation,
+        value creation, and quiet double spends. It does not pretend that Lean
+        has proved Bitcoin, Poseidon2, the AIR prover, storage, networking, or
+        Signal.</p>
+      </div>
+      <aside class="hero-note">
+        <div class="eyebrow">How to read this page</div>
+        <strong>Coverage is a map, not a percentage.</strong>
+        <p>Click a layer below. Green means machine-checked, blue means a narrow
+        code refinement, amber means tested, and red marks an external assumption.</p>
+        <a href="#coverage">OPEN THE PROOF MAP ↓</a>
+      </aside>
+    </div>
   </div>
 </header>
 
+<div class="wrap metrics" aria-label="Formal verification totals">
+  <div class="metric orange"><b>72</b><span>Lean specification declarations<br>audited separately</span></div>
+  <div class="metric"><b>15</b><span>Aeneas translated-Rust refinements<br>narrow kernel only</span></div>
+  <div class="metric"><b>0</b><span>Tracked <code>sorry</code> or <code>admit</code><br>enforced by CI</span></div>
+  <div class="metric"><b>6+</b><span>Runtime and cryptographic surfaces<br>not mechanized</span></div>
+</div>
+
+<section id="coverage" class="coverage">
+  <div class="wrap">
+    <div class="section-number">01 / COMPLETENESS</div>
+    <h2>Follow the claim from paper to phone.</h2>
+    <p class="sub">No single percentage can describe this. Select a layer to see
+    its exact status, proof boundary, pinned source, and receipt.</p>
+    <div class="boundary-rail" role="tablist" aria-label="Formal coverage layers">
+      <button class="boundary" role="tab" aria-selected="true" aria-controls="panel-spec" data-panel="panel-spec"><span class="step">01</span><strong>Protocol specification</strong><em>machine-checked</em></button>
+      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-lineage" data-panel="panel-lineage"><span class="step">02</span><strong>Batch + recursive lineage</strong><em>machine-checked</em></button>
+      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-kernel" data-panel="panel-kernel"><span class="step">03</span><strong>Pure Rust kernel</strong><em>refinement-proved</em></button>
+      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-air" data-panel="panel-air"><span class="step">04</span><strong>AIR + recursive prover</strong><em>tested / shape-gated</em></button>
+      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-bitcoin" data-panel="panel-bitcoin"><span class="step">05</span><strong>Bitcoin chain view</strong><em>external + tested</em></button>
+      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-signal" data-panel="panel-signal"><span class="step">06</span><strong>Rust ↔ Swift ↔ Signal</strong><em>integration-tested</em></button>
+    </div>
+
+    <article id="panel-spec" class="coverage-panel active" role="tabpanel">
+      <div><span class="verdict">Machine-checked</span><h3>The protocol state machine and its load-bearing invariants.</h3><p>Seventy-two separately audited declarations cover genesis→mint→transfer→redeem, supply, conservation, first occurrence, receiver acceptance, value arithmetic, scan exclusion, batching, one-input forwarding, and recursive lineage. The project is dependency-free Lean 4 and CI rejects <code>sorry</code>, <code>admit</code>, or axiom drift.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/tree/dc7e8eb">SPECIFICATION @ dc7e8eb ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">T1–T4 SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/axiom-audit.txt">72-DECLARATION AXIOM AUDIT ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/actions/runs/31044400073">GREEN DEFAULT-BRANCH CI ↗</a></div>
+    </article>
+    <article id="panel-lineage" class="coverage-panel" role="tabpanel" hidden>
+      <div><span class="verdict">Machine-checked</span><h3>The model now includes the recursive tree and batch semantics.</h3><p>The current 72 count is 54 reviewed state/value/scan/batch declarations, seven one-input specializations, and eleven recursive-lineage/tree declarations. It proves edge matching, distinct inputs and nullifiers, fail-closed legacy policy, batch positions, conservation, replacement, and freshness. It still models semantics—not serialized Rust proof bytes.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Lineage.lean">RECURSIVE LINEAGE SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Batch.lean">BATCH MODEL SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Forward.lean">ONE-INPUT FORWARDING ↗</a><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER §6 ↗</a></div>
+    </article>
+    <article id="panel-kernel" class="coverage-panel" role="tabpanel" hidden>
+      <div><span class="verdict partial">Narrow direct refinement</span><h3>Four families of pure Rust decisions are connected to Lean.</h3><p>Aeneas translates the pure <code>opencsv-kernel</code> implementation and proves binding, well-formed occurrence, first occurrence, and supply audit refine their specifications. Fifteen declarations support that bridge. Proof verification, chain I/O, storage, concurrency, the account registry, and FFI glue are outside it.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/formal-aeneas/tree/3bcafed">AENEAS PROJECT @ 3bcafed ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Refinement.lean">BINDING + WELL-FORMED REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec3.lean">FIRST-OCCURRENCE REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec4.lean">SUPPLY REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209">GREEN REPRODUCIBILITY CI ↗</a></div>
+    </article>
+    <article id="panel-air" class="coverage-panel" role="tabpanel" hidden>
+      <div><span class="verdict tested">Tested, not proved equivalent</span><h3>The circuit shape is pinned; the AIR implementation is not mechanized.</h3><p>A fail-closed manifest checks proof version, predecessor count, nullifier padding, output order, conservation constraint, statement projection, legacy policy, and verifier tag against exact Rust. That catches source drift. It does not prove that the hand-written BabyBear AIR or FRI verifier implements the Lean predicate.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/rust-correspondence-v4.json">PINNED CORRESPONDENCE MANIFEST ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED RUST PROVER SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/scripts/check-v4-rust-correspondence.py">SOURCE-DRIFT CHECK ↗</a><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">FORMAL BOUNDARY IN PAPER §6 ↗</a></div>
+    </article>
+    <article id="panel-bitcoin" class="coverage-panel" role="tabpanel" hidden>
+      <div><span class="verdict assumed">External security boundary</span><h3>Bitcoin supplies ordering and probabilistic settlement.</h3><p>Lean proves scan-first exclusion relative to a verified ordered chain view. Rust validates proof-of-work headers, BIP158 candidates, Merkle inclusion, confirmations, and reorgs. The security of Bitcoin consensus, sufficient honest hashpower, network availability, and the meaning of <code>k</code> confirmations remain external assumptions.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN SOUNDNESS SOURCE ↗</a><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN WHITEPAPER ↗</a><a href="https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki">BIP158 COMPACT FILTERS ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/tree/e4265b946f0aaa31a9230aa67a2f964f5bb0362e/crates/opencsv-cbf">OPENCSV CHAIN VERIFIER ↗</a></div>
+    </article>
+    <article id="panel-signal" class="coverage-panel" role="tabpanel" hidden>
+      <div><span class="verdict tested">Integration-tested</span><h3>The product boundary is real code, not a theorem.</h3><p>The Rust↔Swift C ABI decodes requests, resolves wallet handles, manages memory and locks, serializes receipts and stable rejection reasons, and controls the exported symbol surface. Signal then handles lifecycle, attachments, notifications, backup, and presentation. These surfaces have adversarial and simulator receipts, but no direct Lean refinement.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-rs/tree/main/crates/opencsv-ffi">RUST FFI SOURCE ↗</a><a href="https://github.com/opencsvnet/Signal-iOS/pull/6">SIGNAL INTEGRATION CANDIDATE ↗</a><a href="https://github.com/opencsvnet/Signal-iOS/issues/3">ARCHITECTURE + LIVE RECEIPTS ↗</a><a href="../journal/">FAILURES AND ACCEPTANCE JOURNAL ↗</a></div>
+    </article>
+  </div>
+</section>
+
+<section id="foundations">
+  <div class="wrap">
+    <div class="section-number">02 / EXTERNAL FOUNDATIONS</div>
+    <h2>The proof has foundations outside the proof.</h2>
+    <p class="sub">These are not embarrassing footnotes. They are the named
+    security assumptions that make the protocol theorem meaningful.</p>
+    <div class="foundation-grid">
+      <article class="foundation"><span class="status">Assumed cryptographic security</span><h3>Poseidon2</h3><p>Provides commitment, owner/nullifier, anchor-binding, and proof-system hashing. Lean reasons from injectivity, binding, and preimage-resistance hypotheses; it does not mechanize cryptanalysis of the concrete permutation.</p><a href="https://eprint.iacr.org/2023/323">POSEIDON2 PAPER ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Interfaces.lean">LEAN HASH AXIOMS ↗</a></article>
+      <article class="foundation"><span class="status">Assumed proof-system soundness</span><h3>FRI + recursion</h3><p>The receiver theorem calls an abstract sound proof system. Production parameters, predecessor verification keys, version boundaries, and adversarial rejection are implemented and tested; Lean does not prove the concrete FRI verifier.</p><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED PROVER SOURCE ↗</a><br><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER BOUNDARY ↗</a></article>
+      <article class="foundation"><span class="status">External consensus security</span><h3>Bitcoin</h3><p>Orders anchors and gives confirmations. OpenCSV verifies its local view and proves scan semantics, but assumes Bitcoin's proof-of-work security and a chosen confirmation depth against reorganizations.</p><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN SECURITY MODEL ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN MODEL ↗</a></article>
+      <article class="foundation"><span class="status">Operational key boundary</span><h3>Issuer authority</h3><p>The theorem proves that accepted mint lineage carries issuer authorization. It cannot protect an issuer seed that is stolen, misused, or backed up incorrectly. Inflation would be public, not impossible.</p><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">MINT AUTHORIZATION THEOREMS ↗</a><br><a href="../usd-preview/terms-v1/">TEST USD ISSUER DISCLOSURE ↗</a></article>
+    </div>
+  </div>
+</section>
+
 <section id="plain">
   <div class="wrap">
-    <h2>In plain language</h2>
-    <p class="sub">The full tables are below. This is the three-sentence version.</p>
+    <div class="section-number">03 / THREE LOAD-BEARING CLAIMS</div>
+    <h2>What the machine actually guarantees.</h2>
+    <p class="sub">The full ledgers are below. Start with the three claims a
+    receiver actually needs.</p>
     <ul class="layers">
       <li><b>Proven: no inflation without issuer authorization.</b>
         <p>If someone shows you coins, the math — not a server, not trust — proves
@@ -97,6 +282,7 @@
 
 <section id="assumptions-plain">
   <div class="wrap">
+    <div class="section-number">04 / FAILURE-MODE TABLE</div>
     <h2>What you still trust, and what breaks if it's wrong</h2>
     <p class="sub">Every proof rests on assumptions. We don't hide them — each is
     named, and each failure mode is visible rather than silent.</p>
@@ -117,7 +303,8 @@
 
 <section id="theorems">
   <div class="wrap">
-    <h2>What the theorems say</h2>
+    <div class="section-number">05 / HEADLINE THEOREMS</div>
+    <h2>Open the claim. Open the proof.</h2>
     <p class="sub">Four headline results about the <em>protocol logic</em> — the
     layer where catastrophic bugs (inflation, double-spend acceptance) would
     live, independent of any cryptography.</p>
@@ -129,6 +316,7 @@
       <code>Σ mints − Σ redeems</code>, and every mint carries valid issuer
       authorization. Nobody prints money — not the users, not a forger, and not the
       issuer beyond its own signed, publicly anchored mints. Paper §5.1.</p>
+      <div class="thm-links"><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">LEAN SOURCE ↗</a><a href="../paper/opencsv.md#51-inflation-soundness">PAPER §5.1 ↗</a><a href="#axioms">AXIOM LEDGER ↓</a></div>
       </div>
       <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T1-inflation.mp4"></video>
     </div>
@@ -138,6 +326,7 @@
       <p>Every transfer step preserves per-asset totals: outputs sum to inputs,
       so shielded transfers can neither create nor destroy value — which is what
       makes the public mint/redeem stream an exact audit of supply. Paper §4.5.</p>
+      <div class="thm-links"><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">LEAN SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Value.lean">LIMB ARITHMETIC ↗</a><a href="#axioms">AXIOM LEDGER ↓</a></div>
       </div>
       <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T2-conservation.mp4"></video>
     </div>
@@ -153,6 +342,7 @@
       is provably invisible (<code>griefer_copy_invisible</code>), and an
       adversary who doesn't know <code>nf</code> can forge no occurrence at all
       (<code>no_occurrence_without_knowledge</code>). Paper §5.2, §4.7.</p>
+      <div class="thm-links"><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">LEAN SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN MODEL ↗</a><a href="#axioms">AXIOM LEDGER ↓</a></div>
       </div>
       <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T3-nullifiers.mp4"></video>
     </div>
@@ -163,6 +353,7 @@
       check no earlier occurrence, check ownership) succeeds only on transactions
       that extend a valid trace — recipients can't be fooled into accepting
       counterfeit coins, modulo proof-system soundness. Paper §4.8, §5.1.</p>
+      <div class="thm-links"><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">LEAN SOURCE ↗</a><a href="../paper/opencsv.md#48-receiver-verification">RECEIVER CHECKLIST ↗</a><a href="#axioms">AXIOM LEDGER ↓</a></div>
       </div>
       <video muted loop playsinline controls preload="metadata" src="animation/out/formals/T4-receiver.mp4"></video>
     </div>
@@ -171,6 +362,7 @@
 
 <section id="axioms">
   <div class="wrap">
+    <div class="section-number">06 / MACHINE-GENERATED LEDGERS</div>
     <h2>Where the cryptographic hardness lives</h2>
     <p class="sub">Every assumption is an explicitly labeled axiom — the build
     prints an axiom audit (<code>#print axioms</code>) per theorem. Nothing is
@@ -195,6 +387,20 @@
     <h3 style="margin-top:28px">Specification audit — live from the build</h3>
     <p class="sub">Regenerated weekly by CI from <code>axiom-audit.txt</code> in
     opencsv-formal — this block can never drift from the actual proofs.</p>
+    <div class="ledger-tools" aria-label="Filter the specification ledger">
+      <input id="ledger-search" type="search" placeholder="Search 72 declarations or axioms…" aria-label="Search declarations and axioms">
+      <button class="filter-button active" type="button" data-filter="all">All</button>
+      <button class="filter-button" type="button" data-filter="core">Core</button>
+      <button class="filter-button" type="button" data-filter="batch">Batch</button>
+      <button class="filter-button" type="button" data-filter="scan">Scan</button>
+      <button class="filter-button" type="button" data-filter="value">Value</button>
+      <button class="filter-button" type="button" data-filter="forward">Forward</button>
+      <button class="filter-button" type="button" data-filter="lineage">Lineage</button>
+      <span class="ledger-count" id="ledger-count" aria-live="polite">72 / 72 visible</span>
+    </div>
+    <details class="ledger" open>
+      <summary>72-declaration specification ledger</summary>
+      <div class="tablewrap" id="spec-ledger">
     <!-- GEN-AXIOM-TABLE:BEGIN -->
 <table>
   <thead><tr><th>Theorem</th><th>Axiom dependencies</th></tr></thead>
@@ -275,6 +481,8 @@
 </table>
 <p class="gen-summary">72 theorems, audited 2026-08-05 from <code>axiom-audit.txt</code> @ dc7e8eb</p>
 <!-- GEN-AXIOM-TABLE:END -->
+      </div>
+    </details>
     <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-05 20:31 UTC · build green · opencsv-formal@dc7e8eb<!-- /GEN-PROVENANCE --></p>
     <h3 style="margin-top:28px">Translated Rust audit — merged reproducibility receipt</h3>
     <p class="sub">A separate audit of the Aeneas-translated
@@ -282,6 +490,8 @@
     specification-theorem count above. The exact green commit was
     fast-forwarded without rewriting history and is now the default
     <code>formal-aeneas</code> branch.</p>
+    <details class="ledger">
+      <summary>15-declaration translated-Rust refinement ledger</summary>
     <!-- GEN-AENEAS-AXIOM-TABLE:BEGIN -->
     <table>
       <thead><tr><th>Rust refinement declaration</th><th>Axiom dependencies</th></tr></thead>
@@ -307,14 +517,16 @@
     <a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30765043746">30765043746</a>
     · <a href="https://github.com/opencsvnet/formal-aeneas/pull/1"><code>formal-aeneas@3bcafed</code></a></p>
     <!-- GEN-AENEAS-AXIOM-TABLE:END -->
+    </details>
   </div>
 </section>
 
 <section id="gaps">
   <div class="wrap">
+    <div class="section-number">07 / HONESTY GAPS</div>
     <h2>The honesty gaps</h2>
-    <p class="sub">"Formally verified" always means less than it sounds. Here is
-    precisely what it means here — three layers, stated plainly.</p>
+    <p class="sub">"Formally verified" always needs a noun after it. These are
+    the exact surfaces still outside the machine-checked claim.</p>
     <ul class="layers">
       <li><b>1. The cryptography is assumed, not proven.</b>
         <p>Poseidon2's collision resistance, the signature scheme's unforgeability,
@@ -326,12 +538,11 @@
         kernel</em>: <a href="https://github.com/opencsvnet/formal-aeneas">formal-aeneas</a>
         translates <code>opencsv-kernel</code> (binding, occurrence test,
         first-occurrence, supply audit) from Rust into Lean 4 and proves it
-        equal to this specification — sorry-free, audited. Two honest
-        remainder: <em>coverage</em> — proof, scan, storage, and chain I/O are
-        not translated. A4 now adopts binding, occurrence, first-occurrence,
-        and supply through the verified kernel on <code>opencsv-rs/main</code>;
-        A5 projects receiver decisions through a pure accept boundary on that
-        same line.</p></li>
+        equal to this specification — sorry-free and audited. The remaining
+        coverage boundary is large: proof verification, scan orchestration,
+        storage, concurrency, and chain I/O are not translated. A4 adopts the
+        four verified families on <code>opencsv-rs/main</code>; A5 projects
+        receiver decisions through a pure accept boundary on that same line.</p></li>
       <li><b>3. The chain-view assumption is explicit — and shrinking.</b>
         <p>The deployment moved to scan-first indexing (paper §4.7.1): exclusion
         is a <em>local</em> check over a filter-discovered candidate set, verified
@@ -346,16 +557,27 @@
         issuer-seed knowledge and predecessor keys in-circuit and enforces its
         94-bit floor. Deployments still need an explicit allowlist/distribution
         boundary for accepted self-described root-circuit commitments.</p></li>
+      <li><b>5. Rust↔Swift FFI correctness is tested, not proved.</b>
+        <p>The C ABI, JSON decoding, handle registry, memory ownership, locking,
+        stable rejection reasons, and exported-symbol policy sit between the
+        Rust wallet and Signal. CI and simulator acceptance exercise them; no
+        Lean theorem currently connects those calls to the account model.</p></li>
+      <li><b>6. Crash safety and product behavior are runtime properties.</b>
+        <p>The durable operation journal, SQLite transactions, attachment
+        delivery, backup, notifications, and Signal UI are validated by
+        adversarial and end-to-end tests. They are not included in the 72 or 15
+        declaration ledgers.</p></li>
     </ul>
   </div>
 </section>
 
 <section id="roadmap">
   <div class="wrap">
-    <h2>Roadmap</h2>
+    <div class="section-number">08 / NEXT PROOF BOUNDARIES</div>
+    <h2>What should be proved next.</h2>
     <p class="sub">Tracked as <a href="https://github.com/opencsvnet/opencsv-formal/issues/1">opencsv-formal#1</a>.
-    One item already shipped; item 1 converts our scariest informal argument
-    into a theorem.</p>
+    Completed work remains visible here so the frontier cannot be confused with
+    the history.</p>
     <ol class="roadmap">
       <li class="done">
         <h3>CI axiom gating — shipped</h3>
@@ -412,14 +634,17 @@
         recipient plus optional change, exact conservation, one context-bound
         anchor, and an unchanged live pool. Hosted CI builds Lean, audits all 72
         declarations, and checks a manifest against exact
-        <code>opencsv-rs@6278eae</code>. That last check detects source drift; it
+        <code>opencsv-rs@9b9eca2</code>. That last check detects source drift; it
         is not presented as a proof of the Rust AIR, FRI, storage, or network
         implementation.</p>
       </li>
-      <li>
-        <h3>PCD-tree model</h3>
-        <p>Upgrade the state machine from linear traces to the tree structure of
-        the real recursion, matching the paper's §5.1 induction.</p>
+      <li class="done">
+        <h3>Recursive PCD lineage model — shipped</h3>
+        <p>Eleven audited declarations now model the recursive tree: predecessor
+        validity, edge matching, distinct inputs and nullifiers, current
+        lineage, conservation, and fail-closed legacy transfer/redeem policy.
+        Read the exact model in
+        <a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Lineage.lean"><code>OpenCsv/Lineage.lean</code></a>.</p>
       </li>
       <li>
         <h3>Verified predicate→AIR compiler (research track)</h3>
@@ -427,16 +652,78 @@
         define predicates in a Lean-embedded DSL, prove the translation sound
         once, generate circuits. Every future predicate inherits the proof.</p>
       </li>
+      <li>
+        <h3>Account journal and crash-state refinement</h3>
+        <p>Model the durable operation state machine and connect its reservation,
+        signing, broadcast, resume, and cancellation transitions to the account
+        implementation.</p>
+      </li>
+      <li>
+        <h3>Typed FFI contract</h3>
+        <p>Replace JSON-shaped trust at the product boundary with a generated,
+        versioned interface whose ownership, error, and state-transition rules
+        can be checked on both Rust and Swift sides.</p>
+      </li>
     </ol>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <p><b>OpenCSV formal verification</b> — Lean 4, sorry-free, dependency-free.</p>
+    <p><b>OpenCSV formal verification</b> — machine-checked protocol logic, with no whole-system claim.</p>
     <p><a href="https://github.com/opencsvnet/opencsv-formal">opencsvnet/opencsv-formal</a> · <a href="../paper/opencsv.md">Paper (§6)</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="../">Home</a></p>
   </div>
 </footer>
+
+<script>
+  (() => {
+    const tabs = [...document.querySelectorAll('.boundary')];
+    const panels = [...document.querySelectorAll('.coverage-panel')];
+    tabs.forEach((tab) => tab.addEventListener('click', () => {
+      tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
+      panels.forEach((panel) => {
+        const active = panel.id === tab.dataset.panel;
+        panel.classList.toggle('active', active);
+        panel.hidden = !active;
+      });
+    }));
+
+    const ledger = document.querySelector('#spec-ledger table');
+    const search = document.querySelector('#ledger-search');
+    const count = document.querySelector('#ledger-count');
+    const filters = [...document.querySelectorAll('.filter-button')];
+    let activeFilter = 'all';
+    if (!ledger || !search || !count) return;
+    const rows = [...ledger.querySelectorAll('tbody tr')];
+    const family = (value) => {
+      if (value.includes('opencsv.batch.')) return 'batch';
+      if (value.includes('opencsv.scan.')) return 'scan';
+      if (value.includes('opencsv.value.')) return 'value';
+      if (value.includes('one_input') || value.includes('v4_')) return 'forward';
+      if (value.includes('lineage') || value.includes('edgesmatch')) return 'lineage';
+      return 'core';
+    };
+    const update = () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      rows.forEach((row) => {
+        const value = row.textContent.toLowerCase();
+        const shown = (!query || value.includes(query)) &&
+          (activeFilter === 'all' || family(value) === activeFilter);
+        row.hidden = !shown;
+        if (shown) visible += 1;
+      });
+      count.textContent = `${visible} / ${rows.length} visible`;
+    };
+    search.addEventListener('input', update);
+    filters.forEach((button) => button.addEventListener('click', () => {
+      activeFilter = button.dataset.filter;
+      filters.forEach((item) => item.classList.toggle('active', item === button));
+      update();
+    }));
+    update();
+  })();
+</script>
 
 </body>
 </html>
