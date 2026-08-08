@@ -375,8 +375,10 @@
     lemmas are pure list reasoning and depend on <em>no</em> cryptographic axioms
     at all.</p>
     <h3 style="margin-top:28px">Specification audit — live from the build</h3>
-    <p class="sub">Regenerated weekly by CI from <code>axiom-audit.txt</code> in
-    opencsv-formal — this block can never drift from the actual proofs.</p>
+    <p class="sub">The site checks <code>opencsv-formal</code> every 15 minutes.
+    When its default branch moves, CI rebuilds Lean, reruns the axiom audit, and
+    regenerates this block before publishing. An event hook can refresh it
+    immediately, and a weekly forced rebuild remains as a backstop.</p>
     <div class="ledger-tools" aria-label="Filter the specification ledger">
       <input id="ledger-search" type="search" placeholder="Search 72 declarations or axioms…" aria-label="Search declarations and axioms">
       <button class="filter-button active" type="button" data-filter="all">All</button>

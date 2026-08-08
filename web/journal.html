@@ -164,7 +164,8 @@
     Bonus honest finding: the general converse is false (a completeness limitation,
     not a soundness hole) — documented, not lurking. The living
     <a href="formal.html">formal page</a> now carries 17 theorems, regenerated
-    weekly from the build.</p>
+    from the build. The original weekly site mirror was replaced on 2026-08-08
+    by a 15-minute source-revision watch plus a weekly forced rebuild.</p>
   </div>
 
   <div class="entry">
@@ -1059,6 +1060,23 @@
     interface or formal coverage layer. The formal page now contains neither;
     the homepage and end-to-end story label them only as a separate
     non-production demonstration.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-08</div>
+    <h2>The formal ledger stops waiting a week <span class="tag">publication integrity</span></h2>
+    <p>The formal repository already ran CI when proofs changed, but the website
+    copied its axiom table only on Tuesdays or after a manual dispatch. The
+    rendered ledger could therefore be seven days older than its source even
+    though every row was correctly generated.</p>
+    <p>The publication workflow now checks the formal default-branch revision
+    every 15 minutes. An unchanged revision exits before installing Lean. A
+    changed revision must still pass <code>lake build</code> and the complete
+    axiom-audit gate before the table and provenance can be committed. An
+    explicit <code>formal-main-green</code> event hook and manual dispatch can
+    refresh immediately; a weekly forced rebuild remains as an independent
+    integrity backstop. This avoids storing a broad cross-repository personal
+    token merely to remove the lag.</p>
   </div>
 
 </div>

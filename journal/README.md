@@ -114,7 +114,8 @@ field equality ⟺ integer equality within the checked range. Bonus honest
 finding: the general converse is false (some valid splits are rejected at
 witness generation — a completeness limitation, not a soundness hole),
 documented instead of lurking. The living formal page now carries 17 theorems,
-regenerated weekly from the build.
+regenerated from the build. The original weekly site mirror was replaced on
+2026-08-08 by a 15-minute source-revision watch plus a weekly forced rebuild.
 
 ## 2026-08-01 — Indexing evolves four times in a day
 
@@ -1097,6 +1098,21 @@ consumer dollar-payment experience to Signal's team, not an OpenCSV production
 interface or a formal coverage layer. The formal page now contains neither;
 the homepage and end-to-end story label them only as a separate non-production
 demonstration.
+
+## 2026-08-08 — The formal ledger stops waiting a week
+
+The formal repository already ran CI when its proofs changed, but the website
+copied its axiom table only on a Tuesday schedule or manual dispatch. That made
+the rendered ledger potentially seven days older than its source even though
+every row was correctly generated.
+
+The publication workflow now checks the formal default-branch revision every
+15 minutes. An unchanged revision exits before installing Lean, so the common
+poll is cheap. A changed revision must still pass `lake build` and the complete
+axiom-audit gate before the table and provenance can be committed. An explicit
+`formal-main-green` event hook and manual dispatch can refresh immediately; a
+weekly forced rebuild remains as an independent integrity backstop. This avoids
+storing a broad cross-repository personal token merely to remove the lag.
 
 ---
 

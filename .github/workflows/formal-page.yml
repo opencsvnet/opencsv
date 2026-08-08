@@ -1,15 +1,22 @@
 name: formal-page
 
-# Keeps web/formal.html's machine-checkable parts honest: the axiom table
-# is regenerated weekly from opencsvnet/opencsv-formal — but only AFTER
-# proving the Lean build is green (lake build + the axiom-audit gate), so
-# the site can never publish a table the code no longer satisfies.
-# Same pattern as screenshots.yml.
+# Keeps web/formal.html's machine-checkable parts honest. A lightweight poll
+# notices a new opencsv-formal default-branch commit within 15 minutes; only a
+# changed source revision pays for the Lean build and publication. A weekly
+# forced rebuild remains as an integrity backstop. Every publication still
+# requires lake build + the axiom-audit gate.
 
 on:
   schedule:
-    - cron: "41 5 * * 2" # Tuesdays 05:41 UTC
+    - cron: "*/15 * * * *" # low-cost freshness check
+    - cron: "41 5 * * 2"   # weekly forced rebuild
+  repository_dispatch:
+    types: [formal-main-green]
   workflow_dispatch:
+
+concurrency:
+  group: formal-page-publication
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -26,7 +33,36 @@ jobs:
           repository: opencsvnet/opencsv-formal
           path: formal
 
+      - name: Detect a new verified-source candidate
+        id: freshness
+        shell: bash
+        run: |
+          set -euo pipefail
+          FORMAL_SHA="$(git -C formal rev-parse --short HEAD)"
+          PUBLISHED_SHA="$(sed -n 's/.*GEN-PROVENANCE.*opencsv-formal@\([0-9a-f][0-9a-f]*\).*GEN-PROVENANCE.*/\1/p' web/formal.html | head -n 1)"
+          FORCE=false
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            FORCE=true
+          elif [[ "${{ github.event_name }}" == "schedule" && "${{ github.event.schedule }}" == "41 5 * * 2" ]]; then
+            FORCE=true
+          fi
+
+          if [[ -z "$PUBLISHED_SHA" ]]; then
+            echo "published provenance is missing; forcing the fail-closed rebuild"
+            FORCE=true
+          fi
+
+          if [[ "$FORCE" == "true" || "$FORMAL_SHA" != "$PUBLISHED_SHA" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "candidate opencsv-formal@$FORMAL_SHA (published: ${PUBLISHED_SHA:-missing})"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            echo "already current at opencsv-formal@$FORMAL_SHA"
+          fi
+
       - name: Install elan and build the Lean project (publish gate)
+        if: steps.freshness.outputs.should_run == 'true'
         working-directory: formal
         run: |
           curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
@@ -37,10 +73,12 @@ jobs:
           scripts/axiom-audit.sh   # gate: baseline must match the build
 
       - name: Generate the axiom table fragment
+        if: steps.freshness.outputs.should_run == 'true'
         working-directory: formal
         run: python3 scripts/gen-axiom-table.py --output "$RUNNER_TEMP/axiom-table.html"
 
       - name: Inject the fragment into web/formal.html
+        if: steps.freshness.outputs.should_run == 'true'
         run: |
           python3 - <<'EOF'
           import os
@@ -63,6 +101,7 @@ jobs:
           EOF
 
       - name: Stamp provenance
+        if: steps.freshness.outputs.should_run == 'true'
         run: |
           grep -q '<!-- GEN-PROVENANCE -->' web/formal.html || { echo "error: GEN-PROVENANCE marker missing from web/formal.html"; exit 1; }
           SHA=$(git -C formal rev-parse --short HEAD)
@@ -70,6 +109,7 @@ jobs:
           sed -i "s/<!-- GEN-PROVENANCE -->.*<!-- \/GEN-PROVENANCE -->/<!-- GEN-PROVENANCE -->regenerated ${DATE} · build green · opencsv-formal@${SHA}<!-- \/GEN-PROVENANCE -->/" web/formal.html
 
       - name: Commit and push if changed
+        if: steps.freshness.outputs.should_run == 'true'
         run: |
           git config user.name "opencsv-bot"
           git config user.email "bot@opencsvnet.github.io"
