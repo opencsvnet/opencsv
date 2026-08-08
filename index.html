@@ -98,7 +98,7 @@
   .scale-callout .button:hover { text-decoration: none; border-color: var(--accent); }
 
   .consumer-film { text-align: center; }
-  .consumer-film .real-film { width: min(100%, 960px); aspect-ratio: 16 / 9; display: block; margin: 26px auto 0; border: 1px solid var(--border); border-radius: 22px; background: #000; box-shadow: 0 28px 90px rgba(0,0,0,.52); }
+  .consumer-film .real-film { width: min(100%, 430px); aspect-ratio: 9 / 16; display: block; margin: 26px auto 0; border: 1px solid var(--border); border-radius: 22px; background: #000; box-shadow: 0 28px 90px rgba(0,0,0,.52); }
   .consumer-film .note { max-width: 760px; margin: 18px auto 0; color: var(--muted); font-size: 14px; }
   .live-receipt { max-width: 760px; margin: 24px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: left; }
   .live-receipt div { padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
@@ -142,15 +142,16 @@
       Your browser does not support the video tag; download
       <a href="web/media/opencsv-real-signal-test-usd-roundtrip.mp4">the real Signal round-trip recording</a> instead.
     </video>
-    <p class="note"><strong>38.1 seconds · actual Signal simulator footage.</strong>
-    User interactions run at 2–2.5×; the long DEBUG proof and network-verification
-    interval runs at 32× and is labeled on screen. No transaction state or
-    Signal screen is reconstructed. Test USD is signet-only test value with no
-    monetary or redemption claim.</p>
+    <p class="note"><strong>59.3 seconds · actual Signal simulator footage.</strong>
+    Action plays at normal speed with no explanatory overlay. During the static
+    wait, four reading cards explain the local proof, durable signing, relay,
+    and two-observer check; that DEBUG interval runs at 8.5× and is labeled on
+    screen. No transaction state or Signal screen is reconstructed. Test USD is
+    signet-only test value with no monetary or redemption claim.</p>
     <div class="live-receipt" aria-label="Live Signal payment receipt">
       <div><strong>1 Test USD</strong><span>Carol → Bob · tx <a href="https://mempool.space/signet/tx/445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd">445c43cb…400fd</a> · height 316765</span></div>
       <div><strong>1 Test USD</strong><span>Bob → Carol · tx <a href="https://mempool.space/signet/tx/6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa">6d85895f…f49aa</a> · height 316766</span></div>
-      <div><strong>230.803 s raw</strong><span>38.1 s published cut · speed changes disclosed in-frame</span></div>
+      <div><strong>230.803 s raw</strong><span>59.3 s published cut · action at 1× · wait at 8.5×</span></div>
     </div>
     <p class="note">Later live gates used the same Bob and Carol wallets:
     <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">5 + 5 Test USD shared one Bitcoin transaction</a>,

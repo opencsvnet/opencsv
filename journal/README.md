@@ -1047,10 +1047,17 @@ inconsistency is recorded here instead of being hidden by the film.
 
 The first Carol screen recorder froze when simulator runtime focus changed, so
 that take was also rejected. The published file comes only from the subsequent
-uninterrupted 230.803-second Bob recording. The 38.1-second edit runs ordinary
-interactions at 2–2.5× and the long DEBUG proof plus network-verification
-interval at 32×, with the latter labeled on screen. MP4 SHA-256:
-`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+uninterrupted 230.803-second Bob recording. A first 38.1-second edit kept a
+large explanatory panel beside the phone and sped interactions to 2–2.5×. The
+owner correctly found the action chunky and the composition too artificial.
+It was replaced before merge.
+
+The final 59.3-second portrait cut leaves every action segment at normal speed
+with only Signal visible. During the otherwise static wait, four cards explain
+durable intent, local proof, signed persistence and relay, and the two-observer
+raw-byte check. Only that wait is compressed, to 8.5×, and the rate is printed
+on every card. MP4 SHA-256:
+`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
 Test USD remains signet-only and has no monetary or redemption value.
 
 ---

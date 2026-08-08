@@ -245,10 +245,11 @@ Acceptance status, preserving the original order:
    `7edbe4cde4627550288f353f2b81e343` returned 1 Test USD in
    `6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`
    at height 316766. Both public APIs agreed on both confirmed blocks. The
-   homepage film is a 38.1-second edit of one uninterrupted 230.803-second Bob
-   recording; its visible labels disclose 2–2.5× interactions and a 32× DEBUG
-   proof/network interval. MP4 SHA-256:
-   `4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+   homepage film is a 59.3-second edit of one uninterrupted 230.803-second Bob
+   recording. Action remains at normal speed with only Signal visible. Four
+   reading cards occupy the otherwise static wait, and label its 8.5× DEBUG
+   proof/network compression. MP4 SHA-256:
+   `6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
 
    The corrected dual-Require rerun is also complete. Carol→Bob operation
    `1bf04f226bdb5ed71c2d7b7035365da0` anchored in
@@ -300,13 +301,14 @@ Backup and DEBUG-only rebind. It must not replace or erase Bob or Carol.
 
 Published from the current simple consumer return:
 
-- a 38.1-second film containing only real Signal simulator screens, cut from
-  one uninterrupted 230.803-second Bob recording, with every speed change
-  disclosed in-frame and no reconstructed transaction state;
+- a 59.3-second film containing only real Signal simulator screens, cut from
+  one uninterrupted 230.803-second Bob recording, with action at normal speed,
+  four explanatory cards only during the static wait, the 8.5× wait disclosed
+  in-frame, and no reconstructed transaction state;
 - homepage, story, performance page, paper, roadmap, README, and journal updates
   with exact txids, timings, and explicit signet-only language;
 - source MP4 SHA-256
-  `4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+  `6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
 
 This revision adds the exact shared-batch and RBF textual receipts. A new
 shared-batch/RBF film, the full final screenshot set, and crash-matrix captures

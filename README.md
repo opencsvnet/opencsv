@@ -98,13 +98,14 @@ at signet height 316765. Bob then sent 1 Test USD back as operation
 at height 316766. mempool.space and Blockstream reported the same confirmed
 block for each transaction.
 
-The published film is a 38.1-second cut made entirely from one uninterrupted
+The published film is a 59.3-second cut made entirely from one uninterrupted
 230.803-second recording of Bob's actual Signal simulator. It starts on the
 real received +1 card and follows his return through pending to verified. User
-interactions run at 2–2.5×; the DEBUG proof and network-verification interval
-runs at 32× and is labeled in-frame. No Signal or transaction state is
-reconstructed. The MP4 SHA-256 is
-`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+action plays at normal speed with no explanatory overlay. Four reading cards
+appear only during the static wait; the DEBUG proof and network-verification
+interval runs at 8.5× and is labeled in-frame. No Signal or transaction state
+is reconstructed. The MP4 SHA-256 is
+`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
 Test USD is signet-only and has no monetary or redemption value.
 
 The live simulator acceptance completed a real round trip. Carol sent 25 Test
@@ -206,11 +207,12 @@ selection and immediately before signing a child. A missing or replaced parent
 freezes the dependent operation. Single-snapshot and indexer-cross-check modes
 do not grant provisional credit.
 
-The homepage is led by the 38.1-second real-Signal cut of the 2026-08-08
-one-dollar return described above. Every speed change is disclosed in-frame;
+The homepage is led by the 59.3-second real-Signal cut of the 2026-08-08
+one-dollar return described above. Action remains at normal speed; the only
+speed change is the labeled 8.5× static wait described above;
 no Signal screen or payment state is reconstructed. The published MP4 has
 SHA-256
-`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
 Historical 25/10 and zero-confirmation captures remain labeled separately.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 72

@@ -1184,10 +1184,12 @@ Bob in signet transaction
 confirmed at height 316765. Bob sent 1 Test USD back in
 `6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`,
 confirmed at height 316766. mempool.space and Blockstream returned the same
-confirmed block for each transaction. The published 38.1-second cut is made
+confirmed block for each transaction. The published 59.3-second cut is made
 entirely from one uninterrupted 230.803-second Bob simulator recording. User
-interactions are 2–2.5×; the DEBUG proof and network-verification interval is
-32× and labeled in-frame. No application or transaction state is reconstructed.
+action remains at normal speed with no explanatory overlay. Four reading cards
+appear only during the static wait; the DEBUG proof and network-verification
+interval is compressed 8.5× and labeled in-frame. No application or transaction
+state is reconstructed.
 
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction
@@ -1275,9 +1277,9 @@ suite passes 27 tests and the full simulator app builds locally against the
 exact Rust XCFramework. Release claims must still wait for Signal exact-tip
 hosted CI, review, dependency repinning, and merge. The complete crash-state matrix,
 clean-install recovery, RBF settlement, and physical-device rollout remain
-open. The simple 38.1-second real-Signal cut described above is published on
+open. The simple 59.3-second real-Signal cut described above is published on
 the project homepage with its speed changes visible in-frame. Its SHA-256 is
-`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+`6187932cd536d8a2baaba99601340b8928b52f130bc74bfa6d5c9e695a7111ee`.
 
 ---
 
