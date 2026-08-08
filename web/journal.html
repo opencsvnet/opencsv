@@ -158,7 +158,7 @@
   <div class="entry">
     <div class="date">2026-08-01</div>
     <h2>u64 limb soundness becomes a theorem</h2>
-    <p>The conservation gadget's carry argument — the scariest informal claim in
+    <p>The conservation gadget's carry argument — the most failure-sensitive informal claim in
     the codebase — is mechanized
     (<a href="https://github.com/opencsvnet/opencsv-formal/commit/b036cf3">b036cf3</a>).
     Bonus honest finding: the general converse is false (a completeness limitation,
@@ -1043,8 +1043,8 @@
     protocol to phone. It separates the 72 audited specification declarations
     from the 15 Aeneas translated-kernel refinements; identifies the AIR gate as
     source-shape checking rather than equivalence; and makes Bitcoin,
-    Poseidon2/FRI, issuer keys, storage, networking, and Rust↔Swift↔Signal
-    explicit external or tested boundaries. The current V4 manifest pins
+    Poseidon2/FRI, issuer keys, storage, networking, and general runtime
+    orchestration explicit external or tested boundaries. The current V4 manifest pins
     <code>opencsv-rs@9b9eca2</code>, and the eleven shipped recursive-lineage
     declarations are linked as completed work.</p>
     <p>We rejected both a synthetic completeness percentage and an “87 theorem”
@@ -1052,6 +1052,13 @@
     makes the 72-declaration ledger searchable and keeps every major statement
     connected to its exact Lean source, Rust source, paper section, or CI
     receipt. <a href="formal.html">Open the proof map →</a></p>
+    <p>The first poster draft put the temporary Swift bridge and Signal fork on
+    the same coverage rail as the protocol and Rust implementation. The owner
+    rejected that implication. They exist to demonstrate a consumer
+    dollar-payment experience to Signal's team, not as an OpenCSV production
+    interface or formal coverage layer. The formal page now contains neither;
+    the homepage and end-to-end story label them only as a separate
+    non-production demonstration.</p>
   </div>
 
   <div class="entry discovery">

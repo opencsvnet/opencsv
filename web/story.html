@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OpenCSV — A payment, end to end</title>
-<meta name="description" content="A real Carol-to-Bob-to-Carol Test USD round trip in Signal, with exact Bitcoin signet transaction and verification receipts.">
+<title>OpenCSV Signal demo — A payment, end to end</title>
+<meta name="description" content="A non-production Signal integration demo showing a real Carol-to-Bob-to-Carol Test USD round trip on Bitcoin signet.">
 <style>
   :root {
     --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
@@ -20,6 +20,9 @@
   .hero h1 { font-size: 38px; letter-spacing: -1px; }
   .tagline { font-size: 18px; color: var(--muted); margin: 12px auto 12px; max-width: 640px; }
   .back { font-size: 14px; }
+  .demo-boundary { border: 2px solid var(--accent); background: #21170b; padding: 22px 24px; margin: 0 0 36px; }
+  .demo-boundary b { display: block; color: var(--accent); font-family: var(--mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px; }
+  .demo-boundary p { color: var(--muted); font-size: 15px; }
 
   .panel { display: grid; grid-template-columns: 56px 1fr; gap: 20px; padding: 36px 0; border-top: 1px solid var(--border); }
   .panel .n { font-family: var(--mono); color: var(--accent); font-size: 26px; padding-top: 2px; }
@@ -50,6 +53,15 @@
 </header>
 
 <div class="wrap">
+
+  <aside class="demo-boundary">
+    <b>Signal demonstration · not a production interface</b>
+    <p>This fork and its temporary Swift bridge exist to demonstrate a consumer
+    dollar-payment experience to Signal's team. They are not a shipped Signal
+    feature, a supported OpenCSV production API, an upstream commitment, or a
+    formal-verification layer. The production protocol and Rust implementation
+    stand independently of this demonstration adapter.</p>
+  </aside>
 
   <div class="panel">
     <div class="n">▶</div>
@@ -193,7 +205,9 @@
     <p>Every displayed artifact is real. The new film records Bob's real Signal
     simulator during a two-wallet signet return; the remaining panels preserve regtest CLI and
     historical physical-phone prototype evidence. None is a claim that a
-    production Signal release is shipped. Current gates live in the
+    production Signal release or production Swift interface is shipped. This
+    page is deliberately separate from the formal-methods proof map. Current
+    demo gates live in the
     <a href="https://github.com/opencsvnet/opencsv/issues/1">work board</a> and
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">Signal architecture issue</a>.
     The homepage centerpiece is the same
