@@ -88,6 +88,25 @@ mints by asset id. It reads issuer secrets from owner-only files and emits JSON
 for automation. Running it does not confer another issuer's authority, and an
 arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
 
+The current homepage lead is deliberately simpler than the full acceptance
+matrix. On 2026-08-08, Carol sent 1 Test USD to Bob as operation
+`4b03fd18a787d9ab8ebaf2d394aee6d5`, anchored by
+[`445c43cb…400fd`](https://mempool.space/signet/tx/445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd)
+at signet height 316765. Bob then sent 1 Test USD back as operation
+`7edbe4cde4627550288f353f2b81e343`, anchored by
+[`6d85895f…f49aa`](https://mempool.space/signet/tx/6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa)
+at height 316766. mempool.space and Blockstream reported the same confirmed
+block for each transaction.
+
+The published film is a 38.1-second cut made entirely from one uninterrupted
+230.803-second recording of Bob's actual Signal simulator. It starts on the
+real received +1 card and follows his return through pending to verified. User
+interactions run at 2–2.5×; the DEBUG proof and network-verification interval
+runs at 32× and is labeled in-frame. No Signal or transaction state is
+reconstructed. The MP4 SHA-256 is
+`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+Test USD is signet-only and has no monetary or redemption value.
+
 The live simulator acceptance completed a real round trip. Carol sent 25 Test
 USD to Bob in signet transaction
 `e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`
@@ -187,11 +206,12 @@ selection and immediately before signing a child. A missing or replaced parent
 freezes the dependent operation. Single-snapshot and indexer-cross-check modes
 do not grant provisional credit.
 
-The homepage is led by a 38.067-second cut of the real
-Carol→Bob→Carol simulator recordings. Waiting time is removed; no Signal screen
-or payment state is reconstructed. The published MP4 has SHA-256
-`ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
-Historical captures remain labeled separately.
+The homepage is led by the 38.1-second real-Signal cut of the 2026-08-08
+one-dollar return described above. Every speed change is disclosed in-frame;
+no Signal screen or payment state is reconstructed. The published MP4 has
+SHA-256
+`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+Historical 25/10 and zero-confirmation captures remain labeled separately.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 72
 audited declarations in the sorry-free `opencsv-formal` ledger, and 15 audited declarations

@@ -28,7 +28,7 @@
   .panel code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
   .shot { border: 1px solid var(--border); border-radius: 10px; max-width: 100%; }
   .phone-shot { display: block; width: min(100%, 390px); margin: 0 auto; }
-  .film { width: min(100%, 430px); aspect-ratio: 720 / 1566; border: 1px solid var(--border); border-radius: 18px; display: block; margin: 18px auto 0; background: #000; }
+  .film { width: min(100%, 960px); aspect-ratio: 16 / 9; border: 1px solid var(--border); border-radius: 18px; display: block; margin: 18px auto 0; background: #000; }
   .placeholder { border: 1px dashed var(--border); border-radius: 10px; background: var(--card);
     color: var(--muted); font-family: var(--mono); font-size: 13px; padding: 48px 24px; text-align: center; }
   .placeholder b { color: var(--accent2); }
@@ -42,9 +42,9 @@
 <header class="hero">
   <div class="wrap">
     <h1>A payment, end to end</h1>
-    <p class="tagline">A real Test USD round trip in Signal: Carol pays Bob,
-    Bob spends part of what he received, and Carol verifies the return before
-    confirmation. Bitcoin signet supplies ordering; the phones verify locally.</p>
+    <p class="tagline">A real Test USD return in Signal: Bob receives one dollar
+    from Carol and sends one dollar back. Bitcoin signet supplies ordering; the
+    phones verify locally.</p>
     <p class="back"><a href="../">← home</a> · <a href="../scale.html">Bitcoin performance</a> · <a href="journal.html">journal</a> · <a href="formal.html">formal verification</a></p>
   </div>
 </header>
@@ -54,16 +54,18 @@
   <div class="panel">
     <div class="n">▶</div>
     <div>
-      <h2>The complete live round trip</h2>
-      <p>This 38-second cut contains only real iOS simulator footage. Waiting
-      time was removed, but the Signal interface and transaction states were
-      not reconstructed. Carol sent 25 Test USD to Bob; Bob then sent 10 back.
-      The anchors confirmed at signet heights 316611 and 316620. Test USD has no
+      <h2>Receive one Test USD, send it back</h2>
+      <p>This 38.1-second cut contains only real Signal simulator footage. It
+      begins on Bob's actual received +1 card and follows his 1 Test USD return
+      through pending to verified. User interactions run at 2–2.5×; the long
+      DEBUG proof and network-verification interval runs at 32× and is labeled
+      in-frame. No application or transaction state was reconstructed. The
+      anchors confirmed at signet heights 316765 and 316766. Test USD has no
       monetary or redemption value.</p>
       <video class="film" controls autoplay muted loop playsinline preload="metadata" poster="media/opencsv-real-signal-test-usd-poster.jpg">
         <source src="media/opencsv-real-signal-test-usd-roundtrip.mp4" type="video/mp4">
       </video>
-      <div class="cap">real registered Signal simulators · public Bitcoin signet · SHA-256 ca859b8e…808e0</div>
+      <div class="cap">real registered Signal simulators · public Bitcoin signet · SHA-256 4a595690…6f456</div>
     </div>
   </div>
 
@@ -115,7 +117,7 @@
   <div class="panel">
     <div class="n">4</div>
     <div>
-      <h2>Bob sends 10 back</h2>
+      <h2>Earlier 10 Test USD acceptance receipt</h2>
       <p>Bob's recipient key prefills from the Signal chat. The v4
       one-input/payment-plus-change path spent the received 25 Test USD coin
       into 10 for Carol and 15 change. The live simulator generated the proof
@@ -182,8 +184,8 @@
 
 <footer>
   <div class="wrap">
-    <p>Every displayed artifact is real. The new film is a two-simulator signet
-    integration receipt; the remaining panels also preserve regtest CLI and
+    <p>Every displayed artifact is real. The new film records Bob's real Signal
+    simulator during a two-wallet signet return; the remaining panels preserve regtest CLI and
     historical physical-phone prototype evidence. None is a claim that a
     production Signal release is shipped. Current gates live in the
     <a href="https://github.com/opencsvnet/opencsv/issues/1">work board</a> and

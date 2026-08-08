@@ -32,22 +32,23 @@ The publishable files are
 
 ## Real Signal round-trip film
 
-The homepage film is a 38.067-second cut of real, registered iOS simulator
-footage. Carol sends 25 Test USD to Bob, then Bob sends 10 Test USD back to
-Carol inside Signal. Waiting time is removed; the Signal interface and payment
-states are never recreated by Remotion or another renderer.
+The homepage film is a 38.1-second cut made entirely from one uninterrupted
+230.803-second recording of the real Bob Signal simulator. It begins on Bob's
+received +1 Test USD card and follows his 1 Test USD return through pending to
+verified. User interactions run at 2–2.5×; the long DEBUG proof and network
+verification interval runs at 32× and is labeled in-frame. The Signal interface
+and payment states are never recreated by Remotion or another renderer.
 
 - MP4: `../media/opencsv-real-signal-test-usd-roundtrip.mp4`
 - poster: `../media/opencsv-real-signal-test-usd-poster.jpg`
 - social card: `../media/opencsv-real-signal-test-usd-social.jpg`
-- MP4 SHA-256: `ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`
-- Carol → Bob anchor: `e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`
-- Bob → Carol anchor: `a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`
+- MP4 SHA-256: `4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`
+- Carol → Bob anchor: `445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd`
+- Bob → Carol anchor: `6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`
 
-Both anchors are public Bitcoin signet receipts. Test USD has no monetary or
-redemption value. The second receipt was accepted provisionally before its own
-confirmation, but the first anchor had already confirmed before Bob signed the
-return; the film therefore does not claim an unconfirmed-parent child.
+Both anchors are public Bitcoin signet receipts and confirmed at heights 316765
+and 316766. Test USD has no monetary or redemption value. The film is a simple
+consumer payment receipt; it does not claim an unconfirmed-parent child.
 
 ## Withdrawn Consumer USD composition
 

@@ -98,7 +98,7 @@
   .scale-callout .button:hover { text-decoration: none; border-color: var(--accent); }
 
   .consumer-film { text-align: center; }
-  .consumer-film .real-film { width: min(100%, 430px); aspect-ratio: 720 / 1566; display: block; margin: 26px auto 0; border: 1px solid var(--border); border-radius: 22px; background: #000; box-shadow: 0 28px 90px rgba(0,0,0,.52); }
+  .consumer-film .real-film { width: min(100%, 960px); aspect-ratio: 16 / 9; display: block; margin: 26px auto 0; border: 1px solid var(--border); border-radius: 22px; background: #000; box-shadow: 0 28px 90px rgba(0,0,0,.52); }
   .consumer-film .note { max-width: 760px; margin: 18px auto 0; color: var(--muted); font-size: 14px; }
   .live-receipt { max-width: 760px; margin: 24px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: left; }
   .live-receipt div { padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
@@ -132,24 +132,25 @@
 
 <section id="consumer-demo">
   <div class="wrap consumer-film">
-    <h2>25 dollars out. 10 dollars back. Inside Signal.</h2>
-    <p class="sub" style="margin-left:auto;margin-right:auto">Carol sends Test
-    USD to Bob. Bob spends part of what he received and sends it back. These are
-    real Signal simulator builds using public Bitcoin signet—not a recreated
-    wallet interface.</p>
+    <h2>Receive $1. Send it back. Inside Signal.</h2>
+    <p class="sub" style="margin-left:auto;margin-right:auto">The film opens on
+    Bob's real received payment from Carol, then follows Bob sending the same
+    amount back. It is actual Signal simulator footage using public Bitcoin
+    signet—not a recreated wallet interface.</p>
     <video class="real-film" controls autoplay muted loop playsinline preload="metadata" poster="web/media/opencsv-real-signal-test-usd-poster.jpg">
       <source src="web/media/opencsv-real-signal-test-usd-roundtrip.mp4" type="video/mp4">
       Your browser does not support the video tag; download
       <a href="web/media/opencsv-real-signal-test-usd-roundtrip.mp4">the real Signal round-trip recording</a> instead.
     </video>
-    <p class="note"><strong>38 seconds · actual iOS simulator footage.</strong>
-    Waiting time is removed; the Signal screens and payment states are not
-    reconstructed. Test USD is signet-only test value with no monetary or
-    redemption claim.</p>
+    <p class="note"><strong>38.1 seconds · actual Signal simulator footage.</strong>
+    User interactions run at 2–2.5×; the long DEBUG proof and network-verification
+    interval runs at 32× and is labeled on screen. No transaction state or
+    Signal screen is reconstructed. Test USD is signet-only test value with no
+    monetary or redemption claim.</p>
     <div class="live-receipt" aria-label="Live Signal payment receipt">
-      <div><strong>25 Test USD</strong><span>Carol → Bob · confirmed at signet height 316611</span></div>
-      <div><strong>10 Test USD</strong><span>Bob → Carol · tx a3a3f4b1…12dc0a · height 316620</span></div>
-      <div><strong>6.237 s</strong><span>local forwarding proof · 42 ms signing and persistence</span></div>
+      <div><strong>1 Test USD</strong><span>Carol → Bob · tx <a href="https://mempool.space/signet/tx/445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd">445c43cb…400fd</a> · height 316765</span></div>
+      <div><strong>1 Test USD</strong><span>Bob → Carol · tx <a href="https://mempool.space/signet/tx/6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa">6d85895f…f49aa</a> · height 316766</span></div>
+      <div><strong>230.803 s raw</strong><span>38.1 s published cut · speed changes disclosed in-frame</span></div>
     </div>
     <p class="note">Later live gates used the same Bob and Carol wallets:
     <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">5 + 5 Test USD shared one Bitcoin transaction</a>,
@@ -196,10 +197,11 @@
       <article class="status-card last">
         <div class="eyebrow">Live zero-confirmation chain · integration branch</div>
         <h3>Signal-iOS + one Test USD wallet</h3>
-        <p>Two registered simulator wallets completed the live path: Carol sent
-        25 Test USD to Bob, Bob accepted it, and Bob sent 10 back. Carol
-        verified the proof, ownership, anchor binding, and exact mempool bytes
-        before confirmation; both anchors later confirmed. Rust owns custody,
+        <p>Two registered simulator wallets completed multiple live paths. The
+        current film shows the simplest one: Bob received 1 Test USD from Carol
+        and sent 1 back; both public anchors confirmed. Earlier acceptance runs
+        also exercised provisional receipt, unconfirmed-parent forwarding,
+        shared batching, RBF, and relaunch recovery. Rust owns custody,
         Bitcoin fees, change, signed persistence, relay, and recovery. Signal
         has no mint or general Bitcoin-send surface. The return operation took
         5m28s end to end in the instrumented acceptance build: 6.237s was local

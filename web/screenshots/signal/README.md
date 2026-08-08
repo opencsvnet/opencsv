@@ -41,17 +41,17 @@ present in these assets.
 
 The homepage no longer uses these zero-balance captures as its principal
 Signal evidence. The current lead film is
-`../../media/opencsv-real-signal-test-usd-roundtrip.mp4`, a 38.067-second edit of
-real registered-simulator footage showing Carol send 25 Test USD to Bob and Bob
-send 10 Test USD back. Waiting time was removed; no Signal screen or payment
-state was reconstructed. Its SHA-256 is
-`ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
+`../../media/opencsv-real-signal-test-usd-roundtrip.mp4`, a 38.1-second edit
+made entirely from one uninterrupted 230.803-second recording of the real Bob
+simulator. It begins on Bob's received +1 Test USD card and follows his 1 Test
+USD return through pending to verified. User interactions run at 2–2.5×; the
+long DEBUG proof and network-verification interval runs at 32× and is labeled
+in-frame. No Signal screen or payment state was reconstructed. Its SHA-256 is
+`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
 
 The public signet anchors are
-`e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`
-(25 Test USD, height 316611) and
-`a3a3f4b12f71e3423801cea069e5251260aeae70fb9cfd133cd7aaefce12dc0a`
-(10 Test USD returned, height 316620). Test USD has no monetary or redemption
-value. The second payment was accepted provisionally before its confirmation;
-the first anchor had already confirmed, so the footage is not evidence of an
-unconfirmed-parent child.
+`445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd`
+(Carol → Bob, 1 Test USD, height 316765) and
+`6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`
+(Bob → Carol, 1 Test USD, height 316766). Both public APIs returned the same
+confirmed blocks. Test USD has no monetary or redemption value.

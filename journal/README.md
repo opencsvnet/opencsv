@@ -1018,6 +1018,41 @@ framework built and installed on Bob and Carol without replacing their state.
 Signal's ordinary hosted build remains blocked before compilation by the
 separately tracked Rust repin/CocoaPods checksum repair.
 
+## 2026-08-08 — The homepage film becomes one real dollar return
+
+The owner rejected the earlier lead cut because, despite using real captures,
+its assembled presentation still looked fake. We narrowed the claim and the
+footage to the consumer action itself: receive 1 Test USD in Signal, then send
+1 Test USD back. The replacement is made entirely from one uninterrupted Bob
+simulator recording. No Signal screen, tap, payment card, pending state, or
+verified state was recreated.
+
+The first fresh Carol attempt, operation
+`d8c1645716e97ec7bd4f7ad312e8262f`, failed after its DEBUG proof with
+`stale_chain_state`; it produced no spend and was rejected as a successful
+take. After a fresh sync, Carol operation
+`4b03fd18a787d9ab8ebaf2d394aee6d5` sent 1 Test USD in
+[`445c43cb…400fd`](https://mempool.space/signet/tx/445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd).
+Bob displayed `+1 Test USD · available before confirmation · replacement risk`.
+The transaction confirmed at signet height 316765.
+
+Bob operation `7edbe4cde4627550288f353f2b81e343` then returned 1 Test USD
+in [`6d85895f…f49aa`](https://mempool.space/signet/tx/6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa).
+His chat showed the immediate pending card and then `−1 Test USD · verified`.
+The transaction confirmed at height 316766. Each anchor paid 455 sats and
+weighed 909 WU. mempool.space and Blockstream returned the same confirmed
+block for each transaction. Bob's local account row nevertheless retained
+`broadcast_unobserved` after public confirmation; that bookkeeping
+inconsistency is recorded here instead of being hidden by the film.
+
+The first Carol screen recorder froze when simulator runtime focus changed, so
+that take was also rejected. The published file comes only from the subsequent
+uninterrupted 230.803-second Bob recording. The 38.1-second edit runs ordinary
+interactions at 2–2.5× and the long DEBUG proof plus network-verification
+interval at 32×, with the latter labeled on screen. MP4 SHA-256:
+`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
+Test USD remains signet-only and has no monetary or redemption value.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

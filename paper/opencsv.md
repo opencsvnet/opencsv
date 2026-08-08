@@ -1178,6 +1178,17 @@ headless Rust capability. Its account wallet uses Bitcoin only as a protocol
 fee reserve, has no bespoke anchor server, persists signed transactions before
 relay, and carries consignments through Signal attachments.
 
+For the simple consumer film recorded on 2026-08-08, Carol sent 1 Test USD to
+Bob in signet transaction
+`445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd`,
+confirmed at height 316765. Bob sent 1 Test USD back in
+`6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`,
+confirmed at height 316766. mempool.space and Blockstream returned the same
+confirmed block for each transaction. The published 38.1-second cut is made
+entirely from one uninterrupted 230.803-second Bob simulator recording. User
+interactions are 2–2.5×; the DEBUG proof and network-verification interval is
+32× and labeled in-frame. No application or transaction state is reconstructed.
+
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction
 `e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`,
@@ -1264,9 +1275,9 @@ suite passes 27 tests and the full simulator app builds locally against the
 exact Rust XCFramework. Release claims must still wait for Signal exact-tip
 hosted CI, review, dependency repinning, and merge. The complete crash-state matrix,
 clean-install recovery, RBF settlement, and physical-device rollout remain
-open. A 38.067-second cut of the real
-Signal screens is published on the project homepage. Waiting time was removed;
-no Signal screen or transaction state was reconstructed.
+open. The simple 38.1-second real-Signal cut described above is published on
+the project homepage with its speed changes visible in-frame. Its SHA-256 is
+`4a5956908bc39193ce682953dfca9cb6ede1ee9244efa31e92970ccdbfc6f456`.
 
 ---
 
