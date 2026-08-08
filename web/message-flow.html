@@ -23,6 +23,7 @@
   .note span { color: var(--muted); font-size: 14px; }
   .status { display: inline-block; margin-top: 18px; border: 1px solid var(--green); border-radius: 999px; padding: 6px 10px; color: var(--green); font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
   footer { margin-top: 32px; color: var(--muted); font-size: 14px; }
+  footer code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--blue); overflow-wrap: anywhere; }
   @media (max-width: 760px) { .notes { grid-template-columns: 1fr; } .note { border-right: 0; border-bottom: 1px solid var(--line); } }
 </style>
 </head>
@@ -31,19 +32,29 @@
   <a href="../">← OpenCSV home</a>
   <div class="status">PUBLISHED HOMEPAGE FILM</div>
   <p class="eyebrow">Signal message flow / approved cut</p>
-  <h1>One phone explains. Two phones exchange.</h1>
-  <p class="lead">A 36-second cut made from real Bob and Carol simulator recordings. The phones are never recreated or covered; explanations occupy their own column or the space between them.</p>
+  <h1>The Signal message-flow film</h1>
+  <p class="lead">A 36.288-second cut made from real Bob and Carol simulator recordings. The phones are never recreated or covered; explanations occupy their own column or the space between them.</p>
   <div class="film">
     <video controls autoplay muted loop playsinline preload="metadata" poster="animation/out/message-flow/poster.png">
       <source src="animation/out/message-flow/opencsv-signal-message-flow-draft.mp4" type="video/mp4">
     </video>
     <div class="notes">
       <div class="note"><strong>Real UI</strong><span>Every Signal screen is captured simulator footage.</span></div>
-      <div class="note"><strong>Honest timing</strong><span>Retained action is 1×; dead pauses are cut, not accelerated.</span></div>
+      <div class="note"><strong>Timing</strong><span>Retained action is 1×; dead pauses are cut, not accelerated.</span></div>
       <div class="note"><strong>Explanatory motion</strong><span>The moving dot illustrates the encrypted attachment path, not a fabricated app state.</span></div>
     </div>
   </div>
-  <footer>Bitcoin signet · Test USD has no monetary or redemption value · Published after owner review.</footer>
+  <footer>Bitcoin signet · Test USD has no monetary or redemption value ·
+  Published after owner review.<br>
+  Published MP4 (2,881,105 bytes) SHA-256
+  <code>5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c</code>.
+  Raw source recordings (created 2026-08-08T10:15:29Z) SHA-256
+  <code>a19880e24921f0d08ec13364fcf0120985946ea89330838f88fd3d5446b39b68</code> (Bob)
+  and
+  <code>de7de06a4d5e28312608f41cd505ee2bd7649c22aea1e42ada37691c0592aeb2</code> (Carol);
+  opening Bob source
+  <code>bbf524608a040bd0d7f5af561028d181dda776f1272ead529482528653a4851f</code>.
+  Full provenance: <a href="journal.html">journal</a>.</footer>
 </main>
 </body>
 </html>

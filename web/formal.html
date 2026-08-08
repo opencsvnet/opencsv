@@ -169,7 +169,7 @@
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">Formal methods / living evidence poster</div>
+        <div class="eyebrow">Formal methods</div>
         <h1>Protocol rules: <span>proven.</span><br>Whole wallet: no.</h1>
         <p class="tagline">OpenCSV machine-checks the rules that prevent inflation,
         value creation, and quiet double spends. It does not pretend that Lean
@@ -178,7 +178,7 @@
       </div>
       <aside class="hero-note">
         <div class="eyebrow">How to read this page</div>
-        <strong>Coverage is a map, not a percentage.</strong>
+        <strong>Each layer has a different status.</strong>
         <p>Click a layer below. Green means machine-checked, blue means a narrow
         code refinement, amber means tested, and red marks an external assumption.</p>
         <a href="#coverage">OPEN THE PROOF MAP ↓</a>
@@ -196,10 +196,10 @@
 
 <section id="coverage" class="coverage">
   <div class="wrap">
-    <div class="section-number">01 / COMPLETENESS</div>
-    <h2>Follow the claim from model to implementation.</h2>
-    <p class="sub">No single percentage can describe this. Select a layer to see
-    its exact status, proof boundary, pinned source, and receipt.</p>
+    <div class="section-number">01 / COVERAGE</div>
+    <h2>Coverage by layer</h2>
+    <p class="sub">Select a layer to see its exact status, proof boundary,
+    pinned source, and receipt.</p>
     <div class="boundary-rail" role="tablist" aria-label="Formal coverage layers">
       <button class="boundary" role="tab" aria-selected="true" aria-controls="panel-spec" data-panel="panel-spec"><span class="step">01</span><strong>Protocol specification</strong><em>machine-checked</em></button>
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-lineage" data-panel="panel-lineage"><span class="step">02</span><strong>Batch + recursive lineage</strong><em>machine-checked</em></button>
@@ -226,7 +226,7 @@
     </article>
     <article id="panel-bitcoin" class="coverage-panel" role="tabpanel" hidden>
       <div><span class="verdict assumed">External security boundary</span><h3>Bitcoin supplies ordering and probabilistic settlement.</h3><p>Lean proves scan-first exclusion relative to a verified ordered chain view. Rust validates proof-of-work headers, BIP158 candidates, Merkle inclusion, confirmations, and reorgs. The security of Bitcoin consensus, sufficient honest hashpower, network availability, and the meaning of <code>k</code> confirmations remain external assumptions.</p></div>
-      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN SOUNDNESS SOURCE ↗</a><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN WHITEPAPER ↗</a><a href="https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki">BIP158 COMPACT FILTERS ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/tree/e4265b946f0aaa31a9230aa67a2f964f5bb0362e/crates/opencsv-cbf">OPENCSV CHAIN VERIFIER ↗</a></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN SOUNDNESS SOURCE ↗</a><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN WHITEPAPER ↗</a><a href="https://github.com/bitcoin/bips/blob/master/bip-0158.mediawiki">BIP158 COMPACT FILTERS ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/tree/e4265b946f0aaa31a9230aa67a2f964f5bb0362e/crates/opencsv-cbf">OPENCSV CHAIN VERIFIER ↗</a><a href="animation/out/formals/Scan-soundness.mp4">SCAN-SOUNDNESS FILM ↗</a></div>
     </article>
   </div>
 </section>
@@ -234,9 +234,9 @@
 <section id="foundations">
   <div class="wrap">
     <div class="section-number">02 / EXTERNAL FOUNDATIONS</div>
-    <h2>The proof has foundations outside the proof.</h2>
-    <p class="sub">These are not embarrassing footnotes. They are the named
-    security assumptions that make the protocol theorem meaningful.</p>
+    <h2>External assumptions</h2>
+    <p class="sub">The protocol theorems depend on these named security
+    assumptions, which are not mechanized.</p>
     <div class="foundation-grid">
       <article class="foundation"><span class="status">Assumed cryptographic security</span><h3>Poseidon2</h3><p>Provides commitment, owner/nullifier, anchor-binding, and proof-system hashing. Lean reasons from injectivity, binding, and preimage-resistance hypotheses; it does not mechanize cryptanalysis of the concrete permutation.</p><a href="https://eprint.iacr.org/2023/323">POSEIDON2 PAPER ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Interfaces.lean">LEAN HASH AXIOMS ↗</a></article>
       <article class="foundation"><span class="status">Assumed proof-system soundness</span><h3>FRI + recursion</h3><p>The receiver theorem calls an abstract sound proof system. Production parameters, predecessor verification keys, version boundaries, and adversarial rejection are implemented and tested; Lean does not prove the concrete FRI verifier.</p><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED PROVER SOURCE ↗</a><br><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER BOUNDARY ↗</a></article>
@@ -249,24 +249,24 @@
 <section id="plain">
   <div class="wrap">
     <div class="section-number">03 / THREE LOAD-BEARING CLAIMS</div>
-    <h2>What the machine actually guarantees.</h2>
-    <p class="sub">The full ledgers are below. Start with the three claims a
-    receiver actually needs.</p>
+    <h2>The three main guarantees</h2>
+    <p class="sub">The full ledgers are below. These are the three claims a
+    receiver needs.</p>
     <ul class="layers">
       <li><b>Proven: no inflation without issuer authorization.</b>
-        <p>If someone shows you coins, the math — not a server, not trust — proves
-        every unit traces back to a mint the issuer actually authorized. If that's
-        ever wrong, the world has a counterfeiting machine, and the mints stream
-        would show it.</p></li>
+        <p>Every accepted unit traces back to a mint the issuer authorized
+        (T1). A violation would appear in the public mints stream, which
+        anyone can audit.</p></li>
       <li><b>Proven: a double-spend can't quietly succeed.</b>
-        <p>Spending the same coin twice produces a visible conflict that resolves
-        deterministically — the first properly anchored spend wins, and a
-        recipient who waits for confirmations can't be fooled into taking the
-        loser. Copying someone's anchor to grief them provably does nothing.</p></li>
+        <p>Spending the same coin twice produces a visible conflict that
+        resolves deterministically: the first properly anchored spend wins,
+        and a recipient who waits for confirmations cannot accept the loser
+        (T3). Copying someone's anchor record under a different context
+        creates no occurrence (<code>griefer_copy_invisible</code>).</p></li>
       <li><b>Proven: the checklist protects the receiver.</b>
-        <p>A wallet that follows the verification checklist accepts only coins
-        with a genuine, unbroken history. The checklist is short enough to be
-        verified itself — that's what the theorems below are.</p></li>
+        <p>A wallet that follows the <code>Accept</code> checklist accepts
+        only coins that extend a valid trace (T4), modulo proof-system
+        soundness.</p></li>
     </ul>
   </div>
 </section>
@@ -274,9 +274,9 @@
 <section id="assumptions-plain">
   <div class="wrap">
     <div class="section-number">04 / FAILURE-MODE TABLE</div>
-    <h2>What you still trust, and what breaks if it's wrong</h2>
-    <p class="sub">Every proof rests on assumptions. We don't hide them — each is
-    named, and each failure mode is visible rather than silent.</p>
+    <h2>Assumptions and failure modes</h2>
+    <p class="sub">Each assumption is listed with what breaks if it fails and
+    the mitigation.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>You trust that…</th><th>If it breaks…</th><th>Mitigation</th></tr></thead>
@@ -295,10 +295,11 @@
 <section id="theorems">
   <div class="wrap">
     <div class="section-number">05 / HEADLINE THEOREMS</div>
-    <h2>Open the claim. Open the proof.</h2>
-    <p class="sub">Four headline results about the <em>protocol logic</em> — the
-    layer where catastrophic bugs (inflation, double-spend acceptance) would
-    live, independent of any cryptography.</p>
+    <h2>Headline theorems</h2>
+    <p class="sub">Four results about the <em>protocol logic</em> — the layer
+    where catastrophic bugs (inflation, double-spend acceptance) would live,
+    independent of any cryptography. Each links to its Lean source and paper
+    section; each video is from the same generated formal series.</p>
 
     <div class="thm">
       <div class="thm-text">
@@ -354,10 +355,9 @@
 <section id="axioms">
   <div class="wrap">
     <div class="section-number">06 / MACHINE-GENERATED LEDGERS</div>
-    <h2>Where the cryptographic hardness lives</h2>
-    <p class="sub">Every assumption is an explicitly labeled axiom — the build
-    prints an axiom audit (<code>#print axioms</code>) per theorem. Nothing is
-    hidden in the proof tactics.</p>
+    <h2>Axiom ledger</h2>
+    <p class="sub">Every assumption is an explicitly labeled axiom; the build
+    prints an axiom audit (<code>#print axioms</code>) per theorem.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>Assumption</th><th>Form</th><th>Used by</th></tr></thead>
@@ -372,9 +372,10 @@
         </tbody>
       </table>
     </div>
-    <p class="sub" style="margin-top:16px">Notable by absence: the first-occurrence
-    lemmas are pure list reasoning and depend on <em>no</em> cryptographic axioms
-    at all.</p>
+    <p class="sub" style="margin-top:16px">The first-occurrence lemmas are pure
+    list reasoning and depend on no cryptographic axioms. The scan-soundness
+    argument has a short animated explainer:
+    <a href="animation/out/formals/Scan-soundness.mp4">Scan-soundness film</a>.</p>
     <h3 style="margin-top:28px">Specification audit — live from the build</h3>
     <p class="sub">The site checks <code>opencsv-formal</code> every 15 minutes.
     When its default branch moves, CI rebuilds Lean, reruns the axiom audit, and
@@ -516,10 +517,9 @@
 
 <section id="gaps">
   <div class="wrap">
-    <div class="section-number">07 / HONESTY GAPS</div>
-    <h2>The honesty gaps</h2>
-    <p class="sub">"Formally verified" always needs a noun after it. These are
-    the exact surfaces still outside the machine-checked claim.</p>
+    <div class="section-number">07 / GAPS</div>
+    <h2>Known gaps</h2>
+    <p class="sub">These surfaces are outside the machine-checked claim.</p>
     <ul class="layers">
       <li><b>1. The cryptography is assumed, not proven.</b>
         <p>Poseidon2's collision resistance, the signature scheme's unforgeability,
@@ -536,7 +536,7 @@
         storage, concurrency, and chain I/O are not translated. A4 adopts the
         four verified families on <code>opencsv-rs/main</code>; A5 projects
         receiver decisions through a pure accept boundary on that same line.</p></li>
-      <li><b>3. The chain-view assumption is explicit — and shrinking.</b>
+      <li><b>3. The chain-view assumption is explicit.</b>
         <p>The deployment moved to scan-first indexing (paper §4.7.1): exclusion
         is a <em>local</em> check over a filter-discovered candidate set, verified
         against proof-of-work. The formal model now matches the deployment
@@ -561,14 +561,13 @@
 
 <section id="next">
   <div class="wrap">
-    <div class="section-number">08 / KEEP THE QUESTIONS SEPARATE</div>
-    <h2>Follow the boundary you care about.</h2>
-    <p class="sub">This page answers what is proved. Delivery status and
-    throughput have their own interactive, receipt-backed pages so neither can
-    quietly borrow certainty from the formal model.</p>
+    <div class="section-number">08 / RELATED PAGES</div>
+    <h2>Related pages</h2>
+    <p class="sub">This page covers only what is proved. Delivery status and
+    throughput are documented on their own receipt-backed pages.</p>
     <div class="research-grid">
-      <a class="research-link" href="../roadmap.html"><span class="eyebrow">Delivery boundary</span><h3>Roadmap</h3><p>Completed reference work, active fix-forward work, owner gates, and everything still unauthorized.</p></a>
-      <a class="research-link" href="../scale.html"><span class="eyebrow">Performance boundary</span><h3>How it gets fast</h3><p>A checked fee model, live calculator, benchmarks, limits, and machine-readable receipts.</p></a>
+      <a class="research-link" href="../roadmap.html"><span class="eyebrow">Delivery</span><h3>Roadmap</h3><p>Completed reference work, active fix-forward work, owner gates, and everything still unauthorized.</p></a>
+      <a class="research-link" href="../scale.html"><span class="eyebrow">Performance</span><h3>Bitcoin performance</h3><p>A CI-checked fee model, live calculator, benchmarks, limits, and machine-readable receipts.</p></a>
       <a class="research-link" href="../paper/opencsv.md"><span class="eyebrow">Technical narrative</span><h3>Paper</h3><p>The complete protocol design, security argument, assumptions, and formal-methods interpretation.</p></a>
     </div>
   </div>

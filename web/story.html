@@ -113,7 +113,7 @@
   <div class="panel">
     <div class="n">3</div>
     <div>
-      <h2>The phone verifies — alone</h2>
+      <h2>The phone verifies locally</h2>
       <p>The recipient's phone verifies the recursive proof, syncs
       compact block filters (kilobytes), finds the anchor block via the marker,
       and checks locally that the coin was never spent before. No RPC, no
@@ -174,8 +174,9 @@
     <div>
       <h2>The CLI verifies Bob's transfer</h2>
       <p>On the other side, the text wallet runs the same verification: proof,
-      anchor position, local exclusion check. <code>VERIFIED</code> — the two
-      clients agree because the protocol is the proof, not the server.</p>
+      anchor position, local exclusion check. <code>VERIFIED</code> — two
+      independent clients accept the same consignment with no shared
+      server.</p>
       <img class="shot" src="screenshots/receive.png" alt="CLI: receive VERIFIED">
       <div class="cap">regtest · auto-regenerated weekly from a live run</div>
     </div>
@@ -184,11 +185,11 @@
   <div class="panel">
     <div class="n">6</div>
     <div>
-      <h2>A double-spend dies; the supply audits clean</h2>
+      <h2>A double-spend is rejected; the supply audit balances</h2>
       <p>Re-spending the same coin produces a conflicting anchor — the
       first-occurrence rule rejects it at a real block location
-      (<code>NullifierConflict</code>). Meanwhile the public mint/redeem stream
-      sums the supply: anyone can check it, no permission needed.</p>
+      (<code>NullifierConflict</code>). The public mint/redeem stream
+      sums the supply, and anyone can recompute it.</p>
       <img class="shot" src="screenshots/send-double-spend-audit.png" alt="CLI: send, double-spend rejected, supply audit">
       <div class="cap">regtest · auto-regenerated weekly from a live run</div>
     </div>

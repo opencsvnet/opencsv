@@ -65,8 +65,8 @@
 <header>
   <div class="wrap">
     <div class="eyebrow">Execution map · snapshot 2026-08-08</div>
-    <h1>Done is not shipped.</h1>
-    <p class="lede">Four reference baselines are complete. Signal integration is merged but still has a failing default-branch build and acceptance gates. Release and mainnet remain separate decisions.</p>
+    <h1>Roadmap</h1>
+    <p class="lede">Four reference baselines are complete. Signal integration is merged but still has a failing default-branch build and acceptance gates. There is no release and no mainnet use.</p>
     <div class="sourcebar"><a href="ROADMAP.md">Plan of record</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Live work board ↗</a><a href="web/data/roadmap-v1.json">Machine-readable snapshot</a><span id="data-state">static snapshot visible</span></div>
   </div>
 </header>
@@ -79,7 +79,7 @@
 <main>
   <div class="wrap">
     <div class="toolbar">
-      <h2>Every track, with receipts.</h2>
+      <h2>Tracks</h2>
       <div class="filters" aria-label="Filter roadmap tracks">
         <button class="filter active" data-filter="all">All</button><button class="filter" data-filter="complete">Complete</button><button class="filter" data-filter="active">Active</button><button class="filter" data-filter="open">Open</button><button class="filter" data-filter="owner">Owner action</button>
       </div>
@@ -93,7 +93,7 @@
       <article class="track open" data-state="open"><div class="num">06</div><div><h3>Release + mainnet</h3><p>Independent security review, signed distribution, upstream submission, production issuer policy, and every mainnet transaction are deliberately still open.</p></div><span class="state">not authorized</span><details><summary>Open source of truth</summary><div class="receipts"><a href="ROADMAP.md#open-gates">Open gates</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Owner work board ↗</a></div></details></article>
       <article class="track owner" data-state="owner"><div class="num">07</div><div><h3>Domain hardening</h3><p>Apex, www, TLS, HTTPS, and organization verification are live. DNSSEC requires Cloudflare activation and publishing the exact DS at Namecheap.</p></div><span class="state">owner action</span><details><summary>Open receipts</summary><div class="receipts"><a href="https://opencsv.net/">Live site ↗</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Domain checklist ↗</a></div></details></article>
     </div>
-    <div class="next"><a href="web/formal.html"><div class="eyebrow">Proof boundary</div><b>What is formally proved?</b><span>Walk from specification to code, tests, and external assumptions.</span></a><a href="scale.html"><div class="eyebrow">Performance boundary</div><b>How is it fast enough?</b><span>Change participants and fees against the checked Rust-derived model.</span></a></div>
+    <div class="next"><a href="web/formal.html"><div class="eyebrow">Formal methods</div><b>What is formally proved</b><span>The specification ledger, code refinements, tests, and external assumptions.</span></a><a href="scale.html"><div class="eyebrow">Performance</div><b>The fee and capacity model</b><span>Change participants and fees against the CI-checked Rust-derived model.</span></a></div>
   </div>
 </main>
 <footer><div class="wrap">Snapshot data is versioned; live coordination remains in GitHub issue #1. A completed reference track is not a release claim.</div></footer>
