@@ -892,8 +892,9 @@ signed, so a true unconfirmed-parent child remains open.
 The return operation took 328s from durable intent to consignment delivery. Its
 receipt separates 6.237s local proving, 42ms signing/persistence, 1.826s relay,
 77.861s funding verification, and 93.163s pre-sign verification. Two peers
-accepted complete socket writes. Required pinned Blockstream observation
-matched raw bytes in 347ms; optional mempool.space observation timed out after
+recorded complete transaction-submission writes; this is not a
+mempool-acceptance claim. Required pinned Blockstream observation matched raw
+bytes in 347ms; optional mempool.space observation timed out after
 8.025s and was recorded unavailable. The planned two-required-observer gate is
 therefore still open.
 
@@ -937,9 +938,10 @@ The wallet-level rerun closed the gate the earlier film could not. Carol queued
 1 Test USD as operation `1bf04f226bdb5ed71c2d7b7035365da0`; its signed
 signet transaction is
 [`2c3bc97c…f4786`](https://mempool.space/signet/tx/2c3bc97c39615094486f8d1786974aed34ed426ba7d97a949890e073cfbf4786).
-Three ordinary peers accepted complete socket writes. mempool.space returned
-the exact 309-byte transaction in 256ms and Blockstream returned the same bytes
-in 377ms. Signal then delivered the consignment, and Bob displayed
+Three ordinary peers recorded complete transaction-submission writes; this is
+not a mempool-acceptance claim. mempool.space returned the exact 309-byte
+transaction in 256ms and Blockstream returned the same bytes in 377ms. Signal
+then delivered the consignment, and Bob displayed
 `+1 Test USD · available before confirmation · replacement risk` while both
 providers still reported the anchor unconfirmed.
 
@@ -968,6 +970,48 @@ stale reason atomically with observer acceptance. The focused regression and
 the complete warning-denied FFI suite passed: 61 tests, zero failures, two
 explicitly ignored slow recursive-receipt tests. Hosted exact-tip CI remains a
 merge gate.
+
+## 2026-08-07 — One shared anchor, then one logical payment across RBF
+
+Carol froze one explicit batch with operation
+`afcaa691e4a0adb3cfd24a6f986400d0` for 5 Test USD to Bob and operation
+`bc1850940e9e8f2c3af747aa60852725` for 5 Test USD to Note to Self. Batch
+`c3d0260082cea04e98a1a56d9e7713fb` committed both envelopes to the single
+signet transaction
+[`771aefc6…3c4c3`](https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3).
+Three ordinary peers recorded complete transaction-submission writes; this is
+not called mempool acceptance. mempool.space and Blockstream returned the same
+exact bytes in 271ms and 354ms. Both recipients credited once, the apps
+survived relaunch, and the transaction confirmed at signet height 316687 with
+908 sats of fee and 1,808 weight units.
+
+A separate 1 Test USD payment, operation
+`3d2210aeda489dfa33acbb00c92951b1`, first signed
+[`cb32fa10…98fd5`](https://mempool.space/signet/tx/cb32fa1048b83d479fadf4aaa6160664e61170e95036ab5d4d3d57bdd0d98fd5)
+at 2 sat/vB and then replaced it with
+[`4ae0f1c6…bd7f7`](https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7)
+at 5 sat/vB. The replacement preserved the protected funding input, OpenCSV
+record, marker, protocol context, output positions, change destination, batch
+membership, and delivery identity. Both public signet APIs currently return
+the replacement as unconfirmed with a 1,138-sat fee and 909 weight units and
+return 404 for the superseded transaction. Carol moved from 131 to 132 Test USD
+exactly once. Settlement of the replacement remains open.
+
+The first replacement delivery rotated an attachment nonce. That was useful for
+transport retry, but Signal initially rendered the original and replacement
+receipts as two `+1 Test USD` bubbles. A text-based deduplication shortcut was
+rejected because display text is not a payment identity. Rust candidate
+[`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
+now gives every replacement one cryptographic logical-payment id; Signal
+candidate
+[`348b8e1`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41)
+uses it to supersede presentation while retaining both signed receipts as
+evidence. Local Rust recovery-feature validation passed 71 tests plus two
+integration tests, with two intentional slow release-only tests ignored. The
+warning-denied Signal wallet-store suite passed 27 tests, and the exact
+framework built and installed on Bob and Carol without replacing their state.
+Rust hosted tests are still running; Signal's ordinary hosted build remains
+blocked before compilation by the separately tracked CocoaPods checksum repair.
 
 ---
 

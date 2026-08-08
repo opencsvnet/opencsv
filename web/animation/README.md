@@ -90,10 +90,12 @@ film supersedes it with real confirmed-balance and send-review footage.
 
 ### Remaining acceptance-media gates
 
-The real round-trip film closes the basic consumer send/receive media gate. A
-future evidence film may add the still-open shared-transaction batch,
-protocol-safe RBF, crash-state resume, and true unconfirmed-parent child. Those
-states must come from actual receipts and must not be inferred from this film.
+The real round-trip film closes the basic consumer send/receive media gate.
+Shared-transaction batching, one protocol-safe RBF, and a true
+unconfirmed-parent child now also have live textual/on-chain receipts. A future
+evidence film may add those recorded flows plus the still-open complete
+crash-state matrix. Those states must come from actual captures and must not be
+inferred from this film.
 
 Phone numbers, account roots, device bindings, backup material, and checkpoint
 contents remain prohibited from every screenshot, recording, caption, and

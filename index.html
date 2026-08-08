@@ -151,6 +151,12 @@
       <div><strong>10 Test USD</strong><span>Bob → Carol · tx a3a3f4b1…12dc0a · height 316620</span></div>
       <div><strong>6.237 s</strong><span>local forwarding proof · 42 ms signing and persistence</span></div>
     </div>
+    <p class="note">Later live gates used the same Bob and Carol wallets:
+    <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">5 + 5 Test USD shared one Bitcoin transaction</a>,
+    and a separate 1 Test USD payment was
+    <a href="https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7">fee-bumped without becoming a second payment</a>.
+    The main film remains the simple consumer round trip; detailed receipts are
+    in the status and journal.</p>
   </div>
 </section>
 
@@ -203,9 +209,13 @@
         confirmed-parent snapshot conflict. A subsequent 1 Test USD rerun
         produced a true unconfirmed parent and child: both pinned APIs matched
         both exact transactions, local proofs took 6.096s and 5.995s, and each
-        operation resumed after a post-broadcast relaunch. Hosted CI, shared
-        batching, safe RBF, the complete crash matrix, clean recovery, merge,
-        and physical rollout remain open.</p>
+        operation resumed after a post-broadcast relaunch. Carol then sent 5
+        Test USD to Bob and 5 to Note to Self in one confirmed Bitcoin
+        transaction. A separate 1 Test USD payment was safely replaced from 2
+        to 5 sat/vB; Carol credited it once, and Signal retains both attachments
+        while displaying one payment. Hosted CI, the complete crash matrix,
+        replacement settlement, clean recovery, merge, and physical rollout
+        remain open.</p>
       </article>
     </div>
     <p class="receipt"><strong>Bitcoin is protocol gas, not a second payment
@@ -309,8 +319,8 @@
     </ul>
     <div class="tablewrap metrics">
       <table>
-        <caption>Authenticated production-profile measurements. V3 is on the
-        reference main line; the v4 one-input row is measured draft PR #8.
+        <caption>Authenticated production-profile measurements. V3 and the
+        v4 one-input forwarding shape are on the reference main line.
         The August 1 ~0.55 s phone result used the retired test profile.</caption>
         <thead><tr><th>Proof</th><th>M4 prove (warm)</th><th>Verify</th><th>Size</th><th>iPhone 16e prove (cold)</th></tr></thead>
         <tbody>
@@ -411,10 +421,11 @@
       </li>
       <li>
         <h3>Finish Signal release gates</h3>
-        <p>The live two-hop and two-required-observer zero-confirmation receipts
-        are complete. Remaining work is hosted CI and review, explicit shared batching,
-        safe RBF, the crash-state matrix, clean backup recovery, and physical
-        device acceptance. No mainnet or release action is implied.</p>
+        <p>The live two-hop, two-required-observer zero-confirmation, explicit
+        shared-batch, and one protocol-safe RBF receipts are complete. Remaining
+        work is hosted CI and review, the crash-state matrix, replacement
+        settlement, clean backup recovery, and physical-device acceptance. No
+        mainnet or release action is implied.</p>
       </li>
     </ol>
   </div>

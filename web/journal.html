@@ -31,7 +31,7 @@
   .entry h2 { font-size: 22px; margin: 6px 0 10px; }
   .entry p { color: var(--muted); font-size: 16px; max-width: 720px; }
   .entry p + p { margin-top: 8px; }
-  .entry code { font-family: var(--mono); font-size: 13px; color: var(--accent2); }
+  .entry code { font-family: var(--mono); font-size: 13px; color: var(--accent2); overflow-wrap: anywhere; word-break: break-word; }
   .entry .tag { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
     border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; color: var(--muted); margin-left: 8px; vertical-align: middle; }
   .entry.discovery .tag { color: var(--accent); border-color: var(--accent); }
@@ -881,8 +881,9 @@
     <p>The return operation took 328s from durable intent to consignment
     delivery. Its receipt separates 6.237s local proving, 42ms signing and
     persistence, 1.826s relay, 77.861s funding verification, and 93.163s
-    pre-sign verification. Two peers accepted complete socket writes. Required
-    pinned Blockstream observation matched raw bytes in 347ms; optional
+    pre-sign verification. Two peers recorded complete transaction-submission
+    writes, not mempool acceptance. Required pinned Blockstream observation
+    matched raw bytes in 347ms; optional
     mempool.space observation timed out after 8.025s and was recorded
     unavailable. The final two-required-observer policy therefore remains open.</p>
     <p>The homepage film is a 38.067s cut of those real simulator recordings.
@@ -945,6 +946,37 @@
     clears it atomically. The warning-denied FFI suite passed 61 tests with zero
     failures and two explicitly ignored slow recursive-receipt tests. Hosted
     exact-tip CI remains a merge gate.</p>
+  </div>
+
+  <div class="entry discovery">
+    <div class="date">2026-08-07</div>
+    <h2>One shared anchor, then one logical payment across RBF <span class="tag">live signet receipts</span></h2>
+    <p>Carol froze one explicit batch: 5 Test USD to Bob and 5 Test USD to Note
+    to Self. Batch <code>c3d0260082cea04e98a1a56d9e7713fb</code> committed
+    both envelopes to the single signet transaction
+    <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3"><code>771aefc6…3c4c3</code></a>.
+    Three ordinary peers recorded complete transaction-submission writes—not
+    mempool acceptance—and both pinned APIs returned the same bytes in
+    271ms/354ms. Both recipients credited once, the apps survived relaunch, and
+    the anchor confirmed at signet height 316687.</p>
+    <p>A separate 1 Test USD operation first signed
+    <a href="https://mempool.space/signet/tx/cb32fa1048b83d479fadf4aaa6160664e61170e95036ab5d4d3d57bdd0d98fd5"><code>cb32fa10…98fd5</code></a>
+    at 2 sat/vB and replaced it with
+    <a href="https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7"><code>4ae0f1c6…bd7f7</code></a>
+    at 5 sat/vB. The protected funding input, OpenCSV record, marker, protocol
+    context, output positions, change destination, membership, and delivery
+    identity remained unchanged. Both APIs see the replacement unconfirmed and
+    no longer serve the old transaction. Carol credited exactly once;
+    replacement settlement remains open.</p>
+    <p>The first retry rotated an attachment nonce and initially produced two
+    visible <code>+1 Test USD</code> bubbles. A display-text deduplication
+    shortcut was rejected. Rust <a href="https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd"><code>28010d8</code></a>
+    now supplies one cryptographic logical-payment id across replacements;
+    Signal <a href="https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41"><code>348b8e1</code></a>
+    supersedes the presentation while retaining both signed receipts. Local
+    Rust recovery validation passed 71 tests plus two integration tests, and
+    the warning-denied Signal wallet-store suite passed 27 tests. Hosted Rust
+    tests and Signal's tracked CocoaPods checksum repair remain merge gates.</p>
   </div>
 
 </div>

@@ -1,12 +1,13 @@
-# OpenCSV Master Plan (2026-08-07, rev 9) — Live Signal round-trip receipt
+# OpenCSV Master Plan (2026-08-07, rev 10) — Live batch and fee-replacement receipts
 
 ## Plan of record
 
 This revision reconciles the owner-approved **OpenCSV Rev 4 — Permanent Test
-USD and Final Signal Acceptance** plan with the first real Carol→Bob→Carol
-Signal simulator receipt. Coordination state lives in repositories and GitHub
-issues, not chat. Earlier roadmap revisions and failed approaches remain in Git
-history and the public journal.
+USD and Final Signal Acceptance** plan with the real Carol→Bob→Carol path, the
+first explicit shared-transaction batch, and the first protocol-safe fee
+replacement in Signal simulators. Coordination state lives in repositories and
+GitHub issues, not chat. Earlier roadmap revisions and failed approaches remain
+in Git history and the public journal.
 
 The execution order is still:
 
@@ -161,21 +162,20 @@ that are not yet merged: signed limb borrows in the value gadget, canonical
 confirmed-parent snapshot handling, and corrupt BIP158 cache refetch. Hosted CI
 and review apply to the repaired exact tip, not merely the earlier base commits.
 
-The current repair candidates are Rust
-[`2543c25`](https://github.com/opencsvnet/opencsv-rs/commit/2543c25)
+The current consolidated candidates are Rust
+[`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
 and Signal
-[`4c27eca874`](https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286).
-They close a policy mismatch discovered in the live Advanced screen: both
-pinned APIs were marked `Require`, but a separate one-of-two quorum still let
-one required provider fail. Rust now derives an omitted quorum from every raw
-observer marked `Require` and rejects explicit mismatches. Signal derives the
-same count instead of accepting a caller override. Local receipts are 61 Rust
-FFI tests passed with two explicitly ignored slow recursive-receipt tests. The
-warning-denied Signal observer suite then passed all three tests, including a
-1.831-second live run where both pinned providers returned the same exact raw
-signet transaction bytes. The wallet-level rerun then completed a true
-unconfirmed parent/child chain with both required observers. Hosted exact-tip
-CI remains pending.
+[`348b8e1d20`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41).
+They include the corrected two-required-observer policy, the true unconfirmed
+parent/child receipt, batch-envelope verification and account identity fixes,
+exact-once replacement delivery, and a cryptographic logical-payment identity
+that keeps an RBF replacement to one payment bubble while retaining both exact
+attachments. The exact Rust recovery-feature suite passes 71 tests with two
+explicitly ignored slow release-only cases; the warning-denied Signal store
+suite passes 27 tests and the full simulator app builds against the exact Rust
+XCFramework. Rust hosted CI remains a merge gate. Signal's recovery hosted job
+is green, while its ordinary job stops before compilation at the separately
+tracked CocoaPods lockfile checksum gate.
 
 Required product behavior:
 
@@ -216,8 +216,8 @@ Acceptance status, preserving the original order:
 
 1. **Complete:** install the consolidated build on Bob and Carol without
    erasing or relinking either Signal account.
-2. **Partial:** both fee wallets synced; confirmed count-2 batch stock is still
-   required for the explicit shared-batch test.
+2. **Complete:** both fee wallets synced and Carol's count-2 internal stock was
+   confirmed before the explicit shared-batch run.
 3. **Complete:** deliver and verify funded Test USD through Signal.
 4. **Superseded for this run:** additional `[50, 50]` issuance was unnecessary
    for the solo round trip; Signal still exposes no issuance UI or issuer ABI.
@@ -243,19 +243,32 @@ Acceptance status, preserving the original order:
    mempool.space and Blockstream returned matching bytes for both transactions;
    both were still unconfirmed when Bob and Carol exposed the received dollar
    as spendable with replacement risk.
-7. **Open:** Carol explicitly batches 5 Test USD to Bob and 5 Test USD to Note to Self.
-   Both envelopes share one Bitcoin txid and record exact manifest positions.
-   This is a two-recipient Bob/Carol-plus-self test, not a three-party claim.
-8. **Open:** run a separate low-fee 1 Test USD Bob→Carol transfer and a protocol-safe
-   RBF that preserves protected inputs, records, marker, membership, positions,
-   context, and delivery identities.
-9. **Partial:** both new operations resumed from `broadcast_unobserved` and
-   delivered the same operation id after relaunch, without duplicate spend or
-   duplicate chat credit. The full DEBUG pause matrix at planning,
-   signed persistence, broadcast, and pre-delivery remains open; every relaunch
-   must resume the same operation ID with no duplicate spend or chat credit.
-10. **Partial:** both solo anchors reached confirmed settlement. Batch and RBF
-    replacement observation remain open.
+7. **Complete:** Carol explicitly batched 5 Test USD to Bob and 5 Test USD to
+   Note to Self. Operations `afcaa691e4a0adb3cfd24a6f986400d0` and
+   `bc1850940e9e8f2c3af747aa60852725` share batch
+   `c3d0260082cea04e98a1a56d9e7713fb` and signet transaction
+   `771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3`
+   with their exact envelope positions. Both raw-byte observers matched; the
+   transaction settled at height 316687. This is a two-recipient
+   Bob/Carol-plus-self test, not a three-party claim.
+8. **Complete for one replacement:** Bob's operation
+   `3d2210aeda489dfa33acbb00c92951b1` sent 1 Test USD to Carol. Its 2 sat/vB
+   transaction
+   `cb32fa1048b83d479fadf4aaa6160664e61170e95036ab5d4d3d57bdd0d98fd5`
+   was replaced at 5 sat/vB by
+   `4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7`.
+   Funding input, record, marker, change destination, context, output positions,
+   and delivery identity remained protected. Both observers see the replacement
+   and no longer find the original.
+9. **Partial:** batch operations survived deliberate relaunches after proof and
+   broadcast with the same operation ids, and the replacement redelivered
+   exactly once after its nonce rotated. The full DEBUG pause matrix at
+   planning, signed persistence, broadcast, and pre-delivery remains open;
+   every relaunch must resume the same operation ID with no duplicate spend or
+   chat credit.
+10. **Partial:** the solo round trip and shared batch reached confirmed
+    settlement. The RBF replacement remains visible but unconfirmed at both
+    required observers; its eventual CBF/SPV settlement remains open.
 
 The return operation id is `052f6e79210ca3a847cca6eded9871ca` and its durable
 intent-to-delivery interval was 328 seconds. Phase receipts separate 6.237s
@@ -277,14 +290,16 @@ Published from the completed solo round trip:
 - source MP4 SHA-256
   `ca859b8e130c2960b7541b92ca60fc83d29da6c2f9e5aab9fd42f931871808e0`.
 
-The shared-batch film, full final screenshot set, RBF evidence, and crash-matrix
-captures remain tied to their still-open acceptance gates.
+This revision adds the exact shared-batch and RBF textual receipts. A new
+shared-batch/RBF film, the full final screenshot set, and crash-matrix captures
+remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Review Rust `2543c25` and Signal `4c27eca874`, complete their exact-tip hosted
-  CI, and merge only reviewed green candidates.
-- Explicit shared batch, protocol-safe RBF, and complete crash-state matrix.
+- Complete exact-tip hosted CI for Rust `28010d8` and Signal `348b8e1d20`,
+  repin Signal to the merged Rust SHA, and merge only reviewed green candidates.
+- Complete the crash-state matrix and observe the fee replacement through
+  CBF/SPV-confirmed settlement.
 - Separate clean-install Secure Backup recovery/rebind acceptance.
 - Independent mainnet security review.
 - Release packaging/signing and upstream Signal submission decision.

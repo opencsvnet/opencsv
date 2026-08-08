@@ -1197,11 +1197,11 @@ mempool.space observer was configured as `Observe`, timed out after 8.025
 seconds, and did not count as required success. A complete P2P write is recorded
 as submission, not mempool acceptance.
 
-The current repair candidate supersedes that one-required-observer policy.
-Rust `2543c25` derives an omitted raw-byte
-quorum from every API marked `Require` and rejects an explicit mismatch; Signal
-`4c27eca874206ee942e7baf8eaaf4954bc016286` derives the same count and exposes no
-caller override. In a warning-denied simulator test, both pinned providers
+The current consolidated candidate supersedes that one-required-observer
+policy. Rust `28010d8f714c361a6f4a94ded1ed8708affe70dd` derives an
+omitted raw-byte quorum from every API marked `Require` and rejects an explicit
+mismatch; Signal `348b8e1d2020f93d5b623eb14f7ee054a62bed41` derives the same
+count and exposes no caller override. In a warning-denied simulator test, both pinned providers
 returned identical raw bytes for the known return transaction in 1.831 seconds.
 The subsequent wallet-level rerun produced an actual unconfirmed parent and
 child. Carol→Bob transaction
@@ -1214,17 +1214,49 @@ confirmation. For parent/child, mempool.space matched exact bytes in 256/239ms
 and Blockstream in 377/359ms. Local proving took 6.096/5.995 seconds and
 signing/persistence 23/18ms. Both operations survived a post-broadcast relaunch
 and delivered exactly once. This proves sequential zero-confirmation
-forwarding across two Bitcoin transactions; a shared-transaction batch,
-protocol-safe RBF, the complete crash-state matrix, hosted CI on the repaired
-tips, and physical-device rollout remain open.
+forwarding across two Bitcoin transactions.
 
-The run also found three local defects whose repairs are not yet merged: the
+The same candidate completed the separate shared-transaction gate. Carol sent
+5 Test USD to Bob and 5 Test USD to Note to Self under batch
+`c3d0260082cea04e98a1a56d9e7713fb`. Operations
+`afcaa691e4a0adb3cfd24a6f986400d0` and
+`bc1850940e9e8f2c3af747aa60852725` share signet transaction
+`771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3`
+and retain their exact envelope positions. Three peers recorded complete
+submission writes, not mempool acceptance; both pinned APIs returned identical
+raw bytes in 271/354ms. The 908-sat, 1,808-WU transaction later settled at
+height 316687. Deliberate relaunches after proof and broadcast resumed the same
+operation ids. This is a two-recipient Bob/Carol-plus-self receipt, not a
+three-party payment.
+
+A 1 Test USD Bob→Carol operation
+`3d2210aeda489dfa33acbb00c92951b1` also completed one protocol-safe fee
+replacement. Original transaction
+`cb32fa1048b83d479fadf4aaa6160664e61170e95036ab5d4d3d57bdd0d98fd5`
+at 2 sat/vB was replaced by
+`4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7`
+at 5 sat/vB. The funding input, OpenCSV record, marker, change destination,
+protocol context, output positions, and delivery identity remained protected.
+Both observers currently return the replacement as unconfirmed and 404 for the
+original. Carol's balance increased once, from 131 to 132. Rust derives a
+domain-separated identity from canonical proof-protected consignment bytes
+after zeroing only the replaceable anchor txid; Signal uses that verified
+identity to render one payment while retaining both exact attachments as
+receipts.
+
+The run also found local defects whose repairs are not yet merged: the
 value gadget needed a signed low-limb borrow for `25 = 10 + 15`; confirmed
 parents needed canonical snapshot handling instead of a mempool sentinel; and
 corrupt cached BIP158 filters needed refetch/bad-peer failover. The live build
 starts from Rust `3295cd5896aa2615c992faf45a9075ad138094ca` and Signal
-`c14f02025daa557ca9149325dfc3199bced1012b`; release claims must wait for exact-tip
-review and hosted CI of the repaired branches. A 38.067-second cut of the real
+`c14f02025daa557ca9149325dfc3199bced1012b`; the consolidated branch now ends at
+the candidate SHAs above. The exact Rust recovery-feature suite passes 71 tests
+with two deliberate slow release-only ignores; the warning-denied Signal store
+suite passes 27 tests and the full simulator app builds locally against the
+exact Rust XCFramework. Release claims must still wait for exact-tip hosted CI,
+review, dependency repinning, and merge. The complete crash-state matrix,
+clean-install recovery, RBF settlement, and physical-device rollout remain
+open. A 38.067-second cut of the real
 Signal screens is published on the project homepage. Waiting time was removed;
 no Signal screen or transaction state was reconstructed.
 

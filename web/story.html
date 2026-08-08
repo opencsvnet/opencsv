@@ -140,6 +140,16 @@
       <a href="https://mempool.space/signet/tx/f77ff98673107a94391fd0509bfa8c2ec40e4551f62b7b6674319d8098d24554"><code>f77ff986…24554</code></a>.
       Both pinned providers matched both raw transactions, and Signal exposed
       each receipt as available before confirmation with replacement risk.</p>
+      <p>Two later gates exercised different Bitcoin mechanics. Carol sent 5
+      Test USD to Bob and 5 to Note to Self in shared transaction
+      <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3"><code>771aefc6…03c4c3</code></a>,
+      confirmed at height 316687. A separate 1 Test USD Bob→Carol payment was
+      safely fee-bumped from 2 to 5 sat/vB as
+      <a href="https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7"><code>4ae0f1c6…cbd7f7</code></a>.
+      The replacement preserved the protocol layout and logical payment
+      identity: Carol credited once and Signal displays one payment while both
+      exact attachments remain available as receipts. The replacement remains
+      unconfirmed.</p>
     </div>
   </div>
 

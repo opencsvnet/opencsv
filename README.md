@@ -107,16 +107,17 @@ delivery in the instrumented simulator build. The receipt separates the work:
 77.861 seconds funding verification and 93.163 seconds pre-sign verification
 dominated the run, with backup and recovery scheduling between phases. This is
 an acceptance-harness measurement, not a claim that a user waits five minutes
-for production proving. Two ordinary Bitcoin peers accepted complete socket
-writes. The required pinned Blockstream observer returned identical raw bytes
+for production proving. Two ordinary Bitcoin peers recorded complete
+transaction-submission writes; that is not a claim of mempool acceptance. The
+required pinned Blockstream observer returned identical raw bytes
 in 347 ms; the optional mempool.space observer timed out after 8.025 seconds
 and was recorded as unavailable rather than success.
 
 That historical one-required-observer policy is superseded in the current
 candidate. Rust
-[`2543c25`](https://github.com/opencsvnet/opencsv-rs/commit/2543c25)
+[`28010d8`](https://github.com/opencsvnet/opencsv-rs/commit/28010d8f714c361a6f4a94ded1ed8708affe70dd)
 and Signal
-[`4c27eca874`](https://github.com/opencsvnet/Signal-iOS/commit/4c27eca874206ee942e7baf8eaaf4954bc016286)
+[`348b8e1d20`](https://github.com/opencsvnet/Signal-iOS/commit/348b8e1d2020f93d5b623eb14f7ee054a62bed41)
 derive the raw-byte gate from every API marked `Require`; fresh signet wallets
 therefore require both pinned providers. A warning-denied simulator test fetched
 the known return transaction from both providers in 1.831 seconds and received
@@ -132,15 +133,43 @@ Both providers also reported the child unconfirmed while Carol exposed it as
 and 5.995s; signing/persistence took 23ms and 18ms. Each operation survived a
 post-broadcast relaunch with the same operation id and no duplicate credit.
 
-The same run found two honest integration defects. Exact forwarding of
+Carol subsequently created one real two-recipient batch: 5 Test USD to Bob and
+5 Test USD to Note to Self. Operations
+`afcaa691e4a0adb3cfd24a6f986400d0` and
+`bc1850940e9e8f2c3af747aa60852725` share batch
+`c3d0260082cea04e98a1a56d9e7713fb` and signet transaction
+[`771aefc…03c4c3`](https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3).
+Both pinned observers returned identical raw bytes; the 908-sat, 1,808-WU
+transaction settled at height 316687. Deliberate relaunches after proof and
+broadcast resumed the same operation ids. This is a Bob/Carol-plus-self
+two-recipient receipt, not a three-party claim.
+
+A separate 1 Test USD Bob→Carol operation
+`3d2210aeda489dfa33acbb00c92951b1` exercised protocol-safe RBF. Its 2 sat/vB
+transaction
+`cb32fa1048b83d479fadf4aaa6160664e61170e95036ab5d4d3d57bdd0d98fd5`
+was replaced at 5 sat/vB by
+[`4ae0f1c…cbd7f7`](https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7).
+Funding input, record, marker, change destination, protocol context, output
+positions, and delivery identity were preserved. Both observers currently see
+the replacement as unconfirmed and return 404 for the original. Carol's balance
+moved from 131 to 132 exactly once. Rust now derives a cryptographic logical
+payment id across replacements; Signal renders one +1 payment while retaining
+both proof-bearing attachments as exact receipts.
+
+The broader acceptance run found honest integration defects. Exact forwarding of
 `25_000_000 = 10_000_000 + 15_000_000` needs a `-1` limb borrow, but the value
 gadget had constrained carries to `{0,1}`. The local repair permits
 `{-1,0,1}` while still pinning the final carry to zero and passes the exact
 persisted-consignment reproducer plus focused transfer tests. A confirmed
 parent was also being duplicated as a mempool sentinel and could conflict with
 itself; that snapshot path now resolves to one canonical occurrence. These
-repairs and the Signal integration remain under review and are not represented
-as merged release code.
+repairs, batch-envelope/account-identity fixes, and replacement-delivery changes
+are consolidated in the Rust and Signal candidates above. They remain under
+hosted-CI and merge review and are not represented as release code. The exact
+Rust recovery-feature suite passes 71 tests with two deliberate slow
+release-only ignores; the warning-denied Signal store suite passes 27 tests and
+the full simulator app builds locally against the exact Rust XCFramework.
 
 Zero-confirmation availability is deliberately narrower than “trust the
 mempool.” It is enabled only when the phone owns the confirmed-history exclusion
