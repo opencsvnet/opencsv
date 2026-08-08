@@ -1210,15 +1210,14 @@ Bob in signet transaction
 confirmed at height 316765. Bob sent 1 Test USD back in
 `6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`,
 confirmed at height 316766. mempool.space and Blockstream returned the same
-confirmed block for each transaction. The published 59.3-second cut is made
-entirely from one uninterrupted 230.803-second Bob simulator recording. Signal
-remains on the left and a synchronized explainer remains in a separate
-right-hand panel throughout. The first panel identifies the received +1 card;
-subsequent panels explain amount entry, review, pending state, local proof,
-signed persistence, relay, observer agreement, and verified delivery. No panel
-obscures the application. User action remains at normal speed; only the static
-DEBUG proof and network-verification interval is compressed 8.5×, labeled on
-every affected panel. No application or transaction state is reconstructed.
+confirmed block for each transaction. The published 36.288-second cut uses real
+Bob and Carol simulator recordings. One-screen moments pair the real interface
+with context; the handoff uses synchronized two-screen footage. Dead pauses are
+removed while retained application action remains at normal speed. A moving
+dot is disclosed as editorial motion explaining the encrypted consignment
+path—not Signal UI or packet evidence. No application or transaction state is
+reconstructed. Its SHA-256 is
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction
@@ -1239,11 +1238,11 @@ mempool.space observer was configured as `Observe`, timed out after 8.025
 seconds, and did not count as required success. A complete P2P write is recorded
 as submission, not mempool acceptance.
 
-The merged Rust implementation and current Signal candidate supersede that
+The merged Rust and Signal implementations supersede that
 one-required-observer policy. Rust
 `28010d8f714c361a6f4a94ded1ed8708affe70dd` derives an
 omitted raw-byte quorum from every API marked `Require` and rejects an explicit
-mismatch; Signal `348b8e1d2020f93d5b623eb14f7ee054a62bed41` derives the same
+mismatch; Signal `db818658f1511eed0dc98df42affce1be78b486f` derives the same
 count and exposes no caller override. In a warning-denied simulator test, both pinned providers
 returned identical raw bytes for the known return transaction in 1.831 seconds.
 The subsequent wallet-level rerun produced an actual unconfirmed parent and
@@ -1280,8 +1279,11 @@ at 2 sat/vB was replaced by
 `4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7`
 at 5 sat/vB. The funding input, OpenCSV record, marker, change destination,
 protocol context, output positions, and delivery identity remained protected.
-Both observers currently return the replacement as unconfirmed and 404 for the
-original. Carol's balance increased once, from 131 to 132. Rust derives a
+Both observers report the replacement confirmed in signet block 316803 with
+block hash
+`000000110b921854bf388cfdfb480a73f5effb1a14603abcf2031dc47bcf72a5`
+and return 404 for the original. Carol's balance increased once, from 131 to
+132. Rust derives a
 domain-separated identity from canonical proof-protected consignment bytes
 after zeroing only the replaceable anchor txid; Signal uses that verified
 identity to render one payment while retaining both exact attachments as
@@ -1298,17 +1300,18 @@ after hosted runs
 [31231128052](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231128052)
 and
 [31231129868](https://github.com/opencsvnet/opencsv-rs/actions/runs/31231129868)
-passed on that exact SHA. The
-Signal candidate remains `348b8e1d2020f93d5b623eb14f7ee054a62bed41` and still
-requires dependency repinning and hosted CI. The exact Rust recovery-feature suite passes 71 tests
+passed on that exact SHA. Signal integration is merged at
+`db818658f1511eed0dc98df42affce1be78b486f`. The exact Rust recovery-feature suite passes 71 tests
 with two deliberate slow release-only ignores; the warning-denied Signal store
 suite passes 27 tests and the full simulator app builds locally against the
-exact Rust XCFramework. Release claims must still wait for Signal exact-tip
-hosted CI, review, dependency repinning, and merge. The complete crash-state matrix,
-clean-install recovery, RBF settlement, and physical-device rollout remain
-open. The simple 59.3-second real-Signal cut described above is published on
-the project homepage with its speed changes visible in-frame. Its SHA-256 is
-`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
+exact Rust XCFramework. Post-merge recovery and OpenCSV wallet checks passed,
+but the broad Xcode job stopped at the upstream Signal fixture assertion
+`OWSSwiftUtils.swift:56: Missing attachment file`; a complete green
+default-branch run remains a release gate. The live crash-state matrix,
+clean-install recovery, and physical-device rollout remain open. The simple
+36.288-second real-Signal cut described above is published on the project
+homepage with SHA-256
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
 ---
 

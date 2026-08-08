@@ -1191,6 +1191,32 @@ record, and navigation use the same boundary. Current Signal status was also
 corrected: PR #6 is merged at `db818658`, recovery CI passed, and the failed
 default Xcode job in run `31262161093` remains a fix-forward gate—not a release.
 
+## 2026-08-08 — Settlement closes; the acceptance list gets shorter
+
+The protocol-safe replacement
+[`4ae0f1c…cbd7f7`](https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7)
+is no longer pending. mempool.space and Blockstream independently report the
+same signet block: height `316803`, hash
+`000000110b921854bf388cfdfb480a73f5effb1a14603abcf2031dc47bcf72a5`.
+That closes the RBF settlement gate without changing its earlier replacement
+risk or exact-once receipts.
+
+The reconciliation also removed two kinds of publication drift. The plan and
+paper still described already-merged Rust and Signal candidates as drafts, and
+several current-facing pages still called the superseded 59.3-second cut the
+homepage lead. The live homepage actually uses the owner-approved 36.288-second,
+2,881,105-byte two-screen film with SHA-256
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
+Historical journal entries remain unchanged; only current claims were brought
+forward.
+
+No code PR remains open across the five core repositories. The active Signal
+gate is narrower: recovery and the OpenCSV wallet tests passed, but the broad
+post-merge Xcode run stopped at the upstream Signal fixture assertion
+`OWSSwiftUtils.swift:56: Missing attachment file`. Live pause-state recovery,
+clean-install Secure Backup recovery, physical rollout, release/security
+decisions, DNSSEC, and mainnet remain open.
+
 ---
 
 *Screenshots are regenerated weekly by CI from real regtest runs

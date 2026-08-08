@@ -103,17 +103,14 @@ at signet height 316765. Bob then sent 1 Test USD back as operation
 at height 316766. mempool.space and Blockstream reported the same confirmed
 block for each transaction.
 
-The published film is a 59.3-second cut made entirely from one uninterrupted
-230.803-second recording of Bob's actual Signal simulator. It starts on the
-real received +1 card and follows his return through pending to verified. The
-Signal screen remains on the left and a synchronized explainer remains beside
-it for the whole film. The opening identifies the received payment; subsequent
-panels explain choosing, review, pending, proof, durable signing, relay,
-observer checks, and verified delivery. No panel covers the app. User action
-plays at normal speed; only the static DEBUG proof and network-verification
-interval runs at 8.5×, labeled on every affected panel. No Signal or transaction
-state is reconstructed. The MP4 SHA-256 is
-`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
+The published film is a 36.288-second cut of real Bob and Carol Signal
+simulators. One-screen moments pair the real interface with context; the
+handoff uses synchronized two-screen footage. Dead pauses are removed while
+retained application action stays at normal speed. A moving dot is explicitly
+editorial motion explaining the encrypted consignment path—not Signal UI or
+packet-capture evidence. No Signal or transaction state is reconstructed. The
+2,881,105-byte MP4 SHA-256 is
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 Test USD is signet-only and has no monetary or redemption value.
 
 The live simulator acceptance completed a real round trip. Carol sent 25 Test
@@ -179,9 +176,11 @@ transaction
 was replaced at 5 sat/vB by
 [`4ae0f1c…cbd7f7`](https://mempool.space/signet/tx/4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7).
 Funding input, record, marker, change destination, protocol context, output
-positions, and delivery identity were preserved. Both observers currently see
-the replacement as unconfirmed and return 404 for the original. Carol's balance
-moved from 131 to 132 exactly once. Rust now derives a cryptographic logical
+positions, and delivery identity were preserved. Both observers report the
+replacement confirmed in signet block 316803 with block hash
+`000000110b921854bf388cfdfb480a73f5effb1a14603abcf2031dc47bcf72a5`
+and return 404 for the original. Carol's balance moved from 131 to 132 exactly
+once. Rust now derives a cryptographic logical
 payment id across replacements; Signal renders one +1 payment while retaining
 both proof-bearing attachments as exact receipts.
 
@@ -205,7 +204,13 @@ the full simulator app builds locally against the exact Rust XCFramework.
 Signal PR #6 is merged, but post-merge run
 [`31262161093`](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093)
 still requires a fix-forward for the failing default Xcode build. The recovery
-job passed; this is not represented as a release.
+job and OpenCSV wallet tests passed; the broad job stopped at the upstream
+Signal test fixture assertion `OWSSwiftUtils.swift:56: Missing attachment
+file`. This is not represented as a green run or a release. The subsequent
+headless issuer export and opt-in Presage transport landed on Rust `main` at
+[`ad8a45e`](https://github.com/opencsvnet/opencsv-rs/commit/ad8a45e9f99fc028f31015420be41820b0d9f6ee)
+with green default-branch CI
+[31266597981](https://github.com/opencsvnet/opencsv-rs/actions/runs/31266597981).
 
 Zero-confirmation availability is deliberately narrower than “trust the
 mempool.” It is enabled only when the phone owns the confirmed-history exclusion
@@ -218,12 +223,12 @@ selection and immediately before signing a child. A missing or replaced parent
 freezes the dependent operation. Single-snapshot and indexer-cross-check modes
 do not grant provisional credit.
 
-The homepage is led by the 59.3-second real-Signal cut of the 2026-08-08
-one-dollar return described above. Action remains at normal speed; the only
-speed change is the labeled 8.5× static wait described above;
-no Signal screen or payment state is reconstructed. The published MP4 has
-SHA-256
-`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
+The homepage is led by the 36.288-second real-Signal cut described above. It
+alternates a real screen plus side explanation with synchronized Bob and Carol
+views; retained application action stays at normal speed and dead pauses are
+removed. No Signal screen or payment state is reconstructed. The published
+MP4 has SHA-256
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 Historical 25/10 and zero-confirmation captures remain labeled separately.
 
 Formal evidence is kept in two ledgers rather than one inflated count: 72

@@ -7,8 +7,8 @@ transport → scan-first verification → batching → trust summary.
 
 The rendered video is retained as a conceptual protocol explainer at
 `out/opencsv-e2e.mp4` (h264), with `out/poster.png`. It is not the homepage
-lead; the homepage now leads with the real Signal round-trip film documented
-below.
+lead; the homepage now leads with the owner-approved two-screen Signal
+message-flow film documented below.
 
 The batching scene does not claim that the assembler learns nothing. Proof
 contents and coin openings remain private, while membership, fee inputs,
@@ -30,9 +30,9 @@ npm run still:scale
 The publishable files are
 `out/scale/opencsv-bitcoin-performance.mp4` and `out/scale/poster.png`.
 
-## Real Signal round-trip film
+## Earlier real Signal round-trip film
 
-The homepage film is a 59.3-second cut made entirely from one uninterrupted
+This 59.3-second cut was the earlier homepage film. It is made entirely from one uninterrupted
 230.803-second recording of the real Bob Signal simulator. It begins on Bob's
 received +1 Test USD card and follows his 1 Test USD return through pending to
 verified. Signal stays on the left and a synchronized explainer stays in a
@@ -82,6 +82,8 @@ The published outputs are
 `out/message-flow/opencsv-signal-message-flow-draft.mp4` and
 `out/message-flow/poster.png`. The historical filename retains `draft`; the
 bytes reviewed and approved by the owner were not rerendered or renamed.
+The MP4 is 36.288 seconds, 2,881,105 bytes, and has SHA-256
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
 ## Withdrawn Consumer USD composition
 

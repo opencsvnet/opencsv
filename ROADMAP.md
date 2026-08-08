@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-08, rev 11) — Exact Rust merge and final Signal gates
+# OpenCSV Master Plan (2026-08-08, rev 12) — Final Signal acceptance and release gates
 
 ## Plan of record
 
@@ -18,8 +18,9 @@ The execution order is still:
 5. Signal/iOS integration last
 
 Tracks 1–4 have reached their reference implementation baselines. Signal PR #6
-is merged at `db818658`, and the real solo two-hop signet path is complete, but
-post-merge default-branch CI now needs a fix-forward. Neither merge implies a
+is merged at `db818658`; the solo two-hop, true zero-confirmation child, shared
+batch, and protocol-safe RBF have all settled on signet. Post-merge
+default-branch CI still needs a fix-forward. Neither merge implies a
 release, upstream Signal submission, physical-device rollout, or mainnet
 readiness. The public execution view is a separate evidence page at
 [`roadmap.html`](roadmap.html), with a versioned snapshot in
@@ -183,8 +184,15 @@ explicitly ignored slow release-only cases; the warning-denied Signal store
 suite passes 27 tests and the full simulator app builds against the exact Rust
 XCFramework. In post-merge
 [run 31262161093](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093),
-the recovery job passed while the default Xcode build failed. That failure is a
-fix-forward gate and prevents any release claim.
+the recovery job and OpenCSV wallet tests passed while the default Xcode build
+stopped at the upstream Signal fixture assertion
+`OWSSwiftUtils.swift:56: Missing attachment file`. That failure is a
+fix-forward gate and prevents any release claim. Rust `main` subsequently
+advanced to [`ad8a45e`](https://github.com/opencsvnet/opencsv-rs/commit/ad8a45e9f99fc028f31015420be41820b0d9f6ee),
+adding owner-only consignment export to the headless issuer CLI and keeping
+Presage/AGPL Signal transport opt-in; default-branch CI
+[31266597981](https://github.com/opencsvnet/opencsv-rs/actions/runs/31266597981)
+passed on that exact tip.
 
 Required product behavior:
 
@@ -249,14 +257,13 @@ Acceptance status, preserving the original order:
    `7edbe4cde4627550288f353f2b81e343` returned 1 Test USD in
    `6d85895fc516716f48a7b6ee41e2fd25f99a6698b67c9725f298e2c548ef49aa`
    at height 316766. Both public APIs agreed on both confirmed blocks. The
-   homepage film is a 59.3-second edit of one uninterrupted 230.803-second Bob
-   recording. Signal remains on the left and a synchronized explainer remains
-   in a separate right-hand panel for the full film. The opening identifies the
-   received +1 card, each send step is described, and backend work occupies the
-   otherwise static wait. No panel covers the app. Action remains at normal
-   speed; the 8.5× DEBUG proof/network compression is labeled on every affected
-   panel. MP4 SHA-256:
-   `e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
+   homepage film is a 36.288-second cut of real Bob and Carol simulator
+   footage. One-screen moments pair the real interface with context; the
+   handoff uses synchronized two-screen footage. Dead pauses are removed while
+   retained application action stays at normal speed. The moving dot is
+   disclosed as editorial explanation, not Signal UI or packet evidence. MP4
+   SHA-256:
+   `5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
    The corrected dual-Require rerun is also complete. Carol→Bob operation
    `1bf04f226bdb5ed71c2d7b7035365da0` anchored in
@@ -291,9 +298,11 @@ Acceptance status, preserving the original order:
    planning, signed persistence, broadcast, and pre-delivery remains open;
    every relaunch must resume the same operation ID with no duplicate spend or
    chat credit.
-10. **Partial:** the solo round trip and shared batch reached confirmed
-    settlement. The RBF replacement remains visible but unconfirmed at both
-    required observers; its eventual CBF/SPV settlement remains open.
+10. **Complete:** the solo round trip, true parent/child, shared batch, and RBF
+    replacement reached confirmed settlement. Both public observers report
+    replacement `4ae0f1c686977cfb270e94dc834043d4609283781b27e3bb47f222dde6cbd7f7`
+    in signet block 316803 with block hash
+    `000000110b921854bf388cfdfb480a73f5effb1a14603abcf2031dc47bcf72a5`.
 
 The return operation id is `052f6e79210ca3a847cca6eded9871ca` and its durable
 intent-to-delivery interval was 328 seconds. Phase receipts separate 6.237s
@@ -306,17 +315,16 @@ Backup and DEBUG-only rebind. It must not replace or erase Bob or Carol.
 
 ## Publication receipt
 
-Published from the current simple consumer return:
+Published from the current simple consumer send:
 
-- a 59.3-second film containing only real Signal simulator screens, cut from
-  one uninterrupted 230.803-second Bob recording, with Signal on the left and a
-  synchronized step-by-step explainer on the right throughout, action at normal
-  speed, the 8.5× wait disclosed in-frame, and no reconstructed transaction
-  state;
+- a 36.288-second film containing only real Signal simulator screens, using one
+  screen plus side explanation and synchronized Bob/Carol views during the
+  handoff, with retained application action at normal speed and no reconstructed
+  transaction state;
 - homepage, story, performance page, paper, roadmap, README, and journal updates
   with exact txids, timings, and explicit signet-only language;
 - source MP4 SHA-256
-  `e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
+  `5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
 This revision adds the exact shared-batch and RBF textual receipts. A new
 shared-batch/RBF film, the full final screenshot set, and crash-matrix captures
@@ -327,8 +335,8 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 - Fix the default Xcode build failure in post-merge Signal run
   [31262161093](https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093)
   and obtain a complete green default-branch run.
-- Complete the crash-state matrix and observe the fee replacement through
-  CBF/SPV-confirmed settlement.
+- Complete the live crash-state pause matrix at planning, signed persistence,
+  broadcast, and pre-delivery.
 - Separate clean-install Secure Backup recovery/rebind acceptance.
 - Independent mainnet security review.
 - Release packaging/signing and upstream Signal submission decision.

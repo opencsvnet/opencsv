@@ -41,17 +41,14 @@ present in these assets.
 
 The homepage no longer uses these zero-balance captures as its principal
 Signal evidence. The current lead film is
-`../../media/opencsv-real-signal-test-usd-roundtrip.mp4`, a 59.3-second edit
-made entirely from one uninterrupted 230.803-second recording of the real Bob
-simulator. It begins on Bob's received +1 Test USD card and follows his 1 Test
-USD return through pending to verified. Signal stays on the left and a
-synchronized explainer stays in a separate right-hand panel for the full film.
-The first panel identifies the received +1 card and later panels explain each
-send and verification stage. No panel obscures the app. Action runs at normal
-speed; only the static DEBUG proof and network-verification interval runs at
-8.5×, labeled on every affected panel. No Signal screen or payment state was
-reconstructed. Its SHA-256 is
-`e3c0c70e2742c622b8e852fecf0ce45d151d7405dc859753005817d13b348cb3`.
+`../../animation/out/message-flow/opencsv-signal-message-flow-draft.mp4`, a
+36.288-second cut of real Bob and Carol simulator footage. One-screen moments
+pair the application with side explanation; the handoff uses synchronized
+two-screen footage. Dead pauses are removed while retained application action
+stays at normal speed. The moving dot is editorial explanation, not Signal UI
+or packet evidence. No Signal screen or payment state was reconstructed. Its
+SHA-256 is
+`5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
 The public signet anchors are
 `445c43cbe53a7e5e737a7e5c6ef26281c34998d283258e319bd9d9b4315400fd`

@@ -1,7 +1,7 @@
 {
   "schema": "opencsv-roadmap-v1",
-  "snapshot": "2026-08-08T16:20:00-04:00",
-  "plan_revision": 11,
+  "snapshot": "2026-08-08T14:09:27-04:00",
+  "plan_revision": 12,
   "source": {
     "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
     "master_issue": "https://github.com/opencsvnet/opencsv/issues/1"
@@ -57,7 +57,7 @@
       "order": 5,
       "title": "Signal Test USD integration",
       "state": "active",
-      "summary": "Signal PR #6 is merged at db818658. The recovery job is green; the post-merge default-branch Xcode build is failing and remains a fix-forward gate alongside crash-matrix, clean recovery, and physical-device acceptance.",
+      "summary": "Signal PR #6 is merged at db818658. Recovery and OpenCSV wallet tests passed; the broad Xcode job stopped at an upstream missing-attachment fixture and remains a fix-forward gate alongside crash-matrix, clean recovery, and physical-device acceptance. The protocol-safe RBF settled at signet height 316803.",
       "receipts": [
         "https://github.com/opencsvnet/Signal-iOS/pull/6",
         "https://github.com/opencsvnet/Signal-iOS/actions/runs/31262161093",
