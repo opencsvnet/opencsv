@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCSV Demo Beta Privacy</title>
+<meta name="description" content="Privacy disclosures for the OpenCSV Demo public TestFlight beta.">
+<link rel="canonical" href="https://opencsv.net/beta/privacy/">
+<style>
+  :root { --bg:#0d1117; --fg:#e6edf3; --muted:#9da7b3; --accent:#f7931a; --blue:#58a6ff; --card:#161b22; --border:#30363d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  a { color:var(--blue); text-decoration:none; } a:hover { text-decoration:underline; }
+  .wrap { width:min(100% - 40px,820px); margin:0 auto; }
+  nav { padding:24px 0; display:flex; justify-content:space-between; align-items:center; }
+  nav a:first-child { color:var(--fg); font-weight:800; font-size:20px; } .csv { color:var(--accent); }
+  header { padding:68px 0 42px; border-bottom:1px solid var(--border); }
+  .eyebrow { color:var(--accent); font-size:12px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; }
+  h1 { margin:12px 0 16px; font-size:clamp(42px,8vw,68px); line-height:1.04; letter-spacing:-2px; }
+  .lead, .updated { color:var(--muted); } .updated { font-size:14px; }
+  main { padding:36px 0 64px; }
+  section { margin:18px 0; padding:24px; border:1px solid var(--border); border-radius:13px; background:var(--card); }
+  h2 { margin:0 0 8px; font-size:23px; } p { margin:8px 0; } ul { margin:10px 0 0; padding-left:22px; } li { margin:8px 0; color:var(--muted); }
+  strong { color:var(--fg); }
+  footer { padding:34px 0 54px; border-top:1px solid var(--border); color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<nav class="wrap">
+  <a href="../../">Open<span class="csv">CSV</span></a>
+  <a href="../">Back to public beta</a>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">OpenCSV Demo public beta</div>
+    <h1>Privacy disclosures</h1>
+    <p class="lead">OpenCSV Demo is an independently built, signet-only research fork of Signal. This page explains the data paths introduced or inherited by the beta.</p>
+    <p class="updated">Effective August 11, 2026</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <h2>OpenCSV wallet data</h2>
+    <p>Wallet keys, Test USD state, operation journals, and Bitcoin fee-reserve state are stored on your device and in the recovery mechanisms you enable. OpenCSV does not operate a bespoke wallet or anchor server.</p>
+    <p>Do not use this beta for real funds. Test USD has no monetary or redemption value and is permanently bound to Bitcoin signet.</p>
+  </section>
+
+  <section>
+    <h2>Public Bitcoin observers</h2>
+    <p>The beta queries public signet services, including mempool.space and Blockstream, to observe transactions. Those services may receive your IP address, requested Bitcoin addresses or transaction identifiers, request timing, and ordinary HTTP metadata under their own policies.</p>
+    <p>OpenCSV transaction records and signet transactions are public by design. Do not treat signet activity as anonymous.</p>
+  </section>
+
+  <section>
+    <h2>Messaging and device data</h2>
+    <p>The app inherits Signal account registration, encrypted messaging, contact discovery, attachment transport, local database, and permission flows. Signal infrastructure and Apple services may process data required for those features under their respective policies.</p>
+    <p>This build is not produced, endorsed, or supported by Signal Messenger, LLC, and it does not receive Signal's production push-notification entitlement.</p>
+  </section>
+
+  <section>
+    <h2>TestFlight and feedback</h2>
+    <p>Apple may provide beta installation, device, crash, screenshot, and tester-feedback data through TestFlight. If you submit feedback or a crash report, its contents are shared with the Apple developer account operating this beta and used to diagnose the test build.</p>
+  </section>
+
+  <section>
+    <h2>Your choices</h2>
+    <ul>
+      <li>Use a disposable test messaging account and test assets only.</li>
+      <li>Review permissions before granting contacts, camera, microphone, photos, or notification access.</li>
+      <li>Stop testing and delete the beta from your device at any time.</li>
+      <li>Review the <a href="https://github.com/opencsvnet/Signal-iOS">corresponding source</a> and report privacy issues through the <a href="https://github.com/opencsvnet/opencsv/issues">public issue tracker</a>.</li>
+    </ul>
+  </section>
+</main>
+
+<footer><div class="wrap">OpenCSV public research beta · Bitcoin signet only · Test assets only.</div></footer>
+</body>
+</html>
