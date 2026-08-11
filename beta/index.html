@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCSV Public Beta — Test USD in Signal</title>
+<meta name="description" content="Join the OpenCSV public TestFlight beta to send signet-only Test USD in an unofficial Signal prototype.">
+<link rel="canonical" href="https://opencsv.net/beta/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OpenCSV Public Beta">
+<meta property="og:description" content="Test USD on Bitcoin signet in an unofficial Signal prototype.">
+<meta property="og:url" content="https://opencsv.net/beta/">
+<meta property="og:image" content="https://opencsv.net/beta/opencsv-public-beta-og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="OpenCSV Public Beta">
+<meta name="twitter:description" content="Test USD on Bitcoin signet in an unofficial Signal prototype.">
+<meta name="twitter:image" content="https://opencsv.net/beta/opencsv-public-beta-og.png">
+<style>
+  :root {
+    --bg: #0d1117; --fg: #e6edf3; --muted: #9da7b3; --accent: #f7931a;
+    --blue: #58a6ff; --green: #3fb950; --card: #161b22; --border: #30363d;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { width: min(100% - 40px, 960px); margin: 0 auto; }
+  nav { padding: 24px 0; display: flex; justify-content: space-between; align-items: center; }
+  nav a:first-child { color: var(--fg); font-weight: 800; font-size: 20px; }
+  nav .csv { color: var(--accent); }
+  .navlinks { display: flex; gap: 18px; font-size: 14px; }
+  .hero { padding: 82px 0 64px; text-align: center; }
+  .eyebrow { color: var(--accent); font: 700 12px var(--mono); letter-spacing: 1.7px; text-transform: uppercase; }
+  h1 { max-width: 800px; margin: 18px auto; font-size: clamp(46px, 8vw, 82px); line-height: 1.02; letter-spacing: -3px; }
+  .lead { max-width: 690px; margin: 0 auto; color: var(--muted); font-size: 21px; }
+  .status { display: inline-flex; align-items: center; gap: 9px; margin: 32px 0 18px; padding: 9px 14px; border: 1px solid rgba(247,147,26,.55); border-radius: 999px; background: rgba(247,147,26,.08); color: #ffc27a; font: 700 13px var(--mono); }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px var(--accent); }
+  .join { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .button { display: inline-block; min-width: 210px; padding: 13px 22px; border-radius: 9px; font-weight: 800; }
+  .button.pending { cursor: not-allowed; background: #2b3038; color: #8b949e; border: 1px solid #3b424c; }
+  .button.secondary { color: var(--fg); border: 1px solid var(--border); }
+  .availability { margin-top: 12px; color: var(--muted); font-size: 13px; }
+  section { padding: 56px 0; border-top: 1px solid var(--border); }
+  h2 { margin-bottom: 12px; font-size: 31px; letter-spacing: -.5px; }
+  .sub { max-width: 720px; margin-bottom: 30px; color: var(--muted); }
+  .steps, .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step, .fact { padding: 24px; border: 1px solid var(--border); border-radius: 13px; background: var(--card); }
+  .step .number { color: var(--accent); font: 700 12px var(--mono); letter-spacing: 1.6px; text-transform: uppercase; }
+  .step h3, .fact h3 { margin: 8px 0; font-size: 19px; }
+  .step p, .fact p { color: var(--muted); font-size: 15px; }
+  .fact strong { color: var(--green); }
+  .warning { margin-top: 26px; padding: 19px 21px; border-left: 3px solid var(--accent); background: rgba(247,147,26,.07); color: var(--muted); }
+  .warning strong { color: var(--fg); }
+  .checks { list-style: none; display: grid; gap: 13px; }
+  .checks li { padding: 16px 18px 16px 50px; position: relative; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
+  .checks li::before { content: "✓"; position: absolute; left: 18px; color: var(--green); font-weight: 900; }
+  footer { padding: 42px 0 60px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+  @media (max-width: 720px) {
+    .steps, .facts { grid-template-columns: 1fr; }
+    h1 { letter-spacing: -2px; }
+    .navlinks a:not(:last-child) { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav class="wrap">
+  <a href="../">Open<span class="csv">CSV</span></a>
+  <div class="navlinks">
+    <a href="../web/message-flow.html">See the demo</a>
+    <a href="../web/formal.html">Formal methods</a>
+    <a href="https://github.com/opencsvnet/Signal-iOS">Source</a>
+  </div>
+</nav>
+
+<main>
+  <header class="hero wrap">
+    <div class="eyebrow">Public TestFlight beta</div>
+    <h1>Send Test USD in Signal.</h1>
+    <p class="lead">Try private dollar-shaped payments backed by OpenCSV proofs and anchored to public Bitcoin signet. Test assets only. No monetary value.</p>
+    <div class="status">Preparing for Apple beta review</div>
+    <div class="join">
+      <span class="button pending" aria-disabled="true">Public link coming soon</span>
+      <a class="button secondary" href="../web/message-flow.html">Watch a real payment</a>
+    </div>
+    <p class="availability">The invitation will activate here after Apple approves external testing.</p>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <h2>Three steps when the link opens</h2>
+      <p class="sub">The beta is intentionally narrow: one signet-only Test USD product, consumer send and receive, and evidence you can inspect.</p>
+      <div class="steps">
+        <article class="step"><div class="number">Step 1</div><h3>Install TestFlight</h3><p>Use Apple’s TestFlight app on an iPhone running a supported iOS version.</p></article>
+        <article class="step"><div class="number">Step 2</div><h3>Join OpenCSV Demo</h3><p>Open the public invitation, install the beta, and register a disposable test account.</p></article>
+        <article class="step"><div class="number">Step 3</div><h3>Send Test USD</h3><p>Fund the signet fee reserve, receive test assets, then send them in a conversation.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>What you are testing</h2>
+      <p class="sub">Every important boundary is explicit. This is a public research beta, not money and not an official Signal release.</p>
+      <div class="facts">
+        <article class="fact"><h3><strong>Testnet only</strong></h3><p>Test USD is permanently bound to Bitcoin signet. It has no redemption promise or monetary value.</p></article>
+        <article class="fact"><h3><strong>No arbitrary BTC sends</strong></h3><p>The Bitcoin wallet exists only to pay OpenCSV protocol fees and perform protocol-safe fee bumps.</p></article>
+        <article class="fact"><h3><strong>Verifiable evidence</strong></h3><p>Receipts expose transaction identity, proof state, observer results, and confirmed-chain evidence.</p></article>
+      </div>
+      <p class="warning"><strong>Unofficial prototype.</strong> OpenCSV Demo is an independently built AGPL fork for testing OpenCSV. It is not produced, endorsed, or supported by Signal Messenger, LLC. Third-party builds do not receive Signal’s production push-notification entitlement, so background delivery may be unreliable during this beta.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Before you join</h2>
+      <ul class="checks">
+        <li>Use a test account and test assets. Do not rely on this beta for important messages or funds.</li>
+        <li>Expect builds to expire and data formats to change while recovery and crash-resume gates are completed.</li>
+        <li>Keep the app foregrounded during payment demonstrations when immediate message delivery matters.</li>
+        <li>Review the <a href="https://github.com/opencsvnet/Signal-iOS">corresponding source</a>, <a href="../paper/opencsv.md">paper</a>, and <a href="../web/journal.html">evidence journal</a>.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">OpenCSV public research beta · Bitcoin signet only · Test USD has no monetary value.</div>
+</footer>
+</body>
+</html>

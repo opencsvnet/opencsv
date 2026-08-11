@@ -1272,6 +1272,31 @@ Rust SHA at `9b72d86d`. The Signal PR-tip default/recovery jobs passed, but
 post-merge run `31283234786` failed the default Xcode job while recovery passed.
 That failure remains an explicit fix-forward gate, and no release is claimed.
 
+## 2026-08-11 — TestFlight moves from local archive to public-beta preparation
+
+The first independently branded archive completed successfully as `OpenCSV
+Demo` `0.1.0 (1)` under bundle id `net.ultravie.signal`. The app and both
+extensions passed local code-signing validation with only the OpenCSV app
+groups and keychain group retained. Signal-only associated domains, Apple Pay,
+push, VoIP, communications, and privileged data-protection entitlements are not
+part of this third-party archive. The corresponding source preparation commit
+is `896e8c8521` on `codex/testflight-demo`.
+
+The first upload attempt stopped before binary ingestion. Xcode authenticated
+team `2858MX5336`, queried App Store Connect for
+`net.ultravie.signal`, received a successful API response containing zero app
+records, and failed closed with `missingApp`. That is a one-time catalog setup
+gate, not a build or signing failure. No install link, Apple review, or public
+availability is claimed yet.
+
+Public testing adds a second gate beyond upload. Apple requires an internal
+testing group before an external group, TestFlight test information, an
+external build submission, and beta review before a public invitation can be
+activated. The new `beta/` page publishes that pending state and will become the
+stable website endpoint for the real Apple invitation. It also makes the
+boundaries prominent: unofficial Signal fork, Bitcoin signet only, Test USD has
+no value, and third-party push delivery is not represented as reliable.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs
