@@ -431,6 +431,11 @@
     <tr><td><code>OpenCsv.Batch.versioned_commit_no_fallback</code></td><td><code>propext</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code></td></tr>
     <tr><td><code>OpenCsv.Batch.versioned_commit_unique</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>OpenCsv.bindHash</code>, <code>OpenCsv.bindHash_injective</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.EdgesMatch.lengths</code></td><td><code>propext</code>, <code>OpenCsv.Sig</code>, <code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Encoding.canonical_digest_injective</code></td><td><code>Quot.sound</code></td></tr>
+    <tr><td><code>OpenCsv.Encoding.canonical_limb_unique</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Encoding.decode_limb_accepts_canonical</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Encoding.decode_limb_rejects_noncanonical</code></td><td><em>none</em></td></tr>
+    <tr><td><code>OpenCsv.Encoding.modular_reduction_has_noncanonical_twins</code></td><td><code>propext</code></td></tr>
     <tr><td><code>OpenCsv.Scan.anchor_bearing_is_candidate</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Scan.filter_absence_trustless</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
     <tr><td><code>OpenCsv.Scan.filter_no_false_negatives</code></td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
@@ -473,11 +478,11 @@
     <tr><td><code>OpenCsv.v4_one_input_statement_exact</code></td><td><code>propext</code>, <code>OpenCsv.commitHash</code></td></tr>
   </tbody>
 </table>
-<p class="gen-summary">72 theorems, audited 2026-08-05 from <code>axiom-audit.txt</code> @ dc7e8eb</p>
+<p class="gen-summary">77 theorems, audited 2026-08-11 from <code>axiom-audit.txt</code> @ 5af2003</p>
 <!-- GEN-AXIOM-TABLE:END -->
       </div>
     </details>
-    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-11 06:32 UTC · build green · opencsv-formal@dc7e8eb<!-- /GEN-PROVENANCE --></p>
+    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-11 20:20 UTC · build green · opencsv-formal@5af2003<!-- /GEN-PROVENANCE --></p>
     <h3 style="margin-top:28px">Translated Rust audit — merged reproducibility receipt</h3>
     <p class="sub">A separate audit of the Aeneas-translated
     <code>opencsv-kernel</code>. These 15 declarations do not inflate the 72
