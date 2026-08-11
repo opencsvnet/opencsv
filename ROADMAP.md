@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-11, rev 14) — Test USD v2 reset and acceptance gates
+# OpenCSV Master Plan (2026-08-11, rev 15) — Test USD v2 reset and acceptance gates
 
 ## Plan of record
 
@@ -9,7 +9,7 @@ replacement in Signal simulators. Coordination state lives in repositories and
 GitHub issues, not chat. Earlier roadmap revisions and failed approaches remain
 in Git history and the public journal.
 
-Revision 14 makes those runs archived **Test USD v1 evidence** and launches a
+Revision 15 makes those runs archived **Test USD v1 evidence** and launches a
 clean Test USD v2 application deployment on the existing Bitcoin Signet. V2
 uses account generation 2, checkpoint generation 4, deployment id
 `opencsv-test-usd-v2`, new derivation/database/backup domains, and a new exact
@@ -150,6 +150,17 @@ lands.
   only through the non-default headless `opencsv-issuer` tool.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
+
+Signal commit
+[`bd45849`](https://github.com/opencsvnet/Signal-iOS/commit/bd458499693eb3915bf9e3375d45036cad98a853)
+pins Rust `1288977` and moves the consumer wallet to v2-only database,
+Keychain, backup-version, deployment, and product-profile namespaces. It
+rejects v1 Secure Backup payloads and exposes no issuer ABI in the default
+XCFramework. Its local warnings-as-errors build and full aggregate ran 1,572
+tests with 1,556 passed, 12 deliberately skipped, and zero failed. The work is
+under review in draft
+[Signal PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11); hosted CI is
+still a merge gate. No v2 TestFlight build or live transaction is claimed.
 
 ## Completed Rust merge gate
 
@@ -393,9 +404,13 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Fix or rerun the failed default Xcode job in post-merge Signal run
-  [31283234786](https://github.com/opencsvnet/Signal-iOS/actions/runs/31283234786)
-  and obtain a complete green default-branch run at or after the PR #9 Rust pin.
+- Review and merge the exact-green Rust v2 tip, then repin and review Signal
+  PR #11 against the merged SHA. Hosted Rust and Signal CI remain hard gates.
+- Merge the 77-declaration formal review and the separately scoped Aeneas
+  documentation review only at their exact green tips.
+- Create fresh Bob and Carol v2 wallets, fund their signet fee reserves,
+  headlessly mint the exact reviewed v2 instrument, and complete a new live
+  acceptance run before replacing any archived v1 media.
 - Complete the live crash-state pause matrix at planning, signed persistence,
   broadcast, and pre-delivery.
 - Separate clean-install Secure Backup recovery/rebind acceptance.

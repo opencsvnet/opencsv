@@ -1257,6 +1257,16 @@ path—not Signal UI or packet evidence. No application or transaction state is
 reconstructed. Its SHA-256 is
 `5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
+Test USD v2 deliberately does not inherit those wallets or receipts. Draft
+Signal commit `bd458499693eb3915bf9e3375d45036cad98a853` pins the exact v2 Rust
+review, uses account generation 2 and checkpoint generation 4, and separates
+its database, Keychain, backup, deployment, and presentation namespaces from
+v1. The default Signal XCFramework contains no issuer symbols or declarations.
+Its local warnings-as-errors build and complete 1,572-test aggregate pass with
+zero failures; hosted CI, wallet funding, headless issuance, and a live v2
+payment are still open. The v1 film is therefore archived empirical evidence,
+not v2 empirical evidence.
+
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction
 `e5ffe6076052e4bf98ba117d7122d79e21de14ed0992070c0dbe85da22dd9ee9`,

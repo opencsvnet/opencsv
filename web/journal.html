@@ -1274,6 +1274,19 @@
     adds five canonical-encoding declarations, raising the review ledger from
     72 to 77, in formal PR <a href="https://github.com/opencsvnet/opencsv-formal/pull/5">#5</a>.
     These are review receipts—not merged code, a v2 mint, or a TestFlight release.</p>
+    <p>Signal commit
+    <a href="https://github.com/opencsvnet/Signal-iOS/commit/bd458499693eb3915bf9e3375d45036cad98a853"><code>bd45849</code></a>
+    pins that exact Rust review and moves the consumer wallet to v2-only
+    database, Keychain, backup, and product-profile namespaces. It rejects v1
+    Secure Backup payloads, displays the deployment id, and retains no issuer
+    symbol or header declaration in the default XCFramework. CocoaPods
+    deployment mode completed without changing the lockfile; the
+    warnings-as-errors app build succeeded; and the complete local aggregate
+    ran 1,572 tests with 1,556 passed, 12 deliberately skipped, and zero failed.
+    The work is under review in draft Signal PR
+    <a href="https://github.com/opencsvnet/Signal-iOS/pull/11">#11</a>. Hosted CI
+    remains a merge gate, and no v2 TestFlight build, mint, or transaction is
+    claimed.</p>
   </div>
 
 </div>

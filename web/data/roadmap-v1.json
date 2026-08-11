@@ -1,7 +1,7 @@
 {
   "schema": "opencsv-roadmap-v1",
-  "snapshot": "2026-08-11T12:00:00-04:00",
-  "plan_revision": 14,
+  "snapshot": "2026-08-11T15:18:00-04:00",
+  "plan_revision": 15,
   "source": {
     "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
     "master_issue": "https://github.com/opencsvnet/opencsv/issues/1"
@@ -12,10 +12,10 @@
       "order": 1,
       "title": "Formal specification + pure kernel",
       "state": "active",
-      "summary": "72 Lean declarations are merged; 77 are in v2 review with strict canonical-byte encoding and pinned Rust correspondence. Fifteen translated-Rust refinements remain a separate ledger.",
+      "summary": "72 Lean declarations are merged; the green 77-declaration v2 review adds strict canonical-byte encoding and pinned Rust correspondence. The separately scoped Aeneas review is also green and makes no new refinement claim.",
       "receipts": [
         "https://github.com/opencsvnet/opencsv-formal/pull/5",
-        "https://github.com/opencsvnet/formal-aeneas/tree/3bcafed",
+        "https://github.com/opencsvnet/formal-aeneas/pull/2",
         "https://github.com/opencsvnet/opencsv-rs/commit/e4265b946f0aaa31a9230aa67a2f964f5bb0362e"
       ]
     },
@@ -57,8 +57,9 @@
       "order": 5,
       "title": "Clean Test USD v2 integration",
       "state": "active",
-      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Test USD v2 starts fresh with new wallet, database, backup, checkpoint, deployment, issuer, and asset identities; no v1 state migrates. Rust and formal reset changes are under review before a new Signal build and live acceptance run.",
+      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Signal PR #11 pins the exact v2 Rust review and moves the wallet to v2-only namespaces. Its local warnings-as-errors build and 1,572-test aggregate have zero failures; hosted CI and a fresh live v2 run remain open.",
       "receipts": [
+        "https://github.com/opencsvnet/Signal-iOS/pull/11",
         "https://github.com/opencsvnet/Signal-iOS/pull/6",
         "https://github.com/opencsvnet/Signal-iOS/pull/7",
         "https://github.com/opencsvnet/Signal-iOS/actions/runs/31272225305",

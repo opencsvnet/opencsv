@@ -1350,6 +1350,18 @@ adds five canonical-encoding declarations, raises the review ledger from 72 to
 is unchanged: the pure kernel semantics did not change, while serde, account
 namespaces, backup, networking, and Signal remain outside that refinement.
 
+Signal commit
+[`bd45849`](https://github.com/opencsvnet/Signal-iOS/commit/bd458499693eb3915bf9e3375d45036cad98a853)
+pins that exact Rust review and moves the consumer wallet to v2-only database,
+Keychain, backup, and product-profile namespaces. It rejects v1 Secure Backup
+payloads, displays the deployment id, and retains no issuer symbol or header
+declaration in the default XCFramework. CocoaPods deployment mode completed
+without changing the lockfile; the warnings-as-errors app build succeeded; and
+the complete local aggregate ran 1,572 tests with 1,556 passed, 12 deliberately
+skipped, and zero failed. The work is under review in draft Signal PR
+[#11](https://github.com/opencsvnet/Signal-iOS/pull/11). Hosted CI remains a
+merge gate, and no v2 TestFlight build, mint, or transaction is claimed.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

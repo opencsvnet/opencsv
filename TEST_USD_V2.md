@@ -42,7 +42,12 @@ on the serialization/network hardening in
 [PR #18](https://github.com/opencsvnet/opencsv-rs/pull/18). The canonical-byte
 formalization and pinned source correspondence are under review in
 [opencsv-formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
-Neither draft is represented as merged or released.
+The Signal namespace, exact-manifest, backup-version, and non-issuer surface
+are under review in
+[Signal-iOS PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11), pinned
+to Rust commit `1288977`. Its local warnings-as-errors build and complete
+1,572-test aggregate pass with zero failures; hosted CI remains a merge gate.
+None of these drafts is represented as merged or released.
 
 ## Activation gates
 
