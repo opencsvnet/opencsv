@@ -1256,6 +1256,12 @@
     batch-stock, database, backup, and device-binding domains. V1 wallets fail
     closed with <code>testnet_reset_required</code>; their transactions and
     media remain archived evidence.</p>
+    <p>The headless issuer then created exact v2 asset
+    <code>8a88b56e42450f5761b521063df3fa16806add5c434584441d3b626556115d62</code>
+    and exported and acknowledged checkpoint
+    <code>4498cf0992e2ee387be56f05dde511f774c019af5339cb3bcf05fc48af5700d7</code>
+    before writes were re-enabled. Secrets remain outside Signal and source
+    control. No mint or Bitcoin transaction is claimed by this offline receipt.</p>
     <p>Strict field decoding exposed a historical generator bug: unrestricted
     <code>u32</code> limbs almost never round-tripped. We rejected modular
     reduction because it is biased for the BabyBear prime and adopted shared
@@ -1267,7 +1273,7 @@
     Lean commit <a href="https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e"><code>5af2003</code></a>
     adds five canonical-encoding declarations, raising the review ledger from
     72 to 77, in formal PR <a href="https://github.com/opencsvnet/opencsv-formal/pull/5">#5</a>.
-    These are review receipts—not merged code, a v2 asset, or a TestFlight release.</p>
+    These are review receipts—not merged code, a v2 mint, or a TestFlight release.</p>
   </div>
 
 </div>

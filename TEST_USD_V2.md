@@ -13,8 +13,9 @@ new demonstration.
 - BIP84 fee-wallet derivation domain: v2
 - OpenCSV owner, issuer-tool, batch-stock, database, backup, and device-binding
   domains: v2
-- Test USD instrument: a new v2 asset and issuer identity, to be published only
-  after the headless issuer creates the exact manifest
+- Test USD instrument: asset id
+  `8a88b56e42450f5761b521063df3fa16806add5c434584441d3b626556115d62`,
+  created by the headless issuer from the exact v2 terms
 
 There is no v1 balance, coin, address, checkpoint, or backup migration. Opening
 old signet/regtest wallet state fails with `testnet_reset_required`; it is never
@@ -48,7 +49,7 @@ Neither draft is represented as merged or released.
 1. Review and merge the exact-green Rust and formal tips.
 2. Pin Signal to the merged Rust revision and use only v2 namespaces.
 3. Build a new TestFlight candidate; do not reuse the v1 archive as v2.
-4. Headlessly create and publish the exact v2 Test USD manifest.
+4. Review and publish the backed-up exact v2 Test USD manifest.
 5. Fund fresh v2 fee addresses with signet sats.
 6. Execute and record a new Bob-to-Carol-to-Bob payment acceptance run.
 7. Only then replace the archived v1 homepage film with v2 footage.

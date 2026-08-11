@@ -13,7 +13,7 @@ Revision 14 makes those runs archived **Test USD v1 evidence** and launches a
 clean Test USD v2 application deployment on the existing Bitcoin Signet. V2
 uses account generation 2, checkpoint generation 4, deployment id
 `opencsv-test-usd-v2`, new derivation/database/backup domains, and a new exact
-issuer and asset identity. V1 balances, coins, addresses, checkpoints, and
+  issuer and asset identity. V1 balances, coins, addresses, checkpoints, and
 backups do not migrate; they fail closed with `testnet_reset_required`. See the
 [reset contract](TEST_USD_V2.md).
 
@@ -140,9 +140,10 @@ lands.
   records it in review and receipt details.
 - The v1 asset
   `1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507`
-  is archived. V2's exact asset and issuer ids stay pending until the headless
-  issuer creates the canonical manifest after review. No Tether asset or
-  redemption claim exists in this test registry.
+  is archived. The headless v2 issuer has created and backed up exact asset
+  `8a88b56e42450f5761b521063df3fa16806add5c434584441d3b626556115d62`;
+  no mint or live Signal balance is claimed yet. No Tether asset or redemption
+  claim exists in this test registry.
 - Unknown, removed, or ticker-lookalike instruments remain visible and
   read-only. New unsigned work fails with stable `asset_not_reviewed`.
 - Signal cannot mint or create assets. Privileged issuance remains available

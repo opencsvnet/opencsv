@@ -1305,8 +1305,14 @@ history. What it can reset cleanly is every application identity that could
 join an old wallet to a new demonstration. Test USD v2 therefore uses account
 configuration generation 2, checkpoint generation 4, deployment id
 `opencsv-test-usd-v2`, and new domain-separated BIP84 fee, owner, issuer-tool,
-batch-stock, database, backup, and device-binding identities. The new issuer
-and asset ids remain pending until a headless genesis is created after review.
+batch-stock, database, backup, and device-binding identities. The headless
+issuer subsequently created exact v2 asset
+`8a88b56e42450f5761b521063df3fa16806add5c434584441d3b626556115d62`.
+Before writes were re-enabled, it exported and acknowledged checkpoint
+`4498cf0992e2ee387be56f05dde511f774c019af5339cb3bcf05fc48af5700d7`.
+The issuer root and device binding remain outside source control and Signal.
+No mint or Bitcoin transaction has been broadcast; this is an offline identity
+and recovery receipt only.
 
 We rejected in-place v1 migration. Old signet/regtest configurations and
 checkpoints return stable `testnet_reset_required`; a mismatched deployment id

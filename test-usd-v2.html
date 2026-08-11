@@ -37,14 +37,14 @@
     <div class="eyebrow">Clean test deployment · review in progress</div>
     <h1>New wallets. New asset. No ambiguous migration.</h1>
     <p class="lead">Test USD v2 starts fresh on the existing public Bitcoin Signet. Old demonstrations remain inspectable evidence, but no v1 wallet state can be opened as v2.</p>
-    <p class="warning"><strong>Not live yet.</strong> The implementation and formal correspondence are draft pull requests. No v2 TestFlight build, asset id, issuer key, balance, screenshot, or transaction is claimed until the activation gates finish.</p>
+    <p class="warning"><strong>Not live yet.</strong> The implementation and formal correspondence are draft pull requests. The backed-up headless issuer manifest now has an exact public identity, but no v2 TestFlight build, mint, balance, screenshot, or transaction is claimed until the activation gates finish.</p>
   </header>
   <section>
     <h2>The reset boundary</h2>
     <div class="grid">
       <article class="card"><h3>Fresh identity</h3><p>Account generation 2 and deployment id <code>opencsv-test-usd-v2</code> domain-separate the BIP84 fee wallet, owner, issuer-tool, batch stock, database, backup, and device binding.</p></article>
       <article class="card"><h3>Fail closed</h3><p>Old signet/regtest configurations and checkpoints return stable rejection <code>testnet_reset_required</code>. Mismatched v2 deployments cannot share a database.</p></article>
-      <article class="card"><h3>New instrument</h3><p>The v2 asset id and issuer public key will be generated headlessly after code review. Signal remains unable to mint or create assets.</p></article>
+      <article class="card"><h3>New instrument</h3><p>The headless issuer created and backed up exact asset <code>8a88b56e…6115d62</code>. Signal pins its public manifest and remains unable to mint or create assets.</p></article>
       <article class="card"><h3>Same public chain</h3><p>Bitcoin Signet is not destroyed. Its old transactions remain public. The OpenCSV application namespace is what resets.</p></article>
     </div>
   </section>
@@ -53,7 +53,7 @@
     <ul>
       <li><a href="https://github.com/opencsvnet/opencsv-rs/pull/19">Rust v2 deployment boundary (draft PR #19)</a>, stacked on <a href="https://github.com/opencsvnet/opencsv-rs/pull/18">strict encoding and bounded networking (PR #18)</a>.</li>
       <li><a href="https://github.com/opencsvnet/opencsv-formal/pull/5">Lean canonical-byte proofs and exact Rust correspondence (draft PR #5)</a>.</li>
-      <li><a href="usd-preview/terms-v2/">Test USD v2 terms</a>, with asset and issuer identity deliberately marked pending.</li>
+      <li><a href="usd-preview/terms-v2/">Test USD v2 terms and exact public identity</a>; the issuer root remains outside Signal and source control.</li>
       <li><a href="web/message-flow.html">Archived v1 simulator film and receipts</a>, preserved without relabeling them v2.</li>
     </ul>
   </section>
@@ -63,7 +63,7 @@
       <li>Exact-green Rust and formal tips are reviewed and merged.</li>
       <li>Signal uses only v2 database, keychain, backup, and derivation namespaces.</li>
       <li>A new TestFlight candidate is built from the pinned v2 Rust revision.</li>
-      <li>The headless issuer publishes the exact v2 manifest.</li>
+      <li>The backed-up headless issuer manifest is reviewed and published.</li>
       <li>Fresh wallets receive signet sats and Test USD v2.</li>
       <li>A new live payment run produces v2 txids, timings, screenshots, and footage.</li>
     </ol>
