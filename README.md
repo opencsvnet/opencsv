@@ -43,11 +43,14 @@ generation 2, checkpoint generation 4, deployment id
 Test USD instrument. There is no v1 wallet-state migration; an old test wallet
 fails closed with `testnet_reset_required`. See the
 [reset contract](TEST_USD_V2.md) and [interactive walkthrough](test-usd-v2.html).
-The implementation is under review in
-[Rust PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19) and the
-canonical-byte proof layer in
-[formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5). Neither is
-represented as merged, live, or released.
+The implementation is merged at exact Rust commit
+[`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
+through [Rust PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19), with
+the 77-declaration canonical-byte proof layer merged at
+[`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
+through [formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
+Signal and the live v2 acceptance run remain open; no source merge is
+represented as a live wallet or release.
 
 All transactions, wallet balances, screenshots, and video described below are
 preserved **Test USD v1 evidence**. They prove what the earlier prototype did;

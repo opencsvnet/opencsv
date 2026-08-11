@@ -36,26 +36,30 @@ are archived **Test USD v1 evidence**. They remain useful receipts for the
 prototype behavior they actually exercised, but they are not v2 balances,
 wallets, assets, or release evidence.
 
-The v2 Rust deployment boundary is under review in
-[opencsv-rs PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19), now the
-consolidated safe merge boundary directly onto `main`. Historical
-[PR #18](https://github.com/opencsvnet/opencsv-rs/pull/18) must not merge alone:
-strict decoding needs the canonical generator repair included in #19. The canonical-byte
-formalization and pinned source correspondence are under review in
-[opencsv-formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
+The consolidated v2 Rust deployment boundary was fast-forwarded to `main` at
+[`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
+through [opencsv-rs PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19).
+Historical [PR #18](https://github.com/opencsvnet/opencsv-rs/pull/18) is part
+of that history but was never a standalone `main` state: strict decoding needs
+the canonical generator repair included in #19. The 77-declaration
+canonical-byte formalization and pinned source correspondence were
+fast-forwarded to `opencsv-formal/main` at
+[`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
+through [formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
 The Signal namespace, exact-manifest, backup-version, and non-issuer surface
-are under review in
+remain under review in
 [Signal-iOS PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11), pinned
 to Rust commit `1288977`. Its local warnings-as-errors build and complete
-1,572-test aggregate pass with zero failures; hosted CI remains a merge gate.
-Follow-up tip `3f2a994` restores the two clean-runner CocoaPods checksums and
-regenerates Signal's strings file after the first hosted run stopped at setup.
-None of these reviews is represented as merged or released.
+1,572-test aggregate pass with zero failures, and all four hosted jobs are green
+at exact tip `3f2a994`. Signal remains unmerged until the fresh Rust
+default-branch run succeeds. No v2 build is represented as released.
 
 ## Activation gates
 
-1. Review and merge the exact-green Rust and formal tips.
-2. Pin Signal to the merged Rust revision and use only v2 namespaces.
+1. Complete the fresh default-branch CI receipts for the merged Rust, formal,
+   and Aeneas tips.
+2. Fast-forward the exact-green Signal tip, already pinned to merged Rust, and
+   use only v2 namespaces.
 3. Build a new TestFlight candidate; do not reuse the v1 archive as v2.
 4. Review and publish the backed-up exact v2 Test USD manifest.
 5. Fund fresh v2 fee addresses with signet sats.

@@ -1085,9 +1085,9 @@ mint → transfer* → redeem), the value-conservation invariant, and nullifier
 uniqueness. These are *protocol logic* — independent of the SNARK — and are amenable
 to mechanized proof.
 
-**Specification ledger (implemented; v2 addition under review):** a
-dependency-free Lean 4 development with 72 merged declarations and 77
-sorry-free, locally audited declarations on the v2 review branch, covering:
+**Specification ledger (implemented and merged):** a dependency-free Lean 4
+development with 77 sorry-free, CI-audited declarations at exact commit
+`5af200376a98a459d9318224c2c0e37b02da588e`, covering:
 
 1. **Abstract interfaces** — commitment scheme, signature scheme, PRF, each with its
    security property stated as an explicit hypothesis (binding, EUF-CMA,
@@ -1189,8 +1189,8 @@ claim. Current explicit proof gaps are multi-asset transfers
 and distribution of an allowlist for accepted self-described root-circuit
 commitments.
 
-**Formal verification (merged baseline plus v2 review).** The
-dependency-free Lean project has 72 merged and 77 v2-review sorry-free audited specification declarations,
+**Formal verification (merged baseline).** The dependency-free Lean project
+has 77 merged, sorry-free audited specification declarations,
 including limb arithmetic, batching, scan-exclusion soundness, and the v4
 one-input forwarding specialization. The separate
 Aeneas project has 15 audited declarations on its default branch connecting
@@ -1257,17 +1257,18 @@ path—not Signal UI or packet evidence. No application or transaction state is
 reconstructed. Its SHA-256 is
 `5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
-Test USD v2 deliberately does not inherit those wallets or receipts. Draft
-Signal commit `bd458499693eb3915bf9e3375d45036cad98a853` pins the exact v2 Rust
-review, uses account generation 2 and checkpoint generation 4, and separates
+Test USD v2 deliberately does not inherit those wallets or receipts. Merged
+Rust commit `1288977c6110d6d985b5ea51589007d271e35674` is the exact v2 protocol
+and deployment boundary. Signal tip
+`3f2a99415a106b9d53ac06e7f43ceef849ea8b0b` pins that merged Rust commit, uses
+account generation 2 and checkpoint generation 4, and separates
 its database, Keychain, backup, deployment, and presentation namespaces from
 v1. The default Signal XCFramework contains no issuer symbols or declarations.
 Its local warnings-as-errors build and complete 1,572-test aggregate pass with
-zero failures; hosted CI, wallet funding, headless issuance, and a live v2
-payment are still open. Follow-up tip `3f2a994` restores clean-runner CocoaPods
-checksums and generated string placement after the first hosted run stopped
-before Xcode tests. The v1 film is therefore archived empirical evidence, not
-v2 empirical evidence.
+zero failures, and all four hosted jobs are green. The Signal merge remains
+gated on fresh default-branch Rust CI; wallet funding, headless issuance, and a
+live v2 payment are still open. The v1 film is therefore archived empirical
+evidence, not v2 empirical evidence.
 
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction

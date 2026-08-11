@@ -1269,13 +1269,16 @@
     timeouts with one absolute deadline across DNS, every connect, write, and
     bounded read; a slow-drip test records the original failure.</p>
     <p>Rust commit <a href="https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674"><code>1288977</code></a>
-    is under review in consolidated draft PR <a href="https://github.com/opencsvnet/opencsv-rs/pull/19">#19</a>,
-    retargeted directly to <code>main</code>. Historical PR #18 must not merge
-    alone because strict decoding needs the canonical generator repair in #19.
+    was fast-forwarded exactly to <code>main</code> through consolidated PR
+    <a href="https://github.com/opencsvnet/opencsv-rs/pull/19">#19</a>. Historical
+    PR #18 is contained in that history but never existed alone on
+    <code>main</code>: strict decoding needs the canonical generator repair in #19.
     Lean commit <a href="https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e"><code>5af2003</code></a>
-    adds five canonical-encoding declarations, raising the review ledger from
-    72 to 77, in formal PR <a href="https://github.com/opencsvnet/opencsv-formal/pull/5">#5</a>.
-    These are review receipts—not merged code, a v2 mint, or a TestFlight release.</p>
+    adds five canonical-encoding declarations, raising the merged ledger from
+    72 to 77. Formal PR <a href="https://github.com/opencsvnet/opencsv-formal/pull/5">#5</a>
+    was fast-forwarded exactly and default-branch CI
+    <a href="https://github.com/opencsvnet/opencsv-formal/actions/runs/31530914881">run 31530914881</a>
+    succeeded. These are source and CI receipts—not a v2 mint or a TestFlight release.</p>
     <p>Signal commit
     <a href="https://github.com/opencsvnet/Signal-iOS/commit/bd458499693eb3915bf9e3375d45036cad98a853"><code>bd45849</code></a>
     pins that exact Rust review and moves the consumer wallet to v2-only
@@ -1285,12 +1288,12 @@
     deployment mode completed without changing the lockfile; the
     warnings-as-errors app build succeeded; and the complete local aggregate
     ran 1,572 tests with 1,556 passed, 12 deliberately skipped, and zero failed.
-    The work is under review in draft Signal PR
-    <a href="https://github.com/opencsvnet/Signal-iOS/pull/11">#11</a>. Hosted CI
-    remains a merge gate. Follow-up tip <code>3f2a994</code> restores the
-    clean-runner CocoaPods checksums and regenerated string placement named by
-    the first hosted run; that run had stopped before Xcode tests. No v2
-    TestFlight build, mint, or transaction is claimed.</p>
+    Follow-up tip <code>3f2a994</code> restores the clean-runner CocoaPods
+    checksums and regenerated string placement named by the first hosted run;
+    all four hosted jobs are now green. Signal PR
+    <a href="https://github.com/opencsvnet/Signal-iOS/pull/11">#11</a> remains
+    unmerged until the merged Rust tip's fresh default-branch CI succeeds. No
+    v2 TestFlight build, mint, or transaction is claimed.</p>
   </div>
 
 </div>

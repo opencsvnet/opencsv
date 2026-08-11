@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-11, rev 15) — Test USD v2 reset and acceptance gates
+# OpenCSV Master Plan (2026-08-11, rev 16) — Test USD v2 merge and acceptance gates
 
 ## Plan of record
 
@@ -9,13 +9,19 @@ replacement in Signal simulators. Coordination state lives in repositories and
 GitHub issues, not chat. Earlier roadmap revisions and failed approaches remain
 in Git history and the public journal.
 
-Revision 15 makes those runs archived **Test USD v1 evidence** and launches a
+Revision 15 made those runs archived **Test USD v1 evidence** and launched a
 clean Test USD v2 application deployment on the existing Bitcoin Signet. V2
 uses account generation 2, checkpoint generation 4, deployment id
 `opencsv-test-usd-v2`, new derivation/database/backup domains, and a new exact
   issuer and asset identity. V1 balances, coins, addresses, checkpoints, and
 backups do not migrate; they fail closed with `testnet_reset_required`. See the
 [reset contract](TEST_USD_V2.md).
+
+Revision 16 records the exact fast-forward integration of the v2 Rust,
+77-declaration formal, and separately scoped Aeneas tips. Signal remains the
+active gate: its exact tip is hosted-green and already pins merged Rust, but it
+does not merge until Rust's fresh default-branch CI succeeds. No live v2
+payment, media, release, or TestFlight build is inferred from a source merge.
 
 The execution order is still:
 
@@ -41,7 +47,10 @@ mainnet readiness. The public execution view is a separate evidence page at
 
 ### Formal and kernel
 
-- **A3 — reproducible Aeneas refinement: complete.** `formal-aeneas@3bcafed`
+- **A3 — reproducible Aeneas refinement: complete.** The current exact
+  default-branch tip is `formal-aeneas@864469d`; its v2 review changes only
+  reproducibility receipts and explicitly adds no new refinement claim. The
+  underlying `formal-aeneas@3bcafed`
   pins its dependency, builds without `sorry`/`admit`, removes the duplicated
   theorem, and publishes a 15-declaration axiom audit. Default-branch CI:
   [run 30835243209](https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209).
@@ -54,14 +63,14 @@ mainnet readiness. The public execution view is a separate evidence page at
   chain, storage, and transport I/O remain in the driver.
 - A4/A5 are integrated in `opencsv-rs@e4265b9`; exact-tip CI passed in
   [run 30830366654](https://github.com/opencsvnet/opencsv-rs/actions/runs/30830366654).
-- The merged public formal ledger contains 72 audited declarations at
-  `opencsv-formal@dc7e8eb`. The v2 review branch contains **77**, adding five
+- The merged public formal ledger now contains **77 audited declarations** at
+  `opencsv-formal@5af2003`, adding five
   canonical BabyBear byte-encoding declarations and exact Rust source
   correspondence pinned to `1288977c6110d6d985b5ea51589007d271e35674`.
-  Review: [opencsv-formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
-  The prior default-branch CI passed in
-  [run 31044400073](https://github.com/opencsvnet/opencsv-formal/actions/runs/31044400073),
-  and the generated site deployed at `opencsv@75de1b7` in
+  [Formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5) was
+  fast-forwarded exactly; fresh default-branch
+  [run 31530914881](https://github.com/opencsvnet/opencsv-formal/actions/runs/31530914881)
+  succeeded. The prior 72-declaration site deployed at `opencsv@75de1b7` in
   [run 31044493886](https://github.com/opencsvnet/opencsv/actions/runs/31044493886).
 
 The standing bridge remains executable differential testing. The Lean/source
@@ -157,12 +166,12 @@ pins Rust `1288977` and moves the consumer wallet to v2-only database,
 Keychain, backup-version, deployment, and product-profile namespaces. It
 rejects v1 Secure Backup payloads and exposes no issuer ABI in the default
 XCFramework. Its local warnings-as-errors build and full aggregate ran 1,572
-tests with 1,556 passed, 12 deliberately skipped, and zero failed. The work is
-under review in draft
-[Signal PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11); hosted CI is
-still a merge gate. Follow-up tip `3f2a994` restores the two clean-runner
-CocoaPods checksums and regenerates the strings file named by the first hosted
-run. No v2 TestFlight build or live transaction is claimed.
+tests with 1,556 passed, 12 deliberately skipped, and zero failed. Exact tip
+`3f2a994` restores the two clean-runner CocoaPods checksums and regenerates the
+strings file named by the first hosted run; all four hosted jobs are green.
+[Signal PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11) remains
+unmerged until the merged Rust tip's fresh default-branch run succeeds. No v2
+TestFlight build or live transaction is claimed.
 
 ## Completed Rust merge gate
 
@@ -406,10 +415,10 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Review and merge the exact-green Rust v2 tip, then repin and review Signal
-  PR #11 against the merged SHA. Hosted Rust and Signal CI remain hard gates.
-- Merge the 77-declaration formal review and the separately scoped Aeneas
-  documentation review only at their exact green tips.
+- Finish fresh default-branch CI on the already merged exact Rust and Aeneas
+  tips; the exact 77-declaration formal run is already green.
+- Fast-forward hosted-green Signal PR #11 only after that Rust run succeeds,
+  then require a fresh default-branch Signal receipt.
 - Create fresh Bob and Carol v2 wallets, fund their signet fee reserves,
   headlessly mint the exact reviewed v2 instrument, and complete a new live
   acceptance run before replacing any archived v1 media.

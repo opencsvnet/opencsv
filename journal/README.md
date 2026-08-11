@@ -1339,16 +1339,20 @@ slow-drip regression test records the failure mode.
 Rust commit
 [`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
 passes warnings-as-errors core/CLI/FFI tests (18 + 7 + 75, with three deliberate
-slow tests ignored) plus the focused recovery-feature and deadline tests. It is
-under review as consolidated draft PR
-[#19](https://github.com/opencsvnet/opencsv-rs/pull/19), retargeted directly to
-`main`. Historical PR #18 must not merge alone because strict decoding needs
-the canonical generator repair in #19. This work is not represented as merged.
+slow tests ignored) plus the focused recovery-feature and deadline tests. It
+was fast-forwarded exactly to `main` through consolidated PR
+[#19](https://github.com/opencsvnet/opencsv-rs/pull/19). Historical PR #18 is
+contained in that history but never existed alone on `main`: strict decoding
+needs the canonical generator repair in #19. Fresh default-branch CI remains
+the gate for the dependent Signal merge.
 Lean commit
 [`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
-adds five canonical-encoding declarations, raises the review ledger from 72 to
-77, builds with no `sorry`/`admit`, and pins the exact Rust source in formal PR
-[#5](https://github.com/opencsvnet/opencsv-formal/pull/5). The Aeneas boundary
+adds five canonical-encoding declarations, raises the merged ledger from 72 to
+77, builds with no `sorry`/`admit`, and pins the exact Rust source. Formal PR
+[#5](https://github.com/opencsvnet/opencsv-formal/pull/5) was fast-forwarded
+exactly; default-branch CI
+[run 31530914881](https://github.com/opencsvnet/opencsv-formal/actions/runs/31530914881)
+succeeded. The Aeneas boundary
 is unchanged: the pure kernel semantics did not change, while serde, account
 namespaces, backup, networking, and Signal remain outside that refinement.
 
@@ -1360,12 +1364,12 @@ payloads, displays the deployment id, and retains no issuer symbol or header
 declaration in the default XCFramework. CocoaPods deployment mode completed
 without changing the lockfile; the warnings-as-errors app build succeeded; and
 the complete local aggregate ran 1,572 tests with 1,556 passed, 12 deliberately
-skipped, and zero failed. The work is under review in draft Signal PR
-[#11](https://github.com/opencsvnet/Signal-iOS/pull/11). Hosted CI remains a
-merge gate. Follow-up tip `3f2a994` restores the clean-runner CocoaPods
-checksums and regenerated string placement named by the first hosted run; that
-run had stopped before Xcode tests. No v2 TestFlight build, mint, or transaction
-is claimed.
+skipped, and zero failed. Follow-up tip `3f2a994` restores the clean-runner
+CocoaPods checksums and regenerated string placement named by the first hosted
+run; all four hosted jobs are now green. Signal PR
+[#11](https://github.com/opencsvnet/Signal-iOS/pull/11) remains unmerged until
+the merged Rust tip's fresh default-branch CI succeeds. No v2 TestFlight build,
+mint, or transaction is claimed.
 
 ---
 

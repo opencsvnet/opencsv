@@ -1,7 +1,7 @@
 {
   "schema": "opencsv-roadmap-v1",
-  "snapshot": "2026-08-11T15:18:00-04:00",
-  "plan_revision": 15,
+  "snapshot": "2026-08-11T16:08:36-04:00",
+  "plan_revision": 16,
   "source": {
     "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
     "master_issue": "https://github.com/opencsvnet/opencsv/issues/1"
@@ -11,8 +11,8 @@
       "id": "formal-kernel",
       "order": 1,
       "title": "Formal specification + pure kernel",
-      "state": "active",
-      "summary": "72 Lean declarations are merged; the green 77-declaration v2 review adds strict canonical-byte encoding and pinned Rust correspondence. The separately scoped Aeneas review is also green and makes no new refinement claim.",
+      "state": "complete",
+      "summary": "The 77-declaration Lean ledger, strict canonical-byte encoding, pinned Rust correspondence, and separately scoped 15-declaration Aeneas audit are merged at their exact reviewed tips. The Aeneas update makes no new refinement claim.",
       "receipts": [
         "https://github.com/opencsvnet/opencsv-formal/pull/5",
         "https://github.com/opencsvnet/formal-aeneas/pull/2",
@@ -57,7 +57,7 @@
       "order": 5,
       "title": "Clean Test USD v2 integration",
       "state": "active",
-      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Signal PR #11 tip 3f2a994 pins the exact v2 Rust review and moves the wallet to v2-only namespaces. Its local warnings-as-errors build and 1,572-test aggregate have zero failures; hosted CI and a fresh live v2 run remain open.",
+      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Signal PR #11 tip 3f2a994 pins merged v2 Rust and moves the wallet to v2-only namespaces. Its local warnings-as-errors build, 1,572-test aggregate, and all four hosted jobs are green; merge and a fresh live v2 run remain open behind the Rust default-branch gate.",
       "receipts": [
         "https://github.com/opencsvnet/Signal-iOS/pull/11",
         "https://github.com/opencsvnet/Signal-iOS/pull/6",
