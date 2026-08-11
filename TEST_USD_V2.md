@@ -37,9 +37,10 @@ prototype behavior they actually exercised, but they are not v2 balances,
 wallets, assets, or release evidence.
 
 The v2 Rust deployment boundary is under review in
-[opencsv-rs PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19), stacked
-on the serialization/network hardening in
-[PR #18](https://github.com/opencsvnet/opencsv-rs/pull/18). The canonical-byte
+[opencsv-rs PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19), now the
+consolidated safe merge boundary directly onto `main`. Historical
+[PR #18](https://github.com/opencsvnet/opencsv-rs/pull/18) must not merge alone:
+strict decoding needs the canonical generator repair included in #19. The canonical-byte
 formalization and pinned source correspondence are under review in
 [opencsv-formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
 The Signal namespace, exact-manifest, backup-version, and non-issuer surface

@@ -1269,7 +1269,9 @@
     timeouts with one absolute deadline across DNS, every connect, write, and
     bounded read; a slow-drip test records the original failure.</p>
     <p>Rust commit <a href="https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674"><code>1288977</code></a>
-    is under review in stacked draft PR <a href="https://github.com/opencsvnet/opencsv-rs/pull/19">#19</a>.
+    is under review in consolidated draft PR <a href="https://github.com/opencsvnet/opencsv-rs/pull/19">#19</a>,
+    retargeted directly to <code>main</code>. Historical PR #18 must not merge
+    alone because strict decoding needs the canonical generator repair in #19.
     Lean commit <a href="https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e"><code>5af2003</code></a>
     adds five canonical-encoding declarations, raising the review ledger from
     72 to 77, in formal PR <a href="https://github.com/opencsvnet/opencsv-formal/pull/5">#5</a>.

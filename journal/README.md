@@ -1340,9 +1340,11 @@ Rust commit
 [`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
 passes warnings-as-errors core/CLI/FFI tests (18 + 7 + 75, with three deliberate
 slow tests ignored) plus the focused recovery-feature and deadline tests. It is
-under review as stacked draft PR
-[#19](https://github.com/opencsvnet/opencsv-rs/pull/19), not represented as
-merged. Lean commit
+under review as consolidated draft PR
+[#19](https://github.com/opencsvnet/opencsv-rs/pull/19), retargeted directly to
+`main`. Historical PR #18 must not merge alone because strict decoding needs
+the canonical generator repair in #19. This work is not represented as merged.
+Lean commit
 [`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
 adds five canonical-encoding declarations, raises the review ledger from 72 to
 77, builds with no `sorry`/`admit`, and pins the exact Rust source in formal PR
