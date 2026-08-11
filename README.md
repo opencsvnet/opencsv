@@ -30,7 +30,9 @@ surface is deliberately split by question: the interactive
 [`scale.html`](scale.html) publishes the exact Bitcoin performance model and
 calculator, and [`roadmap.html`](roadmap.html) separates completed reference
 work from active, owner-gated, and unauthorized work. The consumer demonstration
-remains at [`index.html`](index.html).
+remains at [`index.html`](index.html). Public TestFlight status and the eventual
+external invitation live at [`beta/index.html`](beta/index.html); until Apple
+approves external testing, that page deliberately exposes no install link.
 
 ## Status
 

@@ -1223,6 +1223,29 @@
     explicit fix-forward gate, and no release is claimed.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-11</div>
+    <h2>TestFlight moves from local archive to public-beta preparation <span class="tag">distribution receipt</span></h2>
+    <p>The first independently branded archive completed as <code>OpenCSV Demo
+    0.1.0 (1)</code>, bundle <code>net.ultravie.signal</code>. The app and both
+    extensions passed local signing validation with only the OpenCSV app groups
+    and keychain group. Signal-only associated domains, Apple Pay, push, VoIP,
+    communications, and privileged data-protection entitlements are absent.
+    The source preparation commit is <code>896e8c8521</code> on
+    <code>codex/testflight-demo</code>.</p>
+    <p>The first upload stopped before binary ingestion. Xcode authenticated
+    Apple team <code>2858MX5336</code>, queried App Store Connect for the bundle,
+    received a successful response with zero app records, and failed closed
+    with <code>missingApp</code>. This is a one-time catalog gate, not a build or
+    signing failure. No public availability or Apple approval is claimed.</p>
+    <p>The new <a href="../beta/">public beta page</a> is now the stable website
+    endpoint for the eventual Apple invitation. It remains explicitly pending
+    until the app record exists, the build is uploaded, external test
+    information is supplied, and Apple approves beta distribution. The page
+    labels the build as an unofficial Signal fork, Bitcoin signet only, and
+    Test USD with no monetary value.</p>
+  </div>
+
 </div>
 
 <footer>
