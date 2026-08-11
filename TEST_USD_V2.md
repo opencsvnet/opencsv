@@ -56,8 +56,8 @@ default-branch run succeeds. No v2 build is represented as released.
 
 ## Activation gates
 
-1. Complete the fresh default-branch CI receipts for the merged Rust, formal,
-   and Aeneas tips.
+1. Complete the fresh default-branch CI receipt for merged Rust; the formal
+   and Aeneas receipts are green.
 2. Fast-forward the exact-green Signal tip, already pinned to merged Rust, and
    use only v2 namespaces.
 3. Build a new TestFlight candidate; do not reuse the v1 archive as v2.

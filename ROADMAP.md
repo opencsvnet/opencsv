@@ -52,8 +52,9 @@ mainnet readiness. The public execution view is a separate evidence page at
   reproducibility receipts and explicitly adds no new refinement claim. The
   underlying `formal-aeneas@3bcafed`
   pins its dependency, builds without `sorry`/`admit`, removes the duplicated
-  theorem, and publishes a 15-declaration axiom audit. Default-branch CI:
-  [run 30835243209](https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209).
+  theorem, and publishes a 15-declaration axiom audit. Fresh exact-tip
+  default-branch CI:
+  [run 31530915682](https://github.com/opencsvnet/formal-aeneas/actions/runs/31530915682).
 - **A4 — staged kernel adoption: complete.** Production binding,
   occurrence/well-formedness, first-occurrence, and supply decisions use the
   adopted kernel, with generated valid/mutated differential tests retaining a
@@ -415,8 +416,8 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Finish fresh default-branch CI on the already merged exact Rust and Aeneas
-  tips; the exact 77-declaration formal run is already green.
+- Finish fresh default-branch CI on the already merged exact Rust tip; the
+  exact formal and Aeneas runs are already green.
 - Fast-forward hosted-green Signal PR #11 only after that Rust run succeeds,
   then require a fresh default-branch Signal receipt.
 - Create fresh Bob and Carol v2 wallets, fund their signet fee reserves,
