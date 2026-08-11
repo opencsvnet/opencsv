@@ -1246,6 +1246,30 @@
     Test USD with no monetary value.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-11</div>
+    <h2>Test USD v2 resets application identity, not Bitcoin Signet <span class="tag">design + failure receipt</span></h2>
+    <p>OpenCSV cannot erase Bitcoin Signet or its public history. The clean v2
+    reset instead changes every application identity that could join old and
+    new state: account generation 2, checkpoint generation 4, deployment id
+    <code>opencsv-test-usd-v2</code>, and new fee-wallet, owner, issuer-tool,
+    batch-stock, database, backup, and device-binding domains. V1 wallets fail
+    closed with <code>testnet_reset_required</code>; their transactions and
+    media remain archived evidence.</p>
+    <p>Strict field decoding exposed a historical generator bug: unrestricted
+    <code>u32</code> limbs almost never round-tripped. We rejected modular
+    reduction because it is biased for the BabyBear prime and adopted shared
+    rejection sampling instead. Network review also replaced per-step HTTP
+    timeouts with one absolute deadline across DNS, every connect, write, and
+    bounded read; a slow-drip test records the original failure.</p>
+    <p>Rust commit <a href="https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674"><code>1288977</code></a>
+    is under review in stacked draft PR <a href="https://github.com/opencsvnet/opencsv-rs/pull/19">#19</a>.
+    Lean commit <a href="https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e"><code>5af2003</code></a>
+    adds five canonical-encoding declarations, raising the review ledger from
+    72 to 77, in formal PR <a href="https://github.com/opencsvnet/opencsv-formal/pull/5">#5</a>.
+    These are review receipts—not merged code, a v2 asset, or a TestFlight release.</p>
+  </div>
+
 </div>
 
 <footer>

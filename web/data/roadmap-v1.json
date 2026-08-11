@@ -1,7 +1,7 @@
 {
   "schema": "opencsv-roadmap-v1",
-  "snapshot": "2026-08-08T18:22:43-04:00",
-  "plan_revision": 13,
+  "snapshot": "2026-08-11T12:00:00-04:00",
+  "plan_revision": 14,
   "source": {
     "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
     "master_issue": "https://github.com/opencsvnet/opencsv/issues/1"
@@ -11,10 +11,10 @@
       "id": "formal-kernel",
       "order": 1,
       "title": "Formal specification + pure kernel",
-      "state": "complete",
-      "summary": "72 audited Lean specification declarations and 15 translated-Rust refinement declarations; the verified kernel is adopted in the reference implementation.",
+      "state": "active",
+      "summary": "72 Lean declarations are merged; 77 are in v2 review with strict canonical-byte encoding and pinned Rust correspondence. Fifteen translated-Rust refinements remain a separate ledger.",
       "receipts": [
-        "https://github.com/opencsvnet/opencsv-formal/tree/dc7e8eb",
+        "https://github.com/opencsvnet/opencsv-formal/pull/5",
         "https://github.com/opencsvnet/formal-aeneas/tree/3bcafed",
         "https://github.com/opencsvnet/opencsv-rs/commit/e4265b946f0aaa31a9230aa67a2f964f5bb0362e"
       ]
@@ -55,9 +55,9 @@
     {
       "id": "signal",
       "order": 5,
-      "title": "Signal Test USD integration",
+      "title": "Clean Test USD v2 integration",
       "state": "active",
-      "summary": "Signal PR #6 is merged at db818658; PR #7 closed the broad hosted gate at 4804e094 with 1,552 tests passed and PR #8 merged the canonical presentation fix at 1e3472b9. A fresh exact unconfirmed parent/child run settled at height 316824. Rust PR #16 merged at 908bbb53 with green Rust CI; Signal PR #9 pins it at 9b72d86d. PR-tip Signal jobs passed, but the post-merge default Xcode job failed while recovery passed. Crash-matrix, clean recovery, and physical-device gates remain open.",
+      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Test USD v2 starts fresh with new wallet, database, backup, checkpoint, deployment, issuer, and asset identities; no v1 state migrates. Rust and formal reset changes are under review before a new Signal build and live acceptance run.",
       "receipts": [
         "https://github.com/opencsvnet/Signal-iOS/pull/6",
         "https://github.com/opencsvnet/Signal-iOS/pull/7",

@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-08, rev 13) — Final Signal acceptance and release gates
+# OpenCSV Master Plan (2026-08-11, rev 14) — Test USD v2 reset and acceptance gates
 
 ## Plan of record
 
@@ -8,6 +8,14 @@ first explicit shared-transaction batch, and the first protocol-safe fee
 replacement in Signal simulators. Coordination state lives in repositories and
 GitHub issues, not chat. Earlier roadmap revisions and failed approaches remain
 in Git history and the public journal.
+
+Revision 14 makes those runs archived **Test USD v1 evidence** and launches a
+clean Test USD v2 application deployment on the existing Bitcoin Signet. V2
+uses account generation 2, checkpoint generation 4, deployment id
+`opencsv-test-usd-v2`, new derivation/database/backup domains, and a new exact
+issuer and asset identity. V1 balances, coins, addresses, checkpoints, and
+backups do not migrate; they fail closed with `testnet_reset_required`. See the
+[reset contract](TEST_USD_V2.md).
 
 The execution order is still:
 
@@ -46,8 +54,12 @@ mainnet readiness. The public execution view is a separate evidence page at
   chain, storage, and transport I/O remain in the driver.
 - A4/A5 are integrated in `opencsv-rs@e4265b9`; exact-tip CI passed in
   [run 30830366654](https://github.com/opencsvnet/opencsv-rs/actions/runs/30830366654).
-- The public formal ledger contains **72 audited declarations** at
-  `opencsv-formal@dc7e8eb`; default-branch CI passed in
+- The merged public formal ledger contains 72 audited declarations at
+  `opencsv-formal@dc7e8eb`. The v2 review branch contains **77**, adding five
+  canonical BabyBear byte-encoding declarations and exact Rust source
+  correspondence pinned to `1288977c6110d6d985b5ea51589007d271e35674`.
+  Review: [opencsv-formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
+  The prior default-branch CI passed in
   [run 31044400073](https://github.com/opencsvnet/opencsv-formal/actions/runs/31044400073),
   and the generated site deployed at `opencsv@75de1b7` in
   [run 31044493886](https://github.com/opencsvnet/opencsv/actions/runs/31044493886).
@@ -79,7 +91,7 @@ as a proof of the Rust AIR, FRI, storage, networking, or iOS implementation.
   relay admission, identity quotas, replay rules, durable reservations, abort
   guards, and gossip-to-broadcast/replacement receipts integrated at `e4265b9`.
 - **C3 — Lean batch model: complete** at `opencsv-formal@c4f970d`; subsequent
-  formal work is included in the 72-declaration ledger.
+  formal work is included in the 77-declaration v2 review ledger.
 
 Current batching combines recipients collected before one proposal freezes.
 It does not yet put a dependent Alice→Bob→Carol chain inside one underlying
@@ -105,9 +117,16 @@ Bitcoin transaction; that remains a separately versioned research item.
   completion requires enabling DNSSEC in Cloudflare and publishing the exact DS
   at Namecheap.
 
-## Permanent Test USD product boundary
+## Test USD v2 product boundary
 
-Signal exposes one user-facing product: **Test USD**.
+Bitcoin Signet is not reset. OpenCSV's application deployment is. V2 uses new
+wallet derivations, database/backup namespaces, checkpoint generation, issuer,
+and asset identities. It intentionally offers no v1 wallet-state migration.
+Every v1 txid and media artifact remains public, but is archived evidence
+rather than v2 acceptance.
+
+Signal will expose one user-facing product: **Test USD** after its v2 build
+lands.
 
 - The wire unit code remains `USD`; no protocol encoding changes.
 - Presentation becomes **Test USD** only when the account is signet and the
@@ -119,9 +138,11 @@ Signal exposes one user-facing product: **Test USD**.
   terms, supply, priority, and claim. Signal may aggregate reviewed issuer
   balances for display, but one send selects one exact issuer instrument and
   records it in review and receipt details.
-- The currently reviewed asset is
-  `1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507`.
-  No Tether asset or redemption claim exists in this test registry.
+- The v1 asset
+  `1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507`
+  is archived. V2's exact asset and issuer ids stay pending until the headless
+  issuer creates the canonical manifest after review. No Tether asset or
+  redemption claim exists in this test registry.
 - Unknown, removed, or ticker-lookalike instruments remain visible and
   read-only. New unsigned work fails with stable `asset_not_reviewed`.
 - Signal cannot mint or create assets. Privileged issuance remains available

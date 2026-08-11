@@ -1297,6 +1297,53 @@ stable website endpoint for the real Apple invitation. It also makes the
 boundaries prominent: unofficial Signal fork, Bitcoin signet only, Test USD has
 no value, and third-party push delivery is not represented as reliable.
 
+## 2026-08-11 — Test USD v2 resets application identity, not Bitcoin Signet
+
+The proposal to “destroy the existing test network” exposed an important
+boundary. OpenCSV does not control Bitcoin Signet and cannot erase its public
+history. What it can reset cleanly is every application identity that could
+join an old wallet to a new demonstration. Test USD v2 therefore uses account
+configuration generation 2, checkpoint generation 4, deployment id
+`opencsv-test-usd-v2`, and new domain-separated BIP84 fee, owner, issuer-tool,
+batch-stock, database, backup, and device-binding identities. The new issuer
+and asset ids remain pending until a headless genesis is created after review.
+
+We rejected in-place v1 migration. Old signet/regtest configurations and
+checkpoints return stable `testnet_reset_required`; a mismatched deployment id
+cannot share a database. The v1 Bob/Carol balances, addresses, txids,
+screenshots, and film remain public receipts for what the earlier prototype
+did, but the website now calls them archived v1 evidence rather than v2 state.
+The earlier TestFlight archive is likewise not relabeled as a v2 build.
+
+Serialization review found that strict field decoding alone was incomplete:
+the historical random digest helper still generated unrestricted `u32` limbs,
+so nearly all new values would fail strict round-trip encoding. The first
+repair considered `candidate % p`. That is valid but biased because the
+BabyBear prime does not divide `2^32`; some residues receive three preimages
+and others two. The accepted repair uses rejection sampling and one shared
+generator delegated to by the core, CLI, and FFI.
+
+The same review found that the advertised 120-second HTTP timeout was not one
+total deadline. DNS, each candidate address, writes, and incremental reads
+could each extend the wall clock, and a slow-drip peer could avoid timing out.
+The repair carries one absolute deadline across DNS resolution in a detached
+helper, every connection attempt, the full write, and bounded response read. A
+slow-drip regression test records the failure mode.
+
+Rust commit
+[`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
+passes warnings-as-errors core/CLI/FFI tests (18 + 7 + 75, with three deliberate
+slow tests ignored) plus the focused recovery-feature and deadline tests. It is
+under review as stacked draft PR
+[#19](https://github.com/opencsvnet/opencsv-rs/pull/19), not represented as
+merged. Lean commit
+[`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
+adds five canonical-encoding declarations, raises the review ledger from 72 to
+77, builds with no `sorry`/`admit`, and pins the exact Rust source in formal PR
+[#5](https://github.com/opencsvnet/opencsv-formal/pull/5). The Aeneas boundary
+is unchanged: the pure kernel semantics did not change, while serde, account
+namespaces, backup, networking, and Signal remain outside that refinement.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

@@ -98,6 +98,8 @@
   .live-receipt div { padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
   .live-receipt strong { display: block; color: var(--accent); font: 700 18px var(--mono); }
   .live-receipt span { color: var(--muted); font-size: 13px; }
+  .reset-banner { border: 1px solid #f7931a; background: #20160c; border-radius: 14px; padding: 22px; margin: 0 auto 32px; max-width: 880px; text-align: left; }
+  .reset-banner p { margin: 8px 0 0; color: #d9d3c8; }
 
   @media (max-width: 760px) {
     .research-pages { grid-template-columns: 1fr; }
@@ -127,13 +129,14 @@
 
 <section id="consumer-demo">
   <div class="wrap consumer-film">
-    <h2>A real 1 Test USD payment inside Signal</h2>
+    <div class="reset-banner"><strong>Test USD v2 is a clean reset now under review.</strong><p>Fresh wallets, derivation domains, database/backup namespaces, and a new asset identity will replace the prototype state. There is no v1 migration. <a href="test-usd-v2.html">Walk through the v2 boundary and live gates →</a></p></div>
+    <h2>Archived: a real Test USD v1 payment inside Signal</h2>
     <p class="receipt"><strong>Consumer demonstration, not a production Signal
     or OpenCSV interface.</strong> The Signal fork and temporary Swift bridge
     exist to show this experience to Signal's team. They are not a shipped
     feature, supported ABI, upstream commitment, or formal-verification layer.</p>
     <p class="sub" style="margin-left:auto;margin-right:auto">The film follows
-    Bob sending 1 Test USD to Carol on public Bitcoin signet. Every Signal
+    Bob sending 1 Test USD v1 to Carol on public Bitcoin signet. Every Signal
     screen is captured simulator footage; explanations appear beside the
     interface, never over it.</p>
     <video class="real-film" controls autoplay muted loop playsinline preload="metadata" poster="web/animation/out/message-flow/poster.png">
@@ -144,7 +147,8 @@
     <p class="note"><strong>36.288 seconds · actual Signal simulator footage.</strong>
     Dead pauses are cut; all retained action plays at normal speed. The moving
     dot is an added illustration of the encrypted consignment path, not Signal
-    UI. Test USD is signet-only test value with no monetary or redemption
+    UI. This is archived v1 evidence and is not footage of the new v2
+    deployment. Test USD is signet-only test value with no monetary or redemption
     claim. Cut details and source-recording hashes:
     <a href="web/message-flow.html">message-flow page</a> and the
     <a href="web/journal.html">journal</a>.</p>
@@ -253,8 +257,9 @@
     <a href="https://github.com/opencsvnet/opencsv/issues/1">issue #1</a> and
     the Signal architecture in
     <a href="https://github.com/opencsvnet/Signal-iOS/issues/3">issue #3</a>.
-    The OpenCSV test issuer's canonical disclosure is in the
-    <a href="usd-preview/terms-v1/">test USD issuer terms</a>.</p>
+    The v2 disclosure is in the
+    <a href="usd-preview/terms-v2/">Test USD v2 terms</a>; the
+    <a href="usd-preview/terms-v1/">v1 terms</a> are archived evidence.</p>
   </div>
 </section>
 
@@ -268,7 +273,7 @@
       <a class="research-card" href="web/formal.html">
         <span class="eyebrow">Formal methods</span>
         <h3>What is proved</h3>
-        <p>The 72-declaration specification ledger, the 15 translated-Rust refinements, axioms, assumptions, and gaps.</p>
+        <p>The 77-declaration v2 review ledger, 15 translated-Rust refinements, canonical-byte boundary, axioms, assumptions, and gaps.</p>
         <span class="arrow">Open the proof map →</span>
       </a>
       <a class="research-card" href="scale.html">

@@ -1,7 +1,7 @@
 # OpenCSV: Client-Side Verified RWAs, Stables, and More on Bitcoin
 
-**Status:** Working draft (v0.4)
-**Date:** 2026-08-07
+**Status:** Working draft (v0.5)
+**Date:** 2026-08-11
 
 ---
 
@@ -48,6 +48,12 @@ promises.
 
 A recipient accepts a payment after checking one succinct proof and one Bitcoin
 anchor. No global state, no bridge, no fork, no new chain.
+
+**Deployment note.** The protocol and Bitcoin Signet are not being replaced,
+but the consumer test deployment is. Test USD v2 uses fresh account,
+derivation, database, backup, checkpoint, issuer, and asset identities. No v1
+wallet state migrates. All earlier Bob/Carol transactions and media remain
+archived Test USD v1 evidence, not v2 acceptance receipts.
 
 ---
 
@@ -816,6 +822,31 @@ and canonically re-encodes the consignment, then hashes the canonical bytes for
 one verdict/render key shared by accepted and rejected outcomes. Attachment IDs
 and delivery-attempt nonces never create a second credit or payment bubble.
 
+### 4.11 Canonical byte encoding and deployment versioning
+
+A field element has many integer representatives modulo its prime, but a wire
+digest must have one byte representation. For each of the eight BabyBear limbs,
+the decoder therefore accepts a little-endian `u32` only when it is strictly
+less than `p = 0x78000001`; it rejects values at or above `p` rather than
+reducing them modulo `p`. New random digests use rejection sampling. Using
+`candidate % p` would produce valid values but a biased distribution because
+`p` does not divide `2^32`.
+
+The Lean encoding layer models the eight decoded integers, proves accepted
+limbs and canonical digests have unique representatives, and explicitly shows
+that `0` and `p` are noncanonical twins under modular reduction. Rust tests and
+the pinned source-correspondence gate cover exact eight-limb parsing,
+little-endian decoding, strict comparison, rejection sampling, and CLI/FFI
+delegation. This is not a proof of the serializer, operating system, or Swift
+bridge; the boundary is stated rather than hidden.
+
+Application state is separately namespaced. Test USD v2 requires account
+configuration generation 2, checkpoint generation 4, and deployment id
+`opencsv-test-usd-v2`, which domain-separate the fee wallet, owner, issuer tool,
+batch stock, database, backup, and device binding. An old signet/regtest wallet
+fails with `testnet_reset_required`; it is never upgraded in place. This reset
+does not change Bitcoin Signet or the OpenCSV wire unit code `USD`.
+
 ---
 
 ## 5. Security Analysis
@@ -1054,8 +1085,9 @@ mint → transfer* → redeem), the value-conservation invariant, and nullifier
 uniqueness. These are *protocol logic* — independent of the SNARK — and are amenable
 to mechanized proof.
 
-**Specification ledger (implemented):** a dependency-free Lean 4 development
-with 72 sorry-free, CI-audited declarations covering:
+**Specification ledger (implemented; v2 addition under review):** a
+dependency-free Lean 4 development with 72 merged declarations and 77
+sorry-free, locally audited declarations on the v2 review branch, covering:
 
 1. **Abstract interfaces** — commitment scheme, signature scheme, PRF, each with its
    security property stated as an explicit hypothesis (binding, EUF-CMA,
@@ -1087,6 +1119,11 @@ with 72 sorry-free, CI-audited declarations covering:
    current lineage, conservation, and fail-closed legacy behavior, on top of
    the reviewed batch semantics. They prove the state-transition model, not the
    encoding or verification of serialized recursive proof bytes.
+7. **Canonical field-element encoding** — five declarations prove strict
+   BabyBear limb acceptance/rejection, uniqueness of canonical limbs and fixed
+   eight-limb digests, and the existence of noncanonical modular twins. The
+   exact Rust comparison and rejection-sampled generator are pinned by a
+   fail-closed source-correspondence receipt.
 
 The separate `formal-aeneas` project translates the pure Rust kernel and proves
 15 audited declarations/refinements for binding, occurrence, first-occurrence,
@@ -1102,7 +1139,7 @@ AIR/recursive prover is adversarially tested and source-shape gated, but not
 proved equivalent to the Lean predicate. Poseidon2 and concrete FRI security,
 Bitcoin consensus/finality, storage and crash safety, networking, issuer-key
 operations, host-language adapters, and application lifecycle/UI remain
-distinct external or tested trust surfaces. None of the 72 specification
+distinct external or tested trust surfaces. None of the 77 specification
 declarations or 15 refinement declarations implies whole-wallet correctness.
 
 ---
@@ -1152,8 +1189,8 @@ claim. Current explicit proof gaps are multi-asset transfers
 and distribution of an allowlist for accepted self-described root-circuit
 commitments.
 
-**Formal verification (specification and Rust adoption merged).** The
-dependency-free Lean project has 72 sorry-free audited specification declarations,
+**Formal verification (merged baseline plus v2 review).** The
+dependency-free Lean project has 72 merged and 77 v2-review sorry-free audited specification declarations,
 including limb arithmetic, batching, scan-exclusion soundness, and the v4
 one-input forwarding specialization. The separate
 Aeneas project has 15 audited declarations on its default branch connecting
@@ -1186,8 +1223,9 @@ The C3 Lean model is also on `opencsv-formal/main`: exact participant/output
 alignment, allocation and conservation, duplicate-field and reusable-output
 guards, sign-time freshness, fail-closed versioning, and conforming replacement
 were the 54-declaration C3 audit milestone. The subsequent v4 specialization
-and follow-up audit work bring the current public ledger to 72 declarations at
-`dc7e8eb`.
+and follow-up audit work brought the merged ledger to 72 declarations at
+`dc7e8eb`. Five canonical-byte declarations are now under review in
+`opencsv-formal` PR #5, bringing that branch to 77.
 
 The checked fee model for that exact implementation is published as a
 versioned JSON receipt and reproduced by documentation CI. At 5 sat/vB the
@@ -1196,8 +1234,8 @@ solo anchors. The resulting 67% saving and 15.15 operations/s theoretical
 full-block upper bound are explicitly separated from measured network
 throughput.
 
-**Signal demonstration transport (real two-hop signet receipt; not a production
-interface).** The current prototype exposes one permanently signet-only **Test USD** instrument,
+**Signal demonstration transport (archived v1 two-hop signet receipt; not a production
+interface).** The archived prototype exposed one permanently signet-only **Test USD v1** instrument,
 with no monetary or redemption value. Signal can receive, send, and inspect
 that reviewed instrument but cannot mint it; issuance remains a non-default
 headless Rust capability. Its account wallet uses Bitcoin only as a protocol
