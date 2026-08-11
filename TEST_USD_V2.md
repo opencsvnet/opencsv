@@ -47,6 +47,8 @@ are under review in
 [Signal-iOS PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11), pinned
 to Rust commit `1288977`. Its local warnings-as-errors build and complete
 1,572-test aggregate pass with zero failures; hosted CI remains a merge gate.
+Follow-up tip `3f2a994` restores the two clean-runner CocoaPods checksums and
+regenerates Signal's strings file after the first hosted run stopped at setup.
 None of these drafts is represented as merged or released.
 
 ## Activation gates

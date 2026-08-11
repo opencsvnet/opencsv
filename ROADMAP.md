@@ -160,7 +160,9 @@ XCFramework. Its local warnings-as-errors build and full aggregate ran 1,572
 tests with 1,556 passed, 12 deliberately skipped, and zero failed. The work is
 under review in draft
 [Signal PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11); hosted CI is
-still a merge gate. No v2 TestFlight build or live transaction is claimed.
+still a merge gate. Follow-up tip `3f2a994` restores the two clean-runner
+CocoaPods checksums and regenerates the strings file named by the first hosted
+run. No v2 TestFlight build or live transaction is claimed.
 
 ## Completed Rust merge gate
 

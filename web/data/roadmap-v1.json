@@ -57,7 +57,7 @@
       "order": 5,
       "title": "Clean Test USD v2 integration",
       "state": "active",
-      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Signal PR #11 pins the exact v2 Rust review and moves the wallet to v2-only namespaces. Its local warnings-as-errors build and 1,572-test aggregate have zero failures; hosted CI and a fresh live v2 run remain open.",
+      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Signal PR #11 tip 3f2a994 pins the exact v2 Rust review and moves the wallet to v2-only namespaces. Its local warnings-as-errors build and 1,572-test aggregate have zero failures; hosted CI and a fresh live v2 run remain open.",
       "receipts": [
         "https://github.com/opencsvnet/Signal-iOS/pull/11",
         "https://github.com/opencsvnet/Signal-iOS/pull/6",

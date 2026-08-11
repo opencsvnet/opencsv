@@ -1264,8 +1264,10 @@ its database, Keychain, backup, deployment, and presentation namespaces from
 v1. The default Signal XCFramework contains no issuer symbols or declarations.
 Its local warnings-as-errors build and complete 1,572-test aggregate pass with
 zero failures; hosted CI, wallet funding, headless issuance, and a live v2
-payment are still open. The v1 film is therefore archived empirical evidence,
-not v2 empirical evidence.
+payment are still open. Follow-up tip `3f2a994` restores clean-runner CocoaPods
+checksums and generated string placement after the first hosted run stopped
+before Xcode tests. The v1 film is therefore archived empirical evidence, not
+v2 empirical evidence.
 
 On 2026-08-07, two registered Signal simulators completed a real round trip.
 Carol sent 25 Test USD to Bob in signet transaction

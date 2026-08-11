@@ -1360,7 +1360,10 @@ without changing the lockfile; the warnings-as-errors app build succeeded; and
 the complete local aggregate ran 1,572 tests with 1,556 passed, 12 deliberately
 skipped, and zero failed. The work is under review in draft Signal PR
 [#11](https://github.com/opencsvnet/Signal-iOS/pull/11). Hosted CI remains a
-merge gate, and no v2 TestFlight build, mint, or transaction is claimed.
+merge gate. Follow-up tip `3f2a994` restores the clean-runner CocoaPods
+checksums and regenerated string placement named by the first hosted run; that
+run had stopped before Xcode tests. No v2 TestFlight build, mint, or transaction
+is claimed.
 
 ---
 
