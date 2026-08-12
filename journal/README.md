@@ -1371,6 +1371,36 @@ run; all four hosted jobs are now green. Signal PR
 the merged Rust tip's fresh default-branch CI succeeds. No v2 TestFlight build,
 mint, or transaction is claimed.
 
+## 2026-08-11 — Receiver admission closes before the live v2 round trip
+
+The first v2 consignment exposed a missing receiver-side policy boundary. A
+sender already refused an unreviewed issuer, but receipt inspection did not
+return the exact carried asset identities early enough for Signal to make the
+same decision before chain and observer work. Rust PR #20 adds that narrow
+inspection result and uses the same reviewed-manifest predicate. Unknown or
+archived instruments remain visible but fail live admission with stable
+`asset_not_reviewed`; retryable network failures are not collapsed into policy
+rejection.
+
+PR #20 was fast-forwarded exactly to `opencsv-rs/main` at
+`f582c118721f679b84870e55271f4723d7e1cac6` after exact-head hosted runs
+31544268369 and 31544264954 succeeded. Signal PR #12 at
+`784b0122445bf9f92e0a11a5587a419500f98868` pins that merged Rust commit,
+preflights the receiver decision, preserves the no-issuer XCFramework surface,
+and embeds the exact Signal source commit in an App Store archive. The focused
+17-test receiver suite and warnings-as-errors simulator build pass locally.
+Signal hosted run 31549962441 subsequently passed its ordinary and DEBUG-only
+recovery builds at the exact tip. Rust default-branch run 31549907405 was still
+running when this entry was written, so neither Signal merge nor release is
+claimed.
+
+The headless v2 issuer has now broadcast mint anchor
+`4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c`.
+Carol inspected a 150 Test USD consignment; mempool.space and Blockstream
+returned matching exact bytes. The anchor remains unconfirmed, and both fresh
+Bob and Carol fee addresses remain unfunded. This is useful provisional
+evidence, not the promised Bob→Carol→Bob acceptance or replacement film.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

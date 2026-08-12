@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-11, rev 16) — Test USD v2 merge and acceptance gates
+# OpenCSV Master Plan (2026-08-11, rev 17) — Test USD v2 receiver gate and acceptance
 
 ## Plan of record
 
@@ -17,11 +17,12 @@ uses account generation 2, checkpoint generation 4, deployment id
 backups do not migrate; they fail closed with `testnet_reset_required`. See the
 [reset contract](TEST_USD_V2.md).
 
-Revision 16 records the exact fast-forward integration of the v2 Rust,
-77-declaration formal, and separately scoped Aeneas tips. Signal remains the
-active gate: its exact tip is hosted-green and already pins merged Rust, but it
-does not merge until Rust's fresh default-branch CI succeeds. No live v2
-payment, media, release, or TestFlight build is inferred from a source merge.
+Revision 17 records the exact receiver-admission fix-forward on top of the v2
+Rust, 77-declaration formal, and separately scoped Aeneas tips. Rust PR #20 is
+merged at `f582c118`; Signal PR #12 pins that exact commit and its exact hosted
+run is green. Rust's fresh default-branch run remains the final pre-merge gate.
+No live v2 payment, media, release, or TestFlight build is inferred
+from a source merge.
 
 The execution order is still:
 
@@ -152,8 +153,12 @@ lands.
   `1d58a8145eedac17efe66371293eb472a4c68554141cc14380360e6eb720b507`
   is archived. The headless v2 issuer has created and backed up exact asset
   `8a88b56e42450f5761b521063df3fa16806add5c434584441d3b626556115d62`;
-  no mint or live Signal balance is claimed yet. No Tether asset or redemption
-  claim exists in this test registry.
+  its first public mint anchor is
+  `4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c`.
+  Carol has inspected a 150 Test USD consignment and both required observers
+  matched its exact raw bytes, but the anchor is still unconfirmed. That is a
+  provisional receipt, not settlement or a completed payment run. No Tether
+  asset or redemption claim exists in this test registry.
 - Unknown, removed, or ticker-lookalike instruments remain visible and
   read-only. New unsigned work fails with stable `asset_not_reviewed`.
 - Signal cannot mint or create assets. Privileged issuance remains available
@@ -161,18 +166,34 @@ lands.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
 
-Signal commit
-[`bd45849`](https://github.com/opencsvnet/Signal-iOS/commit/bd458499693eb3915bf9e3375d45036cad98a853)
-pins Rust `1288977` and moves the consumer wallet to v2-only database,
-Keychain, backup-version, deployment, and product-profile namespaces. It
-rejects v1 Secure Backup payloads and exposes no issuer ABI in the default
-XCFramework. Its local warnings-as-errors build and full aggregate ran 1,572
-tests with 1,556 passed, 12 deliberately skipped, and zero failed. Exact tip
-`3f2a994` restores the two clean-runner CocoaPods checksums and regenerates the
-strings file named by the first hosted run; all four hosted jobs are green.
-[Signal PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11) remains
-unmerged until the merged Rust tip's fresh default-branch run succeeds. No v2
-TestFlight build or live transaction is claimed.
+Signal PR
+[#12](https://github.com/opencsvnet/Signal-iOS/pull/12) at exact tip
+`784b0122445bf9f92e0a11a5587a419500f98868` pins merged Rust `f582c118`,
+keeps the v2-only database, Keychain, backup, deployment, and product-profile
+namespaces, and rejects a consignment with any unreviewed asset before chain or
+observer work. The default XCFramework still exposes no issuer ABI. A focused
+17-test receiver suite and the warnings-as-errors simulator build pass locally.
+Exact hosted run
+[31549962441](https://github.com/opencsvnet/Signal-iOS/actions/runs/31549962441)
+passed its ordinary build/test, strings, no-issuer, CocoaPods, and DEBUG-only
+recovery jobs. No v2 TestFlight build or completed live payment is claimed.
+
+### Receiver-admission merge gate
+
+[opencsv-rs PR #20](https://github.com/opencsvnet/opencsv-rs/pull/20) was
+fast-forwarded exactly to `main` at
+[`f582c118`](https://github.com/opencsvnet/opencsv-rs/commit/f582c118721f679b84870e55271f4723d7e1cac6).
+The receiver inspection reports the sorted exact asset identities carried by a
+consignment and applies the same reviewed-manifest predicate used by sending.
+Unknown or archived instruments remain visible but fail live admission with
+stable `asset_not_reviewed`; transient chain and observer failures stay
+retryable. Exact-head hosted runs
+[31544268369](https://github.com/opencsvnet/opencsv-rs/actions/runs/31544268369)
+and
+[31544264954](https://github.com/opencsvnet/opencsv-rs/actions/runs/31544264954)
+succeeded before merge. Fresh default-branch run
+[31549907405](https://github.com/opencsvnet/opencsv-rs/actions/runs/31549907405)
+is the remaining Rust publication receipt; its success is not claimed early.
 
 ## Completed Rust merge gate
 
@@ -416,9 +437,9 @@ remain tied to recorded final behavior; no transaction state is reconstructed.
 
 ## Open gates
 
-- Finish fresh default-branch CI on the already merged exact Rust tip; the
-  exact formal and Aeneas runs are already green.
-- Fast-forward hosted-green Signal PR #11 only after that Rust run succeeds,
+- Finish fresh default-branch CI on merged Rust `f582c118`; the exact formal
+  and Aeneas runs are already green.
+- Fast-forward exact-green Signal PR #12 only after every hosted job passes,
   then require a fresh default-branch Signal receipt.
 - Create fresh Bob and Carol v2 wallets, fund their signet fee reserves,
   headlessly mint the exact reviewed v2 instrument, and complete a new live

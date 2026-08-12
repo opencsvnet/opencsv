@@ -1258,16 +1258,20 @@ reconstructed. Its SHA-256 is
 `5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 
 Test USD v2 deliberately does not inherit those wallets or receipts. Merged
-Rust commit `1288977c6110d6d985b5ea51589007d271e35674` is the exact v2 protocol
-and deployment boundary. Signal tip
-`3f2a99415a106b9d53ac06e7f43ceef849ea8b0b` pins that merged Rust commit, uses
+Rust commit `f582c118721f679b84870e55271f4723d7e1cac6` is the exact v2 protocol,
+deployment, and receiver-admission boundary. Signal PR #12 tip
+`784b0122445bf9f92e0a11a5587a419500f98868` pins that merged Rust commit, uses
 account generation 2 and checkpoint generation 4, and separates
 its database, Keychain, backup, deployment, and presentation namespaces from
 v1. The default Signal XCFramework contains no issuer symbols or declarations.
-Its local warnings-as-errors build and complete 1,572-test aggregate pass with
-zero failures, and all four hosted jobs are green. The Signal merge remains
-gated on fresh default-branch Rust CI; wallet funding, headless issuance, and a
-live v2 payment are still open. The v1 film is therefore archived empirical
+Its local warnings-as-errors simulator build and focused 17-test receiver suite
+pass with zero failures. Exact hosted run 31549962441 passed the ordinary and
+DEBUG-only recovery builds; Rust's fresh main run is the remaining merge gate.
+The v2 issuer has broadcast anchor
+`4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c`,
+and Carol's 150 Test USD consignment has two matching required-observer
+receipts, but the anchor is unconfirmed. Bob/Carol fee funding and the complete
+live v2 payment run remain open. The v1 film is therefore archived empirical
 evidence, not v2 empirical evidence.
 
 On 2026-08-07, two registered Signal simulators completed a real round trip.

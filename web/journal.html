@@ -1296,6 +1296,38 @@
     v2 TestFlight build, mint, or transaction is claimed.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-11</div>
+    <h2>Receiver admission closes before the live v2 round trip <span class="tag">policy + merge receipt</span></h2>
+    <p>The first v2 consignment exposed a missing receiver-side policy
+    boundary. Rust PR #20 now returns the exact carried asset identities during
+    inspection and applies the same reviewed-manifest predicate used by the
+    sender. Unknown or archived instruments remain visible but fail live
+    admission with stable <code>asset_not_reviewed</code>; retryable network
+    failures remain retryable.</p>
+    <p>PR #20 was fast-forwarded exactly to <code>opencsv-rs/main</code> at
+    <a href="https://github.com/opencsvnet/opencsv-rs/commit/f582c118721f679b84870e55271f4723d7e1cac6"><code>f582c118</code></a>
+    after exact-head runs
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31544268369">31544268369</a>
+    and
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31544264954">31544264954</a>
+    passed. Signal PR #12 at <code>784b0122</code> pins that exact merge,
+    preflights receiver admission, keeps issuer symbols out of the default
+    XCFramework, and attests the exact Signal source commit in an archive. Its
+    focused 17-test receiver suite and warnings-as-errors simulator build pass
+    locally. Signal run
+    <a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31549962441">31549962441</a>
+    subsequently passed its ordinary and DEBUG-only recovery builds. Rust
+    default-branch run 31549907405 was still running when recorded; no Signal
+    merge or release is claimed.</p>
+    <p>The v2 issuer has broadcast public signet anchor
+    <a href="https://mempool.space/signet/tx/4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c"><code>4bb4367b…b769c</code></a>.
+    Carol inspected a 150 Test USD consignment and both required observers
+    matched its exact bytes. The anchor remains unconfirmed, while the new Bob
+    and Carol fee addresses remain unfunded. This is provisional evidence, not
+    the promised v2 round trip or replacement film.</p>
+  </div>
+
 </div>
 
 <footer>

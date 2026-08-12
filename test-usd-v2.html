@@ -34,10 +34,10 @@
 <nav><strong>OpenCSV / Test USD v2</strong><div><a href="./">Home</a><a href="web/formal.html">Formal methods</a><a href="roadmap.html">Roadmap</a><a href="TEST_USD_V2.md">Source document</a></div></nav>
 <main>
   <header>
-    <div class="eyebrow">Clean test deployment · review in progress</div>
+    <div class="eyebrow">Clean test deployment · live acceptance in progress</div>
     <h1>New wallets. New asset. No ambiguous migration.</h1>
     <p class="lead">Test USD v2 starts fresh on the existing public Bitcoin Signet. Old demonstrations remain inspectable evidence, but no v1 wallet state can be opened as v2.</p>
-    <p class="warning"><strong>Not live yet.</strong> The implementation and formal correspondence are draft pull requests. The backed-up headless issuer manifest now has an exact public identity, but no v2 TestFlight build, mint, balance, screenshot, or transaction is claimed until the activation gates finish.</p>
+    <p class="warning"><strong>Not released.</strong> Rust, the 77-declaration formal ledger, and Aeneas are merged. Signal PR #12 is hosted-green and still merge-gated on Rust's fresh main run. The v2 mint anchor is public and Carol has a provisionally inspected 150 Test USD consignment, but the anchor is unconfirmed and no Bob→Carol→Bob acceptance, v2 film, or TestFlight build is claimed.</p>
   </header>
   <section>
     <h2>The reset boundary</h2>
@@ -54,7 +54,9 @@
       <li><a href="https://github.com/opencsvnet/opencsv-rs/pull/19">Rust v2 consolidated merge boundary (merged PR #19 at <code>1288977</code>)</a>. Historical <a href="https://github.com/opencsvnet/opencsv-rs/pull/18">PR #18</a> is contained in that history but never existed alone on <code>main</code>.</li>
       <li><a href="https://github.com/opencsvnet/opencsv-formal/pull/5">Merged 77-declaration Lean canonical-byte proofs and exact Rust correspondence (PR #5)</a>.</li>
       <li><a href="https://github.com/opencsvnet/formal-aeneas/pull/2">Merged Aeneas scope review (PR #2)</a>; it makes no new refinement claim for account, serde, networking, backup, or Signal code.</li>
-      <li><a href="https://github.com/opencsvnet/Signal-iOS/pull/11">Signal v2 namespace and manifest integration (PR #11 at <code>3f2a994</code>)</a>; the local warnings-as-errors build, 1,572-test aggregate, and all four hosted jobs pass with zero failures. Merge remains gated on fresh default-branch Rust CI.</li>
+      <li><a href="https://github.com/opencsvnet/opencsv-rs/pull/20">Merged Rust receiver-admission gate (PR #20 at <code>f582c118</code>)</a>; unreviewed consignments fail before chain or observer work with stable <code>asset_not_reviewed</code>.</li>
+      <li><a href="https://github.com/opencsvnet/Signal-iOS/pull/12">Signal v2 receiver and source-attestation integration (PR #12 at <code>784b0122</code>)</a>; it pins merged Rust <code>f582c118</code>, and exact hosted run <a href="https://github.com/opencsvnet/Signal-iOS/actions/runs/31549962441">31549962441</a> passed its ordinary and recovery builds.</li>
+      <li><a href="https://mempool.space/signet/tx/4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c">Public v2 mint anchor</a>; currently unconfirmed, so it is not presented as settlement or a completed payment run.</li>
       <li><a href="usd-preview/terms-v2/">Test USD v2 terms and exact public identity</a>; the issuer root remains outside Signal and source control.</li>
       <li><a href="web/message-flow.html">Archived v1 simulator film and receipts</a>, preserved without relabeling them v2.</li>
     </ul>

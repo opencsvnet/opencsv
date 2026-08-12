@@ -46,19 +46,28 @@ canonical-byte formalization and pinned source correspondence were
 fast-forwarded to `opencsv-formal/main` at
 [`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
 through [formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
-The Signal namespace, exact-manifest, backup-version, and non-issuer surface
-remain under review in
-[Signal-iOS PR #11](https://github.com/opencsvnet/Signal-iOS/pull/11), pinned
-to Rust commit `1288977`. Its local warnings-as-errors build and complete
-1,572-test aggregate pass with zero failures, and all four hosted jobs are green
-at exact tip `3f2a994`. Signal remains unmerged until the fresh Rust
-default-branch run succeeds. No v2 build is represented as released.
+The receiver-admission follow-up was fast-forwarded to `opencsv-rs/main` at
+[`f582c118`](https://github.com/opencsvnet/opencsv-rs/commit/f582c118721f679b84870e55271f4723d7e1cac6)
+through [opencsv-rs PR #20](https://github.com/opencsvnet/opencsv-rs/pull/20).
+[Signal-iOS PR #12](https://github.com/opencsvnet/Signal-iOS/pull/12), exact
+tip `784b0122445bf9f92e0a11a5587a419500f98868`, pins that merged Rust
+revision and applies the same reviewed-asset decision before receiver chain or
+observer work. Exact hosted run
+[31549962441](https://github.com/opencsvnet/Signal-iOS/actions/runs/31549962441)
+passed the ordinary and DEBUG-only recovery builds; Rust's fresh main run is
+the remaining pre-merge gate. No v2 build is represented as released.
+
+The headless issuer broadcast mint anchor
+[`4bb4367b…b769c`](https://mempool.space/signet/tx/4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c).
+Carol inspected a 150 Test USD consignment and both required observers matched
+the exact raw bytes. The anchor is still unconfirmed, so this is provisional
+evidence rather than settlement or a completed Bob/Carol acceptance run.
 
 ## Activation gates
 
-1. Complete the fresh default-branch CI receipt for merged Rust; the formal
+1. Complete the fresh default-branch CI receipt for Rust `f582c118`; the formal
    and Aeneas receipts are green.
-2. Fast-forward the exact-green Signal tip, already pinned to merged Rust, and
+2. Fast-forward exact-green Signal PR #12, already pinned to merged Rust, and
    use only v2 namespaces.
 3. Build a new TestFlight candidate; do not reuse the v1 archive as v2.
 4. Review and publish the backed-up exact v2 Test USD manifest.
