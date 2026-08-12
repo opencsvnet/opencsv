@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenCSV — Formal Verification</title>
-<meta name="description" content="OpenCSV formal verification: 72 audited protocol declarations, 15 translated-Rust refinement declarations, explicit assumptions, and honest remaining gaps.">
+<meta name="description" content="OpenCSV formal verification: 77 audited declarations on the Test USD v2 review branch, 15 translated-Rust kernel refinements, explicit assumptions, and honest remaining gaps.">
 <style>
   :root {
     --paper: #f3efe5; --paper2: #fffdf7; --ink: #121212; --muted: #5d5b55;
@@ -188,7 +188,7 @@
 </header>
 
 <div class="wrap metrics" aria-label="Formal verification totals">
-  <div class="metric orange"><b>72</b><span>Lean specification declarations<br>audited separately</span></div>
+  <div class="metric orange"><b>77</b><span>Lean declarations merged at <code>5af2003</code><br>green default-branch CI</span></div>
   <div class="metric"><b>15</b><span>Aeneas translated-Rust refinements<br>narrow kernel only</span></div>
   <div class="metric"><b>0</b><span>Tracked <code>sorry</code> or <code>admit</code><br>enforced by CI</span></div>
   <div class="metric"><b>6+</b><span>Runtime and cryptographic surfaces<br>not mechanized</span></div>
@@ -202,6 +202,7 @@
     pinned source, and receipt.</p>
     <div class="boundary-rail" role="tablist" aria-label="Formal coverage layers">
       <button class="boundary" role="tab" aria-selected="true" aria-controls="panel-spec" data-panel="panel-spec"><span class="step">01</span><strong>Protocol specification</strong><em>machine-checked</em></button>
+      <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-encoding" data-panel="panel-encoding"><span class="step">02</span><strong>Canonical bytes</strong><em>machine-checked / merged</em></button>
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-lineage" data-panel="panel-lineage"><span class="step">02</span><strong>Batch + recursive lineage</strong><em>machine-checked</em></button>
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-kernel" data-panel="panel-kernel"><span class="step">03</span><strong>Pure Rust kernel</strong><em>refinement-proved</em></button>
       <button class="boundary" role="tab" aria-selected="false" aria-controls="panel-air" data-panel="panel-air"><span class="step">04</span><strong>AIR + recursive prover</strong><em>tested / shape-gated</em></button>
@@ -209,16 +210,20 @@
     </div>
 
     <article id="panel-spec" class="coverage-panel active" role="tabpanel">
-      <div><span class="verdict">Machine-checked</span><h3>The protocol state machine and its load-bearing invariants.</h3><p>Seventy-two separately audited declarations cover genesis→mint→transfer→redeem, supply, conservation, first occurrence, receiver acceptance, value arithmetic, scan exclusion, batching, one-input forwarding, and recursive lineage. The project is dependency-free Lean 4 and CI rejects <code>sorry</code>, <code>admit</code>, or axiom drift.</p></div>
-      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/tree/dc7e8eb">SPECIFICATION @ dc7e8eb ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">T1–T4 SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/axiom-audit.txt">72-DECLARATION AXIOM AUDIT ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/actions/runs/31044400073">GREEN DEFAULT-BRANCH CI ↗</a></div>
+      <div><span class="verdict">Machine-checked</span><h3>The protocol state machine and its load-bearing invariants.</h3><p>Seventy-seven merged declarations cover genesis→mint→transfer→redeem, supply, conservation, first occurrence, receiver acceptance, value arithmetic, scan exclusion, batching, one-input forwarding, recursive lineage, and canonical BabyBear bytes. CI rejects <code>sorry</code>, <code>admit</code>, or axiom drift.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/tree/5af200376a98a459d9318224c2c0e37b02da588e">MERGED SPECIFICATION @ 5af2003 ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/pull/5">MERGED 77-DECLARATION PR ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e">EXACT COMMIT ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/actions/runs/31530914881">GREEN DEFAULT-BRANCH CI ↗</a></div>
+    </article>
+    <article id="panel-encoding" class="coverage-panel" role="tabpanel" hidden>
+      <div><span class="verdict">Machine-checked / merged</span><h3>Accepted BabyBear bytes have one canonical meaning.</h3><p>Five merged declarations model strict decoding below the BabyBear modulus, prove canonical limbs and fixed eight-limb digests are unique, and exhibit why modular normalization is unsafe: zero and the modulus are distinct byte-level integers with the same field value. The model starts from decoded <code>u32</code> integers; endianness and byte-count parsing remain Rust test and source-correspondence obligations.</p></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/5af200376a98a459d9318224c2c0e37b02da588e/OpenCsv/Encoding.lean">ENCODING PROOFS ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/5af200376a98a459d9318224c2c0e37b02da588e/rust-correspondence-v4.json">PINNED RUST CORRESPONDENCE ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674">EXACT RUST COMMIT ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/pull/5">REVIEW PR + CI ↗</a></div>
     </article>
     <article id="panel-lineage" class="coverage-panel" role="tabpanel" hidden>
-      <div><span class="verdict">Machine-checked</span><h3>The model now includes the recursive tree and batch semantics.</h3><p>The current 72 count is 54 reviewed state/value/scan/batch declarations, seven one-input specializations, and eleven recursive-lineage/tree declarations. It proves edge matching, distinct inputs and nullifiers, fail-closed legacy policy, batch positions, conservation, replacement, and freshness. It still models semantics—not serialized Rust proof bytes.</p></div>
+      <div><span class="verdict">Machine-checked</span><h3>The model includes the recursive tree and batch semantics.</h3><p>The 72 merged semantic declarations comprise 54 reviewed state/value/scan/batch declarations, seven one-input specializations, and eleven recursive-lineage/tree declarations. The five v2 additions address canonical decoding, not lineage. The model still does not prove the full serialized Rust proof format.</p></div>
       <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Lineage.lean">RECURSIVE LINEAGE SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Batch.lean">BATCH MODEL SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Forward.lean">ONE-INPUT FORWARDING ↗</a><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER §6 ↗</a></div>
     </article>
     <article id="panel-kernel" class="coverage-panel" role="tabpanel" hidden>
       <div><span class="verdict partial">Narrow direct refinement</span><h3>Four families of pure Rust decisions are connected to Lean.</h3><p>Aeneas translates the pure <code>opencsv-kernel</code> implementation and proves binding, well-formed occurrence, first occurrence, and supply audit refine their specifications. Fifteen declarations support that bridge. Proof verification, chain I/O, storage, concurrency, and the account registry are outside it.</p></div>
-      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/formal-aeneas/tree/3bcafed">AENEAS PROJECT @ 3bcafed ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Refinement.lean">BINDING + WELL-FORMED REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec3.lean">FIRST-OCCURRENCE REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec4.lean">SUPPLY REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209">GREEN REPRODUCIBILITY CI ↗</a></div>
+      <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/formal-aeneas/tree/864469ddc9fae5074d7c609eb5f2b6a3c9667388">AENEAS PROJECT @ 864469d ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/864469ddc9fae5074d7c609eb5f2b6a3c9667388/Refinement.lean">BINDING + WELL-FORMED REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/864469ddc9fae5074d7c609eb5f2b6a3c9667388/Spec3.lean">FIRST-OCCURRENCE REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/864469ddc9fae5074d7c609eb5f2b6a3c9667388/Spec4.lean">SUPPLY REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/31530915682">GREEN DEFAULT-BRANCH CI ↗</a></div>
     </article>
     <article id="panel-air" class="coverage-panel" role="tabpanel" hidden>
       <div><span class="verdict tested">Tested, not proved equivalent</span><h3>The circuit shape is pinned; the AIR implementation is not mechanized.</h3><p>A fail-closed manifest checks proof version, predecessor count, nullifier padding, output order, conservation constraint, statement projection, legacy policy, and verifier tag against exact Rust. That catches source drift. It does not prove that the hand-written BabyBear AIR or FRI verifier implements the Lean predicate.</p></div>
@@ -241,7 +246,7 @@
       <article class="foundation"><span class="status">Assumed cryptographic security</span><h3>Poseidon2</h3><p>Provides commitment, owner/nullifier, anchor-binding, and proof-system hashing. Lean reasons from injectivity, binding, and preimage-resistance hypotheses; it does not mechanize cryptanalysis of the concrete permutation.</p><a href="https://eprint.iacr.org/2023/323">POSEIDON2 PAPER ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Interfaces.lean">LEAN HASH AXIOMS ↗</a></article>
       <article class="foundation"><span class="status">Assumed proof-system soundness</span><h3>FRI + recursion</h3><p>The receiver theorem calls an abstract sound proof system. Production parameters, predecessor verification keys, version boundaries, and adversarial rejection are implemented and tested; Lean does not prove the concrete FRI verifier.</p><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED PROVER SOURCE ↗</a><br><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER BOUNDARY ↗</a></article>
       <article class="foundation"><span class="status">External consensus security</span><h3>Bitcoin</h3><p>Orders anchors and gives confirmations. OpenCSV verifies its local view and proves scan semantics, but assumes Bitcoin's proof-of-work security and a chosen confirmation depth against reorganizations.</p><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN SECURITY MODEL ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN MODEL ↗</a></article>
-      <article class="foundation"><span class="status">Operational key boundary</span><h3>Issuer authority</h3><p>The theorem proves that accepted mint lineage carries issuer authorization. It cannot protect an issuer seed that is stolen, misused, or backed up incorrectly. Inflation would be public, not impossible.</p><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">MINT AUTHORIZATION THEOREMS ↗</a><br><a href="../usd-preview/terms-v1/">TEST USD ISSUER DISCLOSURE ↗</a></article>
+      <article class="foundation"><span class="status">Operational key boundary</span><h3>Issuer authority</h3><p>The theorem proves that accepted mint lineage carries issuer authorization. It cannot protect an issuer seed that is stolen, misused, or backed up incorrectly. Inflation would be public, not impossible.</p><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">MINT AUTHORIZATION THEOREMS ↗</a><br><a href="../usd-preview/terms-v2/">TEST USD V2 ISSUER DISCLOSURE ↗</a></article>
     </div>
   </div>
 </section>
@@ -382,7 +387,7 @@
     regenerates this block before publishing. An event hook can refresh it
     immediately, and a weekly forced rebuild remains as a backstop.</p>
     <div class="ledger-tools" aria-label="Filter the specification ledger">
-      <input id="ledger-search" type="search" placeholder="Search 72 declarations or axioms…" aria-label="Search declarations and axioms">
+      <input id="ledger-search" type="search" placeholder="Search 77 declarations or axioms…" aria-label="Search declarations and axioms">
       <button class="filter-button active" type="button" data-filter="all">All</button>
       <button class="filter-button" type="button" data-filter="core">Core</button>
       <button class="filter-button" type="button" data-filter="batch">Batch</button>
@@ -390,10 +395,10 @@
       <button class="filter-button" type="button" data-filter="value">Value</button>
       <button class="filter-button" type="button" data-filter="forward">Forward</button>
       <button class="filter-button" type="button" data-filter="lineage">Lineage</button>
-      <span class="ledger-count" id="ledger-count" aria-live="polite">72 / 72 visible</span>
+      <span class="ledger-count" id="ledger-count" aria-live="polite">77 / 77 visible</span>
     </div>
     <details class="ledger" open>
-      <summary>72-declaration specification ledger</summary>
+      <summary>77-declaration v2 review ledger</summary>
       <div class="tablewrap" id="spec-ledger">
     <!-- GEN-AXIOM-TABLE:BEGIN -->
 <table>
@@ -482,10 +487,10 @@
 <!-- GEN-AXIOM-TABLE:END -->
       </div>
     </details>
-    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-11 20:20 UTC · build green · opencsv-formal@5af2003<!-- /GEN-PROVENANCE --></p>
+    <p class="sub"><!-- GEN-PROVENANCE -->regenerated 2026-08-11 20:20 UTC · merged opencsv-formal@5af2003 · green default-branch CI run 31530914881<!-- /GEN-PROVENANCE --></p>
     <h3 style="margin-top:28px">Translated Rust audit — merged reproducibility receipt</h3>
     <p class="sub">A separate audit of the Aeneas-translated
-    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 72
+    <code>opencsv-kernel</code>. These 15 declarations do not inflate the 77
     specification-theorem count above. The exact green commit was
     fast-forwarded without rewriting history and is now the default
     <code>formal-aeneas</code> branch.</p>
@@ -559,7 +564,7 @@
         <p>The durable operation journal, SQLite transactions, attachment
         delivery, backup, notifications, memory ownership, and concurrency are
         validated by adversarial and end-to-end tests. They are not included in
-        the 72 or 15 declaration ledgers.</p></li>
+        the 77 or 15 declaration ledgers.</p></li>
     </ul>
   </div>
 </section>

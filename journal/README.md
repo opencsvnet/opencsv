@@ -1297,6 +1297,110 @@ stable website endpoint for the real Apple invitation. It also makes the
 boundaries prominent: unofficial Signal fork, Bitcoin signet only, Test USD has
 no value, and third-party push delivery is not represented as reliable.
 
+## 2026-08-11 — Test USD v2 resets application identity, not Bitcoin Signet
+
+The proposal to “destroy the existing test network” exposed an important
+boundary. OpenCSV does not control Bitcoin Signet and cannot erase its public
+history. What it can reset cleanly is every application identity that could
+join an old wallet to a new demonstration. Test USD v2 therefore uses account
+configuration generation 2, checkpoint generation 4, deployment id
+`opencsv-test-usd-v2`, and new domain-separated BIP84 fee, owner, issuer-tool,
+batch-stock, database, backup, and device-binding identities. The headless
+issuer subsequently created exact v2 asset
+`8a88b56e42450f5761b521063df3fa16806add5c434584441d3b626556115d62`.
+Before writes were re-enabled, it exported and acknowledged checkpoint
+`4498cf0992e2ee387be56f05dde511f774c019af5339cb3bcf05fc48af5700d7`.
+The issuer root and device binding remain outside source control and Signal.
+No mint or Bitcoin transaction has been broadcast; this is an offline identity
+and recovery receipt only.
+
+We rejected in-place v1 migration. Old signet/regtest configurations and
+checkpoints return stable `testnet_reset_required`; a mismatched deployment id
+cannot share a database. The v1 Bob/Carol balances, addresses, txids,
+screenshots, and film remain public receipts for what the earlier prototype
+did, but the website now calls them archived v1 evidence rather than v2 state.
+The earlier TestFlight archive is likewise not relabeled as a v2 build.
+
+Serialization review found that strict field decoding alone was incomplete:
+the historical random digest helper still generated unrestricted `u32` limbs,
+so nearly all new values would fail strict round-trip encoding. The first
+repair considered `candidate % p`. That is valid but biased because the
+BabyBear prime does not divide `2^32`; some residues receive three preimages
+and others two. The accepted repair uses rejection sampling and one shared
+generator delegated to by the core, CLI, and FFI.
+
+The same review found that the advertised 120-second HTTP timeout was not one
+total deadline. DNS, each candidate address, writes, and incremental reads
+could each extend the wall clock, and a slow-drip peer could avoid timing out.
+The repair carries one absolute deadline across DNS resolution in a detached
+helper, every connection attempt, the full write, and bounded response read. A
+slow-drip regression test records the failure mode.
+
+Rust commit
+[`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
+passes warnings-as-errors core/CLI/FFI tests (18 + 7 + 75, with three deliberate
+slow tests ignored) plus the focused recovery-feature and deadline tests. It
+was fast-forwarded exactly to `main` through consolidated PR
+[#19](https://github.com/opencsvnet/opencsv-rs/pull/19). Historical PR #18 is
+contained in that history but never existed alone on `main`: strict decoding
+needs the canonical generator repair in #19. Fresh default-branch CI remains
+the gate for the dependent Signal merge.
+Lean commit
+[`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
+adds five canonical-encoding declarations, raises the merged ledger from 72 to
+77, builds with no `sorry`/`admit`, and pins the exact Rust source. Formal PR
+[#5](https://github.com/opencsvnet/opencsv-formal/pull/5) was fast-forwarded
+exactly; default-branch CI
+[run 31530914881](https://github.com/opencsvnet/opencsv-formal/actions/runs/31530914881)
+succeeded. The Aeneas boundary
+is unchanged: the pure kernel semantics did not change, while serde, account
+namespaces, backup, networking, and Signal remain outside that refinement.
+
+Signal commit
+[`bd45849`](https://github.com/opencsvnet/Signal-iOS/commit/bd458499693eb3915bf9e3375d45036cad98a853)
+pins that exact Rust review and moves the consumer wallet to v2-only database,
+Keychain, backup, and product-profile namespaces. It rejects v1 Secure Backup
+payloads, displays the deployment id, and retains no issuer symbol or header
+declaration in the default XCFramework. CocoaPods deployment mode completed
+without changing the lockfile; the warnings-as-errors app build succeeded; and
+the complete local aggregate ran 1,572 tests with 1,556 passed, 12 deliberately
+skipped, and zero failed. Follow-up tip `3f2a994` restores the clean-runner
+CocoaPods checksums and regenerated string placement named by the first hosted
+run; all four hosted jobs are now green. Signal PR
+[#11](https://github.com/opencsvnet/Signal-iOS/pull/11) remains unmerged until
+the merged Rust tip's fresh default-branch CI succeeds. No v2 TestFlight build,
+mint, or transaction is claimed.
+
+## 2026-08-11 — Receiver admission closes before the live v2 round trip
+
+The first v2 consignment exposed a missing receiver-side policy boundary. A
+sender already refused an unreviewed issuer, but receipt inspection did not
+return the exact carried asset identities early enough for Signal to make the
+same decision before chain and observer work. Rust PR #20 adds that narrow
+inspection result and uses the same reviewed-manifest predicate. Unknown or
+archived instruments remain visible but fail live admission with stable
+`asset_not_reviewed`; retryable network failures are not collapsed into policy
+rejection.
+
+PR #20 was fast-forwarded exactly to `opencsv-rs/main` at
+`f582c118721f679b84870e55271f4723d7e1cac6` after exact-head hosted runs
+31544268369 and 31544264954 succeeded. Signal PR #12 at
+`784b0122445bf9f92e0a11a5587a419500f98868` pins that merged Rust commit,
+preflights the receiver decision, preserves the no-issuer XCFramework surface,
+and embeds the exact Signal source commit in an App Store archive. The focused
+17-test receiver suite and warnings-as-errors simulator build pass locally.
+Signal hosted run 31549962441 subsequently passed its ordinary and DEBUG-only
+recovery builds at the exact tip. Rust default-branch run 31549907405 was still
+running when this entry was written, so neither Signal merge nor release is
+claimed.
+
+The headless v2 issuer has now broadcast mint anchor
+`4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c`.
+Carol inspected a 150 Test USD consignment; mempool.space and Blockstream
+returned matching exact bytes. The anchor remains unconfirmed, and both fresh
+Bob and Carol fee addresses remain unfunded. This is useful provisional
+evidence, not the promised Bob→Carol→Bob acceptance or replacement film.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

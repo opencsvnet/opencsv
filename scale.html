@@ -190,6 +190,12 @@
       <span class="theoretical">theoretical upper bound</span>
       <span>research—not shipped</span>
     </div>
+    <p class="lede" style="margin-top:28px"><strong>V2 reset note:</strong>
+    the transaction-weight formulas and proof benchmarks are protocol/reference
+    results and remain applicable. Every Bob/Carol txid below is archived Test
+    USD v1 evidence. New v2 payment receipts will be added only after the clean
+    wallet, issuer, and asset activation run. <a href="test-usd-v2.html">Read
+    the reset contract →</a></p>
   </div>
 </header>
 
@@ -440,7 +446,7 @@
         <a href="https://github.com/opencsvnet/opencsv-rs/blob/acfb422c171c75c8ee991b9262724a2d1084f608/crates/opencsv-pcd/BENCHMARKS.md">Open the exact v4 benchmark receipt</a>
       </article>
       <article class="receipt">
-        <div class="state">LIVE · SIGNAL RECEIVE</div>
+        <div class="state">ARCHIVED V1 · SIGNAL RECEIVE</div>
         <h3>Exact unconfirmed parent accepted</h3>
         <p>A cold phone-owned signet scan accepted one still-unconfirmed mint,
         persisted unconfirmed finality, and deduplicated two deliveries of the
@@ -448,7 +454,7 @@
         <a href="web/journal.html">Read the journal receipt</a>
       </article>
       <article class="receipt">
-        <div class="state">LIVE · ZERO-CONFIRMATION CHILD</div>
+        <div class="state">ARCHIVED V1 · ZERO-CONFIRMATION CHILD</div>
         <h3>Real unconfirmed parent and child</h3>
         <p>Carol sent 1 Test USD to Bob; while that Bitcoin transaction was
         still unconfirmed, Bob verified and spent its exact OpenCSV coin back
@@ -469,7 +475,7 @@
         <a href="https://mempool.space/signet/tx/2fbec40ae4aaed063018ce3f3e56d7cdbc9a7372e24cafcbcd5ee78c3db0d286">Inspect the fresh child transaction</a>
       </article>
       <article class="receipt">
-        <div class="state">LIVE · SHARED SIGNET TRANSACTION</div>
+        <div class="state">ARCHIVED V1 · SHARED SIGNET TRANSACTION</div>
         <h3>Two Signal recipients, one Bitcoin transaction</h3>
         <p>Carol sent 5 Test USD to Bob and 5 to Note to Self under one frozen
         batch. Both envelopes share txid <code>771aefc6…03c4c3</code> and their
@@ -478,7 +484,7 @@
         <a href="https://mempool.space/signet/tx/771aefc62e38dae80b4fdeec5ebb183c5c4c53c7902b559991aa55679103c4c3">Inspect the shared transaction</a>
       </article>
       <article class="receipt">
-        <div class="state">LIVE · PROTOCOL-SAFE RBF</div>
+        <div class="state">ARCHIVED V1 · PROTOCOL-SAFE RBF</div>
         <h3>One payment, two exact anchor receipts</h3>
         <p>A 1 Test USD payment moved from 2 to 5 sat/vB while preserving its
         funding input, record, marker, context, output positions, and delivery

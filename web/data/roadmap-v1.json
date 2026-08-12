@@ -1,7 +1,7 @@
 {
   "schema": "opencsv-roadmap-v1",
-  "snapshot": "2026-08-08T18:22:43-04:00",
-  "plan_revision": 13,
+  "snapshot": "2026-08-11T16:08:36-04:00",
+  "plan_revision": 16,
   "source": {
     "document": "https://github.com/opencsvnet/opencsv/blob/main/ROADMAP.md",
     "master_issue": "https://github.com/opencsvnet/opencsv/issues/1"
@@ -12,10 +12,10 @@
       "order": 1,
       "title": "Formal specification + pure kernel",
       "state": "complete",
-      "summary": "72 audited Lean specification declarations and 15 translated-Rust refinement declarations; the verified kernel is adopted in the reference implementation.",
+      "summary": "The 77-declaration Lean ledger, strict canonical-byte encoding, pinned Rust correspondence, and separately scoped 15-declaration Aeneas audit are merged at their exact reviewed tips. The Aeneas update makes no new refinement claim.",
       "receipts": [
-        "https://github.com/opencsvnet/opencsv-formal/tree/dc7e8eb",
-        "https://github.com/opencsvnet/formal-aeneas/tree/3bcafed",
+        "https://github.com/opencsvnet/opencsv-formal/pull/5",
+        "https://github.com/opencsvnet/formal-aeneas/pull/2",
         "https://github.com/opencsvnet/opencsv-rs/commit/e4265b946f0aaa31a9230aa67a2f964f5bb0362e"
       ]
     },
@@ -55,10 +55,14 @@
     {
       "id": "signal",
       "order": 5,
-      "title": "Signal Test USD integration",
+      "title": "Clean Test USD v2 integration",
       "state": "active",
-      "summary": "Signal PR #6 is merged at db818658; PR #7 closed the broad hosted gate at 4804e094 with 1,552 tests passed and PR #8 merged the canonical presentation fix at 1e3472b9. A fresh exact unconfirmed parent/child run settled at height 316824. Rust PR #16 merged at 908bbb53 with green Rust CI; Signal PR #9 pins it at 9b72d86d. PR-tip Signal jobs passed, but the post-merge default Xcode job failed while recovery passed. Crash-matrix, clean recovery, and physical-device gates remain open.",
+      "summary": "The v1 Signal payment, zero-confirmation child, batch, RBF, and media are archived evidence. Signal PR #12 tip 784b0122 pins merged Rust f582c118 and keeps the wallet in v2-only namespaces. Exact hosted run 31549962441 is green; Rust's fresh main run, fresh fee funding, and the live v2 run remain open. The public v2 mint anchor is still unconfirmed.",
       "receipts": [
+        "https://github.com/opencsvnet/Signal-iOS/pull/12",
+        "https://github.com/opencsvnet/Signal-iOS/actions/runs/31549962441",
+        "https://github.com/opencsvnet/opencsv-rs/pull/20",
+        "https://mempool.space/signet/tx/4bb4367b1aea37c82bbc6fbe51d594c7e5dfa260afa448fc8c6c3a02566b769c",
         "https://github.com/opencsvnet/Signal-iOS/pull/6",
         "https://github.com/opencsvnet/Signal-iOS/pull/7",
         "https://github.com/opencsvnet/Signal-iOS/actions/runs/31272225305",

@@ -36,6 +36,26 @@ approves external testing, that page deliberately exposes no install link.
 
 ## Status
 
+**Test USD v2 reset (2026-08-11).** The public Bitcoin Signet is unchanged,
+but the OpenCSV test deployment is starting fresh: account configuration
+generation 2, checkpoint generation 4, deployment id
+`opencsv-test-usd-v2`, new derivation/database/backup domains, and a new exact
+Test USD instrument. There is no v1 wallet-state migration; an old test wallet
+fails closed with `testnet_reset_required`. See the
+[reset contract](TEST_USD_V2.md) and [interactive walkthrough](test-usd-v2.html).
+The implementation is merged at exact Rust commit
+[`1288977`](https://github.com/opencsvnet/opencsv-rs/commit/1288977c6110d6d985b5ea51589007d271e35674)
+through [Rust PR #19](https://github.com/opencsvnet/opencsv-rs/pull/19), with
+the 77-declaration canonical-byte proof layer merged at
+[`5af2003`](https://github.com/opencsvnet/opencsv-formal/commit/5af200376a98a459d9318224c2c0e37b02da588e)
+through [formal PR #5](https://github.com/opencsvnet/opencsv-formal/pull/5).
+Signal and the live v2 acceptance run remain open; no source merge is
+represented as a live wallet or release.
+
+All transactions, wallet balances, screenshots, and video described below are
+preserved **Test USD v1 evidence**. They prove what the earlier prototype did;
+they are not v2 state or v2 acceptance receipts.
+
 The protocol has real end-to-end evidence: mint, transfer, rejection of a
 double-spend, redemption, and supply audit on regtest; a confirmed signet
 anchor; scan-only verification with no RPC/indexer; and two-way transport over
@@ -85,8 +105,10 @@ and BIP84 Bitcoin **fee** wallet; there is no anchor server and no
 arbitrary-Bitcoin-send API. Signal holds owner keys only: it has no issuer
 secret, mint action, arbitrary asset creator, or mint FFI. It presents one
 signet-only Test USD product over exact reviewed issuer instruments. The current
-test issuer's disclosure and public identity live in the
-[test USD terms](usd-preview/terms-v1/).
+v2 issuer disclosure lives in the [Test USD v2 terms](usd-preview/terms-v2/).
+Its cryptographic identity is deliberately pending until the headless v2
+genesis is created after review. The [v1 terms](usd-preview/terms-v1/) remain an
+archived receipt.
 
 Issuance remains supported outside Signal. The non-default `issuer-tools`
 feature builds a headless `opencsv-issuer` operator that creates exact public
@@ -259,7 +281,7 @@ MP4 has SHA-256
 `5a59058f94ce5863337a957e8ec21ef7d724a95520303902b91748d43fa89b0c`.
 Historical 25/10 and zero-confirmation captures remain labeled separately.
 
-Formal evidence is kept in two ledgers rather than one inflated count: 72
+Formal evidence is kept in two ledgers rather than one inflated count: 77
 audited declarations in the sorry-free `opencsv-formal` ledger, and 15 audited declarations
 covering the Aeneas-translated Rust kernel refinements, now on
 `formal-aeneas/main` at `3bcafed`. Seven declarations specialize the v4 one-input
@@ -274,7 +296,7 @@ represented as a proof of the Rust AIR or FRI implementation. See the
 |---|---|
 | **[opencsv](https://github.com/opencsvnet/opencsv)** | this repo — canonical homepage (`index.html`), site assets/pages (`web/`), paper (`paper/`), and journal (`journal/`) |
 | **[opencsv-rs](https://github.com/opencsvnet/opencsv-rs)** | Rust reference implementation: core types & accept driver, AIR-native recursive PCD engine, SPV light client + scan engine, bitcoind backend, wallet CLI, Signal transport |
-| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (72 audited declarations): inflation, conservation, nullifier/occurrence, receiver correctness, limb soundness, batching v2, scan exclusion, v4 one-input forwarding |
+| **[opencsv-formal](https://github.com/opencsvnet/opencsv-formal)** | Lean 4 protocol mechanization (77 audited declarations on the v2 review branch): inflation, conservation, nullifier/occurrence, receiver correctness, canonical byte decoding, limb soundness, batching v2, scan exclusion, v4 one-input forwarding |
 | **[formal-aeneas](https://github.com/opencsvnet/formal-aeneas)** | Separate Lean 4.31 + mathlib project connecting the Aeneas-translated pure Rust kernel to the specification (15 audited declarations on the green reproducibility receipt) |
 
 ## Reference
