@@ -127,8 +127,10 @@ durable receipt that snapshots the complete authorizing release. A
 later RBF revalidates that snapshot's deployment and commitment and uses its
 original miner-fee ceiling, so a later release can neither raise the signed
 operation's exposure nor strand protocol-safe recovery by lowering the live
-ceiling. A missing, malformed, or commitment-mismatched mainnet snapshot is
-database corruption; recovery never substitutes the current host policy for
+ceiling. Rust additionally signs the release commitment and stable operation
+identity with a deployment-separated wallet key. A missing, malformed,
+self-consistently substituted, or cross-operation mainnet snapshot is database
+corruption; recovery never substitutes the current host policy for
 authorization that is absent from the signed operation.
 
 The containing reproducible application release and its distribution signature
@@ -263,7 +265,7 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `4965ba366652dd243a6d830fc953daf68943d0c0`;
+latest unpublished Rust tip is `992eef901335dbb42735e5b092a9cc07d0432ac1`;
 its FFI receipt is 111 passed, 0 failed, and 3 intentional slow ignores, plus
 both feature-gated recovery rebind tests and warnings-denied default, recovery,
 and issuer builds. Until those candidates are rebased, hosted-green,

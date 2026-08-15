@@ -148,10 +148,12 @@ Signal exposes one user-facing product: **Test USD**.
   ceilings at intent creation and before proof/signing. Signed solo, batch,
   and reserve transactions snapshot the complete authorizing release, and RBF
   revalidates that commitment before applying its original fee ceiling.
-  Missing mainnet authorization is database corruption rather than permission
-  to fall back to live host policy. The
+  A wallet-derived signature binds that commitment to the stable solo, batch,
+  or reserve operation identity. Missing or substituted mainnet authorization
+  is database corruption rather than permission to fall back to live host
+  policy. The
   latest local Rust receipt is 111 passed, 0 failed, 3 intentional slow ignores
-  at `4965ba366652dd243a6d830fc953daf68943d0c0`, plus two recovery-rebind
+  at `992eef901335dbb42735e5b092a9cc07d0432ac1`, plus two recovery-rebind
   tests and warnings-denied default/recovery/issuer builds. It remains
   unpublished.
 - The current local production candidates additionally fail closed unless

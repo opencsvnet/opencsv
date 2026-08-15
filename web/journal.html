@@ -1345,6 +1345,17 @@
     intentional slow ignores, and the warnings-denied FFI build is green.
     Substituting a later release for missing authorization was rejected because
     later policy did not authorize those signed bytes.</p>
+    <p>The self-hash still did not authenticate the snapshot: a complete
+    replacement release could carry a newly recomputed commitment. Local commit
+    <code>992eef901335dbb42735e5b092a9cc07d0432ac1</code> derives a
+    deployment-separated wallet key and signs the release commitment plus the
+    stable solo, batch, or reserve operation identity. A self-consistent
+    substituted release and a valid snapshot copied to another operation now
+    fail signature verification as database corruption. The exact full FFI
+    result remains 111 passed, 0 failed, and 3 intentional slow ignores;
+    warnings-denied default, recovery, and issuer builds and both
+    recovery-rebind tests are green. Treating an unkeyed commitment as its own
+    authenticator was rejected because a receipt rewriter can recompute it.</p>
   </div>
 
 </div>

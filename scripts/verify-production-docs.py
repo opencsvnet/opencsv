@@ -84,8 +84,8 @@ def main() -> int:
             "production releases",
             "mainnet broadcasts",
             "production_activation_not_authorized",
-            "Signed operations snapshot this exact release for safe RBF",
-            "Missing approval receipt or signed authorization snapshot",
+            "Wallet signature binds the snapshot to one operation",
+            "Missing, substituted, or cross-operation authorization",
         ],
     )
     require_all(
@@ -94,7 +94,7 @@ def main() -> int:
             "Test USD has no monetary or redemption value",
             "production_activation_not_authorized",
             "snapshot the complete authorizing release",
-            "Missing mainnet authorization is database corruption",
+            "wallet-derived signature binds that commitment",
         ],
     )
     require_all(
@@ -103,11 +103,11 @@ def main() -> int:
             "production/mainnet activation contract",
             "policy is readable but cannot write",
             "signed operation snapshots the complete",
-            "mainnet authorization is treated as corrupt state",
+            "wallet-derived signature also binds the commitment",
         ],
     )
 
-    receipt = "4965ba366652dd243a6d830fc953daf68943d0c0"
+    receipt = "992eef901335dbb42735e5b092a9cc07d0432ac1"
     require_all(journal, [receipt, "111 passed, 0 failed"])
     require_all(rendered_journal, [receipt, "111 passed, 0 failed"])
 
