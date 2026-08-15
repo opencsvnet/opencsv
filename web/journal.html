@@ -1445,7 +1445,7 @@
     stacked Rust draft in
     <a href="https://github.com/opencsvnet/opencsv-rs/pull/31">opencsv-rs PR #31</a>
     at exact head
-    <code>eb9a2ef2062d51d1f53460077b20e80db439ea89</code> replaces that
+    <code>2ab342b026ae4133077862e13a2e5c257cce2334</code> replaces that
     stopgap with a secret-free verification boundary. Registry v2 commits the
     exact issuance policy; the policy names distinct administrative secp256k1
     keys and a threshold of at least two; and every signed authorization binds
@@ -1466,13 +1466,18 @@
     final registry and policy digests. Signed operations snapshot the evidence
     for crash recovery and protocol-safe RBF after policy removal; unsigned
     work still fails against the live release.</p>
+    <p>The first exact-tip audit also found that keys were deduplicated by
+    their submitted hex strings although parsing accepted both cases. One key
+    could occupy two threshold slots through upper/lowercase aliases. Policy
+    verification now requires lowercase compressed canonical encoding and
+    deduplicates serialized key bytes; the alias is an explicit regression.</p>
     <p>The warnings-denied local workspace completed without an executed
-    failure: 123 FFI passes with 3 intentional slow ignores, 3/0 serial release
+    failure: 124 FFI passes with 3 intentional slow ignores, 3/0 serial release
     recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD
     node suite, and a 2-pass PCD redeem suite. Exact-head hosted runs
-    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31913959340">31913959340</a>
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31915972617">31915972617</a>
     and
-    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31913977221">31913977221</a>
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31915974092">31915974092</a>
     were still executing when this entry was written. No real policy, signer,
     administrative key, issuer, release, or mainnet transaction was created;
     independent exact-tip approval remains a merge and activation gate.</p>

@@ -158,7 +158,8 @@ supply. The stacked Rust candidate in
 [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
 therefore requires registry v2 to bind one exact public issuance policy. That
 policy names the deployment, registry version, asset, sorted distinct
-administrative secp256k1 keys, threshold of at least two, per-authorization and
+administrative secp256k1 keys in lowercase compressed canonical encoding, a
+threshold of at least two, per-authorization and
 cumulative supply ceilings, authorization lifetime, validity window, source
 revision, and public approval receipts. Those administrative keys are distinct
 from the AIR issuer key.
@@ -354,11 +355,12 @@ general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
 exact [Rust PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) tip is
-`eb9a2ef2062d51d1f53460077b20e80db439ea89`. Its warning-denied local
-workspace completed without an executed failure: 123 FFI passes with 3
-intentional slow ignores, 3/0 serial release recursive proofs, 4 registry-tool
+`2ab342b026ae4133077862e13a2e5c257cce2334`. Its warning-denied local
+FFI result is 124 passes with 3 intentional slow ignores; those three pass
+explicitly in release mode. The preceding complete workspace had no executed
+failure, including 4 registry-tool
 tests, 8 issuer-tool tests, a 7-pass PCD node suite, and a 2-pass PCD redeem
-suite. Exact-head hosted runs 31913959340 and 31913977221 remain required, as
+suite. Exact-head hosted runs 31915972617 and 31915974092 remain required, as
 does independent review. Until the stacked candidates are hosted-green,
 independently approved, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet

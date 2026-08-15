@@ -173,13 +173,17 @@ Signal exposes one user-facing product: **Test USD**.
 
   The exact published draft is
   [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) at
-  `eb9a2ef2062d51d1f53460077b20e80db439ea89`, stacked on still-unmerged PR #30.
-  Local warnings-denied workspace validation is green with no executed test
-  failure; the proof-heavy PCD node and redeem suites took 963.71 and 431.65
-  seconds respectively. FFI is 123 passed / 0 failed / 3 intentional ignores;
-  those three pass explicitly in release mode in 13.85 seconds. Registry and
+  `2ab342b026ae4133077862e13a2e5c257cce2334`, stacked on still-unmerged PR #30.
+  An exact-tip adversarial pass found and closed a threshold alias: authority
+  keys now require one lowercase compressed canonical encoding, so one signer
+  cannot occupy two slots through upper/lowercase hex. FFI is 124 passed / 0
+  failed / 3 intentional ignores; those three pass explicitly in release mode.
+  The preceding complete warnings-denied workspace had no executed failure;
+  the proof-heavy PCD node and redeem suites took 963.71 and 431.65 seconds.
+  Registry and
   issuer tool suites pass 4/0 and 8/0. Hosted runs 31913977221 and 31913959340
-  are still executing, and independent review remains absent, so nothing here
+  are superseded; exact-head runs 31915972617 and 31915974092 are executing,
+  and independent review remains absent, so nothing here
   is merge or activation authority.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct

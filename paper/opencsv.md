@@ -154,7 +154,9 @@ covering the final registry and policy commitments, recipient, amounts,
 monotonic sequence, and supply transition. Operation creation and the
 per-asset authorization ledger commit atomically; Secure Backup preserves the
 floor, and signed recovery verifies the historical policy snapshot after live
-policy rotation. A cap in operator-editable consumer JSON was rejected because
+policy rotation. Administrative keys have one lowercase compressed canonical
+encoding so textual aliases cannot multiply one signer into several threshold
+slots. A cap in operator-editable consumer JSON was rejected because
 it would constrain honest tooling without authenticating who approved supply.
 Missing or invalid threshold evidence fails with
 `production_issuance_not_authorized`.

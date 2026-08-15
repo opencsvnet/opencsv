@@ -1491,7 +1491,7 @@ unpublished until the earlier exact-tip review gate clears.
 The earlier production boundary correctly disabled headless mainnet minting,
 but a permanent denial was not a usable issuance design. The stacked Rust
 draft in [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
-at exact head `eb9a2ef2062d51d1f53460077b20e80db439ea89` replaces that stopgap with a
+at exact head `2ab342b026ae4133077862e13a2e5c257cce2334` replaces that stopgap with a
 secret-free verification boundary. Registry v2 commits the exact issuance
 policy; the policy names distinct administrative secp256k1 keys and a threshold
 of at least two; and each signed authorization binds the registry, asset,
@@ -1515,13 +1515,19 @@ policy digests. Signed operations snapshot that evidence so crash recovery and
 protocol-safe RBF survive later policy removal; unsigned operations fail closed
 against the live release.
 
+The first exact-tip audit also found that public keys were deduplicated by
+their submitted hex strings even though parsing accepted both cases. One key
+could therefore occupy two threshold slots through upper/lowercase aliases.
+Policy verification now requires lowercase compressed canonical encoding and
+deduplicates the serialized key bytes; the alias is an explicit regression.
+
 The warnings-denied local workspace completed with no executed failures,
-including 123 FFI passes with 3 intentional slow ignores, 3/0 serial release
+including 124 FFI passes with 3 intentional slow ignores, 3/0 serial release
 recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD node
 suite, and a 2-pass PCD redeem suite. Hosted runs
-[31913959340](https://github.com/opencsvnet/opencsv-rs/actions/runs/31913959340)
+[31915972617](https://github.com/opencsvnet/opencsv-rs/actions/runs/31915972617)
 and
-[31913977221](https://github.com/opencsvnet/opencsv-rs/actions/runs/31913977221)
+[31915974092](https://github.com/opencsvnet/opencsv-rs/actions/runs/31915974092)
 are the exact-head publication gates and were still executing when this entry
 was written. No real policy, signer, administrative key, issuer, release, or
 mainnet transaction was created; independent exact-tip approval remains a
