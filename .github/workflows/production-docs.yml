@@ -1,0 +1,40 @@
+name: Production activation contract
+
+on:
+  pull_request:
+    paths:
+      - PRODUCTION_MAINNET.md
+      - production.html
+      - ROADMAP.md
+      - roadmap.html
+      - README.md
+      - paper/opencsv.md
+      - journal/README.md
+      - web/journal.html
+      - scripts/verify-production-docs.py
+      - .github/workflows/production-docs.yml
+  push:
+    branches: [main]
+    paths:
+      - PRODUCTION_MAINNET.md
+      - production.html
+      - ROADMAP.md
+      - roadmap.html
+      - README.md
+      - paper/opencsv.md
+      - journal/README.md
+      - web/journal.html
+      - scripts/verify-production-docs.py
+      - .github/workflows/production-docs.yml
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out documentation
+        uses: actions/checkout@v4
+      - name: Verify the production contract and public links
+        run: python3 scripts/verify-production-docs.py

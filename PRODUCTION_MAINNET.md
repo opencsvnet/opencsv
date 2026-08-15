@@ -94,10 +94,11 @@ candidate Rust boundary accepts issuer policies only inside one
 - the ordered issuer manifests and priorities;
 - one exact rollout policy containing:
   - `phase`: `candidate`, `limited`, or `general`;
-  - maximum base units per transfer, per batch, and per rolling 24 hours;
-  - maximum rolling 24-hour operation count and recipients per batch;
-  - maximum sats allocated by one reserve-maintenance transaction; and
-  - maximum miner fee for initial transactions and replacements;
+  - `max_transfer_base_units`, `max_batch_total_base_units`, and
+    `max_rolling_24h_outgoing_base_units`;
+  - `max_rolling_24h_operations` and `max_batch_recipients`;
+  - `max_reserve_allocation_sats` for one reserve-maintenance transaction; and
+  - `max_miner_fee_sats` for initial transactions and replacements;
 - a 40- or 64-character lowercase hexadecimal source revision;
 - at least one unique public HTTPS approval receipt; and
 - `commitment_sha256`, recomputed over a domain-separated canonical encoding of
@@ -121,8 +122,8 @@ proof/signing. Live and completed intents count against the rolling allowance;
 cancelled and protocol-rejected intents do not. Wallet-internal reserve
 maintenance and every initial or replacement miner fee remain separately
 bounded. Host configuration can lower the miner-fee ceiling but cannot raise
-the release value. When exact solo, batch, or reserve-maintenance bytes are
-signed, their durable receipt snapshots the complete authorizing release. A
+the release value. Signed solo, batch, or reserve-maintenance bytes carry a
+durable receipt that snapshots the complete authorizing release. A
 later RBF revalidates that snapshot's deployment and commitment and uses its
 original miner-fee ceiling, so a later release can neither raise the signed
 operation's exposure nor strand protocol-safe recovery by lowering the live
