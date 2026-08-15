@@ -132,6 +132,11 @@ Signal exposes one user-facing product: **Test USD**.
   gates, and still-open human decisions are specified in
   [`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md). That document is a review
   contract, not an activation or issuer claim.
+- The current Rust candidate rejects loose mainnet issuer lists. A production
+  registry is a versioned, deployment-bound release input whose ordered exact
+  manifests/priorities, source revision, and public HTTPS approval receipts
+  recompute to its exposed commitment. This makes the selected policy
+  reproducible; it does not establish issuer backing or authority.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not

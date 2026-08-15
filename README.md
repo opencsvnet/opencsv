@@ -99,7 +99,10 @@ A future production USD product cannot be created by flipping Signal from
 signet to mainnet. The review-only
 [`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md) contract requires a fresh
 account root, database, backup namespace, fee tree, deployment-scoped key
-derivation, and exact non-test issuer registry. It also lists the issuer,
+derivation, and exact non-test issuer registry. Mainnet rejects loose issuer
+lists: the candidate registry is a versioned, deployment-bound release input
+whose exact ordered policies, source revision, and public approval receipts
+recompute to a published commitment. It also lists the issuer,
 redemption, governance, recovery, distribution, and explicit owner-approval
 decisions that remain unresolved. No production issuer or mainnet activation is
 claimed.

@@ -1339,6 +1339,23 @@ gates. The observer operators and pin lifecycle remain human decisions in the
 activation contract. Recording the implemented minimum here does not claim a
 production issuer, release, or mainnet authorization.
 
+A follow-up audit found one more host-trust gap: the first candidate treated
+any nonempty, internally valid mainnet `usd_issuers` vector as a configured
+product. The local Rust gate now refuses that loose list. It accepts policies
+only inside a versioned release bound to the exact deployment and recomputes a
+domain-separated SHA-256 commitment over the format and registry versions,
+ordered manifests/priorities, source revision, and public HTTPS approval
+receipts. Mutated, cross-deployment, receipt-free, commitment-mismatched, and
+signet-misapplied releases fail during configuration; status exposes the exact
+release identity. The full FFI library result is 102 passed, 0 failed, and 3
+intentional slow ignores, with default, recovery, and issuer feature builds
+warning-clean at local tip `715982ed7c78cbef670ed7b91c680aa720df2fec`.
+
+The commitment and application distribution signature identify policy; they do
+not prove reserves, redemption, legal authority, or brand control. No real
+registry bytes or production issuer were created, and the candidate remains
+unpublished until the earlier exact-tip review gate clears.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

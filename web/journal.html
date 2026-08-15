@@ -1283,6 +1283,22 @@
     unpublished behind earlier exact-tip review gates. Final observer operators
     and the pin lifecycle remain human activation decisions; no issuer,
     release, or mainnet authorization is implied.</p>
+    <p>A follow-up audit found another host-trust gap: the first candidate
+    treated any nonempty, internally valid mainnet <code>usd_issuers</code>
+    vector as a configured product. The local Rust gate now refuses that loose
+    list. It accepts policies only inside a versioned release bound to the exact
+    deployment and recomputes a domain-separated SHA-256 commitment over the
+    format and registry versions, ordered manifests/priorities, source revision,
+    and public HTTPS approval receipts. Mutated, cross-deployment, receipt-free,
+    commitment-mismatched, and signet-misapplied releases fail during
+    configuration; status exposes the exact release identity.</p>
+    <p>The full FFI result is 102 passed, 0 failed, and 3 intentional slow
+    ignores, with default, recovery, and issuer feature builds warning-clean at
+    local tip <code>715982ed7c78cbef670ed7b91c680aa720df2fec</code>.
+    The commitment and application distribution signature identify policy;
+    they do not prove reserves, redemption, legal authority, or brand control.
+    No real registry bytes or production issuer were created, and the candidate
+    remains unpublished until the earlier exact-tip review gate clears.</p>
   </div>
 
 </div>

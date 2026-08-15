@@ -76,7 +76,7 @@
   <div class="wrap">
     <div class="eyebrow">Review contract · snapshot 2026-08-15</div>
     <h1>Mainnet is not a toggle.</h1>
-    <p class="lede">Test USD stays on signet forever. Any future production USD starts with new keys, new storage, a new fee tree, and exact issuer manifests that humans have actually reviewed.</p>
+    <p class="lede">Test USD stays on signet forever. Any future production USD starts with new keys, new storage, a new fee tree, and one exact issuer-registry release that humans have actually reviewed.</p>
     <div class="notice"><strong>Nothing here is active.</strong> This page names the gates. It does not name an issuer, approve a build, release an app, create a production wallet, or authorize a mainnet transaction.</div>
     <div class="sourcebar"><a href="PRODUCTION_MAINNET.md">Canonical contract</a><a href="ROADMAP.md">Plan of record</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Live work board ↗</a><span>all activation states fail closed</span></div>
   </div>
@@ -94,7 +94,18 @@
       <h2>Two products. No migration.</h2>
       <div class="boundary">
         <article class="test"><h3>Test USD</h3><p>Permanent no-value demonstration product.</p><ul><li>Bitcoin signet</li><li><code>opencsv-test-usd-v2</code></li><li>Existing test root, database, backup, and fee tree</li><li>Exact test-only manifests</li><li>Never promoted or converted</li></ul></article>
-        <article class="production"><h3>Future production USD</h3><p>Inactive until every review and owner gate passes.</p><ul><li>Bitcoin mainnet</li><li>New deployment identifier</li><li>Fresh root, database, backup namespace, and BIP84 fee tree</li><li>Deployment-scoped <code>opencsv-mainnet-account-v1</code> derivation</li><li>Exact non-test issuer manifests</li></ul></article>
+        <article class="production"><h3>Future production USD</h3><p>Inactive until every review and owner gate passes.</p><ul><li>Bitcoin mainnet</li><li>New deployment identifier</li><li>Fresh root, database, backup namespace, and BIP84 fee tree</li><li>Deployment-scoped <code>opencsv-mainnet-account-v1</code> derivation</li><li>Versioned release binding exact non-test issuer manifests</li></ul></article>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Exact release input</div>
+      <h2>A valid manifest list is not enough.</h2>
+      <p class="intro">Mainnet refuses loose issuer policy. The candidate wallet recomputes one commitment over the production deployment, registry version, ordered manifests and priorities, source revision, and public approval receipts before it can arm a consumer write.</p>
+      <div class="grid">
+        <details open><summary>Bound into the commitment</summary><ul><li>Format and registry versions</li><li>Exact production deployment</li><li>Ordered issuer manifests and priorities</li><li>Source revision</li><li>Unique public HTTPS approval receipts</li></ul></details>
+        <details open><summary>Fails before account use</summary><ul><li>Loose mainnet issuer list</li><li>Mutated manifest or priority</li><li>Wrong deployment or network</li><li>Missing approval receipt</li><li>Commitment mismatch</li></ul></details>
+        <details open><summary>Still not proven</summary><ul><li>Backing or solvency</li><li>Redemption or legal enforceability</li><li>Brand authority</li><li>Issuer key custody</li><li>Operational readiness</li></ul></details>
       </div>
     </section>
 

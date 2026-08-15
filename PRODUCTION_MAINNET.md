@@ -80,10 +80,37 @@ Version 1 spends one exact issuer instrument per transfer. It does not silently
 combine claims, exchange one issuer for another, or promise par redemption.
 The selected issuer and asset ID remain visible in payment details and receipts.
 
+### Registry release envelope
+
+Mainnet does not accept a loose host-supplied `usd_issuers` vector. The
+candidate Rust boundary accepts issuer policies only inside one
+`ProductionUsdRegistryRelease` with:
+
+- `format_version: 1` and a nonzero `registry_version`;
+- the exact non-test `deployment_id`;
+- the ordered issuer manifests and priorities;
+- a 40- or 64-character lowercase hexadecimal source revision;
+- at least one unique public HTTPS approval receipt; and
+- `commitment_sha256`, recomputed over a domain-separated canonical encoding of
+  every preceding field.
+
+Status exposes the registry version, deployment, source revision, approval
+receipts, issuer count, and commitment. A mutation, wrong deployment, missing
+approval, commitment mismatch, or production object presented to signet fails
+during account configuration. Conversely, a loose mainnet issuer list fails
+even when every individual manifest is internally valid. Test USD keeps its
+separate signet registry format.
+
+The containing reproducible application release and its distribution signature
+authenticate this immutable input. The public receipts make the selected policy
+auditable; neither the commitment, the application signature, nor a receipt URL
+proves backing, solvency, redemption, legal authority, or brand control.
+
 ## Registry lifecycle
 
 Registry changes are versioned, signed release inputs. They are never fetched
-as mutable remote policy at spend time.
+as mutable remote policy at spend time. A version identifies the exact release
+payload above; it is not a mutable counter returned by an API.
 
 - **Add:** requires complete manifest review, independent security review,
   product/legal approval, reproducible client build, and owner approval.
