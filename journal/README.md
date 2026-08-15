@@ -1461,6 +1461,16 @@ Adding supply caps to operator-editable registry JSON was rejected as
 false authority: production issuance needs a distinct authenticated policy
 after the issuer/key ceremony.
 
+A final relay reachability pass then found that fee replacement verified the
+signed production authorization, but ordinary crash rebroadcast did not. Local
+commit `36cadb9f4e886499c5f3cae302c7c38c26badd4d` makes solo,
+shared-batch, and reserve-maintenance resume verify the deployment-bound,
+operation-bound signature before transaction parsing, chain reconciliation, or
+network I/O. Missing pre-gate state fails as `database_corrupt`. The exact FFI
+result is 115 passed, 0 failed, and 3 intentional slow ignores; release-mode is
+3/0 in 31.91 seconds. Deferring authorization to RBF was rejected because
+idempotent rebroadcast is itself a network write.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains

@@ -172,7 +172,9 @@ ceiling. Rust additionally signs the release commitment and stable operation
 identity with a deployment-separated wallet key. A missing, malformed,
 self-consistently substituted, or cross-operation mainnet snapshot is database
 corruption; recovery never substitutes the current host policy for
-authorization that is absent from the signed operation.
+authorization that is absent from the signed operation. Solo, shared-batch,
+and reserve-maintenance crash resume verify that authorization before parsing
+transaction bytes, consulting chain state, or attempting relay.
 
 The containing reproducible application release and its distribution signature
 authenticate this immutable input. The public receipts make the selected policy
@@ -309,12 +311,12 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `a1809ebf7be42e7fa01f23b969c3a401b8aa8722`;
-its FFI receipt is 114 passed, 0 failed, and 3 intentional slow ignores, plus
+latest unpublished Rust tip is `36cadb9f4e886499c5f3cae302c7c38c26badd4d`;
+its FFI receipt is 115 passed, 0 failed, and 3 intentional slow ignores, plus
 four registry-tool tests, both feature-gated recovery rebind tests, and
 warnings-denied default, recovery, issuer, and registry builds. The three
 ignored recursive tests also pass when explicitly run serially in release mode
-(31.31 seconds). Until those candidates are rebased, hosted-green,
+(31.91 seconds). Until those candidates are rebased, hosted-green,
 independently reviewed, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet
 transaction exists as a result of this document.
