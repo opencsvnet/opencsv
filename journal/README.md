@@ -1374,6 +1374,18 @@ plus both feature-gated recovery-rebind tests and warnings-denied default,
 recovery, and issuer builds. Treating `general` as unlimited and relying on UI
 limits were both rejected because neither survives a hostile or stale host.
 
+That first cap implementation still consulted the live registry during RBF.
+Consequently, a later release could raise the exposure of bytes signed under a
+smaller cap or lower the cap far enough to strand their safe recovery. Local
+commit `e5cd9ef4877c0ae493df21b098b68f9e9c0182a7` closes both directions. Initial
+solo, batch, and reserve-maintenance signing snapshots the complete authorizing
+release into the durable receipt; replacement revalidates its deployment and
+commitment and uses the original miner-fee ceiling. A modified snapshot fails
+as database corruption. The exact-tip FFI result is 111 passed, 0 failed, and 3
+intentional slow ignores, with the recovery and issuer build gates still
+warning-clean. Trusting an unauthenticated numeric receipt field was rejected;
+the complete release must recompute to its committed identity.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains

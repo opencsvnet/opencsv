@@ -126,7 +126,10 @@ as a versioned, deployment-bound release input with a recomputed commitment to
 its ordered manifests, activation phase, exact transfer/batch/rolling-day/
 reserve/fee ceilings, source revision, and public approval receipts. Candidate
 policy is readable but cannot write; limited and general releases remain
-bounded by their committed ceilings. This is release-policy integrity, not a
+bounded by their committed ceilings. A signed operation snapshots the complete
+authorizing release, and protocol-safe replacement revalidates that commitment
+and retains its original fee ceiling across later policy changes. This is
+release-policy integrity, not a
 proof of reserves or issuer authority. A
 database- and backup-carried version floor makes rollback read-only without
 hiding wallet evidence; it is operational policy state, not a protocol theorem.

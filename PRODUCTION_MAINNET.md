@@ -121,7 +121,12 @@ proof/signing. Live and completed intents count against the rolling allowance;
 cancelled and protocol-rejected intents do not. Wallet-internal reserve
 maintenance and every initial or replacement miner fee remain separately
 bounded. Host configuration can lower the miner-fee ceiling but cannot raise
-the release value.
+the release value. When exact solo, batch, or reserve-maintenance bytes are
+signed, their durable receipt snapshots the complete authorizing release. A
+later RBF revalidates that snapshot's deployment and commitment and uses its
+original miner-fee ceiling, so a later release can neither raise the signed
+operation's exposure nor strand protocol-safe recovery by lowering the live
+ceiling.
 
 The containing reproducible application release and its distribution signature
 authenticate this immutable input. The public receipts make the selected policy
@@ -255,8 +260,8 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `fa0736c65de64a175b4f1d4e4b4854a9d92e3367`;
-its FFI receipt is 109 passed, 0 failed, and 3 intentional slow ignores, plus
+latest unpublished Rust tip is `e5cd9ef4877c0ae493df21b098b68f9e9c0182a7`;
+its FFI receipt is 111 passed, 0 failed, and 3 intentional slow ignores, plus
 both feature-gated recovery rebind tests and warnings-denied default, recovery,
 and issuer builds. Until those candidates are rebased, hosted-green,
 independently reviewed, and merged, they are evidence of work in progress only.

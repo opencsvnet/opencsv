@@ -145,10 +145,13 @@ Signal exposes one user-facing product: **Test USD**.
   phase and exact transfer, batch, rolling-day, recipient, reserve-allocation,
   and miner-fee ceilings. Candidate releases return
   `production_activation_not_authorized`; activated releases recheck their
-  ceilings at intent creation and before proof/signing. The latest local Rust
-  receipt is 109 passed, 0 failed, 3 intentional slow ignores at
-  `fa0736c65de64a175b4f1d4e4b4854a9d92e3367`, plus two recovery-rebind tests
-  and warnings-denied default/recovery/issuer builds. It remains unpublished.
+  ceilings at intent creation and before proof/signing. Signed solo, batch,
+  and reserve transactions snapshot the complete authorizing release, and RBF
+  revalidates that commitment before applying its original fee ceiling. The
+  latest local Rust receipt is 111 passed, 0 failed, 3 intentional slow ignores
+  at `e5cd9ef4877c0ae493df21b098b68f9e9c0182a7`, plus two recovery-rebind
+  tests and warnings-denied default/recovery/issuer builds. It remains
+  unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not
