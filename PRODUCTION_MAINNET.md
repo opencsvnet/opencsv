@@ -169,11 +169,12 @@ These are intentionally unresolved and block activation:
 
 ## What current work does and does not prove
 
-The current reference implementation proves that Test USD can be minted by a
-headless issuer, transferred in Signal, forwarded before confirmation under
-the required observation policy, batched, fee-bumped, recovered, and settled
-on signet. Formal proofs and tests cover protocol properties described in the
-paper; they do not prove issuer backing or operational readiness.
+The current reference implementation has reproducible receipts for Test USD
+minting by a headless issuer, transfer in Signal, forwarding before
+confirmation under the required observation policy, batching, fee bump,
+recovery, and signet settlement. Formal proofs and tests cover protocol
+properties described in the paper; they do not prove issuer backing or
+operational readiness.
 
 The local Rust production-gate candidate adds the empty-registry write block
 and deployment-scoped mainnet derivation. Until that candidate is rebased,
