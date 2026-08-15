@@ -124,8 +124,10 @@ Signal exposes one user-facing product: **Test USD**.
   No Tether asset or redemption claim exists in this test registry.
 - Unknown, removed, or ticker-lookalike instruments remain visible and
   read-only. New unsigned work fails with stable `asset_not_reviewed`.
-- Signal cannot mint or create assets. Privileged issuance remains available
-  only through the non-default headless `opencsv-issuer` tool.
+- Signal cannot mint or create assets. Privileged signet/regtest issuance
+  remains available only through the non-default headless `opencsv-issuer`
+  tool. Mainnet mint writes return `production_issuance_not_authorized` until
+  a separately authenticated issuer authorization and supply policy exist.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
   The fail-closed namespace, registry lifecycle, activation states, evidence
@@ -156,12 +158,14 @@ Signal exposes one user-facing product: **Test USD**.
   application deployment, distinguishes structural validity from activation
   authority, and refuses to overwrite an existing release. Its checked-in
   candidate has zero issuers and cannot arm writes; limited/general validation
-  rejects empty issuer sets and all-zero placeholder revisions. The latest
-  local Rust receipt is 113 passed, 0 failed, 3 intentional slow ignores at
-  `6fdafb48867e5237c0f38d4e125ec62b4e076205`, plus four registry-tool tests,
+  rejects empty issuer sets and all-zero placeholder revisions. The consumer
+  registry is not issuance authority: the local headless mainnet path permits
+  manifest review but blocks mint preparation, signing, rebroadcast, and mint
+  RBF. The latest local Rust receipt is 114 passed, 0 failed, 3 intentional
+  slow ignores at `a1809ebf7be42e7fa01f23b969c3a401b8aa8722`, plus four registry-tool tests,
   two recovery-rebind tests, and warnings-denied
   default/recovery/issuer/registry builds. All three ignored recursive tests
-  pass when explicitly run serially in release mode (32.60 seconds). The stack
+  pass when explicitly run serially in release mode (31.31 seconds). The stack
   remains unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct

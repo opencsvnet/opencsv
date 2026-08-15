@@ -75,6 +75,8 @@ def main() -> int:
             "Signed solo, batch, or reserve-maintenance bytes",
             "opencsv-registry",
             "activation_authorized: false",
+            "production_issuance_not_authorized",
+            "Consumer policy is not issuance authority",
             "No production manifest, production wallet, public release, or",
         ],
     )
@@ -90,6 +92,7 @@ def main() -> int:
             "Missing, substituted, or cross-operation authorization",
             "Structural validity is not activation authority",
             "Activated release with zero issuers or a placeholder revision",
+            "Mainnet mint writes: <code>production_issuance_not_authorized</code>",
         ],
     )
     require_all(
@@ -100,6 +103,7 @@ def main() -> int:
             "snapshot the complete authorizing release",
             "wallet-derived signature binds that commitment",
             "opencsv-registry",
+            "production_issuance_not_authorized",
         ],
     )
     require_all(
@@ -110,22 +114,26 @@ def main() -> int:
             "signed operation snapshots the complete",
             "wallet-derived signature also binds the commitment",
             "opencsv-registry",
+            "production_issuance_not_authorized",
         ],
     )
 
     implementation = "aa495a76d84003c91e457e7ded522125231bac03"
     ci_receipt = "6fc1e4ca410083297250f4d7a7cfce474f4f2d93"
-    receipt = "6fdafb48867e5237c0f38d4e125ec62b4e076205"
+    activation_receipt = "6fdafb48867e5237c0f38d4e125ec62b4e076205"
+    receipt = "a1809ebf7be42e7fa01f23b969c3a401b8aa8722"
     commitment = "bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169"
     require_all(
         journal,
         [
             implementation,
             ci_receipt,
+            activation_receipt,
             receipt,
             commitment,
-            "113 passed, 0 failed",
-            "32.60 seconds",
+            "114 passed, 0 failed",
+            "31.31 seconds",
+            "production_issuance_not_authorized",
         ],
     )
     require_all(
@@ -133,10 +141,12 @@ def main() -> int:
         [
             implementation,
             ci_receipt,
+            activation_receipt,
             receipt,
             commitment,
-            "113 passed, 0 failed",
-            "32.60 seconds",
+            "114 passed, 0 failed",
+            "31.31 seconds",
+            "production_issuance_not_authorized",
         ],
     )
 

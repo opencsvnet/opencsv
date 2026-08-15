@@ -144,6 +144,12 @@ hiding wallet evidence; it is operational policy state, not a protocol theorem.
 The contract also requires two distinct pinned raw-byte observer hosts and two
 distinct compact-filter peers; those are operational diversity requirements,
 not new cryptographic assumptions or claims that public APIs are authoritative.
+The consumer registry is also not authorization to expand issuer supply. The
+current mainnet candidate leaves manifest construction reviewable but rejects
+mint preparation, signing, rebroadcast, and mint fee replacement with
+`production_issuance_not_authorized` until a separate authenticated issuance
+policy exists. A cap in operator-editable registry JSON was rejected because it
+would constrain honest tooling without authenticating who approved supply.
 The contract keeps the issuer and operational assumptions explicit and is not
 evidence that a production issuer or deployment exists.
 

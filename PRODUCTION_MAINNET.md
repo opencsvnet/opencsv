@@ -20,18 +20,22 @@ future issuer-backed production USD product. It exists so a build cannot become
    never select or authorize an asset. Only a fully validated exact manifest
    and its derived asset ID can enter the reviewed registry.
 4. Signal never holds an issuer secret and never exposes mint or arbitrary
-   Bitcoin-send actions. Issuance remains an explicit headless operator action.
+   Bitcoin-send actions. Test issuance remains an explicit headless operator
+   action; production issuance requires its own authenticated authorization.
 5. A mainnet wallet may open, restore public state, and synchronize while no
    product is configured. It must not create a consumer Bitcoin write until a
    reviewed production registry is present.
-6. Already signed bytes are not stranded by a later registry change. New
-   unsigned work fails closed, while exact persisted recovery and
-   protocol-safe fee bump remain available.
+6. Already signed consumer bytes authorized under a production release are not
+   stranded by a later registry change. New unsigned work fails closed, while
+   exact persisted recovery and protocol-safe fee bump remain available.
 7. No review, build, website edit, or TestFlight state authorizes a mainnet
    broadcast. That remains a separate, deliberate owner action.
 8. Activation and loss limits are release data, not mutable host preferences.
    A production release commits its phase and ceilings; the app may tighten
    them locally but cannot raise them.
+9. A consumer registry is not issuance authority. Production supply cannot
+   grow until a separately authenticated issuer authorization and supply
+   policy survive the issuer/key ceremony and independent review.
 
 ## Namespace separation
 
@@ -46,7 +50,7 @@ future issuer-backed production USD product. It exists so a build cannot become
 | Secure Backup | existing Test USD namespace | fresh versioned production namespace |
 | Bitcoin fee tree | BIP84 signet coin type | fresh BIP84 mainnet coin type |
 | Asset registry | exact test-only manifests | exact non-test manifests approved below |
-| Issuance | headless test issuer tooling | separately governed headless issuer tooling |
+| Issuance | headless test issuer tooling | disabled pending separately authenticated issuer authorization and supply policy |
 | Conversion | none | none from Test USD |
 
 The Rust custody boundary records its derivation identifier in account status,
@@ -134,6 +138,20 @@ validation requires at least one exact issuer and rejects the all-zero
 placeholder revision before wallet open.
 This tool is evidence about exact policy bytes; it is not a registry signer or
 an activation mechanism.
+
+### Consumer policy is not issuance authority
+
+The registry release controls which exact instruments a consumer wallet may
+select and spend. It does not authorize the issuer to increase supply. The
+latest local Rust candidate therefore permits mainnet manifest construction
+for offline review but returns `production_issuance_not_authorized` from mint
+preparation, pre-broadcast signing, stale-row rebroadcast, and mint RBF.
+
+Adding mint caps to the same operator-supplied JSON envelope was rejected: a
+self-consistent limit would be structurally valid without authenticating who
+approved issuance. Production minting remains disabled until a distinct
+authorization binds the exact asset, deployment, issuer key, supply envelope,
+approval evidence, and operation. Signet/regtest issuer behavior is unchanged.
 
 A `candidate` release is reviewable and recoverable but cannot create a fresh
 consumer Bitcoin write; it returns the stable reason
@@ -239,6 +257,8 @@ source, build, manifest, and approval receipts.
 - backing, redemption, eligibility, fee, privacy, and jurisdiction statements
   reviewed by the responsible humans; no protocol proof substitutes for them;
 - issuer key generation, backup, rotation, compromise, and revocation runbooks;
+- independently authenticated issuance authority plus per-operation,
+  rolling-window, and cumulative supply ceilings;
 - supply/audit publication procedure and incident contact.
 
 ### Wallet and operations
@@ -265,6 +285,7 @@ These are intentionally unresolved and block activation:
 - canonical production terms, redemption mechanism, and legal review;
 - production deployment identifier and registry version 1 bytes;
 - issuer-key custody and whether authorization should use threshold hardware;
+- production issuance authorization, review quorum, and exact supply envelope;
 - registry signer/reviewer quorum and emergency-update governance;
 - final production observer operators/endpoints and certificate-pin lifecycle
   (the candidate defaults are mempool.space and Blockstream, not an approval to
@@ -288,12 +309,12 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `6fdafb48867e5237c0f38d4e125ec62b4e076205`;
-its FFI receipt is 113 passed, 0 failed, and 3 intentional slow ignores, plus
+latest unpublished Rust tip is `a1809ebf7be42e7fa01f23b969c3a401b8aa8722`;
+its FFI receipt is 114 passed, 0 failed, and 3 intentional slow ignores, plus
 four registry-tool tests, both feature-gated recovery rebind tests, and
 warnings-denied default, recovery, issuer, and registry builds. The three
 ignored recursive tests also pass when explicitly run serially in release mode
-(32.60 seconds). Until those candidates are rebased, hosted-green,
+(31.31 seconds). Until those candidates are rebased, hosted-green,
 independently reviewed, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet
 transaction exists as a result of this document.

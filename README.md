@@ -94,6 +94,10 @@ manifests and prepares, backs up, signs, resumes, and fee-bumps issuer-authorize
 mints by asset id. It reads issuer secrets from owner-only files and emits JSON
 for automation. Running it does not confer another issuer's authority, and an
 arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
+That flow remains enabled for signet/regtest. Mainnet manifest construction is
+reviewable, but every mainnet mint write currently fails closed with
+`production_issuance_not_authorized` until a separately authenticated issuer
+authorization and supply policy exist.
 
 A future production USD product cannot be created by flipping Signal from
 signet to mainnet. The review-only
@@ -105,8 +109,9 @@ whose exact ordered policies, source revision, and public approval receipts
 recompute to a published commitment. The database and Secure Backup preserve
 the highest version as a read-preserving rollback floor. It also lists the
 issuer, redemption, governance, recovery, distribution, and explicit
-owner-approval decisions that remain unresolved. No production issuer or
-mainnet activation is claimed.
+owner-approval decisions that remain unresolved. The consumer registry is not
+mint authority. No production issuer, issuance authorization, or mainnet
+activation is claimed.
 
 The current homepage lead is deliberately simpler than the full acceptance
 matrix. On 2026-08-08, Carol sent 1 Test USD to Bob as operation

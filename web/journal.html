@@ -1401,6 +1401,19 @@
     revision. Deferring that rejection to the later wallet write gate was
     rejected because the operator verifier must fail malformed activation bytes
     before wallet open.</p>
+    <p>The headless issuer path then exposed a separate authority error. It
+    still used only the primary-device and backup gate, so a mainnet mint could
+    bypass the consumer registry and activation checks. Local commit
+    <code>a1809ebf7be42e7fa01f23b969c3a401b8aa8722</code> keeps manifest
+    construction available for review but makes mint preparation, signing,
+    stale-row rebroadcast, and mint RBF fail with
+    <code>production_issuance_not_authorized</code>. Signet/regtest issuance is
+    unchanged. The exact FFI result is 114 passed, 0 failed, and 3 intentional
+    slow ignores; the three release-mode tests pass 3/0 in 31.31 seconds, and
+    warning-denied default, recovery, issuer, and registry builds are green.
+    Adding supply caps to operator-editable registry JSON was rejected as false
+    authority: production issuance needs a distinct authenticated policy after
+    the issuer/key ceremony.</p>
   </div>
 
 </div>
