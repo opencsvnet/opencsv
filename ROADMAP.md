@@ -147,9 +147,11 @@ Signal exposes one user-facing product: **Test USD**.
   `production_activation_not_authorized`; activated releases recheck their
   ceilings at intent creation and before proof/signing. Signed solo, batch,
   and reserve transactions snapshot the complete authorizing release, and RBF
-  revalidates that commitment before applying its original fee ceiling. The
+  revalidates that commitment before applying its original fee ceiling.
+  Missing mainnet authorization is database corruption rather than permission
+  to fall back to live host policy. The
   latest local Rust receipt is 111 passed, 0 failed, 3 intentional slow ignores
-  at `e5cd9ef589fe24ac26f083868693a9ccc12d31a5`, plus two recovery-rebind
+  at `4965ba366652dd243a6d830fc953daf68943d0c0`, plus two recovery-rebind
   tests and warnings-denied default/recovery/issuer builds. It remains
   unpublished.
 - The current local production candidates additionally fail closed unless

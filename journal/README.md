@@ -1386,6 +1386,15 @@ intentional slow ignores, with the recovery and issuer build gates still
 warning-clean. Trusting an unauthenticated numeric receipt field was rejected;
 the complete release must recompute to its committed identity.
 
+A follow-up removal test showed that an entirely absent snapshot still fell
+back to live host policy. Local commit
+`4965ba366652dd243a6d830fc953daf68943d0c0` makes missing mainnet authorization
+fail as database corruption while preserving legacy signet receipts. The full
+FFI result remains 111 passed, 0 failed, and 3 intentional slow ignores, and the
+warnings-denied FFI build is green. Substituting a later release for missing
+authorization was rejected because later policy did not authorize those
+signed bytes.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains

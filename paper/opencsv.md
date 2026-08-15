@@ -128,7 +128,9 @@ reserve/fee ceilings, source revision, and public approval receipts. Candidate
 policy is readable but cannot write; limited and general releases remain
 bounded by their committed ceilings. A signed operation snapshots the complete
 authorizing release, and protocol-safe replacement revalidates that commitment
-and retains its original fee ceiling across later policy changes. This is
+and retains its original fee ceiling across later policy changes. Missing
+mainnet authorization is treated as corrupt state rather than replaced by live
+host policy. This is
 release-policy integrity, not a
 proof of reserves or issuer authority. A
 database- and backup-carried version floor makes rollback read-only without

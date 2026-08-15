@@ -1337,6 +1337,14 @@
     and issuer build gates still warning-clean. Trusting an unauthenticated
     numeric receipt field was rejected; the complete release must recompute to
     its committed identity.</p>
+    <p>A follow-up removal test showed that an entirely absent snapshot still
+    fell back to live host policy. Local commit
+    <code>4965ba366652dd243a6d830fc953daf68943d0c0</code> makes missing mainnet
+    authorization fail as database corruption while preserving legacy signet
+    receipts. The full FFI result remains 111 passed, 0 failed, and 3
+    intentional slow ignores, and the warnings-denied FFI build is green.
+    Substituting a later release for missing authorization was rejected because
+    later policy did not authorize those signed bytes.</p>
   </div>
 
 </div>
