@@ -78,7 +78,7 @@
     <h1>Mainnet is not a toggle.</h1>
     <p class="lede">Test USD stays on signet forever. Any future production USD starts with new keys, new storage, a new fee tree, and one exact issuer-registry release that humans have actually reviewed.</p>
     <div class="notice"><strong>Nothing here is active.</strong> This page names the gates. It does not name an issuer, approve a build, release an app, create a production wallet, or authorize a mainnet transaction.</div>
-    <div class="sourcebar"><a href="PRODUCTION_MAINNET.md">Canonical contract</a><a href="ROADMAP.md">Plan of record</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Live work board ↗</a><span>all activation states fail closed</span></div>
+    <div class="sourcebar"><a href="PRODUCTION_MAINNET.md">Canonical contract</a><a href="ROADMAP.md">Plan of record</a><a href="https://github.com/opencsvnet/opencsv/issues/1#issuecomment-5303590376">Local Rust receipt ↗</a><a href="https://github.com/opencsvnet/opencsv/issues/1">Live work board ↗</a><span>all activation states fail closed</span></div>
   </div>
 </header>
 <div class="wrap metrics" aria-label="Production status">
@@ -101,10 +101,10 @@
     <section>
       <div class="eyebrow">Exact release input</div>
       <h2>A valid manifest list is not enough.</h2>
-      <p class="intro">Mainnet refuses loose issuer policy. The candidate wallet recomputes one commitment over the production deployment, registry version, ordered manifests and priorities, source revision, and public approval receipts before it can arm a consumer write.</p>
+      <p class="intro">Mainnet refuses loose issuer policy. The candidate wallet recomputes one commitment over the production deployment, registry version, ordered manifests and priorities, activation phase, exact rollout ceilings, source revision, and public approval receipts before it can arm a consumer write.</p>
       <div class="grid">
-        <details open><summary>Bound into the commitment</summary><ul><li>Format and registry versions</li><li>Exact production deployment</li><li>Ordered issuer manifests and priorities</li><li>Source revision</li><li>Unique public HTTPS approval receipts</li><li>Highest version persists in database + backup</li></ul></details>
-        <details open><summary>Fails closed, stays readable</summary><ul><li>Loose mainnet issuer list</li><li>Mutated manifest or priority</li><li>Wrong deployment or network</li><li>Missing approval receipt</li><li>Older version or same-version conflict</li></ul></details>
+        <details open><summary>Bound into the commitment</summary><ul><li>Format and registry versions</li><li>Exact production deployment</li><li>Ordered issuer manifests and priorities</li><li>Candidate, limited, or general phase</li><li>Transfer, batch, daily, reserve, and fee ceilings</li><li>Source revision + public approval receipts</li><li>Highest version persists in database + backup</li></ul></details>
+        <details open><summary>Fails closed, stays readable</summary><ul><li>Loose mainnet issuer list</li><li>Mutated manifest, priority, phase, or limit</li><li>Wrong deployment or network</li><li>Missing approval receipt</li><li>Older version or same-version conflict</li><li>Candidate writes: <code>production_activation_not_authorized</code></li></ul></details>
         <details open><summary>Still not proven</summary><ul><li>Backing or solvency</li><li>Redemption or legal enforceability</li><li>Brand authority</li><li>Issuer key custody</li><li>Operational readiness</li></ul></details>
       </div>
     </section>
@@ -115,11 +115,11 @@
       <p class="intro">Elapsed time changes nothing. Source, build, manifest, review, and owner receipts must identify the exact state transition.</p>
       <div class="phases">
         <article class="phase"><div><h3>Unconfigured</h3><p>Read, restore, sync, and export evidence. New consumer Bitcoin writes return <code>production_usd_not_configured</code>.</p></div><span class="state">current</span></article>
-        <article class="phase"><div><h3>Candidate</h3><p>Freeze proposed deployment, registry, key ceremony, recovery namespace, and build inputs. Writes stay disabled.</p></div><span class="state">blocked</span></article>
-        <article class="phase"><div><h3>Reviewed</h3><p>Independent protocol, wallet, Signal, operational, and issuer reviews approve exact hashes. Still not a release.</p></div><span class="state">blocked</span></article>
-        <article class="phase"><div><h3>Distribution candidate</h3><p>A reproducible signed build passes recovery and signet acceptance. Distribution still needs explicit owner approval.</p></div><span class="state">blocked</span></article>
-        <article class="phase"><div><h3>Limited activation</h3><p>Fresh production wallets operate under published funding, transaction, and loss limits with a first-action runbook.</p></div><span class="state">blocked</span></article>
-        <article class="phase"><div><h3>General activation</h3><p>Requires limited-operation evidence, incident procedures, support readiness, and a new owner decision.</p></div><span class="state">blocked</span></article>
+        <article class="phase"><div><h3>Candidate</h3><p>Freeze deployment, registry, key ceremony, recovery namespace, build inputs, and rollout ceilings. The committed phase is <code>candidate</code>; writes stay disabled.</p></div><span class="state">blocked</span></article>
+        <article class="phase"><div><h3>Reviewed</h3><p>Independent protocol, wallet, Signal, operational, and issuer reviews approve exact hashes. The release remains <code>candidate</code> and cannot write.</p></div><span class="state">blocked</span></article>
+        <article class="phase"><div><h3>Distribution candidate</h3><p>A reproducible signed build passes recovery and signet acceptance. Distribution still needs explicit owner approval; policy remains <code>candidate</code>.</p></div><span class="state">blocked</span></article>
+        <article class="phase"><div><h3>Limited activation</h3><p>A higher <code>limited</code> release permits fresh wallets only inside its exact transfer, batch, daily, reserve, and miner-fee ceilings.</p></div><span class="state">blocked</span></article>
+        <article class="phase"><div><h3>General activation</h3><p>Requires limited-operation evidence, incident procedures, support readiness, and a higher <code>general</code> release. Its ceilings still apply.</p></div><span class="state">blocked</span></article>
       </div>
     </section>
 

@@ -123,8 +123,11 @@ authority, operational recovery, or brand identity. The project's review-only
 requires a fresh namespace and exact reviewed manifest registry before any
 consumer mainnet write. The implementation candidate accepts that policy only
 as a versioned, deployment-bound release input with a recomputed commitment to
-its ordered manifests, source revision, and public approval receipts; this is
-release-policy integrity, not a proof of reserves or issuer authority. A
+its ordered manifests, activation phase, exact transfer/batch/rolling-day/
+reserve/fee ceilings, source revision, and public approval receipts. Candidate
+policy is readable but cannot write; limited and general releases remain
+bounded by their committed ceilings. This is release-policy integrity, not a
+proof of reserves or issuer authority. A
 database- and backup-carried version floor makes rollback read-only without
 hiding wallet evidence; it is operational policy state, not a protocol theorem.
 The contract also requires two distinct pinned raw-byte observer hosts and two

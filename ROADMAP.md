@@ -141,6 +141,14 @@ Signal exposes one user-facing product: **Test USD**.
   account database and production Secure Backup. Older or conflicting policy
   remains readable but cannot start unsigned work; older checkpoints cannot
   lower the floor.
+- The release commitment also binds a `candidate`, `limited`, or `general`
+  phase and exact transfer, batch, rolling-day, recipient, reserve-allocation,
+  and miner-fee ceilings. Candidate releases return
+  `production_activation_not_authorized`; activated releases recheck their
+  ceilings at intent creation and before proof/signing. The latest local Rust
+  receipt is 109 passed, 0 failed, 3 intentional slow ignores at
+  `fa0736c65de64a175b4f1d4e4b4854a9d92e3367`, plus two recovery-rebind tests
+  and warnings-denied default/recovery/issuer builds. It remains unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not

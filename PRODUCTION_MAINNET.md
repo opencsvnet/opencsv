@@ -29,6 +29,9 @@ future issuer-backed production USD product. It exists so a build cannot become
    protocol-safe fee bump remain available.
 7. No review, build, website edit, or TestFlight state authorizes a mainnet
    broadcast. That remains a separate, deliberate owner action.
+8. Activation and loss limits are release data, not mutable host preferences.
+   A production release commits its phase and ceilings; the app may tighten
+   them locally but cannot raise them.
 
 ## Namespace separation
 
@@ -89,17 +92,36 @@ candidate Rust boundary accepts issuer policies only inside one
 - `format_version: 1` and a nonzero `registry_version`;
 - the exact non-test `deployment_id`;
 - the ordered issuer manifests and priorities;
+- one exact rollout policy containing:
+  - `phase`: `candidate`, `limited`, or `general`;
+  - maximum base units per transfer, per batch, and per rolling 24 hours;
+  - maximum rolling 24-hour operation count and recipients per batch;
+  - maximum sats allocated by one reserve-maintenance transaction; and
+  - maximum miner fee for initial transactions and replacements;
 - a 40- or 64-character lowercase hexadecimal source revision;
 - at least one unique public HTTPS approval receipt; and
 - `commitment_sha256`, recomputed over a domain-separated canonical encoding of
   every preceding field.
 
 Status exposes the registry version, deployment, source revision, approval
-receipts, issuer count, and commitment. A mutation, wrong deployment, missing
-approval, commitment mismatch, or production object presented to signet fails
-during account configuration. Conversely, a loose mainnet issuer list fails
-even when every individual manifest is internally valid. Test USD keeps its
-separate signet registry format.
+receipts, issuer count, rollout policy, and commitment. A mutation, wrong
+deployment, missing approval, malformed rollout, commitment mismatch, or
+production object presented to signet fails during account configuration.
+Conversely, a loose mainnet issuer list fails even when every individual
+manifest is internally valid. Test USD keeps its separate signet registry
+format.
+
+A `candidate` release is reviewable and recoverable but cannot create a fresh
+consumer Bitcoin write; it returns the stable reason
+`production_activation_not_authorized`. A `limited` or `general` release may
+write only inside its committed ceilings. Rust checks a new intent against the
+per-transfer and rolling-day allowance, checks an explicit batch against its
+recipient and total-value ceilings, and rechecks the applicable policy before
+proof/signing. Live and completed intents count against the rolling allowance;
+cancelled and protocol-rejected intents do not. Wallet-internal reserve
+maintenance and every initial or replacement miner fee remain separately
+bounded. Host configuration can lower the miner-fee ceiling but cannot raise
+the release value.
 
 The containing reproducible application release and its distribution signature
 authenticate this immutable input. The public receipts make the selected policy
@@ -144,19 +166,23 @@ membership, identities, context, and output positions.
    registry is empty. Read, restore, sync, and evidence export are allowed;
    new consumer Bitcoin writes return `production_usd_not_configured`.
 2. **Candidate** — proposed deployment ID, manifest set, key ceremony,
-   recovery namespace, and build inputs are frozen for review. Writes remain
-   disabled.
+   recovery namespace, build inputs, and rollout ceilings are frozen for
+   review. The committed release phase is `candidate`; writes remain disabled
+   with `production_activation_not_authorized`.
 3. **Reviewed** — independent protocol, wallet, Signal, operational, and issuer
-   reviews approve exact hashes. This is still not a release.
+   reviews approve exact hashes. The committed release phase remains
+   `candidate`; this is still not an activated release.
 4. **Distribution candidate** — reproducible signed build passes clean-install
    recovery and signet acceptance. TestFlight or another distribution action
    still needs explicit owner approval and contains no funded mainnet wallet by
-   default.
+   default. Its production policy remains `candidate`.
 5. **Limited activation** — separately approved users initialize fresh
-   production wallets under published funding and loss limits. Every initial
+   production wallets under the exact `limited` release ceilings. Every initial
    mainnet transaction requires an explicit runbook receipt.
 6. **General activation** — allowed only after limited-operation evidence,
-   incident procedures, support/recovery validation, and a new owner decision.
+   incident procedures, support/recovery validation, and a new owner decision
+   embodied in a higher `general` registry release. General does not mean
+   unlimited; its committed ceilings still apply.
 
 No state transition is inferred from elapsed time. Each transition names exact
 source, build, manifest, and approval receipts.
@@ -223,10 +249,16 @@ properties described in the paper; they do not prove issuer backing or
 operational readiness.
 
 The local Rust production-gate candidate adds the empty-registry write block,
-deployment-scoped mainnet derivation, two-host pinned raw-byte quorum, and a
-two-peer confirmed-chain activation check. Its matching local Signal candidate
-has immutable profiles for the two current built-ins and rejects mutated or
-mixed-network policy before network I/O. Until those candidates are rebased,
-hosted-green, independently reviewed, and merged, they are evidence of work in
-progress only. No production manifest, production wallet, public release, or
-mainnet transaction exists as a result of this document.
+deployment-scoped mainnet derivation, two-host pinned raw-byte quorum, a
+two-peer confirmed-chain activation check, and release-committed activation and
+loss ceilings. Candidate policy remains readable but cannot write; limited and
+general policy is enforced at planning and again before proof/signing. The
+matching local Signal candidate has immutable profiles for the two current
+built-ins and rejects mutated or mixed-network policy before network I/O. The
+latest unpublished Rust tip is `fa0736c65de64a175b4f1d4e4b4854a9d92e3367`;
+its FFI receipt is 109 passed, 0 failed, and 3 intentional slow ignores, plus
+both feature-gated recovery rebind tests and warnings-denied default, recovery,
+and issuer builds. Until those candidates are rebased, hosted-green,
+independently reviewed, and merged, they are evidence of work in progress only.
+No production manifest, production wallet, public release, or mainnet
+transaction exists as a result of this document.

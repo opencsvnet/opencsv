@@ -1360,6 +1360,20 @@ checkpoint cannot lower the floor. The full FFI result is now 105 passed, 0
 failed, and 3 intentional slow ignores. Rejecting account open entirely was
 also rejected because rollback defense must not hide recovery evidence.
 
+The next audit found that the activation contract described limited-rollout
+caps without making them authenticated wallet inputs. That would let a host
+label a build "limited" while independently choosing its loss envelope. Local
+commit `fa0736c65de64a175b4f1d4e4b4854a9d92e3367` therefore adds the activation
+phase and exact transfer, batch, rolling-day, recipient, reserve-allocation,
+and miner-fee ceilings to the registry commitment. Candidate releases remain
+inspectable but return `production_activation_not_authorized`; limited and
+general releases recheck their ceilings at intent creation and before
+proof/signing. Host configuration may tighten the fee cap but cannot raise it.
+The revised FFI receipt is 109 passed, 0 failed, and 3 intentional slow ignores,
+plus both feature-gated recovery-rebind tests and warnings-denied default,
+recovery, and issuer builds. Treating `general` as unlimited and relying on UI
+limits were both rejected because neither survives a hostile or stale host.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains
