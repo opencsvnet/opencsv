@@ -1381,6 +1381,16 @@
     activation authority was explicitly rejected: distribution signing,
     independent review, issuer evidence, and owner approval remain external
     gates.</p>
+    <p>Follow-up
+    <code>6fc1e4ca410083297250f4d7a7cfce474f4f2d93</code> adds the registry-only
+    feature to hosted Rust CI in an isolated target directory. The job runs the
+    four golden/durability tests, builds the release binary and library, writes
+    the symbol inventory as a separate required command, and rejects any issuer
+    C symbol. Piping <code>nm</code> directly into a negative grep was rejected
+    because a failed or incompatible inspector can otherwise look like an empty
+    result. The exact Linux symbol inventory remains a hosted gate after the
+    stacked branch is published; the workflow syntax and cold release build are
+    locally checked.</p>
   </div>
 
 </div>

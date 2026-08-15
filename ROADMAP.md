@@ -157,7 +157,7 @@ Signal exposes one user-facing product: **Test USD**.
   authority, and refuses to overwrite an existing release. Its checked-in
   candidate has zero issuers and cannot arm writes. The latest local Rust
   receipt is 112 passed, 0 failed, 3 intentional slow ignores at
-  `aa495a76d84003c91e457e7ded522125231bac03`, plus four registry-tool tests,
+  `6fc1e4ca410083297250f4d7a7cfce474f4f2d93`, plus four registry-tool tests,
   two recovery-rebind tests, and warnings-denied
   default/recovery/issuer/registry builds. It remains unpublished.
 - The current local production candidates additionally fail closed unless
