@@ -154,7 +154,8 @@ Signal exposes one user-facing product: **Test USD**.
   or reserve operation identity. Missing or substituted mainnet authorization
   is database corruption rather than permission to fall back to live host
   policy. Crash resume revalidates it before transaction parsing, chain lookup,
-  or relay. The separately featured, secret-free `opencsv-registry` tool uses the
+  or relay; fee bump does so before chain verification or replacement signing.
+  The separately featured, secret-free `opencsv-registry` tool uses the
   same Rust serializer and verifier as account open. It requires the expected
   application deployment, distinguishes structural validity from activation
   authority, and refuses to overwrite an existing release. Its checked-in
@@ -163,10 +164,10 @@ Signal exposes one user-facing product: **Test USD**.
   registry is not issuance authority: the local headless mainnet path permits
   manifest review but blocks mint preparation, signing, rebroadcast, and mint
   RBF. The latest local Rust receipt is 115 passed, 0 failed, 3 intentional
-  slow ignores at `36cadb9f4e886499c5f3cae302c7c38c26badd4d`, plus four registry-tool tests,
+  slow ignores at `11bad686b10775207d40e3c85bdde61099637e63`, plus four registry-tool tests,
   two recovery-rebind tests, and warnings-denied
   default/recovery/issuer/registry builds. All three ignored recursive tests
-  pass when explicitly run serially in release mode (31.91 seconds). The stack
+  pass when explicitly run serially in release mode (31.92 seconds). The stack
   remains unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct

@@ -134,7 +134,8 @@ identity, so missing, substituted, or cross-operation mainnet authorization is
 treated as corrupt state rather than replaced by live host policy. This is
 release-policy integrity, not a proof of reserves or issuer authority. Crash
 rebroadcast of solo, shared-batch, and reserve transactions revalidates that
-authorization before parsing bytes or contacting the network. A
+authorization before parsing bytes or contacting the network; their fee-bump
+paths do so before chain verification or replacement signing. A
 separately featured, secret-free `opencsv-registry` tool constructs and checks
 those exact bytes with the same Rust serializer and verifier as account open;
 it reports structural validity without claiming activation authority and binds

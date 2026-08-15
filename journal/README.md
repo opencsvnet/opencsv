@@ -1471,6 +1471,16 @@ result is 115 passed, 0 failed, and 3 intentional slow ignores; release-mode is
 3/0 in 31.91 seconds. Deferring authorization to RBF was rejected because
 idempotent rebroadcast is itself a network write.
 
+A follow-up ordering pass found that all three fee-bump entry points still
+consulted live chain state before authenticating the persisted production
+authorization. Local commit
+`11bad686b10775207d40e3c85bdde61099637e63` moves that validation ahead of
+authoritative chain checks, replacement reconstruction, and signing for solo,
+shared-batch, and reserve-maintenance replacements. This makes missing
+authorization fail before external state or signing work can influence the
+result. The complete exact FFI receipt remains 115 passed, 0 failed, and 3
+intentional slow ignores; the release-mode ignored suite passes 3/0 in 31.92 seconds.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains

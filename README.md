@@ -114,7 +114,8 @@ mint authority. No production issuer, issuance authorization, or mainnet
 activation is claimed.
 Signed mainnet crash resume revalidates the operation-bound authorization
 before transaction parsing, chain lookup, or network relay; stale pre-gate rows
-cannot use idempotent rebroadcast as a policy bypass.
+cannot use idempotent rebroadcast as a policy bypass. Fee bumps validate it
+before chain verification or replacement signing.
 
 The current homepage lead is deliberately simpler than the full acceptance
 matrix. On 2026-08-08, Carol sent 1 Test USD to Bob as operation

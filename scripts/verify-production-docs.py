@@ -78,6 +78,7 @@ def main() -> int:
             "production_issuance_not_authorized",
             "Consumer policy is not issuance authority",
             "crash resume verify that authorization before parsing",
+            "fee-bump paths verify it before authoritative chain checks",
             "No production manifest, production wallet, public release, or",
         ],
     )
@@ -95,6 +96,7 @@ def main() -> int:
             "Activated release with zero issuers or a placeholder revision",
             "Mainnet mint writes: <code>production_issuance_not_authorized</code>",
             "Crash resume revalidates it before parsing or network I/O",
+            "Fee bump revalidates it before chain checks or signing",
         ],
     )
     require_all(
@@ -107,6 +109,7 @@ def main() -> int:
             "opencsv-registry",
             "production_issuance_not_authorized",
             "Crash resume revalidates it before transaction parsing",
+            "fee bump does so before chain verification or replacement signing",
         ],
     )
     require_all(
@@ -120,6 +123,7 @@ def main() -> int:
             "production_issuance_not_authorized",
             "Crash",
             "rebroadcast of solo, shared-batch, and reserve transactions",
+            "before chain verification or replacement signing",
         ],
     )
 
@@ -127,7 +131,8 @@ def main() -> int:
     ci_receipt = "6fc1e4ca410083297250f4d7a7cfce474f4f2d93"
     activation_receipt = "6fdafb48867e5237c0f38d4e125ec62b4e076205"
     issuance_receipt = "a1809ebf7be42e7fa01f23b969c3a401b8aa8722"
-    receipt = "36cadb9f4e886499c5f3cae302c7c38c26badd4d"
+    resume_receipt = "36cadb9f4e886499c5f3cae302c7c38c26badd4d"
+    receipt = "11bad686b10775207d40e3c85bdde61099637e63"
     commitment = "bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169"
     require_all(
         journal,
@@ -136,10 +141,11 @@ def main() -> int:
             ci_receipt,
             activation_receipt,
             issuance_receipt,
+            resume_receipt,
             receipt,
             commitment,
             "115 passed, 0 failed",
-            "31.91 seconds",
+            "31.92 seconds",
             "production_issuance_not_authorized",
         ],
     )
@@ -150,10 +156,11 @@ def main() -> int:
             ci_receipt,
             activation_receipt,
             issuance_receipt,
+            resume_receipt,
             receipt,
             commitment,
             "115 passed, 0 failed",
-            "31.91 seconds",
+            "31.92 seconds",
             "production_issuance_not_authorized",
         ],
     )
