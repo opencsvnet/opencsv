@@ -102,10 +102,11 @@ account root, database, backup namespace, fee tree, deployment-scoped key
 derivation, and exact non-test issuer registry. Mainnet rejects loose issuer
 lists: the candidate registry is a versioned, deployment-bound release input
 whose exact ordered policies, source revision, and public approval receipts
-recompute to a published commitment. It also lists the issuer,
-redemption, governance, recovery, distribution, and explicit owner-approval
-decisions that remain unresolved. No production issuer or mainnet activation is
-claimed.
+recompute to a published commitment. The database and Secure Backup preserve
+the highest version as a read-preserving rollback floor. It also lists the
+issuer, redemption, governance, recovery, distribution, and explicit
+owner-approval decisions that remain unresolved. No production issuer or
+mainnet activation is claimed.
 
 The current homepage lead is deliberately simpler than the full acceptance
 matrix. On 2026-08-08, Carol sent 1 Test USD to Bob as operation

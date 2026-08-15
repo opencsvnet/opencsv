@@ -1299,6 +1299,15 @@
     they do not prove reserves, redemption, legal authority, or brand control.
     No real registry bytes or production issuer were created, and the candidate
     remains unpublished until the earlier exact-tip review gate clears.</p>
+    <p>The first envelope pass still treated the version as metadata. Local
+    commit <code>29174cca3e3221767239afd46ddaa3d40f128232</code> stores the
+    highest version and commitment atomically in the database and carries it
+    in production Secure Backup. Older or same-version-conflicting policy opens
+    balances and evidence but blocks writes with stable rollback/conflict
+    reasons; a restored older checkpoint cannot lower the floor. The full FFI
+    result is now 105 passed, 0 failed, and 3 intentional slow ignores.
+    Rejecting account open entirely was also rejected because rollback defense
+    must not hide recovery evidence.</p>
   </div>
 
 </div>

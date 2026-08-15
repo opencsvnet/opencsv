@@ -137,6 +137,10 @@ Signal exposes one user-facing product: **Test USD**.
   manifests/priorities, source revision, and public HTTPS approval receipts
   recompute to its exposed commitment. This makes the selected policy
   reproducible; it does not establish issuer backing or authority.
+- The highest accepted registry version and commitment persist in both the
+  account database and production Secure Backup. Older or conflicting policy
+  remains readable but cannot start unsigned work; older checkpoints cannot
+  lower the floor.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not

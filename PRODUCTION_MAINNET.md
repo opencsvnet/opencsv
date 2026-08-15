@@ -106,6 +106,16 @@ authenticate this immutable input. The public receipts make the selected policy
 auditable; neither the commitment, the application signature, nor a receipt URL
 proves backing, solvency, redemption, legal authority, or brand control.
 
+The database atomically stores the highest accepted registry version and its
+exact commitment, and production Secure Backup checkpoints carry the same
+floor. An older valid client/release may still open balances, history, and
+evidence, but new writes return `production_registry_rollback`. Reusing one
+version with different committed bytes returns
+`production_registry_conflict`. A higher authenticated version advances the
+floor; restoring an older checkpoint never lowers it, while a newer checkpoint
+keeps an older client read-only. Failing account open entirely was rejected
+because rollback defense must not hide recovery evidence.
+
 ## Registry lifecycle
 
 Registry changes are versioned, signed release inputs. They are never fetched

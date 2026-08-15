@@ -1351,6 +1351,15 @@ release identity. The full FFI library result is 102 passed, 0 failed, and 3
 intentional slow ignores, with default, recovery, and issuer feature builds
 warning-clean at local tip `715982ed7c78cbef670ed7b91c680aa720df2fec`.
 
+The first envelope pass still treated the version as metadata. The next local
+commit `29174cca3e3221767239afd46ddaa3d40f128232` stores the highest version and
+commitment atomically in the database and carries it in production Secure
+Backup. Older or same-version-conflicting policy opens balances and evidence
+but blocks writes with stable rollback/conflict reasons; a restored older
+checkpoint cannot lower the floor. The full FFI result is now 105 passed, 0
+failed, and 3 intentional slow ignores. Rejecting account open entirely was
+also rejected because rollback defense must not hide recovery evidence.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains
