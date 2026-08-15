@@ -121,9 +121,11 @@ An internally valid issuer manifest does not prove backing, redemption, legal
 authority, operational recovery, or brand identity. The project's review-only
 [production/mainnet activation contract](../PRODUCTION_MAINNET.md) therefore
 requires a fresh namespace and exact reviewed manifest registry before any
-consumer mainnet write, while keeping those issuer and operational assumptions
-explicit. The contract is not evidence that a production issuer or deployment
-exists.
+consumer mainnet write. It also requires two distinct pinned raw-byte observer
+hosts and two distinct compact-filter peers; those are operational diversity
+requirements, not new cryptographic assumptions or claims that public APIs are
+authoritative. The contract keeps the issuer and operational assumptions
+explicit and is not evidence that a production issuer or deployment exists.
 
 ### 1.4 Organization
 

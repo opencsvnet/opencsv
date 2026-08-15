@@ -1321,6 +1321,24 @@ identity, key custody, and operational readiness. Those decisions remain open
 and block activation. No real issuer, production manifest, release, wallet, key
 material, or mainnet transaction was created.
 
+The first implementation audit then found that mainnet inherited no required
+raw-transaction observers even though Test USD required two. A second pass
+found that an enabled SPV mode with zero configured peers could look ready and
+fail only at signing. Both were rejected as silent safety downgrades. The local
+Rust candidate now defaults to pinned mempool.space and Blockstream exact-byte
+checks, counts distinct observer hosts rather than check IDs or URL spellings,
+and requires two distinct compact-filter peers before new production writes.
+The local Signal candidate uses immutable profiles for both networks and
+rejects endpoint, pin, or mixed-network mutation before network I/O. Public
+services remain untrusted evidence sources; Rust recomputes transaction
+identity and confirmed settlement still comes from the independently agreed
+proof-of-work chain.
+
+These candidates are deliberately unpublished behind earlier exact-tip review
+gates. The observer operators and pin lifecycle remain human decisions in the
+activation contract. Recording the implemented minimum here does not claim a
+production issuer, release, or mainnet authorization.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

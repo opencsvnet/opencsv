@@ -132,6 +132,11 @@ Signal exposes one user-facing product: **Test USD**.
   gates, and still-open human decisions are specified in
   [`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md). That document is a review
   contract, not an activation or issuer claim.
+- The current local production candidates additionally fail closed unless
+  mainnet has two required pinned raw-byte observer hosts, visible direct
+  relay, and two distinct compact-filter peers. These candidates are not
+  published product state until their prior PRs merge and the exact rebased
+  tips pass hosted CI and independent review.
 
 ## Completed Rust merge gate
 

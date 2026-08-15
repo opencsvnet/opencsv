@@ -149,8 +149,15 @@ source, build, manifest, and approval receipts.
 
 - clean fresh-root setup and Secure Backup recovery without Test USD state;
 - primary/linked-device permissions and lost-device procedure;
-- fee-reserve limits, UTXO policy, observer policy, peer diversity, and stale
-  cache presentation tested on mainnet-compatible fixtures without broadcast;
+- fee-reserve limits and UTXO policy tested on mainnet-compatible fixtures
+  without broadcast;
+- at least two required pinned raw-transaction observers operated on distinct
+  hosts, with exact-byte agreement and no ordinary-trust fallback;
+- direct relay remains enabled and settlement uses at least two distinct
+  configured compact-filter peers; missing or duplicated peers keep the wallet
+  read-only rather than deferring failure until signing;
+- certificate-pin rotation, observer outage/conflict, peer disagreement, and
+  stale-cache presentation tested without broadcast;
 - limited-rollout caps, monitoring, rollback/freeze procedure, and support path;
 - a deliberate owner approval for the exact first mainnet action.
 
@@ -163,7 +170,9 @@ These are intentionally unresolved and block activation:
 - production deployment identifier and registry version 1 bytes;
 - issuer-key custody and whether authorization should use threshold hardware;
 - registry signer/reviewer quorum and emergency-update governance;
-- production observer endpoints and certificate-pin lifecycle;
+- final production observer operators/endpoints and certificate-pin lifecycle
+  (the candidate defaults are mempool.space and Blockstream, not an approval to
+  outsource spend-critical chain truth to either service);
 - initial wallet/transaction/value limits and incident-response owners;
 - release channel, tester population, and support/recovery commitments.
 
@@ -176,8 +185,11 @@ recovery, and signet settlement. Formal proofs and tests cover protocol
 properties described in the paper; they do not prove issuer backing or
 operational readiness.
 
-The local Rust production-gate candidate adds the empty-registry write block
-and deployment-scoped mainnet derivation. Until that candidate is rebased,
-hosted-green, independently reviewed, and merged, it is evidence of work in
+The local Rust production-gate candidate adds the empty-registry write block,
+deployment-scoped mainnet derivation, two-host pinned raw-byte quorum, and a
+two-peer confirmed-chain activation check. Its matching local Signal candidate
+has immutable profiles for the two current built-ins and rejects mutated or
+mixed-network policy before network I/O. Until those candidates are rebased,
+hosted-green, independently reviewed, and merged, they are evidence of work in
 progress only. No production manifest, production wallet, public release, or
 mainnet transaction exists as a result of this document.
