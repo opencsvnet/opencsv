@@ -1486,6 +1486,47 @@ not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains
 unpublished until the earlier exact-tip review gate clears.
 
+## 2026-08-15 — Production mint authority becomes replay-safe evidence
+
+The earlier production boundary correctly disabled headless mainnet minting,
+but a permanent denial was not a usable issuance design. The stacked Rust
+draft in [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
+at exact head `eb9a2ef2062d51d1f53460077b20e80db439ea89` replaces that stopgap with a
+secret-free verification boundary. Registry v2 commits the exact issuance
+policy; the policy names distinct administrative secp256k1 keys and a threshold
+of at least two; and each signed authorization binds the registry, asset,
+recipient, amounts, monotonic sequence, supply transition, validity window,
+and public receipts. The AIR issuer key remains a different role.
+
+An operation ID is the authorization digest. Wallet planning creates the mint
+operation and its consumed-authorization ledger row in one immediate SQLite
+transaction, so a crash, failed proof, missing fee input, or later cancellation
+cannot make the same approval reusable. Sequence one begins at supply zero;
+every successor must begin at the preceding supply-after value. Secure Backup
+includes the ledger and any cancelled operation needed to establish that
+floor, and restore validates the complete chain before importing it.
+
+Two attractive shortcuts were rejected. Consuming an approval only after proof
+generation leaves a replay window when proving or fee selection fails. Making
+the policy commit a registry commitment that itself includes the policy creates
+a circular hash. The chosen registry v2 envelope commits sorted policy
+references, while each authorization separately commits the final registry and
+policy digests. Signed operations snapshot that evidence so crash recovery and
+protocol-safe RBF survive later policy removal; unsigned operations fail closed
+against the live release.
+
+The warnings-denied local workspace completed with no executed failures,
+including 123 FFI passes with 3 intentional slow ignores, 3/0 serial release
+recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD node
+suite, and a 2-pass PCD redeem suite. Hosted runs
+[31913959340](https://github.com/opencsvnet/opencsv-rs/actions/runs/31913959340)
+and
+[31913977221](https://github.com/opencsvnet/opencsv-rs/actions/runs/31913977221)
+are the exact-head publication gates and were still executing when this entry
+was written. No real policy, signer, administrative key, issuer, release, or
+mainnet transaction was created; independent exact-tip approval remains a
+merge and activation gate.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

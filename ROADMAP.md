@@ -126,8 +126,10 @@ Signal exposes one user-facing product: **Test USD**.
   read-only. New unsigned work fails with stable `asset_not_reviewed`.
 - Signal cannot mint or create assets. Privileged signet/regtest issuance
   remains available only through the non-default headless `opencsv-issuer`
-  tool. Mainnet mint writes return `production_issuance_not_authorized` until
-  a separately authenticated issuer authorization and supply policy exist.
+  tool. The stacked mainnet candidate admits issuance only through a
+  registry-v2-committed threshold policy, an exact signed mint authorization,
+  and a replay-safe per-asset sequence/supply floor. Missing material returns
+  `production_issuance_not_authorized`. Signal exposes none of this surface.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
   The fail-closed namespace, registry lifecycle, activation states, evidence
@@ -160,15 +162,25 @@ Signal exposes one user-facing product: **Test USD**.
   application deployment, distinguishes structural validity from activation
   authority, and refuses to overwrite an existing release. Its checked-in
   candidate has zero issuers and cannot arm writes; limited/general validation
-  rejects empty issuer sets and all-zero placeholder revisions. The consumer
-  registry is not issuance authority: the local headless mainnet path permits
-  manifest review but blocks mint preparation, signing, rebroadcast, and mint
-  RBF. The latest local Rust receipt is 115 passed, 0 failed, 3 intentional
-  slow ignores at `11bad686b10775207d40e3c85bdde61099637e63`, plus four registry-tool tests,
-  two recovery-rebind tests, and warnings-denied
-  default/recovery/issuer/registry builds. All three ignored recursive tests
-  pass when explicitly run serially in release mode (31.92 seconds). The stack
-  remains unpublished.
+  rejects empty issuer sets and all-zero placeholder revisions. Registry v2
+  additionally commits sorted exact asset-to-issuance-policy hashes while v1
+  bytes remain unchanged and cannot authorize minting. The headless wallet
+  atomically consumes each threshold-signed authorization with its mint
+  operation, enforces contiguous sequence and supply transitions, carries the
+  ledger in Secure Backup, and verifies signed historical policy snapshots on
+  resume/RBF after policy rotation. Consumer policy alone never authorizes
+  supply.
+
+  The exact published draft is
+  [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) at
+  `eb9a2ef2062d51d1f53460077b20e80db439ea89`, stacked on still-unmerged PR #30.
+  Local warnings-denied workspace validation is green with no executed test
+  failure; the proof-heavy PCD node and redeem suites took 963.71 and 431.65
+  seconds respectively. FFI is 123 passed / 0 failed / 3 intentional ignores;
+  those three pass explicitly in release mode in 13.85 seconds. Registry and
+  issuer tool suites pass 4/0 and 8/0. Hosted runs 31913977221 and 31913959340
+  are still executing, and independent review remains absent, so nothing here
+  is merge or activation authority.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not

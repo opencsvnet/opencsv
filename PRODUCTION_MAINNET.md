@@ -33,9 +33,10 @@ future issuer-backed production USD product. It exists so a build cannot become
 8. Activation and loss limits are release data, not mutable host preferences.
    A production release commits its phase and ceilings; the app may tighten
    them locally but cannot raise them.
-9. A consumer registry is not issuance authority. Production supply cannot
-   grow until a separately authenticated issuer authorization and supply
-   policy survive the issuer/key ceremony and independent review.
+9. A consumer registry is not issuance authority. Production supply can grow
+   only when registry v2 commits one exact threshold policy and a separately
+   signed authorization advances the durable per-asset sequence and supply
+   floor. No real policy or authority exists yet.
 
 ## Namespace separation
 
@@ -50,7 +51,7 @@ future issuer-backed production USD product. It exists so a build cannot become
 | Secure Backup | existing Test USD namespace | fresh versioned production namespace |
 | Bitcoin fee tree | BIP84 signet coin type | fresh BIP84 mainnet coin type |
 | Asset registry | exact test-only manifests | exact non-test manifests approved below |
-| Issuance | headless test issuer tooling | disabled pending separately authenticated issuer authorization and supply policy |
+| Issuance | headless test issuer tooling | headless-only threshold gate implemented; inactive until real policy, keys, and approval exist |
 | Conversion | none | none from Test USD |
 
 The Rust custody boundary records its derivation identifier in account status,
@@ -93,7 +94,9 @@ Mainnet does not accept a loose host-supplied `usd_issuers` vector. The
 candidate Rust boundary accepts issuer policies only inside one
 `ProductionUsdRegistryRelease` with:
 
-- `format_version: 1` and a nonzero `registry_version`;
+- `format_version: 1` or `2` and a nonzero `registry_version`; v1 preserves the
+  original bytes and cannot authorize issuance, while v2 additionally commits
+  sorted unique `(asset_id, issuance_policy_commitment)` references;
 - the exact non-test `deployment_id`;
 - the ordered issuer manifests and priorities;
 - one exact rollout policy containing:
@@ -139,19 +142,56 @@ placeholder revision before wallet open.
 This tool is evidence about exact policy bytes; it is not a registry signer or
 an activation mechanism.
 
+The same secret-free operator surface exposes `issuance-policy build` and
+`issuance-policy verify` for the public threshold policy, plus
+`mint-authorization verify` for a complete proposed authorization. These
+commands canonicalize and inspect public evidence only: they do not generate,
+import, or use an administrative private key, and they cannot mint. A real key
+ceremony, signer implementation, approved policy, and independently reviewed
+registry v2 release remain deliberately absent.
+
 ### Consumer policy is not issuance authority
 
 The registry release controls which exact instruments a consumer wallet may
-select and spend. It does not authorize the issuer to increase supply. The
-latest local Rust candidate therefore permits mainnet manifest construction
-for offline review but returns `production_issuance_not_authorized` from mint
-preparation, pre-broadcast signing, stale-row rebroadcast, and mint RBF.
+select and spend. It does not by itself authorize the issuer to increase
+supply. The stacked Rust candidate in
+[opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
+therefore requires registry v2 to bind one exact public issuance policy. That
+policy names the deployment, registry version, asset, sorted distinct
+administrative secp256k1 keys, threshold of at least two, per-authorization and
+cumulative supply ceilings, authorization lifetime, validity window, source
+revision, and public approval receipts. Those administrative keys are distinct
+from the AIR issuer key.
 
-Adding mint caps to the same operator-supplied JSON envelope was rejected: a
+Each mint authorization binds the final registry commitment, policy
+commitment, exact recipient, one or two amounts, monotonic sequence,
+supply-before/supply-after transition, validity window, and approval receipts.
+Signatures are canonical, unique, sorted, and threshold-checked. The wallet
+verifies this evidence before fee selection, then creates the mint operation
+and authorization-ledger row in one immediate SQLite transaction. The first
+authorization for an asset must be sequence one at supply zero; every later row
+must be the exact successor and begin at the preceding supply-after value. A
+failed proof or missing fee input does not make the authorization reusable.
+Missing or invalid production issuance evidence fails with the stable reason
+`production_issuance_not_authorized`.
+
+Secure Backup carries consumed approvals, including the cancelled mint
+operations that establish the floor. Restore rejects missing operations,
+duplicate ids, sequence gaps, stale supply, policy/authorization mismatch, or
+tampering before it imports anything. Pre-sign rechecks the live v2 release,
+policy, authorization, and ledger. Signed mints snapshot the exact policy and
+authorization beside the wallet-authenticated rollout release, so crash resume
+and protocol-safe RBF can verify historical authority after later policy
+removal while unsigned work stays blocked.
+
+Adding mint caps to the consumer rollout envelope alone was rejected: a
 self-consistent limit would be structurally valid without authenticating who
-approved issuance. Production minting remains disabled until a distinct
-authorization binds the exact asset, deployment, issuer key, supply envelope,
-approval evidence, and operation. Signet/regtest issuer behavior is unchanged.
+approved issuance. The policy deliberately commits the registry version rather
+than its hash, while registry v2 commits the policy hash; the threshold-signed
+mint binds both final commitments and avoids an impossible circular hash fixed
+point. Signet/regtest issuer behavior is unchanged. This is implemented format
+and wallet behavior, not evidence of a real issuer, key ceremony, reviewed
+policy, production release, or mainnet authorization.
 
 A `candidate` release is reviewable and recoverable but cannot create a fresh
 consumer Bitcoin write; it returns the stable reason
@@ -306,19 +346,20 @@ recovery, and signet settlement. Formal proofs and tests cover protocol
 properties described in the paper; they do not prove issuer backing or
 operational readiness.
 
-The local Rust production-gate candidate adds the empty-registry write block,
+The stacked Rust production-gate draft adds the empty-registry write block,
 deployment-scoped mainnet derivation, two-host pinned raw-byte quorum, a
 two-peer confirmed-chain activation check, and release-committed activation and
 loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `11bad686b10775207d40e3c85bdde61099637e63`;
-its FFI receipt is 115 passed, 0 failed, and 3 intentional slow ignores, plus
-four registry-tool tests, both feature-gated recovery rebind tests, and
-warnings-denied default, recovery, issuer, and registry builds. The three
-ignored recursive tests also pass when explicitly run serially in release mode
-(31.92 seconds). Until those candidates are rebased, hosted-green,
-independently reviewed, and merged, they are evidence of work in progress only.
+exact [Rust PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) tip is
+`eb9a2ef2062d51d1f53460077b20e80db439ea89`. Its warning-denied local
+workspace completed without an executed failure: 123 FFI passes with 3
+intentional slow ignores, 3/0 serial release recursive proofs, 4 registry-tool
+tests, 8 issuer-tool tests, a 7-pass PCD node suite, and a 2-pass PCD redeem
+suite. Exact-head hosted runs 31913959340 and 31913977221 remain required, as
+does independent review. Until the stacked candidates are hosted-green,
+independently approved, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet
 transaction exists as a result of this document.

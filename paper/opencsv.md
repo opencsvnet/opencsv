@@ -148,11 +148,18 @@ The contract also requires two distinct pinned raw-byte observer hosts and two
 distinct compact-filter peers; those are operational diversity requirements,
 not new cryptographic assumptions or claims that public APIs are authoritative.
 The consumer registry is also not authorization to expand issuer supply. The
-current mainnet candidate leaves manifest construction reviewable but rejects
-mint preparation, signing, rebroadcast, and mint fee replacement with
-`production_issuance_not_authorized` until a separate authenticated issuance
-policy exists. A cap in operator-editable registry JSON was rejected because it
-would constrain honest tooling without authenticating who approved supply.
+stacked mainnet candidate accepts registry-v2 issuance references only when
+they bind a separate threshold policy, and each mint requires a signed envelope
+covering the final registry and policy commitments, recipient, amounts,
+monotonic sequence, and supply transition. Operation creation and the
+per-asset authorization ledger commit atomically; Secure Backup preserves the
+floor, and signed recovery verifies the historical policy snapshot after live
+policy rotation. A cap in operator-editable consumer JSON was rejected because
+it would constrain honest tooling without authenticating who approved supply.
+Missing or invalid threshold evidence fails with
+`production_issuance_not_authorized`.
+This is operational authorization logic, outside the cryptographic theorem
+boundary, and no real policy or issuer authority is claimed.
 The contract keeps the issuer and operational assumptions explicit and is not
 evidence that a production issuer or deployment exists.
 

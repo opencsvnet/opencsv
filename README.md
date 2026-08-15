@@ -94,10 +94,12 @@ manifests and prepares, backs up, signs, resumes, and fee-bumps issuer-authorize
 mints by asset id. It reads issuer secrets from owner-only files and emits JSON
 for automation. Running it does not confer another issuer's authority, and an
 arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
-That flow remains enabled for signet/regtest. Mainnet manifest construction is
-reviewable, but every mainnet mint write currently fails closed with
-`production_issuance_not_authorized` until a separately authenticated issuer
-authorization and supply policy exist.
+That flow remains enabled for signet/regtest. The stacked mainnet candidate
+admits a mint only when registry v2 commits the exact threshold issuance policy
+and a signed authorization advances the backup-carried per-asset sequence and
+supply floor. Missing policy material still fails with
+`production_issuance_not_authorized`. No real policy or production authority
+exists yet.
 
 A future production USD product cannot be created by flipping Signal from
 signet to mainnet. The review-only
@@ -110,8 +112,10 @@ recompute to a published commitment. The database and Secure Backup preserve
 the highest version as a read-preserving rollback floor. It also lists the
 issuer, redemption, governance, recovery, distribution, and explicit
 owner-approval decisions that remain unresolved. The consumer registry is not
-mint authority. No production issuer, issuance authorization, or mainnet
-activation is claimed.
+mint authority: its v2 bytes may bind a distinct threshold policy, but each
+mint still needs an exact multi-signature authorization and replay-safe supply
+transition. No production issuer, issuance authorization, or mainnet activation
+is claimed.
 Signed mainnet crash resume revalidates the operation-bound authorization
 before transaction parsing, chain lookup, or network relay; stale pre-gate rows
 cannot use idempotent rebroadcast as a policy bypass. Fee bumps validate it
