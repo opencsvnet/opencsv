@@ -136,7 +136,9 @@ release-policy integrity, not a proof of reserves or issuer authority. A
 separately featured, secret-free `opencsv-registry` tool constructs and checks
 those exact bytes with the same Rust serializer and verifier as account open;
 it reports structural validity without claiming activation authority and binds
-verification to the deployment expected by the application. A
+verification to the deployment expected by the application. Candidate fixtures
+may be issuer-empty, but limited/general releases require an exact issuer and a
+non-placeholder source revision. A
 database- and backup-carried version floor makes rollback read-only without
 hiding wallet evidence; it is operational policy state, not a protocol theorem.
 The contract also requires two distinct pinned raw-byte observer hosts and two

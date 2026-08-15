@@ -1422,10 +1422,10 @@ Wrong-deployment verification and overwrite both fail closed. The checked-in
 candidate has zero issuers, candidate phase, and a placeholder revision, so it
 cannot arm writes. Its golden commitment is
 `bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169`.
-The exact receipt is 112 passed, 0 failed, and 3 intentional slow ignores; the
+The exact receipt is 113 passed, 0 failed, and 3 intentional slow ignores; the
 registry binary adds 4 passing tests, and default, recovery, issuer, and
 registry builds are warning-clean. An explicit serial release-mode run executes
-the three ignored recursive tests as 3 passed, 0 failed in 32.13 seconds.
+the three ignored recursive tests as 3 passed, 0 failed in 32.60 seconds.
 Treating structural validity as activation authority was explicitly rejected:
 distribution signing, independent review,
 issuer evidence, and owner approval remain external gates.
@@ -1438,6 +1438,15 @@ symbol. Piping `nm` directly into a negative grep was rejected because a failed
 or incompatible inspector can otherwise look like an empty result. The exact
 Linux symbol inventory remains a hosted gate after the stacked branch is
 published; the workflow syntax and cold release build are locally checked.
+
+Activation-phase review then exposed a dangerous editing shortcut: the public
+candidate's zero issuers and all-zero placeholder revision were valid candidate
+inputs, but merely changing its phase could still produce structurally valid
+limited/general bytes. Local commit
+`6fdafb48867e5237c0f38d4e125ec62b4e076205` now rejects an activated release
+unless it has at least one exact issuer and a non-placeholder source revision.
+Deferring that rejection to the later wallet write gate was rejected because
+the operator verifier must fail malformed activation bytes before wallet open.
 
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real

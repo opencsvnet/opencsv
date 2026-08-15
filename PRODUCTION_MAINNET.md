@@ -129,6 +129,9 @@ The checked-in candidate fixture has zero issuers, `candidate` phase, and a
 placeholder source revision, so it cannot arm consumer writes. Its reproducible
 golden commitment is
 `bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169`.
+Changing that fixture to `limited` or `general` is invalid: activation-phase
+validation requires at least one exact issuer and rejects the all-zero
+placeholder revision before wallet open.
 This tool is evidence about exact policy bytes; it is not a registry signer or
 an activation mechanism.
 
@@ -285,12 +288,12 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `6fc1e4ca410083297250f4d7a7cfce474f4f2d93`;
-its FFI receipt is 112 passed, 0 failed, and 3 intentional slow ignores, plus
+latest unpublished Rust tip is `6fdafb48867e5237c0f38d4e125ec62b4e076205`;
+its FFI receipt is 113 passed, 0 failed, and 3 intentional slow ignores, plus
 four registry-tool tests, both feature-gated recovery rebind tests, and
 warnings-denied default, recovery, issuer, and registry builds. The three
 ignored recursive tests also pass when explicitly run serially in release mode
-(32.13 seconds). Until those candidates are rebased, hosted-green,
+(32.60 seconds). Until those candidates are rebased, hosted-green,
 independently reviewed, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet
 transaction exists as a result of this document.

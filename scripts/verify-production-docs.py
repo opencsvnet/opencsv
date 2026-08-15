@@ -89,6 +89,7 @@ def main() -> int:
             "Wallet signature binds the snapshot to one operation",
             "Missing, substituted, or cross-operation authorization",
             "Structural validity is not activation authority",
+            "Activated release with zero issuers or a placeholder revision",
         ],
     )
     require_all(
@@ -113,20 +114,29 @@ def main() -> int:
     )
 
     implementation = "aa495a76d84003c91e457e7ded522125231bac03"
-    receipt = "6fc1e4ca410083297250f4d7a7cfce474f4f2d93"
+    ci_receipt = "6fc1e4ca410083297250f4d7a7cfce474f4f2d93"
+    receipt = "6fdafb48867e5237c0f38d4e125ec62b4e076205"
     commitment = "bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169"
     require_all(
         journal,
-        [implementation, receipt, commitment, "112 passed, 0 failed", "32.13 seconds"],
+        [
+            implementation,
+            ci_receipt,
+            receipt,
+            commitment,
+            "113 passed, 0 failed",
+            "32.60 seconds",
+        ],
     )
     require_all(
         rendered_journal,
         [
             implementation,
+            ci_receipt,
             receipt,
             commitment,
-            "112 passed, 0 failed",
-            "32.13 seconds",
+            "113 passed, 0 failed",
+            "32.60 seconds",
         ],
     )
 

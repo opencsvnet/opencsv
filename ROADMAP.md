@@ -155,12 +155,13 @@ Signal exposes one user-facing product: **Test USD**.
   same Rust serializer and verifier as account open. It requires the expected
   application deployment, distinguishes structural validity from activation
   authority, and refuses to overwrite an existing release. Its checked-in
-  candidate has zero issuers and cannot arm writes. The latest local Rust
-  receipt is 112 passed, 0 failed, 3 intentional slow ignores at
-  `6fc1e4ca410083297250f4d7a7cfce474f4f2d93`, plus four registry-tool tests,
+  candidate has zero issuers and cannot arm writes; limited/general validation
+  rejects empty issuer sets and all-zero placeholder revisions. The latest
+  local Rust receipt is 113 passed, 0 failed, 3 intentional slow ignores at
+  `6fdafb48867e5237c0f38d4e125ec62b4e076205`, plus four registry-tool tests,
   two recovery-rebind tests, and warnings-denied
   default/recovery/issuer/registry builds. All three ignored recursive tests
-  pass when explicitly run serially in release mode (32.13 seconds). The stack
+  pass when explicitly run serially in release mode (32.60 seconds). The stack
   remains unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
