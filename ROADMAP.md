@@ -151,11 +151,15 @@ Signal exposes one user-facing product: **Test USD**.
   A wallet-derived signature binds that commitment to the stable solo, batch,
   or reserve operation identity. Missing or substituted mainnet authorization
   is database corruption rather than permission to fall back to live host
-  policy. The
-  latest local Rust receipt is 111 passed, 0 failed, 3 intentional slow ignores
-  at `30012349f4889bdcf02f4e0b9e933a809fe22f6c`, plus two recovery-rebind
-  tests and warnings-denied default/recovery/issuer builds. It remains
-  unpublished.
+  policy. The separately featured, secret-free `opencsv-registry` tool uses the
+  same Rust serializer and verifier as account open. It requires the expected
+  application deployment, distinguishes structural validity from activation
+  authority, and refuses to overwrite an existing release. Its checked-in
+  candidate has zero issuers and cannot arm writes. The latest local Rust
+  receipt is 112 passed, 0 failed, 3 intentional slow ignores at
+  `aa495a76d84003c91e457e7ded522125231bac03`, plus four registry-tool tests,
+  two recovery-rebind tests, and warnings-denied
+  default/recovery/issuer/registry builds. It remains unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not

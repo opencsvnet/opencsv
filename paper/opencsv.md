@@ -132,8 +132,11 @@ and retains its original fee ceiling across later policy changes. A
 wallet-derived signature also binds the commitment to the stable operation
 identity, so missing, substituted, or cross-operation mainnet authorization is
 treated as corrupt state rather than replaced by live host policy. This is
-release-policy integrity, not a
-proof of reserves or issuer authority. A
+release-policy integrity, not a proof of reserves or issuer authority. A
+separately featured, secret-free `opencsv-registry` tool constructs and checks
+those exact bytes with the same Rust serializer and verifier as account open;
+it reports structural validity without claiming activation authority and binds
+verification to the deployment expected by the application. A
 database- and backup-carried version floor makes rollback read-only without
 hiding wallet evidence; it is operational policy state, not a protocol theorem.
 The contract also requires two distinct pinned raw-byte observer hosts and two

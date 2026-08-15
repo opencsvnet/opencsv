@@ -75,7 +75,7 @@
       "order": 6,
       "title": "Release + mainnet",
       "state": "open",
-      "summary": "Independent security review, release signing/distribution, upstream submission, production issuer policy, and every mainnet broadcast remain deliberately unauthorized.",
+      "summary": "Independent security review, release signing/distribution, upstream submission, production issuer policy, and every mainnet broadcast remain deliberately unauthorized. Exact registry bytes are reproducible, but structural validity is not activation authority.",
       "receipts": [
         "https://github.com/opencsvnet/opencsv/issues/1"
       ]

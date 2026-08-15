@@ -112,6 +112,26 @@ Conversely, a loose mainnet issuer list fails even when every individual
 manifest is internally valid. Test USD keeps its separate signet registry
 format.
 
+### Canonical construction is reproducible, not authoritative
+
+The latest local Rust candidate includes a separately featured, secret-free
+`opencsv-registry` operator tool. Its `build` path accepts a draft that omits
+`commitment_sha256`, serializes the exact Rust release type used by account
+open, writes a new durably synced file, and refuses to overwrite an existing
+release. Its `verify` path requires the deployment expected by the containing
+application and rechecks that deployment, manifests, rollout limits, approval
+receipts, and exact commitment with the same Rust verifier.
+
+Successful verification reports `structurally_valid: true` and
+`activation_authorized: false`. Application distribution signing, independent
+review, issuer evidence, and deliberate owner approval remain separate gates.
+The checked-in candidate fixture has zero issuers, `candidate` phase, and a
+placeholder source revision, so it cannot arm consumer writes. Its reproducible
+golden commitment is
+`bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169`.
+This tool is evidence about exact policy bytes; it is not a registry signer or
+an activation mechanism.
+
 A `candidate` release is reviewable and recoverable but cannot create a fresh
 consumer Bitcoin write; it returns the stable reason
 `production_activation_not_authorized`. A `limited` or `general` release may
@@ -265,10 +285,11 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `30012349f4889bdcf02f4e0b9e933a809fe22f6c`;
-its FFI receipt is 111 passed, 0 failed, and 3 intentional slow ignores, plus
-both feature-gated recovery rebind tests and warnings-denied default, recovery,
-and issuer builds. Until those candidates are rebased, hosted-green,
-independently reviewed, and merged, they are evidence of work in progress only.
+latest unpublished Rust tip is `aa495a76d84003c91e457e7ded522125231bac03`;
+its FFI receipt is 112 passed, 0 failed, and 3 intentional slow ignores, plus
+four registry-tool tests, both feature-gated recovery rebind tests, and
+warnings-denied default, recovery, issuer, and registry builds. Until those
+candidates are rebased, hosted-green, independently reviewed, and merged, they
+are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet
 transaction exists as a result of this document.

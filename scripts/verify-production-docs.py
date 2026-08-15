@@ -73,6 +73,8 @@ def main() -> int:
             "max_reserve_allocation_sats",
             "max_miner_fee_sats",
             "Signed solo, batch, or reserve-maintenance bytes",
+            "opencsv-registry",
+            "activation_authorized: false",
             "No production manifest, production wallet, public release, or",
         ],
     )
@@ -86,6 +88,7 @@ def main() -> int:
             "production_activation_not_authorized",
             "Wallet signature binds the snapshot to one operation",
             "Missing, substituted, or cross-operation authorization",
+            "Structural validity is not activation authority",
         ],
     )
     require_all(
@@ -95,6 +98,7 @@ def main() -> int:
             "production_activation_not_authorized",
             "snapshot the complete authorizing release",
             "wallet-derived signature binds that commitment",
+            "opencsv-registry",
         ],
     )
     require_all(
@@ -104,12 +108,14 @@ def main() -> int:
             "policy is readable but cannot write",
             "signed operation snapshots the complete",
             "wallet-derived signature also binds the commitment",
+            "opencsv-registry",
         ],
     )
 
-    receipt = "30012349f4889bdcf02f4e0b9e933a809fe22f6c"
-    require_all(journal, [receipt, "111 passed, 0 failed"])
-    require_all(rendered_journal, [receipt, "111 passed, 0 failed"])
+    receipt = "aa495a76d84003c91e457e7ded522125231bac03"
+    commitment = "bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169"
+    require_all(journal, [receipt, commitment, "112 passed, 0 failed"])
+    require_all(rendered_journal, [receipt, commitment, "112 passed, 0 failed"])
 
     link_count = verify_local_links(page) + verify_local_links(ROOT / "roadmap.html")
     print(f"verified production contract across 6 surfaces and {link_count} local links")

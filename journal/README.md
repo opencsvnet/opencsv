@@ -1409,6 +1409,25 @@ it. Test-only follow-up `30012349f4889bdcf02f4e0b9e933a809fe22f6c`
 pins same-root reopen, missing signature, malformed signature, cross-operation
 copy, and self-consistent release substitution as explicit failures.
 
+The operator path still lacked a single canonical way to create the exact
+registry commitment. Reimplementing the release serialization in shell or a
+documentation script would have added a second byte-level policy surface.
+Local commit `aa495a76d84003c91e457e7ded522125231bac03` instead adds a
+separately featured, secret-free `opencsv-registry` binary that calls the same
+Rust builder and verifier as account open. Build input must omit the
+commitment; output is create-new and durably synced. Verification requires the
+deployment expected by the containing application and reports
+`structurally_valid: true` together with `activation_authorized: false`.
+Wrong-deployment verification and overwrite both fail closed. The checked-in
+candidate has zero issuers, candidate phase, and a placeholder revision, so it
+cannot arm writes. Its golden commitment is
+`bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169`.
+The exact receipt is 112 passed, 0 failed, and 3 intentional slow ignores; the
+registry binary adds 4 passing tests, and default, recovery, issuer, and
+registry builds are warning-clean. Treating structural validity as activation
+authority was explicitly rejected: distribution signing, independent review,
+issuer evidence, and owner approval remain external gates.
+
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real
 registry bytes or production issuer were created, and the candidate remains
