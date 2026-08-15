@@ -1405,7 +1405,9 @@ database corruption. The exact full FFI result remains 111 passed, 0 failed,
 and 3 intentional slow ignores; warnings-denied default, recovery, and issuer
 builds and both recovery-rebind tests are green. Treating an unkeyed commitment
 as its own authenticator was rejected because a receipt rewriter can recompute
-it.
+it. Test-only follow-up `30012349f4889bdcf02f4e0b9e933a809fe22f6c`
+pins same-root reopen, missing signature, malformed signature, cross-operation
+copy, and self-consistent release substitution as explicit failures.
 
 The commitment and application distribution signature identify policy; they do
 not prove reserves, redemption, legal authority, or brand control. No real

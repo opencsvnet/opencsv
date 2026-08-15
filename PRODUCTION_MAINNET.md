@@ -265,7 +265,7 @@ loss ceilings. Candidate policy remains readable but cannot write; limited and
 general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
-latest unpublished Rust tip is `992eef901335dbb42735e5b092a9cc07d0432ac1`;
+latest unpublished Rust tip is `30012349f4889bdcf02f4e0b9e933a809fe22f6c`;
 its FFI receipt is 111 passed, 0 failed, and 3 intentional slow ignores, plus
 both feature-gated recovery rebind tests and warnings-denied default, recovery,
 and issuer builds. Until those candidates are rebased, hosted-green,

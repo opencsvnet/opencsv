@@ -107,7 +107,7 @@ def main() -> int:
         ],
     )
 
-    receipt = "992eef901335dbb42735e5b092a9cc07d0432ac1"
+    receipt = "30012349f4889bdcf02f4e0b9e933a809fe22f6c"
     require_all(journal, [receipt, "111 passed, 0 failed"])
     require_all(rendered_journal, [receipt, "111 passed, 0 failed"])
 

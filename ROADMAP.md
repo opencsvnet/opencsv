@@ -153,7 +153,7 @@ Signal exposes one user-facing product: **Test USD**.
   is database corruption rather than permission to fall back to live host
   policy. The
   latest local Rust receipt is 111 passed, 0 failed, 3 intentional slow ignores
-  at `992eef901335dbb42735e5b092a9cc07d0432ac1`, plus two recovery-rebind
+  at `30012349f4889bdcf02f4e0b9e933a809fe22f6c`, plus two recovery-rebind
   tests and warnings-denied default/recovery/issuer builds. It remains
   unpublished.
 - The current local production candidates additionally fail closed unless
