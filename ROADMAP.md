@@ -149,7 +149,7 @@ Signal exposes one user-facing product: **Test USD**.
   and reserve transactions snapshot the complete authorizing release, and RBF
   revalidates that commitment before applying its original fee ceiling. The
   latest local Rust receipt is 111 passed, 0 failed, 3 intentional slow ignores
-  at `e5cd9ef4877c0ae493df21b098b68f9e9c0182a7`, plus two recovery-rebind
+  at `e5cd9ef589fe24ac26f083868693a9ccc12d31a5`, plus two recovery-rebind
   tests and warnings-denied default/recovery/issuer builds. It remains
   unpublished.
 - The current local production candidates additionally fail closed unless
