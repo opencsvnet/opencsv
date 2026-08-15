@@ -1297,6 +1297,30 @@ stable website endpoint for the real Apple invitation. It also makes the
 boundaries prominent: unofficial Signal fork, Bitcoin signet only, Test USD has
 no value, and third-party push delivery is not represented as reliable.
 
+## 2026-08-15 — Mainnet becomes an activation contract, not a network toggle
+
+The permanent Test USD boundary said production needed a new asset, registry,
+database, backup namespace, and Bitcoin fee tree, but it did not yet define how
+those pieces become one reviewed deployment. A readable mainnet wallet could
+therefore be described without a crisp product-activation state, inviting a
+host to treat a network-string change as readiness.
+
+The new `PRODUCTION_MAINNET.md` makes the separation executable as a review
+contract. Test USD never migrates. Production starts with a fresh root and
+deployment-scoped derivation, and an empty exact-manifest registry leaves the
+wallet read/sync-only with `production_usd_not_configured`. Registry additions,
+disables, emergency freezes, and resumes are versioned release inputs. New
+unsigned work rechecks policy, while exact already-signed recovery and safe fee
+bump remain available so revocation cannot strand released Bitcoin bytes.
+
+The rejected alternatives were trusting Signal alone to maintain namespace
+separation, treating `USD` or an issuer name as authority, and blocking recovery
+of an already-signed transaction after a policy update. The contract also names
+what protocol code cannot prove: backing, redemption, legal authority, brand
+identity, key custody, and operational readiness. Those decisions remain open
+and block activation. No real issuer, production manifest, release, wallet, key
+material, or mainnet transaction was created.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

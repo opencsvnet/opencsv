@@ -95,6 +95,15 @@ mints by asset id. It reads issuer secrets from owner-only files and emits JSON
 for automation. Running it does not confer another issuer's authority, and an
 arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
 
+A future production USD product cannot be created by flipping Signal from
+signet to mainnet. The review-only
+[`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md) contract requires a fresh
+account root, database, backup namespace, fee tree, deployment-scoped key
+derivation, and exact non-test issuer registry. It also lists the issuer,
+redemption, governance, recovery, distribution, and explicit owner-approval
+decisions that remain unresolved. No production issuer or mainnet activation is
+claimed.
+
 The current homepage lead is deliberately simpler than the full acceptance
 matrix. On 2026-08-08, Carol sent 1 Test USD to Bob as operation
 `4b03fd18a787d9ab8ebaf2d394aee6d5`, anchored by

@@ -128,6 +128,10 @@ Signal exposes one user-facing product: **Test USD**.
   only through the non-default headless `opencsv-issuer` tool.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
+  The fail-closed namespace, registry lifecycle, activation states, evidence
+  gates, and still-open human decisions are specified in
+  [`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md). That document is a review
+  contract, not an activation or issuer claim.
 
 ## Completed Rust merge gate
 

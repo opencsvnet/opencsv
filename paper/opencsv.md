@@ -116,6 +116,15 @@ matter for verification:
   Lean 4, plus a Rust reference implementation. A separate Signal fork demonstrates
   one possible consumer transport and UI; it is not a production interface.
 
+Deployment policy is deliberately outside the cryptographic theorem boundary.
+An internally valid issuer manifest does not prove backing, redemption, legal
+authority, operational recovery, or brand identity. The project's review-only
+[production/mainnet activation contract](../PRODUCTION_MAINNET.md) therefore
+requires a fresh namespace and exact reviewed manifest registry before any
+consumer mainnet write, while keeping those issuer and operational assumptions
+explicit. The contract is not evidence that a production issuer or deployment
+exists.
+
 ### 1.4 Organization
 
 §2 recalls client-side validation and Shielded CSV. §3 gives the system and trust

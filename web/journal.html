@@ -1246,6 +1246,29 @@
     Test USD with no monetary value.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-15</div>
+    <h2>Mainnet becomes an activation contract, not a network toggle <span class="tag">fail-closed design</span></h2>
+    <p>The permanent Test USD boundary already required a new asset, registry,
+    database, backup namespace, and fee tree for production. It did not yet
+    define how those pieces become one reviewed deployment, leaving too much
+    room for a host to mistake a network-string change for readiness.</p>
+    <p>The new <a href="../production.html">production activation contract</a>
+    makes that separation a review contract. Test USD never migrates.
+    Production starts from a fresh root and deployment-scoped derivation. An
+    empty exact-manifest registry remains read/sync-only with
+    <code>production_usd_not_configured</code>. Registry changes are versioned
+    release inputs; unsigned work rechecks them, while exact already-signed
+    recovery and protocol-safe fee bump remain available.</p>
+    <p>We rejected relying on Signal alone for namespace separation, treating
+    <code>USD</code> or a familiar name as authority, and stranding signed
+    Bitcoin bytes after a policy update. The contract also names the things no
+    protocol proof supplies: backing, redemption, legal authority, brand
+    identity, key custody, and operational readiness. Those decisions remain
+    open and block activation. No issuer, production manifest, release, wallet,
+    key material, or mainnet transaction was created.</p>
+  </div>
+
 </div>
 
 <footer>
