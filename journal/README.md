@@ -1424,8 +1424,10 @@ cannot arm writes. Its golden commitment is
 `bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169`.
 The exact receipt is 112 passed, 0 failed, and 3 intentional slow ignores; the
 registry binary adds 4 passing tests, and default, recovery, issuer, and
-registry builds are warning-clean. Treating structural validity as activation
-authority was explicitly rejected: distribution signing, independent review,
+registry builds are warning-clean. An explicit serial release-mode run executes
+the three ignored recursive tests as 3 passed, 0 failed in 32.13 seconds.
+Treating structural validity as activation authority was explicitly rejected:
+distribution signing, independent review,
 issuer evidence, and owner approval remain external gates.
 
 Follow-up `6fc1e4ca410083297250f4d7a7cfce474f4f2d93` adds the registry-only

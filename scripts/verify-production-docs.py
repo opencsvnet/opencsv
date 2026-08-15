@@ -115,10 +115,19 @@ def main() -> int:
     implementation = "aa495a76d84003c91e457e7ded522125231bac03"
     receipt = "6fc1e4ca410083297250f4d7a7cfce474f4f2d93"
     commitment = "bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169"
-    require_all(journal, [implementation, receipt, commitment, "112 passed, 0 failed"])
+    require_all(
+        journal,
+        [implementation, receipt, commitment, "112 passed, 0 failed", "32.13 seconds"],
+    )
     require_all(
         rendered_journal,
-        [implementation, receipt, commitment, "112 passed, 0 failed"],
+        [
+            implementation,
+            receipt,
+            commitment,
+            "112 passed, 0 failed",
+            "32.13 seconds",
+        ],
     )
 
     link_count = verify_local_links(page) + verify_local_links(ROOT / "roadmap.html")

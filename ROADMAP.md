@@ -159,7 +159,9 @@ Signal exposes one user-facing product: **Test USD**.
   receipt is 112 passed, 0 failed, 3 intentional slow ignores at
   `6fc1e4ca410083297250f4d7a7cfce474f4f2d93`, plus four registry-tool tests,
   two recovery-rebind tests, and warnings-denied
-  default/recovery/issuer/registry builds. It remains unpublished.
+  default/recovery/issuer/registry builds. All three ignored recursive tests
+  pass when explicitly run serially in release mode (32.13 seconds). The stack
+  remains unpublished.
 - The current local production candidates additionally fail closed unless
   mainnet has two required pinned raw-byte observer hosts, visible direct
   relay, and two distinct compact-filter peers. These candidates are not

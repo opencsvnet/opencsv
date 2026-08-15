@@ -288,8 +288,9 @@ built-ins and rejects mutated or mixed-network policy before network I/O. The
 latest unpublished Rust tip is `6fc1e4ca410083297250f4d7a7cfce474f4f2d93`;
 its FFI receipt is 112 passed, 0 failed, and 3 intentional slow ignores, plus
 four registry-tool tests, both feature-gated recovery rebind tests, and
-warnings-denied default, recovery, issuer, and registry builds. Until those
-candidates are rebased, hosted-green, independently reviewed, and merged, they
-are evidence of work in progress only.
+warnings-denied default, recovery, issuer, and registry builds. The three
+ignored recursive tests also pass when explicitly run serially in release mode
+(32.13 seconds). Until those candidates are rebased, hosted-green,
+independently reviewed, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet
 transaction exists as a result of this document.
