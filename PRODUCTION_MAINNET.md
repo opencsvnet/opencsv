@@ -285,7 +285,8 @@ membership, identities, context, and output positions.
    still needs explicit owner approval and contains no funded mainnet wallet by
    default. Its production policy remains `candidate`.
 5. **Limited activation** — separately approved users initialize fresh
-   production wallets under the exact `limited` release ceilings. Every initial
+   production wallets under the exact `limited` release ceilings, but only
+   after D5 independently authenticates the recursive proof root. Every initial
    mainnet transaction requires an explicit runbook receipt.
 6. **General activation** — allowed only after limited-operation evidence,
    incident procedures, support/recovery validation, and a new owner decision
@@ -299,6 +300,11 @@ source, build, manifest, and approval receipts.
 
 ### Protocol and implementation
 
+- D5 root verification-key authentication: the receiver derives or validates
+  the recursive root against an independently authenticated canonical lineage,
+  an adversarial custom-root proof is rejected, and the exact implementation
+  has independent approval. D4 predecessor binding and a static format tag do
+  not satisfy this gate;
 - exact-green Rust and Signal tips, with independent adversarial approval;
 - formal ledger and axiom audit regenerated from the exact protocol revision;
 - default Signal archive proves issuer and test-rebind symbols absent;
@@ -338,6 +344,8 @@ source, build, manifest, and approval receipts.
 
 These are intentionally unresolved and block activation:
 
+- the proof-lineage-v5 root verification-key authentication design and its
+  independent security review;
 - the real issuer or issuers and their authority to make the proposed claims;
 - canonical production terms, redemption mechanism, and legal review;
 - production deployment identifier and registry version 1 bytes;
@@ -363,16 +371,19 @@ The stacked Rust production-gate draft adds the empty-registry write block,
 deployment-scoped mainnet derivation, two-host pinned raw-byte quorum, a
 two-peer confirmed-chain activation check, and release-committed activation and
 loss ceilings. Candidate policy remains readable but cannot write; limited and
-general policy is enforced at planning and again before proof/signing. The
+general policy is bounded at planning and again before proof/signing. It still
+cannot activate: proof-lineage v4 self-describes its root common data, so the
+wallet now returns `production_root_vk_authentication_required` before Bitcoin
+selection, proving, or signing until D5 ships. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
 exact [Rust PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) tip is
-`9e7b6cdce12faf122f9cede08b703d3821b28769`. Its warning-denied local
-FFI result is 126 passes with 3 intentional slow ignores; those three pass
+`cd9a71f7ab4703162b47848dc1fdda0f9841b7b3`. Its warning-denied local
+FFI result is 127 passes with 3 intentional slow ignores; those three pass
 explicitly in release mode. The preceding complete workspace had no executed
 failure, including 4 registry-tool
 tests, 8 issuer-tool tests, a 7-pass PCD node suite, and a 2-pass PCD redeem
-suite. Exact-head hosted runs 31917910203 and 31917911851 remain required, as
+suite. Exact-head hosted runs 31919832350 and 31919834317 remain required, as
 does independent review. Until the stacked candidates are hosted-green,
 independently approved, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet

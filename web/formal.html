@@ -221,7 +221,7 @@
       <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/formal-aeneas/tree/3bcafed">AENEAS PROJECT @ 3bcafed ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Refinement.lean">BINDING + WELL-FORMED REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec3.lean">FIRST-OCCURRENCE REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/blob/3bcafed/Spec4.lean">SUPPLY REFINEMENT ↗</a><a href="https://github.com/opencsvnet/formal-aeneas/actions/runs/30835243209">GREEN REPRODUCIBILITY CI ↗</a></div>
     </article>
     <article id="panel-air" class="coverage-panel" role="tabpanel" hidden>
-      <div><span class="verdict tested">Tested, not proved equivalent</span><h3>The circuit shape is pinned; the AIR implementation is not mechanized.</h3><p>A fail-closed manifest checks proof version, predecessor count, nullifier padding, output order, conservation constraint, statement projection, legacy policy, and verifier tag against exact Rust. That catches source drift. It does not prove that the hand-written BabyBear AIR or FRI verifier implements the Lean predicate.</p></div>
+      <div><span class="verdict tested">Tested, not proved equivalent</span><h3>The circuit shape is pinned; the AIR implementation is not mechanized.</h3><p>A fail-closed manifest checks proof version, predecessor count, nullifier padding, output order, conservation constraint, statement projection, legacy policy, and verifier tag against exact Rust. That catches source drift. It does not prove that the hand-written BabyBear AIR or FRI verifier implements the Lean predicate, and the v4 root verifier is still reconstructed from proof-carried common data.</p></div>
       <div class="evidence-links"><div class="eyebrow">Open the evidence</div><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/rust-correspondence-v4.json">PINNED CORRESPONDENCE MANIFEST ↗</a><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED RUST PROVER SOURCE ↗</a><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/scripts/check-v4-rust-correspondence.py">SOURCE-DRIFT CHECK ↗</a><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">FORMAL BOUNDARY IN PAPER §6 ↗</a></div>
     </article>
     <article id="panel-bitcoin" class="coverage-panel" role="tabpanel" hidden>
@@ -239,7 +239,7 @@
     assumptions, which are not mechanized.</p>
     <div class="foundation-grid">
       <article class="foundation"><span class="status">Assumed cryptographic security</span><h3>Poseidon2</h3><p>Provides commitment, owner/nullifier, anchor-binding, and proof-system hashing. Lean reasons from injectivity, binding, and preimage-resistance hypotheses; it does not mechanize cryptanalysis of the concrete permutation.</p><a href="https://eprint.iacr.org/2023/323">POSEIDON2 PAPER ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Interfaces.lean">LEAN HASH AXIOMS ↗</a></article>
-      <article class="foundation"><span class="status">Assumed proof-system soundness</span><h3>FRI + recursion</h3><p>The receiver theorem calls an abstract sound proof system. Production parameters, predecessor verification keys, version boundaries, and adversarial rejection are implemented and tested; Lean does not prove the concrete FRI verifier.</p><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED PROVER SOURCE ↗</a><br><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER BOUNDARY ↗</a></article>
+      <article class="foundation"><span class="status">Assumed proof-system soundness</span><h3>FRI + recursion</h3><p>The receiver theorem calls an abstract sound proof system. FRI parameters, predecessor-key binding, version boundaries, and adversarial rejection are implemented and tested; Lean does not prove the concrete verifier. D5 remains open: the v4 root key is self-described by proof common data and is not independently authenticated, so v4 cannot activate mainnet.</p><a href="https://github.com/opencsvnet/opencsv-rs/tree/9b9eca2c1a31a780bde7534c4c5b34d1da66b7ce/crates/opencsv-pcd">PINNED PROVER SOURCE ↗</a><br><a href="https://github.com/opencsvnet/opencsv-rs/issues/32">D5 ROOT-KEY GATE ↗</a><br><a href="../paper/opencsv.md#6-formal-verification-status-and-roadmap">PAPER BOUNDARY ↗</a></article>
       <article class="foundation"><span class="status">External consensus security</span><h3>Bitcoin</h3><p>Orders anchors and gives confirmations. OpenCSV verifies its local view and proves scan semantics, but assumes Bitcoin's proof-of-work security and a chosen confirmation depth against reorganizations.</p><a href="https://bitcoin.org/bitcoin.pdf">BITCOIN SECURITY MODEL ↗</a><br><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Scan.lean">SCAN MODEL ↗</a></article>
       <article class="foundation"><span class="status">Operational key boundary</span><h3>Issuer authority</h3><p>The theorem proves that accepted mint lineage carries issuer authorization. It cannot protect an issuer seed that is stolen, misused, or backed up incorrectly. Inflation would be public, not impossible.</p><a href="https://github.com/opencsvnet/opencsv-formal/blob/dc7e8eb/OpenCsv/Theorems.lean">MINT AUTHORIZATION THEOREMS ↗</a><br><a href="../usd-preview/terms-v1/">TEST USD ISSUER DISCLOSURE ↗</a></article>
     </div>
@@ -549,12 +549,15 @@
         full-block scanning, so the old "at least one honest indexer" hypothesis
         is <em>eliminated</em> from the default path — indexers are optional,
         spot-verifiable accelerators whose fraud is provably publishable.</p></li>
-      <li><b>4. The old proof shortcuts are historical, and one trust boundary remains.</b>
+      <li><b>4. D5: the recursive root key is not yet independently authenticated.</b>
         <p>Legacy off-circuit Ed25519 records and the two-query/no-grinding FRI
         profile are inspectable but cannot create or verify v3 proofs. V3 binds
         issuer-seed knowledge and predecessor keys in-circuit and enforces its
-        94-bit floor. Deployments still need an explicit allowlist/distribution
-        boundary for accepted self-described root-circuit commitments.</p></li>
+        94-bit floor. But D4 authenticates predecessor keys only inside their
+        successors; v4 still rebuilds the root verifier from proof-carried
+        common data. A static tag is not enough. Mainnet writes fail closed
+        until a canonical v5 root policy and adversarial custom-root regression
+        pass independent review.</p></li>
       <li><b>5. Crash safety and runtime orchestration are tested, not proved.</b>
         <p>The durable operation journal, SQLite transactions, attachment
         delivery, backup, notifications, memory ownership, and concurrency are

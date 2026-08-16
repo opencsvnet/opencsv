@@ -76,6 +76,8 @@ def main() -> int:
             "opencsv-registry",
             "activation_authorized: false",
             "production_issuance_not_authorized",
+            "production_root_vk_authentication_required",
+            "D5 root verification-key authentication",
             "Consumer policy is not issuance authority",
             "crash resume verify that authorization before parsing",
             "fee-bump paths verify it before authoritative chain checks",
@@ -95,6 +97,8 @@ def main() -> int:
             "Structural validity is not activation authority",
             "Activated release with zero issuers or a placeholder revision",
             "Mainnet mint writes: <code>production_issuance_not_authorized</code>",
+            "production_root_vk_authentication_required",
+            "D5: independent recursive root-key authentication",
             "Crash resume revalidates it before parsing or network I/O",
             "Fee bump revalidates it before chain checks or signing",
         ],
@@ -108,6 +112,8 @@ def main() -> int:
             "wallet-derived signature binds that commitment",
             "opencsv-registry",
             "production_issuance_not_authorized",
+            "production_root_vk_authentication_required",
+            "D5 — root verification-key authentication",
             "Crash resume revalidates it before transaction parsing",
             "fee bump does so before chain verification or replacement signing",
         ],
@@ -121,6 +127,8 @@ def main() -> int:
             "wallet-derived signature also binds the commitment",
             "opencsv-registry",
             "production_issuance_not_authorized",
+            "production_root_vk_authentication_required",
+            "D5 requires a",
             "Crash",
             "rebroadcast of solo, shared-batch, and reserve transactions",
             "before chain verification or replacement signing",
@@ -133,7 +141,10 @@ def main() -> int:
     issuance_receipt = "a1809ebf7be42e7fa01f23b969c3a401b8aa8722"
     resume_receipt = "36cadb9f4e886499c5f3cae302c7c38c26badd4d"
     receipt = "11bad686b10775207d40e3c85bdde61099637e63"
+    d5_receipt = "cd9a71f7ab4703162b47848dc1fdda0f9841b7b3"
     commitment = "bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169"
+    require_all(canonical, [d5_receipt, "31919832350", "31919834317"])
+    require_all(roadmap, [d5_receipt, "31919832350", "31919834317"])
     require_all(
         journal,
         [
@@ -143,10 +154,13 @@ def main() -> int:
             issuance_receipt,
             resume_receipt,
             receipt,
+            d5_receipt,
             commitment,
             "115 passed, 0 failed",
             "31.92 seconds",
             "production_issuance_not_authorized",
+            "production_root_vk_authentication_required",
+            "The roadmap overstated root-key readiness",
         ],
     )
     require_all(
@@ -158,10 +172,13 @@ def main() -> int:
             issuance_receipt,
             resume_receipt,
             receipt,
+            d5_receipt,
             commitment,
             "115 passed, 0 failed",
             "31.92 seconds",
             "production_issuance_not_authorized",
+            "production_root_vk_authentication_required",
+            "The roadmap overstated root-key readiness",
         ],
     )
 

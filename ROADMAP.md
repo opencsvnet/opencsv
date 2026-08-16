@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-08, rev 13) — Final Signal acceptance and release gates
+# OpenCSV Master Plan (2026-08-15, rev 14) — D5 and production release gates
 
 ## Plan of record
 
@@ -56,7 +56,7 @@ The standing bridge remains executable differential testing. The Lean/source
 correspondence gate is fail-closed source-drift evidence; it is not represented
 as a proof of the Rust AIR, FRI, storage, networking, or iOS implementation.
 
-### Prover production readiness
+### Prover implementation baseline and remaining D5 gate
 
 - **D1 — setup caching: complete** at `ca8ad37`, keyed by complete setup and
   verification-key identity with cold, warm, invalidation, and concurrency
@@ -69,6 +69,14 @@ as a proof of the Rust AIR, FRI, storage, networking, or iOS implementation.
   `46a3e48`. The measured physical iPhone 16e release receipt is 6.435 seconds
   proving, 19.75 ms verification, and 788,047 bytes. Debug multi-minute proofs
   are development behavior and are never product performance claims.
+- **D5 — root verification-key authentication: open and blocking mainnet.**
+  D4 prevents a fixed successor circuit from accepting a foreign predecessor,
+  but v4 still reconstructs the root native verifier from proof-carried common
+  data. The static verifier-set tag is not a root of trust. Issue
+  [opencsv-rs#32](https://github.com/opencsvnet/opencsv-rs/issues/32) owns the
+  v5 design and adversarial custom-root regression. Until it closes, shipped
+  mainnet wallets fail fresh writes with
+  `production_root_vk_authentication_required`; v4 remains signet-only.
 
 ### Batching v2
 
@@ -175,7 +183,7 @@ Signal exposes one user-facing product: **Test USD**.
 
   The exact published draft is
   [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) at
-  `9e7b6cdce12faf122f9cede08b703d3821b28769`, stacked on still-unmerged PR #30.
+  `cd9a71f7ab4703162b47848dc1fdda0f9841b7b3`, stacked on still-unmerged PR #30.
   An exact-tip adversarial pass found and closed a threshold alias: authority
   keys now require one lowercase compressed canonical encoding, so one signer
   cannot occupy two slots through upper/lowercase hex. A second pass bound each
@@ -184,13 +192,14 @@ Signal exposes one user-facing product: **Test USD**.
   independently recheck the operation row and persisted transaction input.
   A crash after atomic admission resumes the same `planned` or `fee_reserved`
   operation after reopen and can reserve only that signed outpoint.
-  FFI is 126 passed / 0
+  D5 now additionally blocks every shipped mainnet write because v4 does not
+  independently authenticate the recursive root verification key. FFI is 127 passed / 0
   failed / 3 intentional ignores; those three pass explicitly in release mode.
   The preceding complete warnings-denied workspace had no executed failure;
-  the proof-heavy PCD node and redeem suites took 963.71 and 431.65 seconds.
+  the proof-heavy PCD node and redeem suites took 957.31 and 430.63 seconds.
   Registry and
   issuer tool suites pass 4/0 and 8/0. Hosted runs 31913977221 and 31913959340
-  are superseded; exact-head runs 31917910203 and 31917911851 are executing,
+  are superseded; exact-head runs 31919832350 and 31919834317 are executing,
   and independent review remains absent, so nothing here
   is merge or activation authority.
 - The current local production candidates additionally fail closed unless

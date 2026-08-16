@@ -43,12 +43,15 @@ production Signal on a physical iPhone. That August 1 phone demo used the
 historical feasibility profile. It proved the interaction model, not production
 parameters.
 
-The frozen production FRI profile binds issuer authorization and recursive
-predecessor keys in-circuit, rejects legacy proof/profile tags, and enforces a
-94-bit conservative union-adjusted security floor. Proof lineage v4 retains
+The frozen FRI profile binds issuer authorization and recursive predecessor
+keys in-circuit, rejects legacy proof/profile tags, and enforces a 94-bit
+conservative union-adjusted security floor. Proof lineage v4 retains
 those parameters and adds a one-input/two-output forwarding circuit: a wallet
 can spend one received coin into a payment plus change without manufacturing a
 fake second input. V4 is on the reference main line through `46a3e48`.
+It remains a signet profile: D4 binds predecessor keys, but v4 still rebuilds
+the root verifier from proof-carried common data. [D5](https://github.com/opencsvnet/opencsv-rs/issues/32)
+must independently authenticate that root before a mainnet write can activate.
 Current authenticated-lineage measurements:
 
 | proof | Apple M4 prove (warm) | verify | size | iPhone 16e prove (cold) |
@@ -121,6 +124,10 @@ mint authority: its v2 bytes may bind a distinct threshold policy, but each
 mint still needs an exact multi-signature authorization and replay-safe supply
 transition. No production issuer, issuance authorization, or mainnet activation
 is claimed.
+The Rust candidate now makes that cryptographic boundary executable: a shipped
+mainnet account returns `production_root_vk_authentication_required` before a
+fresh consumer or issuer write. A registry phase, app signature, or static
+proof tag cannot bypass D5.
 Signed mainnet crash resume revalidates the operation-bound authorization
 before transaction parsing, chain lookup, or network relay; stale pre-gate rows
 cannot use idempotent rebroadcast as a policy bypass. Fee bumps validate it

@@ -1557,6 +1557,41 @@ was written. No real policy, signer, administrative key, issuer, release, or
 mainnet transaction was created; independent exact-tip approval remains a
 merge and activation gate.
 
+## 2026-08-15 — The roadmap overstated root-key readiness
+
+Re-reading the original Rust security audit against the current recursive
+receiver found one unresolved critical boundary. D4 correctly hard-binds each
+predecessor verification key inside the successor circuit, but proof-lineage
+v4 still reconstructs the **root** native verifier from common data carried by
+the proof. The static `opencsv-pcd-coin-v4-with-v3-fri94` tag authenticates a
+format/profile label, not that root circuit. Calling D1–D4 “prover production
+readiness” therefore overstated what had actually been established.
+
+The missing boundary is now D5 in
+[opencsv-rs issue #32](https://github.com/opencsvnet/opencsv-rs/issues/32).
+The immediate implementation change is deliberately fail-closed: v4 remains
+usable for signet, while every shipped mainnet account reports
+`production_root_vk_authentication_required` before any fresh consumer or
+issuer Bitcoin write—even if a registry is otherwise valid and marked
+`limited` or `general`. Read, restore, sync, and evidence export remain
+available.
+
+Several tempting patches were rejected because they would only rename the
+trust gap: the existing static tag, proof-carried self-attestation, a mutable
+per-transaction allowlist, issuer/server cosigning of ordinary transfers, and
+a finite-depth allowlist advertised as the general protocol. V5 must make the
+root identity independently derivable or authenticated from a canonical
+lineage, reject an adversarial custom-root proof, and receive independent
+exact-tip review before this gate can open. The fail-closed implementation is
+published at Rust PR #31 head `cd9a71f7ab4703162b47848dc1fdda0f9841b7b3`.
+Its warning-denied workspace completed without an executed failure: FFI is
+127/0/3, the PCD node suite is 7/0/3, and redeem is 2/0/1. Hosted runs
+[31919832350](https://github.com/opencsvnet/opencsv-rs/actions/runs/31919832350)
+and
+[31919834317](https://github.com/opencsvnet/opencsv-rs/actions/runs/31919834317)
+and independent review remain required. No release, production issuer, mainnet
+wallet, or mainnet transaction was created.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

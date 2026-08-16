@@ -1505,6 +1505,39 @@
     independent exact-tip approval remains a merge and activation gate.</p>
   </div>
 
+  <div class="entry discovery">
+    <div class="date">2026-08-15</div>
+    <h2>The roadmap overstated root-key readiness <span class="tag">D5 fail-closed</span></h2>
+    <p>Re-reading the original Rust security audit against the recursive
+    receiver found one unresolved critical boundary. D4 hard-binds every
+    predecessor verification key inside its successor circuit, but
+    proof-lineage v4 still reconstructs the <strong>root</strong> native
+    verifier from common data carried by the proof. The static verifier-set
+    tag authenticates a format/profile label, not that circuit. Calling D1–D4
+    “prover production readiness” therefore overstated the evidence.</p>
+    <p>The missing boundary is now
+    <a href="https://github.com/opencsvnet/opencsv-rs/issues/32">D5 / opencsv-rs#32</a>.
+    V4 remains available on signet, while every shipped mainnet account returns
+    <code>production_root_vk_authentication_required</code> before a fresh
+    consumer or issuer Bitcoin write—even under an otherwise valid
+    <code>limited</code> or <code>general</code> registry. Read, restore, sync,
+    and evidence export remain available.</p>
+    <p>The static tag, proof-carried self-attestation, a mutable per-transaction
+    allowlist, issuer/server cosigning of ordinary transfers, and a finite-depth
+    allowlist presented as the general protocol were rejected as shortcuts.
+    V5 must independently derive or authenticate the root from a canonical
+    lineage, reject an adversarial custom-root proof, and receive independent
+    exact-tip review. The fail-closed implementation is published at Rust PR
+    #31 head <code>cd9a71f7ab4703162b47848dc1fdda0f9841b7b3</code>. Its
+    warning-denied workspace completed without an executed failure: FFI is
+    127/0/3, the PCD node suite is 7/0/3, and redeem is 2/0/1. Hosted runs
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31919832350">31919832350</a>
+    and
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31919834317">31919834317</a>
+    and independent review remain required. No release, production issuer,
+    mainnet wallet, or mainnet transaction was created.</p>
+  </div>
+
 </div>
 
 <footer>

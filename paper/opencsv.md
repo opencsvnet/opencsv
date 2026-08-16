@@ -1206,8 +1206,14 @@ accepted only as migration predecessors, and changing an outer version byte
 does not relabel a proof. The v4 row above is measured evidence for the proof
 lineage now on `opencsv-rs/main` through `46a3e48`; it is not a product-release
 claim. Current explicit proof gaps are multi-asset transfers
-and distribution of an allowlist for accepted self-described root-circuit
-commitments.
+and independent authentication of the recursive root verification key. D4
+hard-binds each predecessor key inside the circuit that consumes it, but the v4
+native receiver still reconstructs the root verifier from proof-carried common
+data. The static format/profile tag does not authenticate that circuit. Thus v4
+is a signet implementation profile, not a production proof root. D5 requires a
+canonical v5 lineage whose root key is independently derived or authenticated,
+plus an adversarial custom-root regression; the shipped mainnet wallet fails
+closed with `production_root_vk_authentication_required` until then.
 
 **Formal verification (specification and Rust adoption merged).** The
 dependency-free Lean project has 72 sorry-free audited specification declarations,
