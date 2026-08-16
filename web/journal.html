@@ -1445,7 +1445,7 @@
     stacked Rust draft in
     <a href="https://github.com/opencsvnet/opencsv-rs/pull/31">opencsv-rs PR #31</a>
     at exact head
-    <code>3244e91afff3d0e9f3b45fb1509c328d7de77a58</code> replaces that
+    <code>9e7b6cdce12faf122f9cede08b703d3821b28769</code> replaces that
     stopgap with a secret-free verification boundary. Registry v2 commits the
     exact issuance policy; the policy names distinct administrative secp256k1
     keys and a threshold of at least two; and every signed authorization binds
@@ -1484,13 +1484,22 @@
     resume/RBF also deserialize the persisted transaction and require its first
     input to be the authorized outpoint. Mutating either boundary fails as
     database corruption before signing or relay.</p>
+    <p>That implementation also admitted the authorization before reservation
+    but could only report, not advance, a crash-left <code>planned</code> mint.
+    Reusing the authorization for another operation remained correctly
+    forbidden, so the sequence was safe but stranded. Issuer-only resume now
+    reopens the same operation, reserves only its signed outpoint, continues an
+    existing <code>fee_reserved</code> lock, and proves it to
+    <code>proof_ready</code>. If the outpoint is absent, the operation stays
+    planned and a larger unrelated wallet UTXO remains unlocked. A reopen
+    regression exercises this exact transition.</p>
     <p>The warnings-denied local workspace completed without an executed
-    failure: 125 FFI passes with 3 intentional slow ignores, 3/0 serial release
+    failure: 126 FFI passes with 3 intentional slow ignores, 3/0 serial release
     recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD
     node suite, and a 2-pass PCD redeem suite. Exact-head hosted runs
-    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31916968138">31916968138</a>
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31917910203">31917910203</a>
     and
-    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31916970920">31916970920</a>
+    <a href="https://github.com/opencsvnet/opencsv-rs/actions/runs/31917911851">31917911851</a>
     were still executing when this entry was written. No real policy, signer,
     administrative key, issuer, release, or mainnet transaction was created;
     independent exact-tip approval remains a merge and activation gate.</p>

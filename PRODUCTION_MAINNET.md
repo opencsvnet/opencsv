@@ -174,6 +174,9 @@ and authorization-ledger row in one immediate SQLite transaction. The first
 authorization for an asset must be sequence one at supply zero; every later row
 must be the exact successor and begin at the preceding supply-after value. A
 failed proof or missing fee input does not make the authorization reusable.
+If a process stops after admission, the same durable operation resumes from
+`planned` or `fee_reserved`; an unavailable signed outpoint leaves it planned
+and retryable without selecting a different wallet coin.
 Missing or invalid production issuance evidence fails with the stable reason
 `production_issuance_not_authorized`.
 
@@ -364,12 +367,12 @@ general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
 exact [Rust PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) tip is
-`3244e91afff3d0e9f3b45fb1509c328d7de77a58`. Its warning-denied local
-FFI result is 125 passes with 3 intentional slow ignores; those three pass
+`9e7b6cdce12faf122f9cede08b703d3821b28769`. Its warning-denied local
+FFI result is 126 passes with 3 intentional slow ignores; those three pass
 explicitly in release mode. The preceding complete workspace had no executed
 failure, including 4 registry-tool
 tests, 8 issuer-tool tests, a 7-pass PCD node suite, and a 2-pass PCD redeem
-suite. Exact-head hosted runs 31916968138 and 31916970920 remain required, as
+suite. Exact-head hosted runs 31917910203 and 31917911851 remain required, as
 does independent review. Until the stacked candidates are hosted-green,
 independently approved, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet

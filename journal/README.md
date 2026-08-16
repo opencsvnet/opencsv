@@ -1491,7 +1491,7 @@ unpublished until the earlier exact-tip review gate clears.
 The earlier production boundary correctly disabled headless mainnet minting,
 but a permanent denial was not a usable issuance design. The stacked Rust
 draft in [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
-at exact head `3244e91afff3d0e9f3b45fb1509c328d7de77a58` replaces that stopgap with a
+at exact head `9e7b6cdce12faf122f9cede08b703d3821b28769` replaces that stopgap with a
 secret-free verification boundary. Registry v2 commits the exact issuance
 policy; the policy names distinct administrative secp256k1 keys and a threshold
 of at least two; and each signed authorization binds the registry, asset,
@@ -1536,13 +1536,22 @@ deserialize the persisted transaction and require its first input to be the
 authorized outpoint. Mutating either boundary fails as database corruption
 before signing or relay.
 
+That implementation also admitted the authorization before reservation but
+could only report, not advance, a crash-left `planned` mint. Reusing the
+authorization for another operation remained correctly forbidden, so the
+sequence was safe but stranded. The issuer-only resume boundary now reopens
+the same operation, reserves only its signed outpoint, continues an existing
+`fee_reserved` lock, and proves it to `proof_ready`. If that outpoint is absent,
+the operation stays planned and a larger unrelated wallet UTXO remains
+unlocked. A reopen regression exercises this exact transition.
+
 The warnings-denied local workspace completed with no executed failures,
-including 125 FFI passes with 3 intentional slow ignores, 3/0 serial release
+including 126 FFI passes with 3 intentional slow ignores, 3/0 serial release
 recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD node
 suite, and a 2-pass PCD redeem suite. Hosted runs
-[31916968138](https://github.com/opencsvnet/opencsv-rs/actions/runs/31916968138)
+[31917910203](https://github.com/opencsvnet/opencsv-rs/actions/runs/31917910203)
 and
-[31916970920](https://github.com/opencsvnet/opencsv-rs/actions/runs/31916970920)
+[31917911851](https://github.com/opencsvnet/opencsv-rs/actions/runs/31917911851)
 are the exact-head publication gates and were still executing when this entry
 was written. No real policy, signer, administrative key, issuer, release, or
 mainnet transaction was created; independent exact-tip approval remains a

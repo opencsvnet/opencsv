@@ -175,20 +175,22 @@ Signal exposes one user-facing product: **Test USD**.
 
   The exact published draft is
   [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) at
-  `3244e91afff3d0e9f3b45fb1509c328d7de77a58`, stacked on still-unmerged PR #30.
+  `9e7b6cdce12faf122f9cede08b703d3821b28769`, stacked on still-unmerged PR #30.
   An exact-tip adversarial pass found and closed a threshold alias: authority
   keys now require one lowercase compressed canonical encoding, so one signer
   cannot occupy two slots through upper/lowercase hex. A second pass bound each
   authorization to one exact funding outpoint so restoring an older valid
   backup cannot replay it with a different UTXO. Pre-sign, resume, and RBF
   independently recheck the operation row and persisted transaction input.
-  FFI is 125 passed / 0
+  A crash after atomic admission resumes the same `planned` or `fee_reserved`
+  operation after reopen and can reserve only that signed outpoint.
+  FFI is 126 passed / 0
   failed / 3 intentional ignores; those three pass explicitly in release mode.
   The preceding complete warnings-denied workspace had no executed failure;
   the proof-heavy PCD node and redeem suites took 963.71 and 431.65 seconds.
   Registry and
   issuer tool suites pass 4/0 and 8/0. Hosted runs 31913977221 and 31913959340
-  are superseded; exact-head runs 31916968138 and 31916970920 are executing,
+  are superseded; exact-head runs 31917910203 and 31917911851 are executing,
   and independent review remains absent, so nothing here
   is merge or activation authority.
 - The current local production candidates additionally fail closed unless

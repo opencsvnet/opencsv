@@ -100,7 +100,9 @@ and a signed authorization binds one canonical confirmed funding outpoint while
 advancing the backup-carried per-asset sequence and supply floor. The exact
 outpoint prevents an older valid backup from replaying the approval with fresh
 Bitcoin funding. Pre-sign and signed recovery independently recheck the durable
-operation and transaction input against it. Missing policy material still fails with
+operation and transaction input against it. A process stop after atomic
+admission resumes the same `planned` or `fee_reserved` mint and cannot select
+another fee coin. Missing policy material still fails with
 `production_issuance_not_authorized`. No real policy or production authority
 exists yet.
 
