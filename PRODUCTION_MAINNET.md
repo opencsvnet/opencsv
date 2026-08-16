@@ -181,9 +181,10 @@ Secure Backup carries consumed approvals, including the cancelled mint
 operations that establish the floor. Restore rejects missing operations,
 duplicate ids, sequence gaps, stale supply, policy/authorization mismatch, or
 tampering before it imports anything. Pre-sign rechecks the live v2 release,
-policy, authorization, and ledger. Signed mints snapshot the exact policy and
+policy, authorization, ledger, and operation funding. Signed mints snapshot the exact policy and
 authorization beside the wallet-authenticated rollout release, so crash resume
-and protocol-safe RBF can verify historical authority after later policy
+and protocol-safe RBF can verify historical authority and the persisted
+transaction's first input after later policy
 removal while unsigned work stays blocked.
 
 The funding outpoint closes rollback replay that a backup hash alone cannot.
@@ -363,12 +364,12 @@ general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
 exact [Rust PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) tip is
-`fb7a16fcac27e0eba2771f6a7ee5d7036cc26f3a`. Its warning-denied local
+`3244e91afff3d0e9f3b45fb1509c328d7de77a58`. Its warning-denied local
 FFI result is 125 passes with 3 intentional slow ignores; those three pass
 explicitly in release mode. The preceding complete workspace had no executed
 failure, including 4 registry-tool
 tests, 8 issuer-tool tests, a 7-pass PCD node suite, and a 2-pass PCD redeem
-suite. Exact-head hosted runs 31916611995 and 31916613984 remain required, as
+suite. Exact-head hosted runs 31916968138 and 31916970920 remain required, as
 does independent review. Until the stacked candidates are hosted-green,
 independently approved, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet

@@ -161,7 +161,9 @@ slots. A cap in operator-editable consumer JSON was rejected because
 it would constrain honest tooling without authenticating who approved supply.
 Funding-outpoint binding makes authorization replay after an old-backup restore
 a Bitcoin double spend instead of a second independently fundable mint; only
-one branch can settle. A backup commitment alone cannot provide that property.
+one branch can settle. Pre-sign and signed recovery recheck both the operation
+row and persisted transaction input. A backup commitment alone cannot provide
+that property.
 Missing or invalid threshold evidence fails with
 `production_issuance_not_authorized`.
 This is operational authorization logic, outside the cryptographic theorem

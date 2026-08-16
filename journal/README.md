@@ -1491,7 +1491,7 @@ unpublished until the earlier exact-tip review gate clears.
 The earlier production boundary correctly disabled headless mainnet minting,
 but a permanent denial was not a usable issuance design. The stacked Rust
 draft in [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
-at exact head `fb7a16fcac27e0eba2771f6a7ee5d7036cc26f3a` replaces that stopgap with a
+at exact head `3244e91afff3d0e9f3b45fb1509c328d7de77a58` replaces that stopgap with a
 secret-free verification boundary. Registry v2 commits the exact issuance
 policy; the policy names distinct administrative secp256k1 keys and a threshold
 of at least two; and each signed authorization binds the registry, asset,
@@ -1530,13 +1530,19 @@ canonical confirmed funding outpoint, and the wallet reserves exactly that
 input without fallback. Replay after rollback must double-spend the same
 Bitcoin outpoint, so at most one branch can settle.
 
+The first implementation enforced the binding only while reserving. Pre-sign
+now rechecks the durable operation funding columns, and signed resume/RBF also
+deserialize the persisted transaction and require its first input to be the
+authorized outpoint. Mutating either boundary fails as database corruption
+before signing or relay.
+
 The warnings-denied local workspace completed with no executed failures,
 including 125 FFI passes with 3 intentional slow ignores, 3/0 serial release
 recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD node
 suite, and a 2-pass PCD redeem suite. Hosted runs
-[31916611995](https://github.com/opencsvnet/opencsv-rs/actions/runs/31916611995)
+[31916968138](https://github.com/opencsvnet/opencsv-rs/actions/runs/31916968138)
 and
-[31916613984](https://github.com/opencsvnet/opencsv-rs/actions/runs/31916613984)
+[31916970920](https://github.com/opencsvnet/opencsv-rs/actions/runs/31916970920)
 are the exact-head publication gates and were still executing when this entry
 was written. No real policy, signer, administrative key, issuer, release, or
 mainnet transaction was created; independent exact-tip approval remains a
