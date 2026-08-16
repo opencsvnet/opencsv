@@ -151,13 +151,17 @@ The consumer registry is also not authorization to expand issuer supply. The
 stacked mainnet candidate accepts registry-v2 issuance references only when
 they bind a separate threshold policy, and each mint requires a signed envelope
 covering the final registry and policy commitments, recipient, amounts,
-monotonic sequence, and supply transition. Operation creation and the
+one canonical confirmed funding outpoint, monotonic sequence, and supply
+transition. Operation creation and the
 per-asset authorization ledger commit atomically; Secure Backup preserves the
 floor, and signed recovery verifies the historical policy snapshot after live
 policy rotation. Administrative keys have one lowercase compressed canonical
 encoding so textual aliases cannot multiply one signer into several threshold
 slots. A cap in operator-editable consumer JSON was rejected because
 it would constrain honest tooling without authenticating who approved supply.
+Funding-outpoint binding makes authorization replay after an old-backup restore
+a Bitcoin double spend instead of a second independently fundable mint; only
+one branch can settle. A backup commitment alone cannot provide that property.
 Missing or invalid threshold evidence fails with
 `production_issuance_not_authorized`.
 This is operational authorization logic, outside the cryptographic theorem

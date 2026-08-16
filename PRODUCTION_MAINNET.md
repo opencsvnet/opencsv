@@ -165,8 +165,9 @@ revision, and public approval receipts. Those administrative keys are distinct
 from the AIR issuer key.
 
 Each mint authorization binds the final registry commitment, policy
-commitment, exact recipient, one or two amounts, monotonic sequence,
-supply-before/supply-after transition, validity window, and approval receipts.
+commitment, exact recipient, one or two amounts, one canonical confirmed
+Bitcoin funding outpoint, monotonic sequence, supply-before/supply-after
+transition, validity window, and approval receipts.
 Signatures are canonical, unique, sorted, and threshold-checked. The wallet
 verifies this evidence before fee selection, then creates the mint operation
 and authorization-ledger row in one immediate SQLite transaction. The first
@@ -184,6 +185,13 @@ policy, authorization, and ledger. Signed mints snapshot the exact policy and
 authorization beside the wallet-authenticated rollout release, so crash resume
 and protocol-safe RBF can verify historical authority after later policy
 removal while unsigned work stays blocked.
+
+The funding outpoint closes rollback replay that a backup hash alone cannot.
+An older authentic Secure Backup may predate a later consumed authorization;
+without input binding, that same signed authorization could be reused with a
+fresh fee UTXO. The wallet now reserves only the threshold-signed outpoint and
+never substitutes another wallet coin. Reuse must therefore double-spend the
+same Bitcoin input, so at most one branch can settle.
 
 Adding mint caps to the consumer rollout envelope alone was rejected: a
 self-consistent limit would be structurally valid without authenticating who
@@ -355,12 +363,12 @@ general policy is enforced at planning and again before proof/signing. The
 matching local Signal candidate has immutable profiles for the two current
 built-ins and rejects mutated or mixed-network policy before network I/O. The
 exact [Rust PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) tip is
-`2ab342b026ae4133077862e13a2e5c257cce2334`. Its warning-denied local
-FFI result is 124 passes with 3 intentional slow ignores; those three pass
+`fb7a16fcac27e0eba2771f6a7ee5d7036cc26f3a`. Its warning-denied local
+FFI result is 125 passes with 3 intentional slow ignores; those three pass
 explicitly in release mode. The preceding complete workspace had no executed
 failure, including 4 registry-tool
 tests, 8 issuer-tool tests, a 7-pass PCD node suite, and a 2-pass PCD redeem
-suite. Exact-head hosted runs 31915972617 and 31915974092 remain required, as
+suite. Exact-head hosted runs 31916611995 and 31916613984 remain required, as
 does independent review. Until the stacked candidates are hosted-green,
 independently approved, and merged, they are evidence of work in progress only.
 No production manifest, production wallet, public release, or mainnet

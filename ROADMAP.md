@@ -128,7 +128,9 @@ Signal exposes one user-facing product: **Test USD**.
   remains available only through the non-default headless `opencsv-issuer`
   tool. The stacked mainnet candidate admits issuance only through a
   registry-v2-committed threshold policy, an exact signed mint authorization,
-  and a replay-safe per-asset sequence/supply floor. Missing material returns
+  a canonical confirmed funding outpoint, and a replay-safe per-asset
+  sequence/supply floor. The signed outpoint prevents old-backup replay from
+  retargeting the same approval to fresh Bitcoin funding. Missing material returns
   `production_issuance_not_authorized`. Signal exposes none of this surface.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
@@ -173,16 +175,18 @@ Signal exposes one user-facing product: **Test USD**.
 
   The exact published draft is
   [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) at
-  `2ab342b026ae4133077862e13a2e5c257cce2334`, stacked on still-unmerged PR #30.
+  `fb7a16fcac27e0eba2771f6a7ee5d7036cc26f3a`, stacked on still-unmerged PR #30.
   An exact-tip adversarial pass found and closed a threshold alias: authority
   keys now require one lowercase compressed canonical encoding, so one signer
-  cannot occupy two slots through upper/lowercase hex. FFI is 124 passed / 0
+  cannot occupy two slots through upper/lowercase hex. A second pass bound each
+  authorization to one exact funding outpoint so restoring an older valid
+  backup cannot replay it with a different UTXO. FFI is 125 passed / 0
   failed / 3 intentional ignores; those three pass explicitly in release mode.
   The preceding complete warnings-denied workspace had no executed failure;
   the proof-heavy PCD node and redeem suites took 963.71 and 431.65 seconds.
   Registry and
   issuer tool suites pass 4/0 and 8/0. Hosted runs 31913977221 and 31913959340
-  are superseded; exact-head runs 31915972617 and 31915974092 are executing,
+  are superseded; exact-head runs 31916611995 and 31916613984 are executing,
   and independent review remains absent, so nothing here
   is merge or activation authority.
 - The current local production candidates additionally fail closed unless
