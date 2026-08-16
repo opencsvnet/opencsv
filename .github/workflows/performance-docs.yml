@@ -2,8 +2,20 @@ name: Bitcoin performance receipt
 
 on:
   pull_request:
+    paths:
+      - scale.html
+      - paper/opencsv.md
+      - web/data/bitcoin-performance-v1.json
+      - scripts/verify-performance-docs.py
+      - .github/workflows/performance-docs.yml
   push:
     branches: [main, codex/bitcoin-performance-explainer]
+    paths:
+      - scale.html
+      - paper/opencsv.md
+      - web/data/bitcoin-performance-v1.json
+      - scripts/verify-performance-docs.py
+      - .github/workflows/performance-docs.yml
 
 permissions:
   contents: read

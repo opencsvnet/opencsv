@@ -43,12 +43,15 @@ production Signal on a physical iPhone. That August 1 phone demo used the
 historical feasibility profile. It proved the interaction model, not production
 parameters.
 
-The frozen production FRI profile binds issuer authorization and recursive
-predecessor keys in-circuit, rejects legacy proof/profile tags, and enforces a
-94-bit conservative union-adjusted security floor. Proof lineage v4 retains
+The frozen FRI profile binds issuer authorization and recursive predecessor
+keys in-circuit, rejects legacy proof/profile tags, and enforces a 94-bit
+conservative union-adjusted security floor. Proof lineage v4 retains
 those parameters and adds a one-input/two-output forwarding circuit: a wallet
 can spend one received coin into a payment plus change without manufacturing a
 fake second input. V4 is on the reference main line through `46a3e48`.
+It remains a signet profile: D4 binds predecessor keys, but v4 still rebuilds
+the root verifier from proof-carried common data. [D5](https://github.com/opencsvnet/opencsv-rs/issues/32)
+must independently authenticate that root before a mainnet write can activate.
 Current authenticated-lineage measurements:
 
 | proof | Apple M4 prove (warm) | verify | size | iPhone 16e prove (cold) |
@@ -94,6 +97,41 @@ manifests and prepares, backs up, signs, resumes, and fee-bumps issuer-authorize
 mints by asset id. It reads issuer secrets from owner-only files and emits JSON
 for automation. Running it does not confer another issuer's authority, and an
 arbitrary USD-labelled manifest does not enter Signal's reviewed registry.
+That flow remains enabled for signet/regtest. The stacked mainnet candidate
+admits a mint only when registry v2 commits the exact threshold issuance policy
+and a signed authorization binds one canonical confirmed funding outpoint while
+advancing the backup-carried per-asset sequence and supply floor. The exact
+outpoint prevents an older valid backup from replaying the approval with fresh
+Bitcoin funding. Pre-sign and signed recovery independently recheck the durable
+operation and transaction input against it. A process stop after atomic
+admission resumes the same `planned` or `fee_reserved` mint and cannot select
+another fee coin. Missing policy material still fails with
+`production_issuance_not_authorized`. No real policy or production authority
+exists yet.
+
+A future production USD product cannot be created by flipping Signal from
+signet to mainnet. The review-only
+[`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md) contract requires a fresh
+account root, database, backup namespace, fee tree, deployment-scoped key
+derivation, and exact non-test issuer registry. Mainnet rejects loose issuer
+lists: the candidate registry is a versioned, deployment-bound release input
+whose exact ordered policies, source revision, and public approval receipts
+recompute to a published commitment. The database and Secure Backup preserve
+the highest version as a read-preserving rollback floor. It also lists the
+issuer, redemption, governance, recovery, distribution, and explicit
+owner-approval decisions that remain unresolved. The consumer registry is not
+mint authority: its v2 bytes may bind a distinct threshold policy, but each
+mint still needs an exact multi-signature authorization and replay-safe supply
+transition. No production issuer, issuance authorization, or mainnet activation
+is claimed.
+The Rust candidate now makes that cryptographic boundary executable: a shipped
+mainnet account returns `production_root_vk_authentication_required` before a
+fresh consumer or issuer write. A registry phase, app signature, or static
+proof tag cannot bypass D5.
+Signed mainnet crash resume revalidates the operation-bound authorization
+before transaction parsing, chain lookup, or network relay; stale pre-gate rows
+cannot use idempotent rebroadcast as a policy bypass. Fee bumps validate it
+before chain verification or replacement signing.
 
 The current homepage lead is deliberately simpler than the full acceptance
 matrix. On 2026-08-08, Carol sent 1 Test USD to Bob as operation

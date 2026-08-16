@@ -116,6 +116,63 @@ matter for verification:
   Lean 4, plus a Rust reference implementation. A separate Signal fork demonstrates
   one possible consumer transport and UI; it is not a production interface.
 
+Deployment policy is deliberately outside the cryptographic theorem boundary.
+An internally valid issuer manifest does not prove backing, redemption, legal
+authority, operational recovery, or brand identity. The project's review-only
+[production/mainnet activation contract](../PRODUCTION_MAINNET.md) therefore
+requires a fresh namespace and exact reviewed manifest registry before any
+consumer mainnet write. The implementation candidate accepts that policy only
+as a versioned, deployment-bound release input with a recomputed commitment to
+its ordered manifests, activation phase, exact transfer/batch/rolling-day/
+reserve/fee ceilings, source revision, and public approval receipts. Candidate
+policy is readable but cannot write; limited and general releases remain
+bounded by their committed ceilings. A signed operation snapshots the complete
+authorizing release, and protocol-safe replacement revalidates that commitment
+and retains its original fee ceiling across later policy changes. A
+wallet-derived signature also binds the commitment to the stable operation
+identity, so missing, substituted, or cross-operation mainnet authorization is
+treated as corrupt state rather than replaced by live host policy. This is
+release-policy integrity, not a proof of reserves or issuer authority. Crash
+rebroadcast of solo, shared-batch, and reserve transactions revalidates that
+authorization before parsing bytes or contacting the network; their fee-bump
+paths do so before chain verification or replacement signing. A
+separately featured, secret-free `opencsv-registry` tool constructs and checks
+those exact bytes with the same Rust serializer and verifier as account open;
+it reports structural validity without claiming activation authority and binds
+verification to the deployment expected by the application. Candidate fixtures
+may be issuer-empty, but limited/general releases require an exact issuer and a
+non-placeholder source revision. A
+database- and backup-carried version floor makes rollback read-only without
+hiding wallet evidence; it is operational policy state, not a protocol theorem.
+The contract also requires two distinct pinned raw-byte observer hosts and two
+distinct compact-filter peers; those are operational diversity requirements,
+not new cryptographic assumptions or claims that public APIs are authoritative.
+The consumer registry is also not authorization to expand issuer supply. The
+stacked mainnet candidate accepts registry-v2 issuance references only when
+they bind a separate threshold policy, and each mint requires a signed envelope
+covering the final registry and policy commitments, recipient, amounts,
+one canonical confirmed funding outpoint, monotonic sequence, and supply
+transition. Operation creation and the
+per-asset authorization ledger commit atomically; Secure Backup preserves the
+floor, and signed recovery verifies the historical policy snapshot after live
+policy rotation. Administrative keys have one lowercase compressed canonical
+encoding so textual aliases cannot multiply one signer into several threshold
+slots. A cap in operator-editable consumer JSON was rejected because
+it would constrain honest tooling without authenticating who approved supply.
+Funding-outpoint binding makes authorization replay after an old-backup restore
+a Bitcoin double spend instead of a second independently fundable mint; only
+one branch can settle. Pre-sign and signed recovery recheck both the operation
+row and persisted transaction input. Atomic admission is also an idempotency
+boundary: after a process stop, only the same durable `planned` or
+`fee_reserved` mint may resume, and only with the authorization's outpoint. A
+backup commitment alone cannot provide that property.
+Missing or invalid threshold evidence fails with
+`production_issuance_not_authorized`.
+This is operational authorization logic, outside the cryptographic theorem
+boundary, and no real policy or issuer authority is claimed.
+The contract keeps the issuer and operational assumptions explicit and is not
+evidence that a production issuer or deployment exists.
+
 ### 1.4 Organization
 
 §2 recalls client-side validation and Shielded CSV. §3 gives the system and trust
@@ -1149,8 +1206,14 @@ accepted only as migration predecessors, and changing an outer version byte
 does not relabel a proof. The v4 row above is measured evidence for the proof
 lineage now on `opencsv-rs/main` through `46a3e48`; it is not a product-release
 claim. Current explicit proof gaps are multi-asset transfers
-and distribution of an allowlist for accepted self-described root-circuit
-commitments.
+and independent authentication of the recursive root verification key. D4
+hard-binds each predecessor key inside the circuit that consumes it, but the v4
+native receiver still reconstructs the root verifier from proof-carried common
+data. The static format/profile tag does not authenticate that circuit. Thus v4
+is a signet implementation profile, not a production proof root. D5 requires a
+canonical v5 lineage whose root key is independently derived or authenticated,
+plus an adversarial custom-root regression; the shipped mainnet wallet fails
+closed with `production_root_vk_authentication_required` until then.
 
 **Formal verification (specification and Rust adoption merged).** The
 dependency-free Lean project has 72 sorry-free audited specification declarations,

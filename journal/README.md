@@ -1297,6 +1297,301 @@ stable website endpoint for the real Apple invitation. It also makes the
 boundaries prominent: unofficial Signal fork, Bitcoin signet only, Test USD has
 no value, and third-party push delivery is not represented as reliable.
 
+## 2026-08-15 — Mainnet becomes an activation contract, not a network toggle
+
+The permanent Test USD boundary said production needed a new asset, registry,
+database, backup namespace, and Bitcoin fee tree, but it did not yet define how
+those pieces become one reviewed deployment. A readable mainnet wallet could
+therefore be described without a crisp product-activation state, inviting a
+host to treat a network-string change as readiness.
+
+The new `PRODUCTION_MAINNET.md` makes the separation executable as a review
+contract. Test USD never migrates. Production starts with a fresh root and
+deployment-scoped derivation, and an empty exact-manifest registry leaves the
+wallet read/sync-only with `production_usd_not_configured`. Registry additions,
+disables, emergency freezes, and resumes are versioned release inputs. New
+unsigned work rechecks policy, while exact already-signed recovery and safe fee
+bump remain available so revocation cannot strand released Bitcoin bytes.
+
+The rejected alternatives were trusting Signal alone to maintain namespace
+separation, treating `USD` or an issuer name as authority, and blocking recovery
+of an already-signed transaction after a policy update. The contract also names
+what protocol code cannot prove: backing, redemption, legal authority, brand
+identity, key custody, and operational readiness. Those decisions remain open
+and block activation. No real issuer, production manifest, release, wallet, key
+material, or mainnet transaction was created.
+
+The first implementation audit then found that mainnet inherited no required
+raw-transaction observers even though Test USD required two. A second pass
+found that an enabled SPV mode with zero configured peers could look ready and
+fail only at signing. Both were rejected as silent safety downgrades. The local
+Rust candidate now defaults to pinned mempool.space and Blockstream exact-byte
+checks, counts distinct observer hosts rather than check IDs or URL spellings,
+and requires two distinct compact-filter peers before new production writes.
+The local Signal candidate uses immutable profiles for both networks and
+rejects endpoint, pin, or mixed-network mutation before network I/O. Public
+services remain untrusted evidence sources; Rust recomputes transaction
+identity and confirmed settlement still comes from the independently agreed
+proof-of-work chain.
+
+These candidates are deliberately unpublished behind earlier exact-tip review
+gates. The observer operators and pin lifecycle remain human decisions in the
+activation contract. Recording the implemented minimum here does not claim a
+production issuer, release, or mainnet authorization.
+
+A follow-up audit found one more host-trust gap: the first candidate treated
+any nonempty, internally valid mainnet `usd_issuers` vector as a configured
+product. The local Rust gate now refuses that loose list. It accepts policies
+only inside a versioned release bound to the exact deployment and recomputes a
+domain-separated SHA-256 commitment over the format and registry versions,
+ordered manifests/priorities, source revision, and public HTTPS approval
+receipts. Mutated, cross-deployment, receipt-free, commitment-mismatched, and
+signet-misapplied releases fail during configuration; status exposes the exact
+release identity. The full FFI library result is 102 passed, 0 failed, and 3
+intentional slow ignores, with default, recovery, and issuer feature builds
+warning-clean at local tip `715982ed7c78cbef670ed7b91c680aa720df2fec`.
+
+The first envelope pass still treated the version as metadata. The next local
+commit `29174cca3e3221767239afd46ddaa3d40f128232` stores the highest version and
+commitment atomically in the database and carries it in production Secure
+Backup. Older or same-version-conflicting policy opens balances and evidence
+but blocks writes with stable rollback/conflict reasons; a restored older
+checkpoint cannot lower the floor. The full FFI result is now 105 passed, 0
+failed, and 3 intentional slow ignores. Rejecting account open entirely was
+also rejected because rollback defense must not hide recovery evidence.
+
+The next audit found that the activation contract described limited-rollout
+caps without making them authenticated wallet inputs. That would let a host
+label a build "limited" while independently choosing its loss envelope. Local
+commit `fa0736ce0f5cbde00aef145111b1223964ab0160` therefore adds the activation
+phase and exact transfer, batch, rolling-day, recipient, reserve-allocation,
+and miner-fee ceilings to the registry commitment. Candidate releases remain
+inspectable but return `production_activation_not_authorized`; limited and
+general releases recheck their ceilings at intent creation and before
+proof/signing. Host configuration may tighten the fee cap but cannot raise it.
+The revised FFI receipt is 109 passed, 0 failed, and 3 intentional slow ignores,
+plus both feature-gated recovery-rebind tests and warnings-denied default,
+recovery, and issuer builds. Treating `general` as unlimited and relying on UI
+limits were both rejected because neither survives a hostile or stale host.
+
+That first cap implementation still consulted the live registry during RBF.
+Consequently, a later release could raise the exposure of bytes signed under a
+smaller cap or lower the cap far enough to strand their safe recovery. Local
+commit `e5cd9ef589fe24ac26f083868693a9ccc12d31a5` closes both directions. Initial
+solo, batch, and reserve-maintenance signing snapshots the complete authorizing
+release into the durable receipt; replacement revalidates its deployment and
+commitment and uses the original miner-fee ceiling. A modified snapshot fails
+as database corruption. The exact-tip FFI result is 111 passed, 0 failed, and 3
+intentional slow ignores, with the recovery and issuer build gates still
+warning-clean. Trusting an unauthenticated numeric receipt field was rejected;
+the complete release must recompute to its committed identity.
+
+A follow-up removal test showed that an entirely absent snapshot still fell
+back to live host policy. Local commit
+`4965ba366652dd243a6d830fc953daf68943d0c0` makes missing mainnet authorization
+fail as database corruption while preserving legacy signet receipts. The full
+FFI result remains 111 passed, 0 failed, and 3 intentional slow ignores, and the
+warnings-denied FFI build is green. Substituting a later release for missing
+authorization was rejected because later policy did not authorize those
+signed bytes.
+
+The self-hash still did not authenticate the snapshot: a complete replacement
+release could carry a newly recomputed commitment. Local commit
+`992eef901335dbb42735e5b092a9cc07d0432ac1` derives a deployment-separated
+wallet key and signs the release commitment plus the stable solo, batch, or
+reserve operation identity. A self-consistent substituted release and a valid
+snapshot copied to another operation now fail signature verification as
+database corruption. The exact full FFI result remains 111 passed, 0 failed,
+and 3 intentional slow ignores; warnings-denied default, recovery, and issuer
+builds and both recovery-rebind tests are green. Treating an unkeyed commitment
+as its own authenticator was rejected because a receipt rewriter can recompute
+it. Test-only follow-up `30012349f4889bdcf02f4e0b9e933a809fe22f6c`
+pins same-root reopen, missing signature, malformed signature, cross-operation
+copy, and self-consistent release substitution as explicit failures.
+
+The operator path still lacked a single canonical way to create the exact
+registry commitment. Reimplementing the release serialization in shell or a
+documentation script would have added a second byte-level policy surface.
+Local commit `aa495a76d84003c91e457e7ded522125231bac03` instead adds a
+separately featured, secret-free `opencsv-registry` binary that calls the same
+Rust builder and verifier as account open. Build input must omit the
+commitment; output is create-new and durably synced. Verification requires the
+deployment expected by the containing application and reports
+`structurally_valid: true` together with `activation_authorized: false`.
+Wrong-deployment verification and overwrite both fail closed. The checked-in
+candidate has zero issuers, candidate phase, and a placeholder revision, so it
+cannot arm writes. Its golden commitment is
+`bf808e3e0a5fad6cbc8caf23741e82adb5fbe5dd21dfb5a00840fd0801361169`.
+The exact receipt is 113 passed, 0 failed, and 3 intentional slow ignores; the
+registry binary adds 4 passing tests, and default, recovery, issuer, and
+registry builds are warning-clean. An explicit serial release-mode run executes
+the three ignored recursive tests as 3 passed, 0 failed in 32.60 seconds.
+Treating structural validity as activation authority was explicitly rejected:
+distribution signing, independent review,
+issuer evidence, and owner approval remain external gates.
+
+Follow-up `6fc1e4ca410083297250f4d7a7cfce474f4f2d93` adds the registry-only
+feature to hosted Rust CI in an isolated target directory. The job runs the
+four golden/durability tests, builds the release binary and library, writes the
+symbol inventory as a separate required command, and rejects any issuer C
+symbol. Piping `nm` directly into a negative grep was rejected because a failed
+or incompatible inspector can otherwise look like an empty result. The exact
+Linux symbol inventory remains a hosted gate after the stacked branch is
+published; the workflow syntax and cold release build are locally checked.
+
+Activation-phase review then exposed a dangerous editing shortcut: the public
+candidate's zero issuers and all-zero placeholder revision were valid candidate
+inputs, but merely changing its phase could still produce structurally valid
+limited/general bytes. Local commit
+`6fdafb48867e5237c0f38d4e125ec62b4e076205` now rejects an activated release
+unless it has at least one exact issuer and a non-placeholder source revision.
+Deferring that rejection to the later wallet write gate was rejected because
+the operator verifier must fail malformed activation bytes before wallet open.
+
+The headless issuer path then exposed a separate authority error. It still used
+only the primary-device and backup gate, so a mainnet mint could bypass the
+consumer registry and activation checks. Local commit
+`a1809ebf7be42e7fa01f23b969c3a401b8aa8722` keeps manifest construction
+available for review but makes mint preparation, signing, stale-row rebroadcast,
+and mint RBF fail with `production_issuance_not_authorized`. Signet/regtest
+issuance is unchanged. The exact FFI result is 114 passed, 0 failed, and 3
+intentional slow ignores; the three release-mode tests pass 3/0 in 31.31 seconds,
+and warning-denied default, recovery, issuer, and registry builds are green.
+Adding supply caps to operator-editable registry JSON was rejected as
+false authority: production issuance needs a distinct authenticated policy
+after the issuer/key ceremony.
+
+A final relay reachability pass then found that fee replacement verified the
+signed production authorization, but ordinary crash rebroadcast did not. Local
+commit `36cadb9f4e886499c5f3cae302c7c38c26badd4d` makes solo,
+shared-batch, and reserve-maintenance resume verify the deployment-bound,
+operation-bound signature before transaction parsing, chain reconciliation, or
+network I/O. Missing pre-gate state fails as `database_corrupt`. The exact FFI
+result is 115 passed, 0 failed, and 3 intentional slow ignores; release-mode is
+3/0 in 31.91 seconds. Deferring authorization to RBF was rejected because
+idempotent rebroadcast is itself a network write.
+
+A follow-up ordering pass found that all three fee-bump entry points still
+consulted live chain state before authenticating the persisted production
+authorization. Local commit
+`11bad686b10775207d40e3c85bdde61099637e63` moves that validation ahead of
+authoritative chain checks, replacement reconstruction, and signing for solo,
+shared-batch, and reserve-maintenance replacements. This makes missing
+authorization fail before external state or signing work can influence the
+result. The complete exact FFI receipt remains 115 passed, 0 failed, and 3
+intentional slow ignores; the release-mode ignored suite passes 3/0 in 31.92 seconds.
+
+The commitment and application distribution signature identify policy; they do
+not prove reserves, redemption, legal authority, or brand control. No real
+registry bytes or production issuer were created, and the candidate remains
+unpublished until the earlier exact-tip review gate clears.
+
+## 2026-08-15 — Production mint authority becomes replay-safe evidence
+
+The earlier production boundary correctly disabled headless mainnet minting,
+but a permanent denial was not a usable issuance design. The stacked Rust
+draft in [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31)
+at exact head `9e7b6cdce12faf122f9cede08b703d3821b28769` replaces that stopgap with a
+secret-free verification boundary. Registry v2 commits the exact issuance
+policy; the policy names distinct administrative secp256k1 keys and a threshold
+of at least two; and each signed authorization binds the registry, asset,
+recipient, amounts, monotonic sequence, supply transition, validity window,
+and public receipts. The AIR issuer key remains a different role.
+
+An operation ID is the authorization digest. Wallet planning creates the mint
+operation and its consumed-authorization ledger row in one immediate SQLite
+transaction, so a crash, failed proof, missing fee input, or later cancellation
+cannot make the same approval reusable. Sequence one begins at supply zero;
+every successor must begin at the preceding supply-after value. Secure Backup
+includes the ledger and any cancelled operation needed to establish that
+floor, and restore validates the complete chain before importing it.
+
+Two attractive shortcuts were rejected. Consuming an approval only after proof
+generation leaves a replay window when proving or fee selection fails. Making
+the policy commit a registry commitment that itself includes the policy creates
+a circular hash. The chosen registry v2 envelope commits sorted policy
+references, while each authorization separately commits the final registry and
+policy digests. Signed operations snapshot that evidence so crash recovery and
+protocol-safe RBF survive later policy removal; unsigned operations fail closed
+against the live release.
+
+The first exact-tip audit also found that public keys were deduplicated by
+their submitted hex strings even though parsing accepted both cases. One key
+could therefore occupy two threshold slots through upper/lowercase aliases.
+Policy verification now requires lowercase compressed canonical encoding and
+deduplicates the serialized key bytes; the alias is an explicit regression.
+
+A second audit found that the durable ledger still could not distinguish an
+older authentic backup from the latest one. Restoring a checkpoint from before
+authorization N would recreate the earlier floor, letting the same already
+signed N use a different fee UTXO. Adding another backup hash was rejected
+because integrity does not prove freshness. Each authorization now signs one
+canonical confirmed funding outpoint, and the wallet reserves exactly that
+input without fallback. Replay after rollback must double-spend the same
+Bitcoin outpoint, so at most one branch can settle.
+
+The first implementation enforced the binding only while reserving. Pre-sign
+now rechecks the durable operation funding columns, and signed resume/RBF also
+deserialize the persisted transaction and require its first input to be the
+authorized outpoint. Mutating either boundary fails as database corruption
+before signing or relay.
+
+That implementation also admitted the authorization before reservation but
+could only report, not advance, a crash-left `planned` mint. Reusing the
+authorization for another operation remained correctly forbidden, so the
+sequence was safe but stranded. The issuer-only resume boundary now reopens
+the same operation, reserves only its signed outpoint, continues an existing
+`fee_reserved` lock, and proves it to `proof_ready`. If that outpoint is absent,
+the operation stays planned and a larger unrelated wallet UTXO remains
+unlocked. A reopen regression exercises this exact transition.
+
+The warnings-denied local workspace completed with no executed failures,
+including 126 FFI passes with 3 intentional slow ignores, 3/0 serial release
+recursive proofs, 4 registry-tool tests, 8 issuer-tool tests, a 7-pass PCD node
+suite, and a 2-pass PCD redeem suite. Hosted runs
+[31917910203](https://github.com/opencsvnet/opencsv-rs/actions/runs/31917910203)
+and
+[31917911851](https://github.com/opencsvnet/opencsv-rs/actions/runs/31917911851)
+are the exact-head publication gates and were still executing when this entry
+was written. No real policy, signer, administrative key, issuer, release, or
+mainnet transaction was created; independent exact-tip approval remains a
+merge and activation gate.
+
+## 2026-08-15 — The roadmap overstated root-key readiness
+
+Re-reading the original Rust security audit against the current recursive
+receiver found one unresolved critical boundary. D4 correctly hard-binds each
+predecessor verification key inside the successor circuit, but proof-lineage
+v4 still reconstructs the **root** native verifier from common data carried by
+the proof. The static `opencsv-pcd-coin-v4-with-v3-fri94` tag authenticates a
+format/profile label, not that root circuit. Calling D1–D4 “prover production
+readiness” therefore overstated what had actually been established.
+
+The missing boundary is now D5 in
+[opencsv-rs issue #32](https://github.com/opencsvnet/opencsv-rs/issues/32).
+The immediate implementation change is deliberately fail-closed: v4 remains
+usable for signet, while every shipped mainnet account reports
+`production_root_vk_authentication_required` before any fresh consumer or
+issuer Bitcoin write—even if a registry is otherwise valid and marked
+`limited` or `general`. Read, restore, sync, and evidence export remain
+available.
+
+Several tempting patches were rejected because they would only rename the
+trust gap: the existing static tag, proof-carried self-attestation, a mutable
+per-transaction allowlist, issuer/server cosigning of ordinary transfers, and
+a finite-depth allowlist advertised as the general protocol. V5 must make the
+root identity independently derivable or authenticated from a canonical
+lineage, reject an adversarial custom-root proof, and receive independent
+exact-tip review before this gate can open. The fail-closed implementation is
+published at Rust PR #31 head `cd9a71f7ab4703162b47848dc1fdda0f9841b7b3`.
+Its warning-denied workspace completed without an executed failure: FFI is
+127/0/3, the PCD node suite is 7/0/3, and redeem is 2/0/1. Hosted runs
+[31919832350](https://github.com/opencsvnet/opencsv-rs/actions/runs/31919832350)
+and
+[31919834317](https://github.com/opencsvnet/opencsv-rs/actions/runs/31919834317)
+and independent review remain required. No release, production issuer, mainnet
+wallet, or mainnet transaction was created.
+
 ---
 
 *Screenshot regeneration is defined by CI from real regtest runs

@@ -1,4 +1,4 @@
-# OpenCSV Master Plan (2026-08-08, rev 13) — Final Signal acceptance and release gates
+# OpenCSV Master Plan (2026-08-15, rev 14) — D5 and production release gates
 
 ## Plan of record
 
@@ -56,7 +56,7 @@ The standing bridge remains executable differential testing. The Lean/source
 correspondence gate is fail-closed source-drift evidence; it is not represented
 as a proof of the Rust AIR, FRI, storage, networking, or iOS implementation.
 
-### Prover production readiness
+### Prover implementation baseline and remaining D5 gate
 
 - **D1 — setup caching: complete** at `ca8ad37`, keyed by complete setup and
   verification-key identity with cold, warm, invalidation, and concurrency
@@ -69,6 +69,14 @@ as a proof of the Rust AIR, FRI, storage, networking, or iOS implementation.
   `46a3e48`. The measured physical iPhone 16e release receipt is 6.435 seconds
   proving, 19.75 ms verification, and 788,047 bytes. Debug multi-minute proofs
   are development behavior and are never product performance claims.
+- **D5 — root verification-key authentication: open and blocking mainnet.**
+  D4 prevents a fixed successor circuit from accepting a foreign predecessor,
+  but v4 still reconstructs the root native verifier from proof-carried common
+  data. The static verifier-set tag is not a root of trust. Issue
+  [opencsv-rs#32](https://github.com/opencsvnet/opencsv-rs/issues/32) owns the
+  v5 design and adversarial custom-root regression. Until it closes, shipped
+  mainnet wallets fail fresh writes with
+  `production_root_vk_authentication_required`; v4 remains signet-only.
 
 ### Batching v2
 
@@ -124,10 +132,81 @@ Signal exposes one user-facing product: **Test USD**.
   No Tether asset or redemption claim exists in this test registry.
 - Unknown, removed, or ticker-lookalike instruments remain visible and
   read-only. New unsigned work fails with stable `asset_not_reviewed`.
-- Signal cannot mint or create assets. Privileged issuance remains available
-  only through the non-default headless `opencsv-issuer` tool.
+- Signal cannot mint or create assets. Privileged signet/regtest issuance
+  remains available only through the non-default headless `opencsv-issuer`
+  tool. The stacked mainnet candidate admits issuance only through a
+  registry-v2-committed threshold policy, an exact signed mint authorization,
+  a canonical confirmed funding outpoint, and a replay-safe per-asset
+  sequence/supply floor. The signed outpoint prevents old-backup replay from
+  retargeting the same approval to fresh Bitcoin funding. Missing material returns
+  `production_issuance_not_authorized`. Signal exposes none of this surface.
 - Production USD requires a new reviewed asset and registry, separate account
   database and backup namespace, and a separately initialized mainnet fee tree.
+  The fail-closed namespace, registry lifecycle, activation states, evidence
+  gates, and still-open human decisions are specified in
+  [`PRODUCTION_MAINNET.md`](PRODUCTION_MAINNET.md). That document is a review
+  contract, not an activation or issuer claim.
+- The current Rust candidate rejects loose mainnet issuer lists. A production
+  registry is a versioned, deployment-bound release input whose ordered exact
+  manifests/priorities, source revision, and public HTTPS approval receipts
+  recompute to its exposed commitment. This makes the selected policy
+  reproducible; it does not establish issuer backing or authority.
+- The highest accepted registry version and commitment persist in both the
+  account database and production Secure Backup. Older or conflicting policy
+  remains readable but cannot start unsigned work; older checkpoints cannot
+  lower the floor.
+- The release commitment also binds a `candidate`, `limited`, or `general`
+  phase and exact transfer, batch, rolling-day, recipient, reserve-allocation,
+  and miner-fee ceilings. Candidate releases return
+  `production_activation_not_authorized`; activated releases recheck their
+  ceilings at intent creation and before proof/signing. Signed solo, batch,
+  and reserve transactions snapshot the complete authorizing release, and RBF
+  revalidates that commitment before applying its original fee ceiling.
+  A wallet-derived signature binds that commitment to the stable solo, batch,
+  or reserve operation identity. Missing or substituted mainnet authorization
+  is database corruption rather than permission to fall back to live host
+  policy. Crash resume revalidates it before transaction parsing, chain lookup,
+  or relay; fee bump does so before chain verification or replacement signing.
+  The separately featured, secret-free `opencsv-registry` tool uses the
+  same Rust serializer and verifier as account open. It requires the expected
+  application deployment, distinguishes structural validity from activation
+  authority, and refuses to overwrite an existing release. Its checked-in
+  candidate has zero issuers and cannot arm writes; limited/general validation
+  rejects empty issuer sets and all-zero placeholder revisions. Registry v2
+  additionally commits sorted exact asset-to-issuance-policy hashes while v1
+  bytes remain unchanged and cannot authorize minting. The headless wallet
+  atomically consumes each threshold-signed authorization with its mint
+  operation, enforces contiguous sequence and supply transitions, carries the
+  ledger in Secure Backup, and verifies signed historical policy snapshots on
+  resume/RBF after policy rotation. Consumer policy alone never authorizes
+  supply.
+
+  The exact published draft is
+  [opencsv-rs PR #31](https://github.com/opencsvnet/opencsv-rs/pull/31) at
+  `cd9a71f7ab4703162b47848dc1fdda0f9841b7b3`, stacked on still-unmerged PR #30.
+  An exact-tip adversarial pass found and closed a threshold alias: authority
+  keys now require one lowercase compressed canonical encoding, so one signer
+  cannot occupy two slots through upper/lowercase hex. A second pass bound each
+  authorization to one exact funding outpoint so restoring an older valid
+  backup cannot replay it with a different UTXO. Pre-sign, resume, and RBF
+  independently recheck the operation row and persisted transaction input.
+  A crash after atomic admission resumes the same `planned` or `fee_reserved`
+  operation after reopen and can reserve only that signed outpoint.
+  D5 now additionally blocks every shipped mainnet write because v4 does not
+  independently authenticate the recursive root verification key. FFI is 127 passed / 0
+  failed / 3 intentional ignores; those three pass explicitly in release mode.
+  The preceding complete warnings-denied workspace had no executed failure;
+  the proof-heavy PCD node and redeem suites took 957.31 and 430.63 seconds.
+  Registry and
+  issuer tool suites pass 4/0 and 8/0. Hosted runs 31913977221 and 31913959340
+  are superseded; exact-head runs 31919832350 and 31919834317 are executing,
+  and independent review remains absent, so nothing here
+  is merge or activation authority.
+- The current local production candidates additionally fail closed unless
+  mainnet has two required pinned raw-byte observer hosts, visible direct
+  relay, and two distinct compact-filter peers. These candidates are not
+  published product state until their prior PRs merge and the exact rebased
+  tips pass hosted CI and independent review.
 
 ## Completed Rust merge gate
 
