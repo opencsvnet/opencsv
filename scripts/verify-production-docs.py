@@ -59,6 +59,7 @@ def main() -> int:
     canonical = ROOT / "PRODUCTION_MAINNET.md"
     page = ROOT / "production.html"
     roadmap = ROOT / "ROADMAP.md"
+    readme = ROOT / "README.md"
     paper = ROOT / "paper/opencsv.md"
     journal = ROOT / "journal/README.md"
     rendered_journal = ROOT / "web/journal.html"
@@ -116,6 +117,17 @@ def main() -> int:
             "D5 — root verification-key authentication",
             "Crash resume revalidates it before transaction parsing",
             "fee bump does so before chain verification or replacement signing",
+        ],
+    )
+    require_all(
+        readme,
+        [
+            "D4 binds predecessor keys, but v4 still rebuilds",
+            "the root verifier from proof-carried common data.",
+            "must independently authenticate that root before a mainnet write can activate.",
+            "production_issuance_not_authorized",
+            "production_root_vk_authentication_required",
+            "proof tag cannot bypass D5.",
         ],
     )
     require_all(
@@ -183,7 +195,7 @@ def main() -> int:
     )
 
     link_count = verify_local_links(page) + verify_local_links(ROOT / "roadmap.html")
-    print(f"verified production contract across 6 surfaces and {link_count} local links")
+    print(f"verified production contract across 7 surfaces and {link_count} local links")
     return 0
 
 

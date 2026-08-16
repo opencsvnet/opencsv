@@ -1363,7 +1363,7 @@ also rejected because rollback defense must not hide recovery evidence.
 The next audit found that the activation contract described limited-rollout
 caps without making them authenticated wallet inputs. That would let a host
 label a build "limited" while independently choosing its loss envelope. Local
-commit `fa0736c65de64a175b4f1d4e4b4854a9d92e3367` therefore adds the activation
+commit `fa0736ce0f5cbde00aef145111b1223964ab0160` therefore adds the activation
 phase and exact transfer, batch, rolling-day, recipient, reserve-allocation,
 and miner-fee ceilings to the registry commitment. Candidate releases remain
 inspectable but return `production_activation_not_authorized`; limited and
